@@ -44,6 +44,9 @@
 # define StdError 2
 #endif
 
+#define SHOW_EXECUTION_TIME_MASK 8
+#define NO_RESULT_MASK 16
+
 #ifdef WINDOWS
 HANDLE std_input_handle,std_output_handle,std_error_handle;
 int console_window_visible,console_allocated,console_flag=0;
@@ -1200,7 +1203,7 @@ int clean_main (void)
 	else
 		std_error_handle=GetStdHandle (STD_ERROR_HANDLE);
 
-	console_window_visible=flags & 16 ? 0 : 1;
+	console_window_visible=flags & NO_RESULT_MASK ? 0 : 1;
 
 	if (heap_size_multiple<MINIMUM_HEAP_SIZE_MULTIPLE)
 		heap_size_multiple=MINIMUM_HEAP_SIZE_MULTIPLE;
@@ -1245,9 +1248,9 @@ int clean_main (void)
 		else if (EQ_STRING2 (s,'s','c'))
 			flags &= ~1;
 		else if (EQ_STRING1 (s,'t'))
-			flags |= 8;
+			flags |= SHOW_EXECUTION_TIME_MASK;
 		else if (EQ_STRING2 (s,'n','t'))
-			flags &= ~8;
+			flags &= ~SHOW_EXECUTION_TIME_MASK;
 		else if (EQ_STRING2 (s,'g','c'))
 			flags |= 2;
 		else if (EQ_STRING3 (s,'n','g','c'))
@@ -1257,7 +1260,7 @@ int clean_main (void)
 		else if (EQ_STRING3 (s,'n','s','t'))
 			flags &= ~4;
 		else if (EQ_STRING2 (s,'n','r'))
-			flags |= 16;
+			flags |= NO_RESULT_MASK;
 #ifdef GC_FLAGS
 		else if (EQ_STRING3 (s,'g','c','m'))
 			flags |= 64;
@@ -1316,7 +1319,11 @@ int clean_main (void)
 		exit_tcpip_function();
 
 #ifdef WINDOWS
-	if ( (!(flags & 16) || (flags & 8) || execution_aborted) && !console_flag)
+# if 1
+	if ( (!(flags & NO_RESULT_MASK) || (flags & SHOW_EXECUTION_TIME_MASK) || execution_aborted || (console_window_visible && !console_allocated) ) && !console_flag)
+# else
+	if ( (!(flags & NO_RESULT_MASK) || (flags & SHOW_EXECUTION_TIME_MASK) || execution_aborted) && !console_flag)
+# endif
 		wait_for_key_press();
 
 	if (return_code==0 && execution_aborted)
