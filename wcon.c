@@ -7,7 +7,7 @@
 #include <float.h>
 
 #define GC_FLAGS
-#define EXCEPTION_HANDLER
+#define STACK_OVERFLOW_EXCEPTION_HANDLER
 
 #ifdef WINDOWS
 # include <windows.h>
@@ -971,7 +971,7 @@ void *allocate_memory (int size)
 #endif
 }
 
-#ifdef WINDOWS
+#if defined (WINDOWS) && defined (STACK_OVERFLOW_EXCEPTION_HANDLER)
 void *allocate_memory_with_guard_page_at_end (int size)
 {
 	int alloc_size;
@@ -1077,7 +1077,7 @@ int execution_aborted;
 int return_code;
 #endif
 
-#ifdef EXCEPTION_HANDLER
+#ifdef STACK_OVERFLOW_EXCEPTION_HANDLER
 extern __stdcall LONG clean_exception_handler (struct _EXCEPTION_POINTERS *exception_p);
 #endif
 
@@ -1305,7 +1305,7 @@ int clean_main (void)
 	global_argv=&argv[arg_n];
 	global_argc=argc-arg_n;
 
-#ifdef EXCEPTION_HANDLER
+#ifdef STACK_OVERFLOW_EXCEPTION_HANDLER
 	SetUnhandledExceptionFilter (&clean_exception_handler);
 #endif
 
