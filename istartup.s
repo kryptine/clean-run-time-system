@@ -235,7 +235,7 @@ printf_int_string:
 	.ascii	"%d"
 	.byte	0
 printf_real_string:
-	.ascii	"%g"
+	.ascii	"%.15g"
 	.byte	0
 printf_string_string:
 	.ascii	"%s"
