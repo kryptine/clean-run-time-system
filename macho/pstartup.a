@@ -410,7 +410,12 @@ entier_constants_and_buffers:
 	.globl	_c13,_c14,_c15,_c16,_c17,_c18,_c19,_c20,_c21,_c22
 	.globl	_c23,_c24,_c25,_c26,_c27,_c28,_c29,_c30,_c31,_c32
 
-	.globl	__indirection,__eaind,eval_fill
+	.globl	e__system__nind
+	.globl	e__system__eaind
+# comment old names of the previous two labels for compatibility, remove later
+	.globl	__indirection,__eaind
+
+	.globl	eval_fill
 	.globl	eval_upd_0,eval_upd_1,eval_upd_2,eval_upd_3,eval_upd_4
 	.globl	eval_upd_5,eval_upd_6,eval_upd_7,eval_upd_8,eval_upd_9
 	.globl	eval_upd_10,eval_upd_11,eval_upd_12,eval_upd_13,eval_upd_14
@@ -3648,6 +3653,7 @@ eval_22:
 
 # __TEXT.__eaind:
 
+e__system__eaind:
 __eaind:
 eval_fill:
 	stw	a0,0(a4)
@@ -3686,6 +3692,7 @@ eval_fill:
  .endif
 	.long	0
 	.long	-2
+e__system__nind:
 __indirection:
 	lwz	a1,4(a0)
 	lwz	d0,0(a1)
