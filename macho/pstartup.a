@@ -1727,17 +1727,29 @@ calculate_digits:
 	cmplwi	0,d0,10
 	blt	last_digit
 
+#if 1
+	lis	o0,-13107
+	subi	o0,o0,13107
+	mulhwu	o0,o0,d0
+	srwi	o0,o0,3
+
+	slwi	o1,o0,1
+	sub	a1,d0,o1
+	slwi	o1,o0,3
+	sub	a1,a1,o1
+#else
 	li	o1,10
 	divwu	o0,d0,o1
 
 	mullw	a1,o0,o1
 	sub	a1,d0,a1
+#endif
 	addi	a1,a1,48
+	mr	d0,o0
 
 	stb	a1,0(a2)
 	addi	a2,a2,1
 		
-	mr	d0,o0
 	b	calculate_digits
 
 last_digit:
