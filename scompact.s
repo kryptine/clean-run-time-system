@@ -12,22 +12,13 @@
 	be	end_mark_cafs
 	dec	4,sp
 
-#ifdef SP_G5
 	dec	4,sp
-#endif
 
 mark_cafs_lp:
-#ifdef SP_G5
 	ld	[d0-4],%g1
-#else
-	ld	[d0-4],%g5
-#endif
 	add	d0,4,a2
 	ld	[d0],d0
-
-#ifdef SP_G5
 	st	%g1,[sp]
-#endif
 	sll	d0,2,d0
 	add	a2,d0,a4
 
@@ -35,18 +26,12 @@ mark_cafs_lp:
 	call	mark_stack_nodes
 	st	%o7,[sp]
 
-#ifdef SP_G5
 	ld	[sp],d0
 	addcc	d0,0,d0
-#else
-	addcc	%g5,0,d0
-#endif
 	bne	mark_cafs_lp
 	nop
 
-#ifdef SP_G5
 	inc	4,sp
-#endif
 
 end_mark_cafs:
 	ldg	(stack_p,a2)
@@ -272,7 +257,7 @@ mark_hnf_3:
 	
 	mov	128,%o3
 
-	sub	a1,%l6,d0
+	sub	a1,d6,d0
 	srl	d0,2,d0
 
 	srl	d0,3,%o0
@@ -332,7 +317,7 @@ mark_hnf_1:
 
 mark_indirection_node:
 	sub	a0,4,%o1
-	sub	%o1,%l6,%o1
+	sub	%o1,d6,%o1
 	srl	%o1,2,%o1
 
 	srl	%o1,3,d2
@@ -357,9 +342,8 @@ mark_selector_node_1:
 
 	inccc	d2
 	ble	mark_record_selector_node_1
-	nop
-
 	srl	%o1,3,d2
+
 	ldub	[%o4+d2],%g1
 	and	%o1,7,%g2
 	mov	128,%g3
@@ -420,10 +404,8 @@ small_tuple_or_record:
 
 mark_record_selector_node_1:
 	beq	mark_strict_record_selector_node_1
-	nop
-
-	srl	%o1,3,d2
 	ldub	[%o4+d2],%g1
+
 	and	%o1,7,%g2
 	mov	128,%g3
 	srl	%g3,%g2,%g3
@@ -443,8 +425,6 @@ mark_record_selector_node_1:
 	b,a	large_tuple_or_record
 
 mark_strict_record_selector_node_1:
-	srl	%o1,3,d2
-	ldub	[%o4+d2],%g1
 	and	%o1,7,%g2
 	mov	128,%g3
 	srl	%g3,%g2,%g3
@@ -476,9 +456,8 @@ mark_strict_record_selector_node_1:
 	nop
 
 select_from_small_record:
-	dec	4,a0
-
 	ld	[d0-8],%g1
+	dec	4,a0
 	ld	[%g1+4],%g1
 
 	dec	4,sp
@@ -499,7 +478,7 @@ mark_hnf_2:
 	mov	d2,a0
 
 mark_node:
-	sub	a0,%l6,d0
+	sub	a0,d6,d0
 #ifdef SHARE_CHAR_INT
 	cmp	d0,%l7
 	bcc	mark_next_node_after_static
@@ -603,7 +582,7 @@ mark_hnf_0:
 	bcc	mark_next_node
 	nop
 
-	sub	a0,%l6,d1
+	sub	a0,d6,d1
 	srl	d1,2,d1
 
 	srl	d1,3,d0
@@ -662,24 +641,23 @@ no_char_3:
 	
 no_normal_hnf_0:
 #endif
-
 	set	__ARRAY__+2,%o0
 	cmp	d0,%o0
 	bne,a	mark_next_node+4
 	tst	d5
 
-	ld	[a0+8],d0
-	tst	d0
+	ld	[a0+8],d1
+	tst	d1
 	be,a	mark_lazy_array
 	ld	[a0+4],d0
 
-	lduh	[d0-2+2],d1
-	tst	d1
+	lduh	[d1-2],d0
+	tst	d0
 	be,a	mark_b_record_array
 	sub	a0,d6,d0
 
-	lduh	[d0-2],d0
-	tst	d0
+	lduh	[d1-2+2],d1
+	tst	d1
 	be,a	mark_b_record_array
 	sub	a0,d6,d0
 
@@ -697,6 +675,7 @@ mark_ab_record_array:
 
 	ld	[a0+4],d2
 	inc	8,a0
+
 	mov	a0,%g4
 
 	sll	d2,2,d2
@@ -758,6 +737,7 @@ mul_array_length:
 
 mark_lazy_array:
 	inc	8,a0
+
 mark_lr_array:
 	sub	a0,d6,d1
 	srl	d1,2,d1
@@ -806,11 +786,9 @@ mark_array_length_0_1:
 	st	d1,[a0-4]
 	ba	mark_hnf_1
 	dec	4,a0
-!
+
 mark_parent:
 	tst	d3
-! selectors:
-!	be	mark_stack_nodes
 	be	mark_stack_nodes2
 	nop
 
@@ -1101,142 +1079,14 @@ free_finalizer_list_empty:
 	ba	find_non_zero_long_2
 	clr	d4
 
-move_record:
-	deccc	258,d1
-	blu,a	move_record_1
-	lduh	[d0-2+2],%g1
-	be,a	move_record_2
-	lduh	[d0-2+2],%g1
-
-move_record_3:
-	lduh	[d0-2+2],d1
-	deccc	1,d1
-	bgu	copy_hnf_3
-	nop
-
-	ld	[a0],a1
-	blu	move_record_3_1b
-	inc	4,a0
-
-move_record_3_1a:
-	cmp	a1,a0
-	blu	move_record_3_1b
-#ifdef SHARE_CHAR_INT
-	cmp	a1,d2
-	bgeu	move_record_3_1b
-#endif
-	add	a6,1,d0
-	ld	[a1],d1
-	st	d0,[a1]
-	mov	d1,a1
-move_record_3_1b:
-	st	a1,[a6]
-	inc	4,a6
-
-	ld	[a0],a1
-	cmp	a1,a0
-	blu	move_record_3_2
-	inc	4,a0
-#ifdef SHARE_CHAR_INT
-	cmp	a1,d2
-	bgeu	move_record_3_2
-#endif
-	sub	a1,d6,d0
-	srl	d0,2,d0
-	inc	1,d0
-
-	tstmbit	(%o4,d0,d1,%o0,%o1,%o2)
-	be	not_linked_record_argument_part_3_b
-	bset	%o0,%o1
-
-	sub	a6,d6,d0
-	srl	d0,2,d0
-	setmbit	(%o4,d0,d1,%o0,%o1,%o2)
-	b,a	linked_record_argument_part_3_b
-
-not_linked_record_argument_part_3_b:
-	stb	%o1,[%o4+d1]
-
-	sub	a6,d6,d0
-	srl	d0,2,d0
-	clrmbit	(%o4,d0,d1,%o0,%o1,%o2)
-
-linked_record_argument_part_3_b:
-	ld	[a1],d1
-	add	a6,2+1,d0
-	st	d0,[a1]
-	mov	d1,a1
-move_record_3_2:
-	st	a1,[a6]
-	inc	4,a6
-
-	sub	%i2,%o4,%o0
-	sll	%o0,5,%o0
-	add	%o0,%l6,%o0
-
-	cmp	%o0,d7
-	be,a	bit_in_next_long
-	sethi	%hi 0xc0000000,%o1
-
-	inc	4,d7
-	cmp	%o0,d7
-	inc	4,d7
-	bne	skip_zero_bits
-	sll	d4,2,d4
-
-	sethi	%hi 0x80000000,%o1
-
-bit_in_next_long:
-	deccc	%l5
-	bneg	end_compact_heap
-	nop
-
-	ld	[%i2],d4
-	ba	skip_zeros_2
-	bclr	%o1,d4
-
-move_record_2:
-	cmp	%g1,1
-	bgu	copy_hnf_2
-	nop
-	blu	move_real_or_file
-	nop
-move_record_2_ab:
-	ld	[a0],a1
-	cmp	a1,a0
-	blu	move_record_2_1
-	inc	4,a0
-#ifdef SHARE_CHAR_INT
-	cmp	a1,d2
-	bgeu	move_record_2_1
-	add	a6,1,d0
-#endif
-	ld	[a1],d1
-	st	d0,[a1]
-	mov	d1,a1
-move_record_2_1:
-	st	a1,[a6]
-	ld	[a0],%o0
-	inc	4,a0
-	st	%o0,[a6+4]
-	ba	skip_zero_bits
-	inc	8,a6
-
-move_record_1:
-	tst	%g1
-	bne	copy_hnf_1
-	nop
-	ba	move_int_bool_or_char
-	nop
-
 skip_zeros_2:
 	tst	d4
 	bne	end_skip_zeros
-	inc	4,%i2	
+	inc	4,a2	
 find_non_zero_long_2:
-	deccc	%l5
+	deccc	d5
 	bpos,a	skip_zeros_2
-	ld	[%i2],d4
+	ld	[a2],d4
 
 	b,a	end_compact_heap
 
@@ -1247,8 +1097,9 @@ end_skip_zeros:
 	add	%l7,%l6,%l7
 
 skip_zero_bits:
-	set	first_one_bit_table,%o0
+	seth	(first_one_bit_table,%o0)	!
 	srl	d4,24,%o1
+	setl	(first_one_bit_table,%o0)
 	ldsb	[%o0+%o1],d1
 	tst	d1
 	bpos,a	copy_nodes
@@ -1262,7 +1113,7 @@ more_than_7:
 	sll	d4,8,d4
 	btst	d4,%o2
 	beq	more_than_7
-	inc	8<<2,%l7
+	inc	8<<2,d7
 
 less_than_8:
 	srl	d4,24,%o1
@@ -1270,25 +1121,17 @@ less_than_8:
 	sll	d4,d1,d4
 
 copy_nodes:
-!	sethi	%hi 0x80000000,%o0
-!	bclr	%o0,d4
+	sll	d1,2,d1
 	sll	d4,1,d4
 
-	sll	d1,2,d1
-	add	%l7,d1,%l7
-	
-!	mov	%l7,a0
-!	ld	[a0],d0
-!	inc	4,a0
-	ld	[d7],d0
-	inc	4,d7
-	mov	d7,a0
-
-	bclr	1,d0
+	ld	[d7+d1],d0
+	add	d7,d1,a0
+	add	a0,4,d7
+	inc	4,a0
 
 	btst	2,d0
 	beq	begin_update_list_2
-	bclr	2,d0
+	bclr	3,d0
 
 	ld	[d0-8],d3
 	mov	d0,a1
@@ -1659,8 +1502,9 @@ move_hnf_0:
 	set	INT+2,%l3
 	cmp	d0,%l3
 	blu	move_real_file_or_string
-	nop
-	set	CHAR+2,%o0
+	seth	(CHAR+2,%o0)
+
+	setl	(CHAR+2,%o0)
 	cmp	d0,%o0
 	bleu	move_int_bool_or_char
 	nop
@@ -1691,6 +1535,200 @@ cp_s_arg_lp3:
 
 	b,a	skip_zero_bits
 
+move_record:
+	deccc	258,d1
+	blu,a	move_record_1
+	lduh	[d0-2+2],%g1
+	be,a	move_record_2
+	lduh	[d0-2+2],%g1
+
+move_record_3:
+	lduh	[d0-2+2],d1
+	deccc	1,d1
+	bgu	copy_hnf_3
+	nop
+
+	ld	[a0],a1
+	blu	move_record_3_1b
+	inc	4,a0
+
+move_record_3_1a:
+	cmp	a1,a0
+	blu	move_record_3_1b
+#ifdef SHARE_CHAR_INT
+	cmp	a1,d2
+	bgeu	move_record_3_1b
+#endif
+	add	a6,1,d0
+	ld	[a1],d1
+	st	d0,[a1]
+	mov	d1,a1
+move_record_3_1b:
+	st	a1,[a6]
+	inc	4,a6
+
+	ld	[a0],a1
+	cmp	a1,a0
+	blu	move_record_3_2
+	inc	4,a0
+#ifdef SHARE_CHAR_INT
+	cmp	a1,d2
+	bgeu	move_record_3_2
+#endif
+	sub	a1,d6,d0
+	srl	d0,2,d0
+	inc	1,d0
+
+	tstmbit	(%o4,d0,d1,%o0,%o1,%o2)
+	be	not_linked_record_argument_part_3_b
+	bset	%o0,%o1
+
+	sub	a6,d6,d0
+	srl	d0,2,d0
+	setmbit	(%o4,d0,d1,%o0,%o1,%o2)
+	b,a	linked_record_argument_part_3_b
+
+not_linked_record_argument_part_3_b:
+	stb	%o1,[%o4+d1]
+
+	sub	a6,d6,d0
+	srl	d0,2,d0
+	clrmbit	(%o4,d0,d1,%o0,%o1,%o2)
+
+linked_record_argument_part_3_b:
+	ld	[a1],d1
+	add	a6,2+1,d0
+	st	d0,[a1]
+	mov	d1,a1
+move_record_3_2:
+	st	a1,[a6]
+	inc	4,a6
+
+	sub	%i2,%o4,%o0
+	sll	%o0,5,%o0
+	add	%o0,%l6,%o0
+
+	cmp	%o0,d7
+	be,a	bit_in_next_long
+	sethi	%hi 0xc0000000,%o1
+
+	inc	4,d7
+	cmp	%o0,d7
+	inc	4,d7
+	bne	skip_zero_bits
+	sll	d4,2,d4
+
+	sethi	%hi 0x80000000,%o1
+
+bit_in_next_long:
+	deccc	%l5
+	bneg	end_compact_heap
+	nop
+
+	ld	[%i2],d4
+	ba	skip_zeros_2
+	bclr	%o1,d4
+
+move_record_2:
+	cmp	%g1,1
+	bgu	copy_hnf_2
+	nop
+	blu	move_real_or_file
+	nop
+move_record_2_ab:
+	ld	[a0],a1
+	cmp	a1,a0
+	blu	move_record_2_1
+	inc	4,a0
+#ifdef SHARE_CHAR_INT
+	cmp	a1,d2
+	bgeu	move_record_2_1
+	add	a6,1,d0
+#endif
+	ld	[a1],d1
+	st	d0,[a1]
+	mov	d1,a1
+move_record_2_1:
+	st	a1,[a6]
+	ld	[a0],%o0
+	inc	4,a0
+	st	%o0,[a6+4]
+	ba	skip_zero_bits
+	inc	8,a6
+
+move_record_1:
+	tst	%g1
+	bne	copy_hnf_1
+	nop
+	ba	move_int_bool_or_char
+	nop
+
+move_real_array:
+	tst	d4
+	bneg	clear_bit_in_this_word
+	sll	d4,1,d4
+
+	ld	[a2],d4
+	dec	d5
+	sub	a2,%o4,d7
+	inc	4,a2
+	sll	d7,5,d7
+	add	d7,%l6,d7
+
+	sll	d4,1,d4
+clear_bit_in_this_word:
+	inc	4,d7
+
+	add	%g6,8,d1
+	andn	d1,4,d1
+
+	ld	[a0],d0
+	ba	begin_array_update_list_2
+	bclr	1,d0
+
+update_array_list_2:
+	st	d1,[a1]
+begin_array_update_list_2:
+	mov	d0,a1
+	ld	[a1],d0
+update_array_list__2:
+	btst	1,d0
+	be	end_update_array_list_2
+	bclr	1,d0
+	btst	2,d0
+	be	update_array_list_2
+	bclr	2,d0
+	mov	d0,a1
+	ba	update_array_list__2
+	ld	[a1],d0
+
+end_update_array_list_2:
+	st	d1,[a1]
+
+	st	d0,[d1]
+	inc	4,d1
+
+	ld	[a0+4],d0
+	inc	4,a0
+
+	inc	16,%g6
+
+	sll	d0,3,%o0
+	sll	d0,1,d0
+
+	add	%g6,%o0,%g6
+
+move_real_array_reals:
+	ld	[a0],%o0	!
+	inc	4,a0
+	st	%o0,[d1]
+	inc	4,d1
+	deccc	d0
+	bge,a	move_real_array_reals+4
+	ld	[a0],%o0
+
+	b,a	skip_zero_bits
+
 skip_zeros_2_a:
 	ld	[a2],d4
 	dec	d5
@@ -1699,15 +1737,17 @@ skip_zeros_2_a:
 	inc	4,a2
 
 end_skip_zeros_a:
-	sub	%i2,%o4,%l7
-	dec	4,%l7
-	sll	%l7,5,%l7
-	add	%l7,%l6,%l7
+	sub	%i2,%o4,d7
+	dec	4,d7
+	sll	d7,5,d7
+	add	d7,%l6,d7
 
 move_array:
+
 skip_zero_bits_a:
-	set	first_one_bit_table,%o0
+	seth	(first_one_bit_table,%o0)	!
 	srl	d4,24,%o1
+	setl	(first_one_bit_table,%o0)
 	ldsb	[%o0+%o1],d1
 	tst	d1
 	bpos,a	end_array_bit
@@ -1721,7 +1761,7 @@ more_than_7_a:
 	sll	d4,8,d4
 	btst	d4,%o2
 	beq	more_than_7_a
-	inc	8<<2,%l7
+	inc	8<<2,d7
 
 less_than_8_a:
 	srl	d4,24,%o1
@@ -1732,9 +1772,9 @@ end_array_bit:
 	sll	d4,1,d4
 
 	sll	d1,2,d1
-	add	%l7,d1,%l7
+	add	d7,d1,d7
 
-	mov	%l7,d1
+	mov	d7,d1
 	cmp	d7,a0
 	bne	move_a_array
 	inc	4,d7
@@ -1785,7 +1825,7 @@ move_a_array:
 	deccc	1,d1
 	blu	end_array
 	nop
-	
+
 	ld	[a0],%o0
 	ld	[a1-4],d0
 	st	%o0,[a1-4]
@@ -1802,6 +1842,7 @@ move_a_array:
 	lduh	[d0-2+2],d3
 	lduh	[d0-2],d0
 	dec	256,d0
+
 	cmp	d0,d3
 	be	st_move_array_lp
 	nop

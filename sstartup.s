@@ -8,11 +8,10 @@
 #define MY_ITOS
 #define FINALIZERS
 #define STACK_OVERFLOW_EXCEPTION_HANDLER
-#undef MARK_GC
 #undef ADD_SYSTEM_TIME
 #undef COUNT_GARBAGE_COLLECTIONS
-
 #define SP_G5
+#define MARK_GC
 
 #define ldg(g,r) sethi %hi g,%o0 ; ld [%o0+%lo g],r
 #define ldgr(g,r,ir) sethi %hi g,ir ; ld [ir+%lo g],r
@@ -21,8 +20,8 @@
 #define ldgsb(g,r) sethi %hi g,%o0 ; ldsb [%o0+%lo g],r
 #define ldgub(g,r) sethi %hi g,%o0 ; ldub [%o0+%lo g],r
 #define stgb(r,g) sethi %hi g,%o0 ; stb r,[%o0+%lo g]
-#define seth(g,r) sethi %hi g,r
-#define setl(g,r) add r,%lo g,r
+#define seth(g,r) sethi %hi (g),r
+#define setl(g,r) add r,%lo (g),r
 
 #define setmbit(vector,bit_n,byte_offset,bit,byte,scratch) \
 	mov	128,bit ;\
@@ -108,6 +107,7 @@ bit_vector_p:	.long	0
 zero_bits_before_mark: .long	1
 free_after_mark:	.long	1000
 last_heap_free:	.long	0
+lazy_array_list:	.long	0
 #endif
 
 caf_list:	.word	0
@@ -318,11 +318,7 @@ free_finalizer_list:
 	.global	create_arrayC
 	.global	create_arrayI
 	.global	create_arrayR
-#if 0
-	.global	create_r_array
-#else
 	.global	create_R_array
-#endif
 
 	.global	_create_arrayB
 	.global	_create_arrayC
@@ -356,7 +352,13 @@ free_finalizer_list:
 	.global	_c13,_c14,_c15,_c16,_c17,_c18,_c19,_c20,_c21,_c22
 	.global	_c23,_c24,_c25,_c26,_c27,_c28,_c29,_c30,_c31,_c32
 
-	.global	__indirection,__eaind,eval_fill
+	.global	e__system__nind
+	.global	e__system__eaind
+! old names of the previous two labels for compatibility, remove later
+	.global	__indirection,__eaind
+	.global	e__system__dind
+	.global	eval_fill
+
 	.global	eval_upd_0,eval_upd_1,eval_upd_2,eval_upd_3,eval_upd_4
 	.global	eval_upd_5,eval_upd_6,eval_upd_7,eval_upd_8,eval_upd_9
 	.global	eval_upd_10,eval_upd_11,eval_upd_12,eval_upd_13,eval_upd_14
@@ -2294,6 +2296,7 @@ halt:
 	call	@longjmp
 	mov	1,%o1
 
+e__system__eaind:
 __eaind:
 eval_fill:
 	st	a0,[%i4]
@@ -2318,11 +2321,12 @@ eval_fill:
 	retl
 	inc	4,sp
 
-	b,a	eval_fill
+	b,a	e__system__eaind
 	nop
 	nop
-	.word	0
+	.word	e__system__dind	
 	.word	-2
+e__system__nind:
 __indirection:
 	ld	[a0+4],a1
 	ld	[a1],d0
@@ -2586,6 +2590,7 @@ catAC:
 	inc	8,a0
 	ld	[a1+4],d1
 	inc	8,a1
+
 	add	d0,d1,d2
 	add	d2,3+8,d5
 	srl	d5,2,d5
@@ -2599,7 +2604,7 @@ gc_r_3:
 	set	__STRING__+2,%o0
 	st	%o0,[a6]
 	mov	a6,d5
-	inc	8,%g6
+	inc	8,a6
 	st	d2,[a6-4]
 
 ! copy string 1
@@ -2676,8 +2681,10 @@ cat_string_al0_1:
 	retl
 	inc	4,sp
 
-gc_3:	dec	8,a0
+gc_3:
+	dec	8,a0
 	dec	8,a1
+
 	dec	4,sp
 	call	collect_2
 	st	%o7,[sp]
@@ -2695,6 +2702,7 @@ empty_string:
 sliceAC:
 	ld	[a0+4],d2
 	add	a0,8,a2
+
 	tst	d1
 	bl,a	slice_string_1
 	clr	d1
@@ -2773,7 +2781,6 @@ gc_4:	dec	4,sp
 	st	%o7,[sp]
 	ba	r_gc_4
 	add	a0,8,a2
-	
 
 updateAC:
 	ld	[a0+4],d2
@@ -2815,7 +2822,6 @@ gc_5:	dec	4,sp
 	st	%o7,[sp]
 	ba	r_gc_5
 	add	a0,8,a2
-
 
 update_string_error:
 	set	high_index_string,%o0
@@ -2882,6 +2888,7 @@ cmpAC:
 	inc	8,a0
 	ld	[a1+4],d2
 	inc	8,a1
+
 	cmp	d2,d1
 	bcs,a	cmp_string_less
 	mov	-1,d0
@@ -3068,8 +3075,8 @@ no_collect_4575:
 	or	d0,d3,d0
 	sll	d0,16,d3
 	or	d0,d3,d0
-	mov	a6,a0
 	set	__ARRAY__+2,%o0
+	mov	a6,a0
 	st	%o0,[a6]
 	st	d2,[a6+4]
 	set	BOOL+2,%o0
@@ -3113,13 +3120,14 @@ create_arrayI:
 	st	%o7,[sp]
 
 no_collect_4577:
-	mov	a6,a0
 	set	__ARRAY__+2,%o0
+	mov	a6,a0
 	st	%o0,[a6]
 	st	d1,[a6+4]
 	set	INT+2,%o0
 	st	%o0,[a6+8]
 	inc	12,a6
+
 create_arrayBCI:
 	btst	1,d1
 	be	st_filli_array
@@ -3165,7 +3173,6 @@ no_collect_4579:
 	st	%o0,[a6+8]
 	ba	st_fillr_array
 	inc	12,a6
-
 fillr_array:
 	st	d2,[a6+4]
 	inc	8,a6
@@ -3173,7 +3180,6 @@ st_fillr_array:
 	deccc	1,d0
 	bcc,a	fillr_array
 	st	d1,[a6]
-
 	ld	[sp],%o7
 	retl	
 	inc	4,sp
@@ -3188,315 +3194,17 @@ create_array:
 	st	%o7,[sp]
 no_collect_4576:
 	mov	a0,d1
-	mov	a6,a0
 	set	__ARRAY__+2,%o0
+	mov	a6,a0
 	st	%o0,[a6]
 	st	d0,[a6+4]
+
 	st	%g0,[a6+8]
 	inc	12,a6
 	ld	[sp],a1
 	ba	fillr1_array
 	inc	4,sp
 
-#if 0
-create_r_array:
-	deccc	2,d2
-	bcs	create_r_array_1
-	nop
-	be	create_r_array_2
-	nop
-	deccc	2,d2
-	bcs	create_r_array_3
-	nop
-	be	create_r_array_4
-	nop
-	b,a	create_r_array_5
-
-create_r_array_1:
-	dec	3,d7
-	subcc	d7,d0,d7
-	bpos	no_collect_4581
-	nop
-	dec	4,sp
-	call	collect_0
-	st	%o7,[sp]
-no_collect_4581:
-	mov	a6,a0
-	set	__ARRAY__+2,%o0
-	st	%o0,[a6]
-	st	d0,[a6+4]
-	st	d1,[a6+8]
-	inc	12,a6
-	ld	[sp],a1
-	tst	d3
-	be	r_array_1_b
-	inc	4,sp
-
-	ld	[a4-4],d1
-	ba	fillr1_array
-	dec	4,a4
-
-r_array_1_b:
-	ld	[sp],d1
-	inc	4,sp
-
-fillr1_array:
-	btst	1,d0
-	be	st_fillr1_array_1
-	srl	d0,1,d0
-	st	d1,[a6]
-	ba	st_fillr1_array_1
-	inc	4,a6
-
-fillr1_array_lp:
-	st	d1,[a6+4]
-	inc	8,a6
-st_fillr1_array_1:
-	deccc	1,d0
-	bcc,a	fillr1_array_lp
-	st	d1,[a6]
-
-	jmp	a1+8
-	nop
-
-create_r_array_2:
-	dec	3,d7
-	sub	d7,d0,d7
-	subcc	d7,d0,d7
-	bpos	no_collect_4582
-	nop
-	dec	4,sp
-	call	collect_0
-	st	%o7,[sp]
-no_collect_4582:
-	mov	a6,a0
-	set	__ARRAY__+2,%o0
-	st	%o0,[a6]
-	st	d0,[a6+4]
-	st	d1,[a6+8]
-	inc	12,a6
-
-	ld	[sp],a1
-	inc	4,sp
-
-	deccc	1,d3
-	bcs	r_array_2_bb
-	nop
-	be	r_array_2_ab
-	nop
-r_array_2_aa:
-	ld	[a4-4],d1
-	ld	[a4-8],d2
-	ba	st_fillr2_array
-	dec	8,a4
-r_array_2_ab:
-	ld	[a4-4],d1
-	ld	[sp],d2
-	inc	4,sp
-	ba	st_fillr2_array
-	dec	4,a4
-r_array_2_bb:
-	ld	[sp],d1
-	ld	[sp+4],d2
-	ba	st_fillr2_array
-	inc	8,sp
-
-fillr2_array_1:
-	st	d2,[a6+4]
-	inc	8,a6
-st_fillr2_array:
-	deccc	1,d0
-	bcc,a	fillr2_array_1
-	st	d1,[a6]
-
-	jmp	a1+8
-	nop
-
-create_r_array_3:
-	dec	3,d7
-	sub	d7,d0,d7
-	sub	d7,d0,d7
-	subcc	d7,d0,d7
-	bpos	no_collect_4583
-	nop
-	dec	4,sp
-	call	collect_0
-	st	%o7,[sp]
-no_collect_4583:
-	mov	a6,a0
-	set	__ARRAY__+2,%o0
-	st	%o0,[a6]
-	st	d0,[a6+4]
-	st	d1,[a6+8]
-	inc	12,a6
-
-	ld	[sp],a1
-	inc	4,sp
-
-	tst	d3
-	be	r_array_3
-	nop
-	sll	d3,2,d4
-	sub	a4,d4,a4
-	mov	a4,a3
-	dec	1,d3
-copy_a_to_b_lp3:
-	ld	[a3],%o0
-	inc	4,a3
-	st	%o0,[sp-4]
-	deccc	1,d3
-	bcc	copy_a_to_b_lp3
-	dec	4,sp
-r_array_3:
-	ld	[sp],d1
-	ld	[sp+4],d2
-	ld	[sp+8],d3
-	ba	st_fillr3_array
-	inc	12,sp
-fillr3_array_1:
-	st	d2,[a6+4]
-	st	d3,[a6+8]
-	inc	12,a6
-st_fillr3_array:
-	deccc	1,d0
-	bcc,a	fillr3_array_1
-	st	d1,[a6]
-
-	jmp	a1+8
-	nop
-
-create_r_array_4:
-	dec	3,d7
-	sll	d0,2,d2
-	subcc	d7,d2,d7
-	bpos	no_collect_4584
-	nop
-	dec	4,sp
-	call	collect_0
-	st	%o7,[sp]
-no_collect_4584:
-	mov	a6,a0
-	set	__ARRAY__+2,%o1
-	st	%o1,[a6]
-	st	d0,[a6+4]
-	st	d1,[a6+8]
-	inc	12,a6
-
-	ld	[sp],a1
-	inc	4,sp
-
-	tst	d3
-	be	r_array_4
-	nop
-
-	sll	d3,2,d4
-	sub	a4,d4,a4
-	mov	a4,a3
-	dec	1,d3
-copy_a_to_b_lp4:
-	ld	[a3],%o1
-	inc	4,a3
-	st	%o1,[sp-4]
-	deccc	1,d3
-	bcc	copy_a_to_b_lp4
-	dec	4,sp
-
-r_array_4:
-	ld	[sp],d1
-	ld	[sp+4],d2
-	ld	[sp+8],d3
-	ld	[sp+12],d4
-	ba	st_fillr4_array
-	inc	16,sp
-
-fillr4_array:
-	st	d2,[a6+4]
-	st	d3,[a6+8]
-	st	d4,[a6+12]
-	inc	16,a6
-st_fillr4_array:
-	deccc	1,d0
-	bcc,a	fillr4_array
-	st	d1,[a6]
-
-	jmp	a1+8
-	nop
-
-create_r_array_5:
-	dec	3,d7
-	sll	d0,2,d4
-	sub	d7,d4,d7
-	dec	1,d2
-	mov	d2,d5
-sub_size_lp:
-	deccc	1,d5
-	bcc	sub_size_lp
-	subcc	d7,d0,d7
-
-	bpos	no_collect_4585
-	nop
-	dec	4,sp
-	call	collect_0
-	st	%o7,[sp]
-no_collect_4585:
-	mov	a6,a0
-	set	__ARRAY__+2,%o0
-	st	%o0,[a6]
-	st	d0,[a6+4]
-	st	d1,[a6+8]
-	inc	12,a6
-
-	ld	[sp],a1
-	inc	4,sp
-	mov	d2,d5
-
-	tst	d3
-	be	r_array_5
-	nop
-	sll	d3,2,d4
-	sub	a4,d4,a4
-	mov	a4,a3
-	dec	1,d3
-copy_a_to_b_lp5:
-	ld	[a3],%o0
-	inc	4,a3
-	st	%o0,[sp-4]
-	deccc	1,d3
-	bcc	copy_a_to_b_lp5
-	dec	4,sp
-r_array_5:
-	ld	[sp],d1
-	ld	[sp+4],d2
-	ld	[sp+8],d3
-	ld	[sp+12],d4
-	ba	st_fillr5_array
-	inc	16,sp
-
-fillr5_array_1:
-	st	d2,[a6+4]
-	mov	d5,d6
-	st	d3,[a6+8]
-	mov	sp,a3
-	st	d4,[a6+12]
-	inc	16,a6
-	ld	[a3],%o0
-copy_elem_lp5:
-	inc	4,a3
-	st	%o0,[a6]
-	inc	4,a6
-	deccc	1,d6
-	bcc,a	copy_elem_lp5
-	ld	[a3],%o0
-st_fillr5_array:
-	deccc	1,d0
-	bcc,a	fillr5_array_1
-	st	d1,[a6]
-
-	sll	d5,2,d5
-	add	sp,d5,sp
-	jmp	a1+8
-	inc	4,sp
-#else
 create_R_array:
 	deccc	2,d2
 	bcs	create_R_array_1
@@ -3519,11 +3227,12 @@ create_R_array_1:
 	call	collect_0
 	st	%o7,[sp]
 no_collect_4581:
-	mov	a6,a0
 	set	__ARRAY__+2,%o0
+	mov	a6,a0
 	st	%o0,[a6]
 	st	d0,[a6+4]
 	st	d1,[a6+8]
+
 	inc	12,a6
 	ld	[sp],a1
 
@@ -3566,8 +3275,9 @@ create_R_array_2:
 	call	collect_0
 	st	%o7,[sp]
 no_collect_4582:
-	mov	a6,a0
 	set	__ARRAY__+2,%o0
+
+	mov	a6,a0
 	st	%o0,[a6]
 	st	d0,[a6+4]
 	st	d1,[a6+8]
@@ -3616,8 +3326,8 @@ create_R_array_3:
 	call	collect_0
 	st	%o7,[sp]
 no_collect_4583:
-	mov	a6,a0
 	set	__ARRAY__+2,%o0
+	mov	a6,a0
 	st	%o0,[a6]
 	st	d0,[a6+4]
 	st	d1,[a6+8]
@@ -3668,8 +3378,8 @@ create_R_array_4:
 	call	collect_0
 	st	%o7,[sp]
 no_collect_4584:
-	mov	a6,a0
 	set	__ARRAY__+2,%o1
+	mov	a6,a0
 	st	%o1,[a6]
 	st	d0,[a6+4]
 	st	d1,[a6+8]
@@ -3731,8 +3441,8 @@ sub_size_lp:
 	call	collect_0
 	st	%o7,[sp]
 no_collect_4585:
-	mov	a6,a0
 	set	__ARRAY__+2,%o0
+	mov	a6,a0
 	st	%o0,[a6]
 	st	d0,[a6+4]
 	st	d1,[a6+8]
@@ -3785,7 +3495,6 @@ st_fillr5_array:
 
 	jmp	a1+8
 	mov	a2,sp
-#endif
 
 !
 !	AP code
@@ -3867,13 +3576,14 @@ _create_arrayB:
 	st	%o7,[sp]
 
 no_collect_3575:
-	mov	a6,a0
 	set	__ARRAY__+2,%o0
+	mov	a6,a0
 	st	%o0,[a6]
 	st	d1,[a6+4]
 	set	BOOL+2,%o0
 	st	%o0,[a6+8]
 	inc	12,a6
+
 	sll	d0,2,d0
 	add	a6,d0,a6
 	ld	[sp],%o7
@@ -3894,8 +3604,8 @@ _create_arrayC:
 	st	%o7,[sp]
 
 no_collect_3578:
-	mov	a6,a0
 	set	__STRING__+2,%o0
+	mov	a6,a0
 	st	%o0,[a6]
 	st	d1,[a6+4]
 	inc	8,a6
@@ -3916,13 +3626,14 @@ _create_arrayI:
 	st	%o7,[sp]
 
 no_collect_3577:
-	mov	a6,a0
 	set	__ARRAY__+2,%o0
+	mov	a6,a0
 	st	%o0,[a6]
 	st	d0,[a6+4]
 	set	INT+2,%o0
 	st	%o0,[a6+8]
 	inc	12,a6
+
 	sll	d0,2,d0
 	add	a6,d0,a6
 	ld	[sp],%o7
@@ -3973,8 +3684,8 @@ sub_size_lp2:
 no_collect_3585:
 	mov	a0,d4
 
-	mov	a6,a0
 	set	__ARRAY__+2,%o0
+	mov	a6,a0
 	st	%o0,[a6]
 	st	d0,[a6+4]
 	st	d1,[a6+8]

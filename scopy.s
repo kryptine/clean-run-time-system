@@ -794,19 +794,20 @@ copy_string_or_array_2:
 	inc	4,a2
 
 	ld	[a0+4],d2
-	sub	%o4,8,a1
 
+	ld	[a0],%o0
 	inc	3,d2
+
 	srl	d2,2,d2
 
 	sll	d2,2,d1
+	sub	%o4,8,a1
 	sub	a1,d1,a1
 
 	st	a1,[a2-4]
 	add	a1,1,d0
 
 	mov	a1,%o4
-	ld	[a0],%o0
 	inc	4,a1	
 	st	%o0,[a1-4]
 	st	d0,[a0]
@@ -838,7 +839,6 @@ copy_string_constant:
 
 copy_array_2:
 	ld	[a0+8],d0
-
 	tst	d0
 	be	copy_array_a2
 	ld	[a0+4],d2
@@ -847,7 +847,7 @@ copy_array_2:
 	tst	d1
 	be	copy_strict_basic_array_2
 	nop
-	
+
 	sub	d1,257,d0
 	mov	d2,d1
 	mov	0,d2
@@ -858,7 +858,6 @@ mul_length_2:
 
 copy_array_a2:
 	mov	a6,a1
-
 	sll	d2,2,d1
 	add	a6,d1,a6
 	inc	12,a6
