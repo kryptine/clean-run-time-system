@@ -8,6 +8,7 @@
 #define NEW_HEADERS
 #ifdef MACHO
 # define MACOSX
+# define MACHO_EXCEPTIONS
 #endif
 #ifdef MACOSX
 # define FLUSH_PORT_BUFFER
@@ -68,6 +69,9 @@ void first_function (void)
 #ifdef STACK_OVERFLOW_EXCEPTION_HANDLER
 # ifdef MACHO
 #  include <mach/mach.h>
+#  ifdef MACHO_EXCEPTIONS
+#   include <pthread.h>
+#  endif
 # else
 #	include <Files.h>
 #	include <Folders.h>
@@ -1786,6 +1790,7 @@ void *allocate_a_stack (int size)
 extern int *halt_sp;
 extern void stack_overflow (void);
 
+#ifndef MACHO_EXCEPTIONS
 struct sigaction old_BUS_sa,old_SEGV_sa;
 
 static void clean_exception_handler (int sig,void *sip,struct sigcontext *scp)
@@ -1832,6 +1837,154 @@ static void clean_exception_handler (int sig,void *sip,struct sigcontext *scp)
 		call_function_3 (sig,sip,scp,old_sa_p->sa_handler);
 # endif
 }
+#else
+# define N_OLD_EXCEPTION_PORTS 64
+
+static mach_msg_type_number_t n_ports;
+static exception_mask_t old_exception_masks[N_OLD_EXCEPTION_PORTS];
+static exception_handler_t old_exception_handlers[N_OLD_EXCEPTION_PORTS];
+static exception_behavior_t old_exception_behaviors[N_OLD_EXCEPTION_PORTS];
+static thread_state_flavor_t old_thread_state_flavors[N_OLD_EXCEPTION_PORTS];
+
+static mach_port_t exception_port;
+
+static kern_return_t forward_exception (mach_port_t thread,mach_port_t task,exception_type_t exception,exception_data_t code,mach_msg_type_number_t code_count)
+{
+	exception_mask_t exception_mask;
+	exception_behavior_t behavior;
+	int port_n;
+	
+	exception_mask=1<<exception;
+	
+	for (port_n=0; port_n<n_ports; ++port_n)
+		if (old_exception_masks[port_n] & exception_mask)
+			break;
+	
+	if (port_n!=n_ports)
+		return KERN_INVALID_ARGUMENT;
+	
+	behavior=old_exception_behaviors[port_n];
+	
+	if (behavior==EXCEPTION_DEFAULT)
+		return exception_raise (old_exception_handlers[port_n],thread,task,exception,code,code_count);
+	else {
+		thread_state_data_t thread_state;
+		mach_msg_type_number_t thread_state_count;
+		thread_state_flavor_t flavor;
+		kern_return_t r;
+		
+		flavor=old_thread_state_flavors[port_n];
+		
+		thread_state_count=THREAD_STATE_MAX;
+		
+		r=thread_get_state (thread,flavor,thread_state,&thread_state_count);
+		if (r!=KERN_SUCCESS)
+			return r;
+
+		if (behavior==EXCEPTION_STATE)
+			r=exception_raise_state (old_exception_handlers[port_n],exception,code,code_count,&flavor,thread_state,thread_state_count,thread_state,&thread_state_count);
+		else if (behavior==EXCEPTION_STATE_IDENTITY)
+			r=exception_raise_state_identity (old_exception_handlers[port_n],thread,task,exception,code,code_count,&flavor,thread_state,thread_state_count,thread_state,&thread_state_count);
+		else
+			return KERN_INVALID_ARGUMENT;
+
+		if (r!=KERN_SUCCESS)
+			return r;
+		
+		r=thread_set_state (thread,flavor,thread_state,thread_state_count);
+		if (r!=KERN_SUCCESS)
+			return r;
+	}
+	
+	return KERN_SUCCESS;
+}
+
+kern_return_t catch_exception_raise (mach_port_t exception_port,mach_port_t thread,mach_port_t task,exception_type_t exception,exception_data_t code,mach_msg_type_number_t code_count)
+{
+	mach_msg_type_number_t exception_state_count;
+	ppc_exception_state_t exception_state;
+	mach_msg_type_number_t thread_state_count;
+	ppc_thread_state_t thread_state;
+	int a_aligned_4k;
+
+	if (exception!=EXC_BAD_ACCESS || !(code[0]==KERN_PROTECTION_FAILURE || code[0]==KERN_INVALID_ADDRESS))
+		return forward_exception (thread,task,exception,code,code_count);
+	
+	exception_state_count=PPC_EXCEPTION_STATE_COUNT;
+	
+	if (thread_get_state (thread,PPC_EXCEPTION_STATE,(natural_t*)&exception_state,&exception_state_count)!=KERN_SUCCESS){
+		/* printf ("thread_get_state failed\n"); */
+		exit (1);
+	}
+
+	a_aligned_4k = ((int)exception_state.dar) & -4096;
+
+	if (!(a_aligned_4k==(int)b_stack_guard_page || a_aligned_4k==(int)a_stack_guard_page))
+		return forward_exception (thread,task,exception,code,code_count);
+	
+	thread_state_count=PPC_THREAD_STATE_COUNT;
+	
+	if (thread_get_state (thread,PPC_THREAD_STATE,(natural_t*)&thread_state,&thread_state_count)!=KERN_SUCCESS){
+		/* printf ("thread_get_state failed\n"); */
+		exit (1);
+	}
+
+	thread_state.srr0=(int)&stack_overflow;;
+	thread_state.r1=(int)halt_sp;
+
+	if (thread_set_state (thread,PPC_THREAD_STATE,(natural_t*)&thread_state,thread_state_count)!=KERN_SUCCESS){
+		/* printf ("thread_set_state failed\n"); */
+		exit (1);
+	}
+
+	/* printf ("catch_exception_raise called\n"); */
+	return KERN_SUCCESS;
+}
+
+kern_return_t catch_exception_raise_state (mach_port_t exception_port,exception_type_t exception,
+									exception_data_t code,mach_msg_type_number_t codeCnt,int *flavor,
+        		                	thread_state_t old_state,mach_msg_type_number_t old_stateCnt,thread_state_t new_state,mach_msg_type_number_t new_stateCnt)
+{
+	/* printf ("exception_raise_state\n"); */
+	return KERN_INVALID_ARGUMENT;
+}
+
+kern_return_t catch_exception_raise_state_identity (mach_port_t exception_port,mach_port_t thread,mach_port_t task,exception_type_t exception,
+											  exception_data_t code,mach_msg_type_number_t codeCnt,int *flavor,
+					                          thread_state_t old_state,mach_msg_type_number_t old_stateCnt,thread_state_t new_state,mach_msg_type_number_t new_stateCnt)
+{
+	/* printf ("exception_raise_state_identity\n"); */
+	return KERN_INVALID_ARGUMENT;
+}
+
+static void *my_pthread (void *a)
+{
+	for (;;){
+		char msg_data[1024],reply_data[1024];
+		mach_msg_header_t *msg,*reply;
+	
+		msg=(mach_msg_header_t*)msg_data;
+		reply=(mach_msg_header_t*)reply_data;
+		
+		if (mach_msg (msg,MACH_RCV_MSG,0,1024,exception_port,0,MACH_PORT_NULL)!=KERN_SUCCESS){
+			/* printf ("mach_msg failed\n"); */
+			exit (1);
+		}
+
+		/* printf ("msg received\n"); */
+		
+		if (!exc_server (msg,reply)){
+			/* printf ("exc_server failed\n"); */
+			exit (1);
+		}
+		
+		if (mach_msg (reply,MACH_SEND_MSG,reply->msgh_size,0,msg->msgh_local_port,0,MACH_PORT_NULL)!=KERN_SUCCESS){
+			/* printf ("mach_msg failed\n"); */
+			exit (1);
+		}
+	}
+}
+#endif
 
 # ifndef MACHO
 extern int *get_TOC (void);
@@ -1866,9 +2019,9 @@ static void install_clean_exception_handler (void)
 		if (r!=0)
 			return;
 
-#ifndef MACHO
+# ifndef MACHO
 		stack_top=(int*)(vm_address+vm_size);
-#endif
+# endif
 
 		do {
 			previous_address=vm_address;
@@ -1884,7 +2037,7 @@ static void install_clean_exception_handler (void)
 
 		b_stack_guard_page=(int*)((int)previous_address-4096);
 
-#ifndef MACHO
+# ifndef MACHO
 		{
 			int stack_size_aligned_4k;
 
@@ -1894,39 +2047,40 @@ static void install_clean_exception_handler (void)
 				vm_protect (mach_task_self(),(int)b_stack_guard_page,4096,0,0);
 			}
 		}
-#endif
+# endif
 	}
 
+# ifndef MACHO_EXCEPTIONS
 	{
 		struct sigaltstack sa_stack;
 		void *signal_stack;
 		struct sigaction sa;
 
-# ifdef MACHO
+#  ifdef MACHO
 		signal_stack=(int*)malloc (MINSIGSTKSZ);
-# else
+#  else
 		signal_stack=(int*)NewPtr (8192);
-# endif
+#  endif
 		if (signal_stack!=NULL){
-# ifndef MACHO
+#  ifndef MACHO
 			int *handler_trampoline;
-# endif
+#  endif
 
 			sa_stack.ss_sp=signal_stack;
-# ifdef MACHO
+#  ifdef MACHO
 			sa_stack.ss_size=MINSIGSTKSZ;
-# else
+#  else
 			sa_stack.ss_size=8192;
-# endif
+#  endif
 			sa_stack.ss_flags=0;
 
 			sigaltstack (&sa_stack,NULL);
 
-# ifdef MACHO
+#  ifdef MACHO
 			sa.sa_handler=&clean_exception_handler;
 			sigemptyset (&sa.sa_mask);
 			sa.sa_flags=SA_ONSTACK;//SA_SIGINFO;
-# else
+#  else
 			handler_trampoline = (int*) NewPtr (24);
 			if (handler_trampoline!=NULL){
 				int *handler_address,*toc_register;
@@ -1934,13 +2088,13 @@ static void install_clean_exception_handler (void)
 				handler_address=*(int**)&clean_exception_handler;
 				toc_register=get_TOC();
 
-# define i_dai_i(i,rd,ra,si)((i<<26)|((rd)<<21)|((ra)<<16)|((unsigned short)(si)))
-# define addis_i(rd,ra,si)	i_dai_i (15,rd,ra,si)
-# define addi_i(rd,ra,si)	i_dai_i (14,rd,ra,si)
-# define lis_i(rd,si)		addis_i (rd,0,si)
-# define bctr_i()			((19<<26)|(20<<21)|(528<<1))
-# define mtspr_i(spr,rs)	((31<<26)|((rs)<<21)|(spr<<16)|(467<<1))
-# define mtctr_i(rs)		mtspr_i (9,rs)
+#  define i_dai_i(i,rd,ra,si)((i<<26)|((rd)<<21)|((ra)<<16)|((unsigned short)(si)))
+#  define addis_i(rd,ra,si)	i_dai_i (15,rd,ra,si)
+#  define addi_i(rd,ra,si)	i_dai_i (14,rd,ra,si)
+#  define lis_i(rd,si)		addis_i (rd,0,si)
+#  define bctr_i()			((19<<26)|(20<<21)|(528<<1))
+#  define mtspr_i(spr,rs)	((31<<26)|((rs)<<21)|(spr<<16)|(467<<1))
+#  define mtctr_i(rs)		mtspr_i (9,rs)
 
 				handler_trampoline[0]=lis_i (6,((int)handler_address-(short)handler_address)>>16);
 				handler_trampoline[1]=addi_i (6,6,(short)handler_address);
@@ -1956,11 +2110,60 @@ static void install_clean_exception_handler (void)
 				sa.sa_mask=0;
 				sa.sa_flags=1;
 			}
-# endif
+#  endif
 			sigaction (SIGSEGV,&sa,&old_SEGV_sa);
 			sigaction (SIGBUS,&sa,&old_BUS_sa);
 		}
 	}
+#else
+	{
+		mach_port_t my_mach_task;
+		pthread_attr_t attr;
+		pthread_t pthread;
+
+		my_mach_task=mach_task_self();
+		
+		if (mach_port_allocate (my_mach_task,MACH_PORT_RIGHT_RECEIVE,&exception_port)!=KERN_SUCCESS){
+			/* printf ("mach_port_allocate failed\n"); */
+			return;
+		}
+		
+		if (mach_port_insert_right (my_mach_task,exception_port,exception_port,MACH_MSG_TYPE_MAKE_SEND)!=KERN_SUCCESS){
+			/* printf ("mach_port_insert_right failed\n"); */
+			return;
+		}
+
+		if (task_get_exception_ports (my_mach_task,EXC_MASK_BAD_ACCESS,old_exception_masks,&n_ports,old_exception_handlers,old_exception_behaviors,old_thread_state_flavors)!=KERN_SUCCESS){
+			/* printf ("task_get_exception_ports failed\n"); */
+			return;
+		}
+
+		if (task_set_exception_ports (my_mach_task,EXC_MASK_BAD_ACCESS,exception_port,EXCEPTION_DEFAULT,MACHINE_THREAD_STATE)!=KERN_SUCCESS){
+			/* printf ("task_get_exception_ports failed\n"); */
+			return;
+		}
+
+		if (pthread_attr_init (&attr)!=0){
+			/* printf ("pthread_attr_init failed\n"); */
+			return;
+		}
+
+		if (pthread_attr_setdetachstate (&attr,PTHREAD_CREATE_DETACHED)!=0){
+			/* printf ("pthread_attr_setdetach_state failed\n"); */
+			return;
+		}
+
+		if (pthread_create (&pthread,&attr,my_pthread,NULL)!=0){
+			/* printf ("pthread_create failed\n"); */
+			return;
+		}
+
+		if (pthread_attr_destroy (&attr)!=0){
+			/* printf ("pthread_attr_destroy failed\n"); */
+			return;
+		}
+	}
+# endif
 }
 #endif
 
@@ -1992,7 +2195,10 @@ int main (void)
 		char *s;
 		
 		s=argv[i];
-		if (s[0]=='-' && s[1]=='p' && s[2]=='s' && s[3]=='n'){
+		if (s[0]=='-' && 
+			((s[1]=='p' && s[2]=='s' && s[3]=='n') ||
+			 (s[1]=='s' && s[2]=='t' && s[3]=='d' && s[4]=='w' && s[5]=='i' && s[6]=='n' && s[7]=='\0') )
+			){
 			use_stdio=0;
 			break;
 		}
