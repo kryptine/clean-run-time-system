@@ -2329,10 +2329,10 @@ end_garbage_collect:
 end_garbage_collect_:
 #endif
 
+	pushl	d0
+
 	testl	$2,@flags
 	je	no_heap_use_message
-
-	pushl	d0
 
 	pushl	d0
 	
@@ -2347,23 +2347,19 @@ end_garbage_collect_:
 	call	@ew_print_string
 	add	$4,sp
 
-	popl	d0
-
 no_heap_use_message:
 
 #ifdef FINALIZERS
 	call	call_finalizers
 #endif
 
+	popl	d0
+
 #ifdef WRITE_HEAP
 	/* Check whether memory profiling is on or off */
 	testb	$32,@flags
 	je	no_write_heap
 
-	/*
-	    if d0 (actual heap_size) < @min_write_heap_size
-	    then do not write heap
-	*/
 	cmpl	@min_write_heap_size,d0
 	jb	no_write_heap
 
