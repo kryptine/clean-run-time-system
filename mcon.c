@@ -3,11 +3,18 @@
 	Written by:	John van Groningen
 */
 
-#define MACOSX
-#define NEW_HEADERS
+/* #define MACOSX */
 #define G_POWER
-#define FLUSH_PORT_BUFFER
-#define STACK_OVERFLOW_EXCEPTION_HANDLER
+#define NEW_HEADERS
+#ifdef MACHO
+# define MACOSX
+#endif
+#ifdef MACHO
+# define FLUSH_PORT_BUFFER
+#endif
+#if defined (MACOSX) || defined (MACHO)
+# define STACK_OVERFLOW_EXCEPTION_HANDLER
+#endif
 
 #ifdef MACHO
 # define NEWLINE_CHAR '\r'
@@ -15,7 +22,7 @@
 # define NEWLINE_CHAR '\n'
 #endif
 
-#ifdef NEW_HEADERS
+#ifdef MACOSX
 # define TARGET_API_MAC_CARBON 1
 #endif
 

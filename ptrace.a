@@ -6,7 +6,7 @@
 	lwz	&r,&a{TC}(RTOC)
 	endm
 
-MACOSX		set	1
+; MACOSX		set	1
 USE_TEMPORARY_MEMORY	set	1
 CHECK_STACK_OVERFLOWS	set	0
 MODULE_NAMES	set	1

@@ -5,7 +5,7 @@
 
 	string	asis
 
-MACOSX	set	1
+; MACOSX	set	1
 
 d0:	set	r24
 d1:	set	r25
