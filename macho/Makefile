@@ -46,7 +46,7 @@ pfileIO3_.a: pfileIO3.a
 
 
 _startup3.o: ../mfileIO3.c
-	cc -I /Developer/Headers/FlatCarbon/ -I .. -c -fpascal-strings -O -DMACHO ../mfileIO3.c -o _startup3.o
+	cc -I /Developer/Headers/FlatCarbon/ -I .. -c -fpascal-strings -O -DMACHO -DMACOSX=1 ../mfileIO3.c -o _startup3.o
 
 
 _library.o: ../mcon.c ../mcon.h

@@ -17,7 +17,7 @@ ppcasm -d MACOSX=1 -sym off -typecheck ptrace.a -o ptrace.a.o
 PPCLink -sym off -xm library mcon.c.x mwrite_heap.c.x ptrace.a.o pstartup.a.o -o _startupTrace.xo
 setfile -t CgOb -c 3PRM _startupTrace.xo
 
-mrc -typecheck relaxed -w off -sym off -d POWER -d G_POWER mfileIO3.c
+mrc -typecheck relaxed -w off -sym off -d MACOSX=1 -d POWER -d G_POWER mfileIO3.c
 ppcasm -d MACOSX=1 -sym off -typecheck pfileIO3.a -o pfileIO3.a.o
 PPCLink -sym off -xm library pfileIO3.a.o mfileIO3.c.o -o _library.xo
 setfile -t CgOb -c 3PRM _library.xo
@@ -44,7 +44,7 @@ ppcasm -d MACOSX=0 -sym off -typecheck ptrace.a -o ptrace.a.o
 PPCLink -sym off -xm library mcon.c.x mwrite_heap.c.x ptrace.a.o pstartup.a.o -o _startupTrace.cxo
 setfile -t CgOb -c 3PRM _startupTrace.cxo
 
-mrc -typecheck relaxed -w off -sym off -d POWER -d G_POWER mfileIO3.c
+mrc -typecheck relaxed -w off -sym off -d MACOSX=0 -d POWER -d G_POWER mfileIO3.c
 ppcasm -d MACOSX=0 -sym off -typecheck pfileIO3.a -o pfileIO3.a.o
 PPCLink -sym off -xm library pfileIO3.a.o mfileIO3.c.o -o _library.cxo
 setfile -t CgOb -c 3PRM _library.cxo
