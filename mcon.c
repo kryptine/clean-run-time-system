@@ -58,6 +58,13 @@ extern void sprintf (char *,...);
 #ifndef NEW_HEADERS
 //# include <OSEvents.h>
 #endif
+
+#ifdef G_POWER
+void first_function (void)
+{
+}
+#endif
+
 #ifdef STACK_OVERFLOW_EXCEPTION_HANDLER
 # ifdef MACHO
 #  include <mach/mach.h>
@@ -234,12 +241,6 @@ extern void sprintf (char *,...);
 #include "mcon.h"
 #ifdef COMMUNICATION
 #	include "mcom.h"
-#endif
-
-#ifdef G_POWER
-void first_function (void)
-{
-}
 #endif
 
 extern void *abc_main();
