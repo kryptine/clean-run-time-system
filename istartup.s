@@ -5211,10 +5211,10 @@ pow_negative:
 
 	testl	$1,12(sp)
 	fstp	%st(1)
-	add	$16,sp
 	jz	exponent_even
 	fchs
 exponent_even:
+	add	$16,sp
 	ret
 
 pow_zero:
