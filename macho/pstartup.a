@@ -1,10 +1,10 @@
-# comment
-# comment	File:	pstartup.a
-# comment	Author:	John van Groningen
-# comment	Machine:	power macintosh
+;
+;	File:	pstartup.a
+;	Author:	John van Groningen
+;	Machine:	power macintosh
 
 LINUX	=	0
-# comment PROFILE	=	0
+; PROFILE	=	0
 
 #define	sp	r1
 
@@ -52,13 +52,13 @@ LINUX	=	0
 	stbx	$4,$0,$2
 	.endmacro
 
-# comment	&vector 0,&bit_n 1,&byte_offset 2,&bit 3,&byte 4,&scratch 5,&shift 6
-# comment	rlwinm	&byte_offset,&bit_n,32-&shift-3,3+&shift,31
-# comment	lbzx	&byte,&vector,&byte_offset
-# comment	rlwinm	&scratch,&bit_n,(32-&shift) & 31,29,31
-# comment	srw	&bit,g3,&scratch
-# comment	or	&byte,&byte,&bit
-# comment	stbx	&byte,&vector,&byte_offset
+;	&vector 0,&bit_n 1,&byte_offset 2,&bit 3,&byte 4,&scratch 5,&shift 6
+;	rlwinm	&byte_offset,&bit_n,32-&shift-3,3+&shift,31
+;	lbzx	&byte,&vector,&byte_offset
+;	rlwinm	&scratch,&bit_n,(32-&shift) & 31,29,31
+;	srw	&bit,g3,&scratch
+;	or	&byte,&byte,&bit
+;	stbx	&byte,&vector,&byte_offset
 
 	.macro	tstmbit
 	rlwinm	$2,$1,32-$6-3,3+$6,31
@@ -67,12 +67,12 @@ LINUX	=	0
 	rlwnm.	$3,$4,$5,24,24	
 	.endmacro
 
-# comment	&vector 0,&bit_n 1,&byte_offset 2,&bit 3,&byte 4,&bit_n_in_byte 5,&shift 6
-# comment	rlwinm	&byte_offset,&bit_n,32-&shift-3,3+&shift,31
-# comment	lbzx	&byte,&vector,&byte_offset
-# comment	rlwinm	&bit_n_in_byte,&bit_n,32-&shift,29,31
-# comment	rlwnm.	&bit,&byte,&bit_n_in_byte,24,24	
-# comment	.endmacro
+;	&vector 0,&bit_n 1,&byte_offset 2,&bit 3,&byte 4,&bit_n_in_byte 5,&shift 6
+;	rlwinm	&byte_offset,&bit_n,32-&shift-3,3+&shift,31
+;	lbzx	&byte,&vector,&byte_offset
+;	rlwinm	&bit_n_in_byte,&bit_n,32-&shift,29,31
+;	rlwnm.	&bit,&byte,&bit_n_in_byte,24,24	
+;	.endmacro
 
 	.macro	clrmbit
 	rlwinm	$2,$1,32-$6-3,3+$6,31
@@ -83,14 +83,14 @@ LINUX	=	0
 	stbx	$4,$0,$2
 	.endmacro
 
-# comment	&vector 0,&bit_n 1,&byte_offset 2,&bit 3,&byte 4,&scratch 5,&shift 6
-# comment	rlwinm	&byte_offset,&bit_n,32-&shift-3,3+&shift,31
-# comment	lbzx	&byte,&vector,&byte_offset
-# comment	rlwinm	&scratch,&bit_n,32-&shift,29,31
-# comment	srw	&bit,g3,&scratch
-# comment	andc	&byte,&byte,&bit
-# comment	stbx	&byte,&vector,&byte_offset
-# comment	.endmacro
+;	&vector 0,&bit_n 1,&byte_offset 2,&bit 3,&byte 4,&scratch 5,&shift 6
+;	rlwinm	&byte_offset,&bit_n,32-&shift-3,3+&shift,31
+;	lbzx	&byte,&vector,&byte_offset
+;	rlwinm	&scratch,&bit_n,32-&shift,29,31
+;	srw	&bit,g3,&scratch
+;	andc	&byte,&byte,&bit
+;	stbx	&byte,&vector,&byte_offset
+;	.endmacro
 
 #include	"pmacros.a"
 
@@ -118,7 +118,7 @@ WRITE_HEAP		=	0
 WRITE_HEAP		=	0
 STDERR_TO_FILE	=	1
  .endif
-# comment	PROFILE	=	0
+;	PROFILE	=	0
 UNBOXED_CLOSURES	=	1
 
 MODULE_NAMES_IN_TIME_PROFILER	=	1
@@ -157,7 +157,7 @@ ZERO_ARITY_DESCRIPTOR_OFFSET	=	(-12)
  .endif
 	.comm	_halt_sp,4
 	.globl	_halt_sp
-# comment number of long words requested from the garbage collector
+; number of long words requested from the garbage collector
 	.comm	alloc_size,4
 	.comm	basic_only,4
 	.comm	last_time,4
@@ -232,10 +232,10 @@ file_c_string:
 	.ascii	"File"
 	.byte	0,0,0,0
 
-# comment -1: compact or mark, no extra heap
-# comment  0: copy, no extra heap
-# comment  1: compact, extra heap
-# comment  2: copy, extra heap
+; -1: compact or mark, no extra heap
+;  0: copy, no extra heap
+;  1: compact, extra heap
+;  2: copy, extra heap
 garbage_collect_flag:
 	.byte	0
 	.byte	0,0,0
@@ -412,7 +412,7 @@ entier_constants_and_buffers:
 
 	.globl	e__system__nind
 	.globl	e__system__eaind
-# comment old names of the previous two labels for compatibility, remove later
+; old names of the previous two labels for compatibility, remove later
 	.globl	__indirection,__eaind
 
 	.globl	eval_fill
@@ -465,7 +465,7 @@ entier_constants_and_buffers:
 	.globl	__driver
 
 		
-# comment from system.abc:	
+; from system.abc:	
 	.globl	INT
 	.globl	CHAR
 	.globl	BOOL
@@ -481,7 +481,7 @@ entier_constants_and_buffers:
 	.globl	_close_stderr_file
  .endif
 
-# comment from cgcon.c:
+; from mcon.c:
 	.globl	_w_print_char
 	.globl	_w_print_text
 	.globl	_w_print_int
@@ -512,7 +512,7 @@ entier_constants_and_buffers:
 	.globl	_initial_heap_size
  .endif
  
-# comment from standard c library:
+; from standard c library:
 	.globl	_sprintf
  .if LINUX
 	.globl	malloc
@@ -541,7 +541,7 @@ entier_constants_and_buffers:
 	.globl	write_profile_information,write_profile_stack
  .endif
 
-# __TEXT._abc_main:
+; __TEXT._abc_main:
 
 _abc_main:
  	mflr	r0
@@ -1069,7 +1069,7 @@ no_memory_1:
  .endif
 	b	exit_1
 
-# __TEXT.print_sc:
+; __TEXT.print_sc:
 
 print_sc:
 	lea	o0,basic_only
@@ -1110,7 +1110,7 @@ end_print:
 	addi	sp,sp,4
 	blr	
 
-# __TEXT.printD:
+; __TEXT.printD:
 
 printD:	andi.	r0,d0,2
 	bne	printD_
@@ -1118,13 +1118,13 @@ printD:	andi.	r0,d0,2
 	mr	a2,d0
 	b	print_string_a2
 
-# __TEXT.print_symbol:
+; __TEXT.print_symbol:
 
 print_symbol:
 	li	d1,0
 	b	print_symbol_2
 
-# __TEXT.print_symbol_sc:
+; __TEXT.print_symbol_sc:
 
 print_symbol_sc:
 	lea	o0,basic_only
@@ -1201,13 +1201,13 @@ print_int2:
 	lwz	r0,-4(sp)
 	blr	
 
-# __TEXT.print_int:
+; __TEXT.print_int:
 
 print_int:
 	mr	o0,d0
 	b	print_int2
 
-# __TEXT.print_char:
+; __TEXT.print_char:
 
 print_char:
 	lea	o0,basic_only
@@ -1295,7 +1295,7 @@ print_false:
 	lea	o0,false_c_string
 	b	print_string_o0_and_return
 
-# __TEXT.print_real:
+; __TEXT.print_real:
 
 print_real:
 	fmr	f1,f14
@@ -1357,7 +1357,7 @@ print_string_a2:
 	lwz	r0,-4(sp)
 	blr	
 
-# __TEXT.print__chars__sc:
+; __TEXT.print__chars__sc:
 
 print__chars__sc:
 	lea	o0,basic_only
@@ -1400,7 +1400,7 @@ no_print_chars:
 	blr
 
 	.text
-# __TEXT.eprint__:
+; __TEXT.eprint__:
 
 eprint__:
 	mr	o0,d0
@@ -1435,7 +1435,7 @@ eprint__:
 	blr
 
 	.text
-# __TEXT.eprint__string__:
+; __TEXT.eprint__string__:
 
 eprint__string__:
 	lwz	o1,4(a0)
@@ -1471,7 +1471,7 @@ eprint__string__:
 	blr	
 
 	.text
-# __TEXT.eprintD:
+; __TEXT.eprintD:
 
 eprintD:	andi.	r0,d0,2
 	bne	eprintD_
@@ -1531,7 +1531,7 @@ eprint_string_a2:
 	blr	
 
 	.text
-# __TEXT.DtoAC:
+; __TEXT.DtoAC:
 
 DtoAC:	lha	d1,-2(d0)
 	addi	a0,d0,-2
@@ -1589,7 +1589,7 @@ DtoAC_record:
 	b	DtoAC_a0
 
 	.text
-# __TEXT.push_a_r_args:
+; __TEXT.push_a_r_args:
 
 push_a_r_args:
 	lwz	a1,8(a0)
@@ -1635,7 +1635,7 @@ push_b_elements:
 	mr	d0,a1
 	blr	
 
-# __TEXT.push_t_r_args:
+; __TEXT.push_t_r_args:
 
 push_t_r_args:
 	lwz	a1,0(a0)
@@ -1695,7 +1695,7 @@ push_r_a_elements:
 	blr	
 
 	.text
-# __TEXT.BtoAC:
+; __TEXT.BtoAC:
 
 BtoAC:
 	andi.	d0,d0,255
@@ -1712,7 +1712,7 @@ BtoAC_false:
 	blr	
 
 	.text
-# __TEXT.RtoAC:
+; __TEXT.RtoAC:
 
 RtoAC:
  .if LINUX
@@ -1752,7 +1752,7 @@ RtoAC:
 	b	return_sprintf_buffer_string
 		
 	.text
-# __TEXT.ItoAC:
+; __TEXT.ItoAC:
 
 ItoAC:
  .if MY_ITOS
@@ -1892,7 +1892,7 @@ D_to_S_cp_str_2:
 	blr	
 
 	.text
-# __TEXT.eqD:
+; __TEXT.eqD:
 
 eqD:	lwz	d0,0(a0)
 	lwz	o0,0(a1)
@@ -1964,9 +1964,9 @@ eqD_false:
 	addi	sp,sp,4
 	blr	
 
-# comment
-# comment	the timer
-# comment
+;
+;	the timer
+;
 
 _init_timer:
 	mflr	r0
@@ -2098,12 +2098,12 @@ _add_IO_time:
 
 	blr	
 
-# comment
-# comment	the garbage collector
-# comment
+;
+;	the garbage collector
+;
 
 	.text
-# __TEXT.collect_3:
+; __TEXT.collect_3:
 
 collect_3:
 	stwu	r0,-4(sp)
@@ -2136,7 +2136,7 @@ collect_3:
  .endif
 
 	.text
-# __TEXT.collect_2:
+; __TEXT.collect_2:
 
 collect_2:
 	stwu	r0,-4(sp)
@@ -2167,7 +2167,7 @@ collect_2:
  .endif
 
 	.text
-# __TEXT.collect_1:
+; __TEXT.collect_1:
 
 collect_1:
 	stwu	r0,-4(sp)
@@ -2196,7 +2196,7 @@ collect_1:
  .endif
 
 	.text
-# __TEXT.collect_0:
+; __TEXT.collect_0:
 
 collect_0:
 	stwu	r0,-4(sp)
@@ -2220,7 +2220,7 @@ collect_0:
  .endif
 
 	.text
-# __TEXT.collect_03:
+; __TEXT.collect_03:
 
 collect_03:
 	stwu	r0,-4(sp)
@@ -2252,7 +2252,7 @@ collect_03:
  .endif
 
 	.text
-# __TEXT.collect_02:
+; __TEXT.collect_02:
 
 collect_02:
 	stwu	r0,-4(sp)
@@ -2282,7 +2282,7 @@ collect_02:
  .endif
 
 	.text
-# __TEXT.collect_01:
+; __TEXT.collect_01:
 
 collect_01:
 	stwu	r0,-4(sp)
@@ -2310,7 +2310,7 @@ collect_01:
  .endif
 
 	.text
-# __TEXT.collect_00:
+; __TEXT.collect_00:
 
 collect_00:
 	stwu	r0,-4(sp)
@@ -2334,7 +2334,7 @@ collect_00:
 
 
  	.text
-# __TEXT.collect_:
+; __TEXT.collect_:
 
 collect_:
 	stwu	r0,-4(sp)
@@ -2665,7 +2665,7 @@ zero_all:
 end_zero_bit_vector:
  .endif
 
-# comment calculate alloc_size
+; calculate alloc_size
 	lea	o0,heap_end_after_gc
 	lwz	d0,0(o0)
 	lea	o1,alloc_size
@@ -2693,7 +2693,7 @@ end_zero_bit_vector:
 	lwz	o1,0(o0)
 	sub.	d7,d7,o1
 	blt	switch_to_mark_scan
-# comment	bneg	out_of_memory_4
+;	bneg	out_of_memory_4
 
 	slwi	d0,d7,2
 	add	d0,d0,d7
@@ -2706,7 +2706,7 @@ end_zero_bit_vector:
 	add	d1,d1,d2
 	cmplw	0,d0,d1
 	bge	no_mark_scan
-# comment	b	no_mark_scan
+;	b	no_mark_scan
 
 switch_to_mark_scan:
 	lea	o0,heap_size_33
@@ -2799,7 +2799,7 @@ switch_to_mark_scan_2:
  .endif
 
 no_mark_scan:
-# comment exchange the semi_spaces
+; exchange the semi_spaces
 
 	lea	o0,heap_p1
 	lea	o1,heap_p2
@@ -2827,7 +2827,7 @@ no_mark_scan:
 	mulhwu	o0,d0,o0
 
 	rlwinm	d2,d2,32-9,9,31-2
-# comment	srwi	d2,d2,9
+;	srwi	d2,d2,9
 
 	rlwimi	d2,o0,32-9,0,8
 	srwi.	o0,o0,9
@@ -3077,9 +3077,9 @@ out_of_memory_4:
 	b	print_error
 
 	.text
-# comment	d0 = n words
-# comment	a2 = address
-# comment	g0 = 0
+;	d0 = n words
+;	a2 = address
+;	g0 = 0
 zero_bit_vector:
 	andi.	r0,d0,1
 	srwi	d0,d0,1
@@ -3145,14 +3145,14 @@ st_reorder_lp:
 
 	blr
 	
-# comment
-# comment	the sliding compacting garbage collector
-# comment
+;
+;	the sliding compacting garbage collector
+;
 
 	.text
 compacting_collector:
 
-# comment zero all mark bits
+; zero all mark bits
 
 	lea	o0,heap_p3
 	lea	o1,heap_vector
@@ -3256,7 +3256,7 @@ no_zero_bits:
 	mulhwu	o2,o2,o0
 
 	rlwinm	o1,o1,32-7,7,31-2
-# comment	srwi	o1,o1,7
+;	srwi	o1,o1,7
 
 	rlwimi	o1,o2,32-7,0,6
 	srwi.	o2,o2,7
@@ -3338,9 +3338,9 @@ no_mark5:
 	mulhwu	o0,o2,o0
 
 	rlwinm	d0,d0,32-8,8,31-2
-# comment	srwi	d0,d0,8
+;	srwi	d0,d0,8
 	rlwimi	d0,o0,32-8,0,7
-# comment	clrrwi	d0,d0,2
+;	clrrwi	d0,d0,2
 	
 	srwi.	o0,o0,8
 	bne	no_small_heap2
@@ -3382,7 +3382,7 @@ no_mark6:
 	cmpw	0,d0,d1
 
 	ble	no_copy_garbage_collection
-# comment	b	no_copy_garbage_collection
+;	b	no_copy_garbage_collection
 
 	lea	o0,heap_p
 	lwz	d0,0(o0)
@@ -3606,7 +3606,7 @@ e__Exceptions__sraise__exception:
  .endif
 
 	.text
-# __TEXT.eval_01:
+; __TEXT.eval_01:
 
 eval_01:
 	stw	a1,0(a4)
@@ -3614,7 +3614,7 @@ eval_01:
 	bctr
 
 	.text
-# __TEXT.eval_11:
+; __TEXT.eval_11:
 
 eval_11:
 	stw	a0,0(a4)
@@ -3623,7 +3623,7 @@ eval_11:
 	bctr
 
 	.text
-# __TEXT.eval_02:
+; __TEXT.eval_02:
 
 eval_02:
 	stw	a2,0(a4)
@@ -3632,7 +3632,7 @@ eval_02:
 	bctr
 
 	.text
-# __TEXT.eval_12:
+; __TEXT.eval_12:
 
 eval_12:
 	stw	a0,4(a4)
@@ -3642,7 +3642,7 @@ eval_12:
 	bctr
 
 	.text
-# __TEXT.eval_22:
+; __TEXT.eval_22:
 
 eval_22:
 	stw	a0,4(a4)
@@ -3651,7 +3651,7 @@ eval_22:
 	addi	a4,a4,8
 	bctr
 
-# __TEXT.__eaind:
+; __TEXT.__eaind:
 
 e__system__eaind:
 __eaind:
@@ -3681,7 +3681,7 @@ eval_fill:
 	addi	sp,sp,4
 	blr	
 
-# __TEXT.__indirection:
+; __TEXT.__indirection:
 
 	b	eval_fill
 	nop	
@@ -3753,7 +3753,7 @@ eval_fill2:
  .endif
 
 	.text
-# __TEXT.eval_upd_0:
+; __TEXT.eval_upd_0:
 
  .if PROFILE
 	mflr	r0
@@ -3767,7 +3767,7 @@ eval_upd_0:
 	bctr
 
 	.text
-# __TEXT.eval_upd_1:
+; __TEXT.eval_upd_1:
 
  .if PROFILE
 	mflr	r0
@@ -3783,7 +3783,7 @@ eval_upd_1:
 	bctr
 
 	.text
-# __TEXT.eval_upd_2:
+; __TEXT.eval_upd_2:
 
  .if PROFILE
 	mflr	r0
@@ -3799,7 +3799,7 @@ eval_upd_2:
 	bctr
 
 	.text
-# __TEXT.eval_upd_3:
+; __TEXT.eval_upd_3:
 
  .if PROFILE
 	mflr	r0
@@ -3818,7 +3818,7 @@ eval_upd_3:
 	bctr
 
 	.text
-# __TEXT.eval_upd_4:
+; __TEXT.eval_upd_4:
 
  .if PROFILE
 	mflr	r0
@@ -3839,7 +3839,7 @@ eval_upd_4:
 	bctr
 
 	.text
-# __TEXT.eval_upd_5:
+; __TEXT.eval_upd_5:
 
  .if PROFILE
 	mflr	r0
@@ -3862,7 +3862,7 @@ eval_upd_5:
 	bctr
 
 	.text
-# __TEXT.eval_upd_6:
+; __TEXT.eval_upd_6:
 
  .if PROFILE
 	mflr	r0
@@ -3887,7 +3887,7 @@ eval_upd_6:
 	bctr
 
 	.text
-# __TEXT.eval_upd_7:
+; __TEXT.eval_upd_7:
 
  .if PROFILE
 	mflr	r0
@@ -3923,7 +3923,7 @@ eval_upd_n_lp:
 	lwz	a1,-8-NODE_POINTER_OFFSET(a1)
 	bctr
 
-# __TEXT.eval_upd_8:
+; __TEXT.eval_upd_8:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3932,7 +3932,7 @@ eval_upd_8:
 	li	d0,1
 	li	d1,24
 	b	eval_upd_n
-# __TEXT.eval_upd_9:
+; __TEXT.eval_upd_9:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3941,7 +3941,7 @@ eval_upd_9:
 	li	d0,2
 	li	d1,28
 	b	eval_upd_n
-# __TEXT.eval_upd_10:
+; __TEXT.eval_upd_10:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3950,7 +3950,7 @@ eval_upd_10:
 	li	d0,3
 	li	d1,32
 	b	eval_upd_n
-# __TEXT.eval_upd_11:
+; __TEXT.eval_upd_11:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3959,7 +3959,7 @@ eval_upd_11:
 	li	d0,4
 	li	d1,36
 	b	eval_upd_n
-# __TEXT.eval_upd_12:
+; __TEXT.eval_upd_12:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3968,7 +3968,7 @@ eval_upd_12:
 	li	d0,5
 	li	d1,40
 	b	eval_upd_n
-# __TEXT.eval_upd_13:
+; __TEXT.eval_upd_13:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3977,7 +3977,7 @@ eval_upd_13:
 	li	d0,6
 	li	d1,44
 	b	eval_upd_n
-# __TEXT.eval_upd_14:
+; __TEXT.eval_upd_14:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3986,7 +3986,7 @@ eval_upd_14:
 	li	d0,7
 	li	d1,48
 	b	eval_upd_n
-# __TEXT.eval_upd_15:
+; __TEXT.eval_upd_15:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3995,7 +3995,7 @@ eval_upd_15:
 	li	d0,8
 	li	d1,52
 	b	eval_upd_n
-# __TEXT.eval_upd_16:
+; __TEXT.eval_upd_16:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4004,7 +4004,7 @@ eval_upd_16:
 	li	d0,9
 	li	d1,56
 	b	eval_upd_n
-# __TEXT.eval_upd_17:
+; __TEXT.eval_upd_17:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4013,7 +4013,7 @@ eval_upd_17:
 	li	d0,10
 	li	d1,60
 	b	eval_upd_n
-# __TEXT.eval_upd_18:
+; __TEXT.eval_upd_18:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4022,7 +4022,7 @@ eval_upd_18:
 	li	d0,11
 	li	d1,64
 	b	eval_upd_n
-# __TEXT.eval_upd_19:
+; __TEXT.eval_upd_19:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4031,7 +4031,7 @@ eval_upd_19:
 	li	d0,12
 	li	d1,68
 	b	eval_upd_n
-# __TEXT.eval_upd_20:
+; __TEXT.eval_upd_20:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4040,7 +4040,7 @@ eval_upd_20:
 	li	d0,13
 	li	d1,72
 	b	eval_upd_n
-# __TEXT.eval_upd_21:
+; __TEXT.eval_upd_21:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4049,7 +4049,7 @@ eval_upd_21:
 	li	d0,14
 	li	d1,76
 	b	eval_upd_n
-# __TEXT.eval_upd_22:
+; __TEXT.eval_upd_22:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4058,7 +4058,7 @@ eval_upd_22:
 	li	d0,15
 	li	d1,80
 	b	eval_upd_n
-# __TEXT.eval_upd_23:
+; __TEXT.eval_upd_23:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4067,7 +4067,7 @@ eval_upd_23:
 	li	d0,16
 	li	d1,84
 	b	eval_upd_n
-# __TEXT.eval_upd_24:
+; __TEXT.eval_upd_24:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4076,7 +4076,7 @@ eval_upd_24:
 	li	d0,17
 	li	d1,88
 	b	eval_upd_n
-# __TEXT.eval_upd_25:
+; __TEXT.eval_upd_25:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4085,7 +4085,7 @@ eval_upd_25:
 	li	d0,18
 	li	d1,92
 	b	eval_upd_n
-# __TEXT.eval_upd_26:
+; __TEXT.eval_upd_26:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4094,7 +4094,7 @@ eval_upd_26:
 	li	d0,19
 	li	d1,96
 	b	eval_upd_n
-# __TEXT.eval_upd_27:
+; __TEXT.eval_upd_27:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4103,7 +4103,7 @@ eval_upd_27:
 	li	d0,20
 	li	d1,100
 	b	eval_upd_n
-# __TEXT.eval_upd_28:
+; __TEXT.eval_upd_28:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4112,7 +4112,7 @@ eval_upd_28:
 	li	d0,21
 	li	d1,104
 	b	eval_upd_n
-# __TEXT.eval_upd_29:
+; __TEXT.eval_upd_29:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4121,7 +4121,7 @@ eval_upd_29:
 	li	d0,22
 	li	d1,108
 	b	eval_upd_n
-# __TEXT.eval_upd_30:
+; __TEXT.eval_upd_30:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4130,7 +4130,7 @@ eval_upd_30:
 	li	d0,23
 	li	d1,112
 	b	eval_upd_n
-# __TEXT.eval_upd_31:
+; __TEXT.eval_upd_31:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4139,7 +4139,7 @@ eval_upd_31:
 	li	d0,24
 	li	d1,116
 	b	eval_upd_n
-# __TEXT.eval_upd_32:
+; __TEXT.eval_upd_32:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4149,11 +4149,11 @@ eval_upd_32:
 	li	d1,120
 	b	eval_upd_n
 
-# comment
-# comment	STRINGS
-# comment
+;
+;	STRINGS
+;
 	.text
-# __TEXT.catAC:
+; __TEXT.catAC:
 
 catAC:
  .if NODE_POINTER_OFFSET==0
@@ -4169,8 +4169,8 @@ catAC:
 	addi	d5,d2,3+8
 	srwi	d5,d5,2
 	sub.	d7,d7,d5
-# comment reserve one word extra, because 
-# comment word after the string may change
+; reserve one word extra, because 
+; word after the string may change
 	addi	d6,d2,3
 	ble	gc_3
 gc_r_3:
@@ -4180,7 +4180,7 @@ gc_r_3:
 	stw	o1,4(a6)
 	stwu	d2,8(a6)
 
-# comment copy string 1
+; copy string 1
 
 	addi	d2,d1,3
 	srwi	d2,d2,2
@@ -4200,7 +4200,7 @@ cat_string_3:
 	bge	cat_string_3
 cat_string_4:
 
-# comment copy string 2
+; copy string 2
 
 	addi	d0,d0,3
 	srwi	d0,d0,2
@@ -4245,7 +4245,7 @@ empty_string:
 	addi	sp,sp,4
 	blr	
 
-# __TEXT.sliceAC:
+; __TEXT.sliceAC:
 
 sliceAC:
 	lwz	d2,4-NODE_POINTER_OFFSET(a0)
@@ -4304,7 +4304,7 @@ gc_4:	mflr	r0
 	b	r_gc_4
 
 	.text
-# __TEXT.updateAC:
+; __TEXT.updateAC:
 
 updateAC:
 	lwz	d2,4-NODE_POINTER_OFFSET(a0)
@@ -4357,7 +4357,7 @@ update_string_error_2:
 	b	print_error
 
 	.text
-# __TEXT.eqAC:
+; __TEXT.eqAC:
 
 eqAC:
 	lwzu	d0,4-NODE_POINTER_OFFSET(a0)
@@ -4409,7 +4409,7 @@ equal_string_ne:
 	blr	
 
 	.text
-# __TEXT.cmpAC:
+; __TEXT.cmpAC:
 
 cmpAC:
 	lwzu	d1,4-NODE_POINTER_OFFSET(a0)
@@ -4480,7 +4480,7 @@ cmp_string_r1:
 	blr	
 
 	.text
-# __TEXT.string_to_string_node:
+; __TEXT.string_to_string_node:
 
 string_to_string_node:
 	lwz	d0,0(a0)
@@ -4525,102 +4525,102 @@ string_to_string_node_gc:
 
 	.text
 	.long	3
-# __TEXT._c3:
+; __TEXT._c3:
 _c3:	b	__cycle__in__spine
 	.long	4
-# __TEXT._c4:
+; __TEXT._c4:
 _c4:	b	__cycle__in__spine
 	.long	5
-# __TEXT._c5:
+; __TEXT._c5:
 _c5:	b	__cycle__in__spine
 	.long	6
-# __TEXT._c6:
+; __TEXT._c6:
 _c6:	b	__cycle__in__spine
 	.long	7
-# __TEXT._c7:
+; __TEXT._c7:
 _c7:	b	__cycle__in__spine
 	.long	8
-# __TEXT._c8:
+; __TEXT._c8:
 _c8:	b	__cycle__in__spine
 	.long	9
-# __TEXT._c9:
+; __TEXT._c9:
 _c9:	b	__cycle__in__spine
 	.long	10
-# __TEXT._c10:
+; __TEXT._c10:
 _c10:	b	__cycle__in__spine
 	.long	11
-# __TEXT._c11:
+; __TEXT._c11:
 _c11:	b	__cycle__in__spine
 	.long	12
-# __TEXT._c12:
+; __TEXT._c12:
 _c12:	b	__cycle__in__spine
 	.long	13
-# __TEXT._c13:
+; __TEXT._c13:
 _c13:	b	__cycle__in__spine
 	.long	14
-# __TEXT._c14:
+; __TEXT._c14:
 _c14:	b	__cycle__in__spine
 	.long	15
-# __TEXT._c15:
+; __TEXT._c15:
 _c15:	b	__cycle__in__spine
 	.long	16
-# __TEXT._c16:
+; __TEXT._c16:
 _c16:	b	__cycle__in__spine
 	.long	17
-# __TEXT._c17:
+; __TEXT._c17:
 _c17:	b	__cycle__in__spine
 	.long	18
-# __TEXT._c18:
+; __TEXT._c18:
 _c18:	b	__cycle__in__spine
 	.long	19
-# __TEXT._c19:
+; __TEXT._c19:
 _c19:	b	__cycle__in__spine
 	.long	20
-# __TEXT._c20:
+; __TEXT._c20:
 _c20:	b	__cycle__in__spine
 	.long	21
-# __TEXT._c21:
+; __TEXT._c21:
 _c21:	b	__cycle__in__spine
 	.long	22
-# __TEXT._c22:
+; __TEXT._c22:
 _c22:	b	__cycle__in__spine
 	.long	23
-# __TEXT._c23:
+; __TEXT._c23:
 _c23:	b	__cycle__in__spine
 	.long	24
-# __TEXT._c24:
+; __TEXT._c24:
 _c24:	b	__cycle__in__spine
 	.long	25
-# __TEXT._c25:
+; __TEXT._c25:
 _c25:	b	__cycle__in__spine
 	.long	26
-# __TEXT._c26:
+; __TEXT._c26:
 _c26:	b	__cycle__in__spine
 	.long	27
-# __TEXT._c27:
+; __TEXT._c27:
 _c27:	b	__cycle__in__spine
 	.long	28
-# __TEXT._c28:
+; __TEXT._c28:
 _c28:	b	__cycle__in__spine
 	.long	29
-# __TEXT._c29:
+; __TEXT._c29:
 _c29:	b	__cycle__in__spine
 	.long	30
-# __TEXT._c30:
+; __TEXT._c30:
 _c30:	b	__cycle__in__spine
 	.long	31
-# __TEXT._c31:
+; __TEXT._c31:
 _c31:	b	__cycle__in__spine
 	.long	32
-# __TEXT._c32:
+; __TEXT._c32:
 _c32:	b	__cycle__in__spine
 
-# comment
-# comment	ARRAYS
-# comment
+;
+;	ARRAYS
+;
 
 	.text
-# __TEXT.create_arrayB:
+; __TEXT.create_arrayB:
 
 create_arrayB:
 	mr	d2,d1
@@ -4646,7 +4646,7 @@ no_collect_4575:
 	b	create_arrayBCI
 
 	.text
-# __TEXT.create_arrayC:
+; __TEXT.create_arrayC:
 
 create_arrayC:
 	mr	d2,d1
@@ -4671,7 +4671,7 @@ no_collect_4578:
 	b	create_arrayBCI
 
 	.text
-# __TEXT.create_arrayI:
+; __TEXT.create_arrayI:
 
 create_arrayI:
 	subi	d7,d7,3
@@ -4710,7 +4710,7 @@ skip_filli_array:
 	blr	
 
 	.text
-# __TEXT.create_arrayR:
+; __TEXT.create_arrayR:
 
 create_arrayR:
 	stfd	f14,-8(sp)
@@ -4756,7 +4756,7 @@ skip_fillr_array:
 	blr	
 
 	.text
-# __TEXT.create_array:
+; __TEXT.create_array:
 
 create_array:
 	subi	d7,d7,3
@@ -5065,7 +5065,7 @@ st_fillr5_array:
 	blr
 
 	.text
-# __TEXT.e__system__sAP:
+; __TEXT.e__system__sAP:
 
 e__system__sAP:
 	lwz	a2,0(a1)
@@ -5073,10 +5073,10 @@ e__system__sAP:
 	mtctr	a2	
 	bctr
 
-# comment	_ARRAYS
+;	_ARRAYS
 
 	.text
-# __TEXT._create_arrayB:
+; __TEXT._create_arrayB:
 
 _create_arrayB:
 	mr	d1,d0
@@ -5102,7 +5102,7 @@ no_collect_3575:
 	blr	
 
 	.text
-# __TEXT._create_arrayC:
+; __TEXT._create_arrayC:
 
 _create_arrayC:
 	mr	d1,d0
@@ -5127,7 +5127,7 @@ no_collect_3578:
 	blr	
 
 	.text
-# __TEXT._create_arrayI:
+; __TEXT._create_arrayI:
 
 _create_arrayI:
 	subi	d7,d7,3
@@ -5150,7 +5150,7 @@ no_collect_3577:
 	blr	
 
 	.text
-# __TEXT._create_arrayR:
+; __TEXT._create_arrayR:
 
 _create_arrayR:
 	sub	d7,d7,d0
@@ -5180,11 +5180,11 @@ no_collect_3579:
 	addi	sp,sp,4
 	blr	
 
-# comment d0: number of elements, d1: element descriptor, d2: element size,
-# comment d3: element a size a0: a_element -> a0: array
+; d0: number of elements, d1: element descriptor, d2: element size,
+; d3: element a size a0: a_element -> a0: array
 
 	.text
-# __TEXT._create_r_array:
+; __TEXT._create_r_array:
 
 _create_r_array:
 	subi	d7,d7,3
@@ -5309,10 +5309,10 @@ _st_fillr5_array:
 	blr
 
 	.text
-# __TEXT.yet_args_needed:
+; __TEXT.yet_args_needed:
 
 yet_args_needed:
-# comment for more than 4 arguments
+; for more than 4 arguments
 	lwz	d1,0(a1)
 	lhz	d0,-2(d1)
 	subi	d7,d7,3
@@ -5353,7 +5353,7 @@ gc_1:	mflr	r0
 	b	gc_r_1
 
 	.text
-# __TEXT.yet_args_needed_0:
+; __TEXT.yet_args_needed_0:
 
 yet_args_needed_0:
 	subic.	d7,d7,2
@@ -5373,7 +5373,7 @@ gc_20:	mflr	r0
 	b	gc_r_20
 
 	.text
-# __TEXT.yet_args_needed_1:
+; __TEXT.yet_args_needed_1:
 
 yet_args_needed_1:
 	subic.	d7,d7,3
@@ -5395,7 +5395,7 @@ gc_21:	mflr	r0
 	b	gc_r_21
 
 	.text
-# __TEXT.yet_args_needed_2:
+; __TEXT.yet_args_needed_2:
 
 yet_args_needed_2:
 	subic.	d7,d7,5
@@ -5421,7 +5421,7 @@ gc_22:	mflr	r0
 	b	gc_r_22
 
 	.text
-# __TEXT.yet_args_needed_3:
+; __TEXT.yet_args_needed_3:
 
 yet_args_needed_3:
 	subic.	d7,d7,6
@@ -5450,7 +5450,7 @@ gc_23:	mflr	r0
 	b	gc_r_23
 
 	.text
-# __TEXT.yet_args_needed_4:
+; __TEXT.yet_args_needed_4:
 
 yet_args_needed_4:
 	subic.	d7,d7,7
@@ -5481,7 +5481,7 @@ gc_24:	mflr	r0
 	b	gc_r_24
 
 	.text
-# __TEXT.repl_args_b:
+; __TEXT.repl_args_b:
 
 repl_args_b:
 	cmpwi	0,d0,0
@@ -5519,7 +5519,7 @@ repl_args_b_1:
 	blr	
 
 	.text
-# __TEXT.push_arg_b:
+; __TEXT.push_arg_b:
 
 push_arg_b:
 	cmplwi	0,d1,2
@@ -5540,7 +5540,7 @@ push_arg_b_1:
 	blr	
 
 	.text
-# __TEXT.del_args:
+; __TEXT.del_args:
 
 del_args:
 	lwz	d1,0(a0)
@@ -5669,7 +5669,7 @@ ea__S_P2_3:
  .endif
 
 	.text
-# __TEXT.acos_real:
+; __TEXT.acos_real:
 
 acos_real:
 	mflr	r0
@@ -5705,7 +5705,7 @@ acos_real:
 	blr
 
 	.text
-# __TEXT.asin_real:
+; __TEXT.asin_real:
 
 asin_real:
 	mflr	r0
@@ -5741,7 +5741,7 @@ asin_real:
 	blr
 
 	.text
-# __TEXT.atan_real:
+; __TEXT.atan_real:
 
 atan_real:
 	mflr	r0
@@ -5777,7 +5777,7 @@ atan_real:
 	blr
 
 	.text
-# __TEXT.cos_real:
+; __TEXT.cos_real:
 
 cos_real:
 	mflr	r0
@@ -5813,7 +5813,7 @@ cos_real:
 	blr
 
 	.text
-# __TEXT.sin_real:
+; __TEXT.sin_real:
 
 sin_real:
 	mflr	r0
@@ -5849,7 +5849,7 @@ sin_real:
 	blr
 
 	.text
-# __TEXT.tan_real:
+; __TEXT.tan_real:
 
 tan_real:
 	mflr	r0
@@ -5885,7 +5885,7 @@ tan_real:
 	blr
 
 	.text
-# __TEXT.ln_real:
+; __TEXT.ln_real:
 
 ln_real:
 	mflr	r0
@@ -5921,7 +5921,7 @@ ln_real:
 	blr
 
 	.text
-# __TEXT.log10_real:
+; __TEXT.log10_real:
 
 log10_real:
 	mflr	r0
@@ -5957,7 +5957,7 @@ log10_real:
 	blr
 
 	.text
-# __TEXT.exp_real:
+; __TEXT.exp_real:
 
 exp_real:
 	mflr	r0
@@ -5994,7 +5994,7 @@ exp_real:
 
 	.text
 
-# __TEXT.sqrt_real:
+; __TEXT.sqrt_real:
 	
 sqrt_real:
 	mflr	r0
@@ -6031,7 +6031,7 @@ sqrt_real:
 
 	.text
 	
-# __TEXT.pow_real:
+; __TEXT.pow_real:
 
 pow_real:
 	mflr	r0
@@ -6069,7 +6069,7 @@ pow_real:
 
 	.text
 
-# __TEXT.entier_real:
+; __TEXT.entier_real:
 
 entier_real:
 	lea	o0,entier_constants_and_buffers
@@ -6364,5 +6364,3 @@ L14$pb:
 L14$lz:
 	.indirect_symbol _NewPtr
 	.long dyld_stub_binding_helper
-
- 

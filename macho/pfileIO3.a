@@ -1,7 +1,7 @@
-# comment	File:	cgpfileIO3.s
-# comment	Copyright:	University of Nijmegen
-# comment	Written by:	John van Groningen
-# comment	Machine:	Power Macintosh
+;	File:	cgpfileIO3.s
+;	Copyright:	University of Nijmegen
+;	Written by:	John van Groningen
+;	Machine:	Power Macintosh
 
 MACOSX	=	1
 
