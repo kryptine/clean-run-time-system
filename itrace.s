@@ -322,11 +322,35 @@ write_functions_on_stack:
 	mov	name(d1),a0
 
 	push	a2
+
+#ifdef MODULE_NAMES
+	movl	-4(a0),a1
+#endif
+
 	add	$4,a0
+
+#ifdef MODULE_NAMES
+	pushl	(a1)
+	addl	$4,a1
+	pushl	a1
+#endif
 
 	push	a0
 	call	@ew_print_string
 	add	$4,sp
+
+#ifdef MODULE_NAMES
+	pushl	$module_string
+	call	@ew_print_string
+	add	$4,sp
+
+	call	@ew_print_text
+	addl	$8,sp
+
+	pushl	$']'
+	call	@ew_print_char
+	add	$4,sp
+#endif
 
 	pushl	$10
 	call	@ew_print_char
@@ -415,5 +439,8 @@ stack_trace_string:
 	.ascii	"Stack trace:"
 	.byte	10
 	.byte	0
-
+#ifdef MODULE_NAMES
+module_string:
+	.asciz	" [module: "
+#endif
 	align	(2)
