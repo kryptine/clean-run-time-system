@@ -496,7 +496,7 @@ void w_print_string (char *s)
 	if (std_output_to_file){
 		for (p=s; *p!=0; ++p)
 			;
-		file_write_characters (p,p-s,&file_table[1]);
+		file_write_characters (s,p-s,&file_table[1]);
 		return;
 	}
 
