@@ -55,6 +55,7 @@ fwritestring_error:
 	.globl	positionF
 	.globl	seekF
 	.globl	shareF
+	.globl	flushF
 	
 	.globl	openSF
 	.globl	readSFC
@@ -95,6 +96,7 @@ fwritestring_error:
 	.globl	@file_position
 	.globl	@file_seek
 	.globl	@file_share
+	.globl	@flush_file_buffer
 
 	.globl	@open_s_file
 	.globl	@file_read_s_char
@@ -501,7 +503,16 @@ shareF:
 	
 	movl	$-1,d0
 	ret
-	
+
+flushF:
+	pushl	d1
+	call	@flush_file_buffer
+	movl	4(sp),a2
+	xchg	d0,d1
+	movl	$-1,4(sp)
+	movl	a2,(sp)
+	ret
+
 openSF:	pushl	d0
 	addl	$4,a0
 	pushl	a0
