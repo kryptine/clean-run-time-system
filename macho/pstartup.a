@@ -536,6 +536,8 @@ entier_constants_and_buffers:
 	.globl	write_profile_information,write_profile_stack
  .endif
 
+# __TEXT._abc_main:
+
 _abc_main:
  	mflr	r0
 	stwu	r0,-4(sp)
@@ -1062,6 +1064,8 @@ no_memory_1:
  .endif
 	b	exit_1
 
+# __TEXT.print_sc:
+
 print_sc:
 	lea	o0,basic_only
 	lwz	o1,0(o0)
@@ -1101,15 +1105,21 @@ end_print:
 	addi	sp,sp,4
 	blr	
 
+# __TEXT.printD:
+
 printD:	andi.	r0,d0,2
 	bne	printD_
 
 	mr	a2,d0
 	b	print_string_a2
 
+# __TEXT.print_symbol:
+
 print_symbol:
 	li	d1,0
 	b	print_symbol_2
+
+# __TEXT.print_symbol_sc:
 
 print_symbol_sc:
 	lea	o0,basic_only
@@ -1186,9 +1196,13 @@ print_int2:
 	lwz	r0,-4(sp)
 	blr	
 
+# __TEXT.print_int:
+
 print_int:
 	mr	o0,d0
 	b	print_int2
+
+# __TEXT.print_char:
 
 print_char:
 	lea	o0,basic_only
@@ -1276,6 +1290,8 @@ print_false:
 	lea	o0,false_c_string
 	b	print_string_o0_and_return
 
+# __TEXT.print_real:
+
 print_real:
 	fmr	f1,f14
 	b	print_real_
@@ -1336,6 +1352,8 @@ print_string_a2:
 	lwz	r0,-4(sp)
 	blr	
 
+# __TEXT.print__chars__sc:
+
 print__chars__sc:
 	lea	o0,basic_only
 	lwz	d1,0(o0)
@@ -1377,6 +1395,8 @@ no_print_chars:
 	blr
 
 	.text
+# __TEXT.eprint__:
+
 eprint__:
 	mr	o0,d0
 
@@ -1410,6 +1430,8 @@ eprint__:
 	blr
 
 	.text
+# __TEXT.eprint__string__:
+
 eprint__string__:
 	lwz	o1,4(a0)
 	addi	o0,a0,8
@@ -1444,6 +1466,8 @@ eprint__string__:
 	blr	
 
 	.text
+# __TEXT.eprintD:
+
 eprintD:	andi.	r0,d0,2
 	bne	eprintD_
 
@@ -1502,6 +1526,7 @@ eprint_string_a2:
 	blr	
 
 	.text
+# __TEXT.DtoAC:
 
 DtoAC:	lha	d1,-2(d0)
 	addi	a0,d0,-2
@@ -1559,6 +1584,8 @@ DtoAC_record:
 	b	DtoAC_a0
 
 	.text
+# __TEXT.push_a_r_args:
+
 push_a_r_args:
 	lwz	a1,8(a0)
 	subi	a1,a1,2
@@ -1602,6 +1629,8 @@ push_b_elements:
 
 	mr	d0,a1
 	blr	
+
+# __TEXT.push_t_r_args:
 
 push_t_r_args:
 	lwz	a1,0(a0)
@@ -1661,6 +1690,8 @@ push_r_a_elements:
 	blr	
 
 	.text
+# __TEXT.BtoAC:
+
 BtoAC:
 	andi.	d0,d0,255
 	beq	BtoAC_false
@@ -1676,6 +1707,8 @@ BtoAC_false:
 	blr	
 
 	.text
+# __TEXT.RtoAC:
+
 RtoAC:
  .if LINUX
  	fmr	f1,f14
@@ -1714,6 +1747,8 @@ RtoAC:
 	b	return_sprintf_buffer_string
 		
 	.text
+# __TEXT.ItoAC:
+
 ItoAC:
  .if MY_ITOS
 	lea	a0,sprintf_buffer
@@ -1852,6 +1887,8 @@ D_to_S_cp_str_2:
 	blr	
 
 	.text
+# __TEXT.eqD:
+
 eqD:	lwz	d0,0(a0)
 	lwz	o0,0(a1)
 	cmpw	0,d0,o0
@@ -2061,6 +2098,8 @@ _add_IO_time:
 # comment
 
 	.text
+# __TEXT.collect_3:
+
 collect_3:
 	stwu	r0,-4(sp)
  .if PROFILE
@@ -2092,6 +2131,8 @@ collect_3:
  .endif
 
 	.text
+# __TEXT.collect_2:
+
 collect_2:
 	stwu	r0,-4(sp)
  .if PROFILE
@@ -2121,6 +2162,8 @@ collect_2:
  .endif
 
 	.text
+# __TEXT.collect_1:
+
 collect_1:
 	stwu	r0,-4(sp)
  .if PROFILE
@@ -2148,6 +2191,8 @@ collect_1:
  .endif
 
 	.text
+# __TEXT.collect_0:
+
 collect_0:
 	stwu	r0,-4(sp)
  .if PROFILE
@@ -2170,6 +2215,8 @@ collect_0:
  .endif
 
 	.text
+# __TEXT.collect_03:
+
 collect_03:
 	stwu	r0,-4(sp)
  .if PROFILE
@@ -2200,6 +2247,8 @@ collect_03:
  .endif
 
 	.text
+# __TEXT.collect_02:
+
 collect_02:
 	stwu	r0,-4(sp)
  .if PROFILE
@@ -2228,6 +2277,8 @@ collect_02:
  .endif
 
 	.text
+# __TEXT.collect_01:
+
 collect_01:
 	stwu	r0,-4(sp)
  .if PROFILE
@@ -2254,6 +2305,8 @@ collect_01:
  .endif
 
 	.text
+# __TEXT.collect_00:
+
 collect_00:
 	stwu	r0,-4(sp)
  .if PROFILE
@@ -2276,6 +2329,8 @@ collect_00:
 
 
  	.text
+# __TEXT.collect_:
+
 collect_:
 	stwu	r0,-4(sp)
 
@@ -3546,12 +3601,16 @@ e__Exceptions__sraise__exception:
  .endif
 
 	.text
+# __TEXT.eval_01:
+
 eval_01:
 	stw	a1,0(a4)
 	addi	a4,a4,4
 	bctr
 
 	.text
+# __TEXT.eval_11:
+
 eval_11:
 	stw	a0,0(a4)
 	mr	a0,a1
@@ -3559,6 +3618,8 @@ eval_11:
 	bctr
 
 	.text
+# __TEXT.eval_02:
+
 eval_02:
 	stw	a2,0(a4)
 	addi	a4,a4,8
@@ -3566,6 +3627,8 @@ eval_02:
 	bctr
 
 	.text
+# __TEXT.eval_12:
+
 eval_12:
 	stw	a0,4(a4)
 	mr	a0,a1
@@ -3574,12 +3637,16 @@ eval_12:
 	bctr
 
 	.text
+# __TEXT.eval_22:
+
 eval_22:
 	stw	a0,4(a4)
 	mr	a0,a2
 	stw	a1,0(a4)
 	addi	a4,a4,8
 	bctr
+
+# __TEXT.__eaind:
 
 __eaind:
 eval_fill:
@@ -3607,6 +3674,8 @@ eval_fill:
 	lwz	r0,0(sp)
 	addi	sp,sp,4
 	blr	
+
+# __TEXT.__indirection:
 
 	b	eval_fill
 	nop	
@@ -3677,6 +3746,8 @@ eval_fill2:
  .endif
 
 	.text
+# __TEXT.eval_upd_0:
+
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3689,6 +3760,8 @@ eval_upd_0:
 	bctr
 
 	.text
+# __TEXT.eval_upd_1:
+
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3703,6 +3776,8 @@ eval_upd_1:
 	bctr
 
 	.text
+# __TEXT.eval_upd_2:
+
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3717,6 +3792,8 @@ eval_upd_2:
 	bctr
 
 	.text
+# __TEXT.eval_upd_3:
+
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3734,6 +3811,8 @@ eval_upd_3:
 	bctr
 
 	.text
+# __TEXT.eval_upd_4:
+
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3753,6 +3832,8 @@ eval_upd_4:
 	bctr
 
 	.text
+# __TEXT.eval_upd_5:
+
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3774,6 +3855,8 @@ eval_upd_5:
 	bctr
 
 	.text
+# __TEXT.eval_upd_6:
+
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3797,6 +3880,8 @@ eval_upd_6:
 	bctr
 
 	.text
+# __TEXT.eval_upd_7:
+
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3831,6 +3916,7 @@ eval_upd_n_lp:
 	lwz	a1,-8-NODE_POINTER_OFFSET(a1)
 	bctr
 
+# __TEXT.eval_upd_8:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3839,6 +3925,7 @@ eval_upd_8:
 	li	d0,1
 	li	d1,24
 	b	eval_upd_n
+# __TEXT.eval_upd_9:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3847,6 +3934,7 @@ eval_upd_9:
 	li	d0,2
 	li	d1,28
 	b	eval_upd_n
+# __TEXT.eval_upd_10:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3855,6 +3943,7 @@ eval_upd_10:
 	li	d0,3
 	li	d1,32
 	b	eval_upd_n
+# __TEXT.eval_upd_11:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3863,6 +3952,7 @@ eval_upd_11:
 	li	d0,4
 	li	d1,36
 	b	eval_upd_n
+# __TEXT.eval_upd_12:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3871,6 +3961,7 @@ eval_upd_12:
 	li	d0,5
 	li	d1,40
 	b	eval_upd_n
+# __TEXT.eval_upd_13:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3879,6 +3970,7 @@ eval_upd_13:
 	li	d0,6
 	li	d1,44
 	b	eval_upd_n
+# __TEXT.eval_upd_14:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3887,6 +3979,7 @@ eval_upd_14:
 	li	d0,7
 	li	d1,48
 	b	eval_upd_n
+# __TEXT.eval_upd_15:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3895,6 +3988,7 @@ eval_upd_15:
 	li	d0,8
 	li	d1,52
 	b	eval_upd_n
+# __TEXT.eval_upd_16:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3903,6 +3997,7 @@ eval_upd_16:
 	li	d0,9
 	li	d1,56
 	b	eval_upd_n
+# __TEXT.eval_upd_17:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3911,6 +4006,7 @@ eval_upd_17:
 	li	d0,10
 	li	d1,60
 	b	eval_upd_n
+# __TEXT.eval_upd_18:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3919,6 +4015,7 @@ eval_upd_18:
 	li	d0,11
 	li	d1,64
 	b	eval_upd_n
+# __TEXT.eval_upd_19:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3927,6 +4024,7 @@ eval_upd_19:
 	li	d0,12
 	li	d1,68
 	b	eval_upd_n
+# __TEXT.eval_upd_20:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3935,6 +4033,7 @@ eval_upd_20:
 	li	d0,13
 	li	d1,72
 	b	eval_upd_n
+# __TEXT.eval_upd_21:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3943,6 +4042,7 @@ eval_upd_21:
 	li	d0,14
 	li	d1,76
 	b	eval_upd_n
+# __TEXT.eval_upd_22:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3951,6 +4051,7 @@ eval_upd_22:
 	li	d0,15
 	li	d1,80
 	b	eval_upd_n
+# __TEXT.eval_upd_23:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3959,6 +4060,7 @@ eval_upd_23:
 	li	d0,16
 	li	d1,84
 	b	eval_upd_n
+# __TEXT.eval_upd_24:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3967,6 +4069,7 @@ eval_upd_24:
 	li	d0,17
 	li	d1,88
 	b	eval_upd_n
+# __TEXT.eval_upd_25:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3975,6 +4078,7 @@ eval_upd_25:
 	li	d0,18
 	li	d1,92
 	b	eval_upd_n
+# __TEXT.eval_upd_26:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3983,6 +4087,7 @@ eval_upd_26:
 	li	d0,19
 	li	d1,96
 	b	eval_upd_n
+# __TEXT.eval_upd_27:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3991,6 +4096,7 @@ eval_upd_27:
 	li	d0,20
 	li	d1,100
 	b	eval_upd_n
+# __TEXT.eval_upd_28:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -3999,6 +4105,7 @@ eval_upd_28:
 	li	d0,21
 	li	d1,104
 	b	eval_upd_n
+# __TEXT.eval_upd_29:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4007,6 +4114,7 @@ eval_upd_29:
 	li	d0,22
 	li	d1,108
 	b	eval_upd_n
+# __TEXT.eval_upd_30:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4015,6 +4123,7 @@ eval_upd_30:
 	li	d0,23
 	li	d1,112
 	b	eval_upd_n
+# __TEXT.eval_upd_31:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4023,6 +4132,7 @@ eval_upd_31:
 	li	d0,24
 	li	d1,116
 	b	eval_upd_n
+# __TEXT.eval_upd_32:
  .if PROFILE
 	mflr	r0
 	bl	profile_n
@@ -4036,6 +4146,8 @@ eval_upd_32:
 # comment	STRINGS
 # comment
 	.text
+# __TEXT.catAC:
+
 catAC:
  .if NODE_POINTER_OFFSET==0
 	lwzu	d0,4(a0)
@@ -4126,6 +4238,8 @@ empty_string:
 	addi	sp,sp,4
 	blr	
 
+# __TEXT.sliceAC:
+
 sliceAC:
 	lwz	d2,4-NODE_POINTER_OFFSET(a0)
 	addi	a2,a0,4-NODE_POINTER_OFFSET
@@ -4183,6 +4297,8 @@ gc_4:	mflr	r0
 	b	r_gc_4
 
 	.text
+# __TEXT.updateAC:
+
 updateAC:
 	lwz	d2,4-NODE_POINTER_OFFSET(a0)
 	addi	a2,a0,4-NODE_POINTER_OFFSET
@@ -4234,6 +4350,8 @@ update_string_error_2:
 	b	print_error
 
 	.text
+# __TEXT.eqAC:
+
 eqAC:
 	lwzu	d0,4-NODE_POINTER_OFFSET(a0)
 	lwzu	o0,4-NODE_POINTER_OFFSET(a1)
@@ -4284,6 +4402,8 @@ equal_string_ne:
 	blr	
 
 	.text
+# __TEXT.cmpAC:
+
 cmpAC:
 	lwzu	d1,4-NODE_POINTER_OFFSET(a0)
 	lwzu	d2,4-NODE_POINTER_OFFSET(a1)
@@ -4353,6 +4473,8 @@ cmp_string_r1:
 	blr	
 
 	.text
+# __TEXT.string_to_string_node:
+
 string_to_string_node:
 	lwz	d0,0(a0)
 	addi	a0,a0,4
@@ -4396,64 +4518,94 @@ string_to_string_node_gc:
 
 	.text
 	.long	3
+# __TEXT._c3:
 _c3:	b	__cycle__in__spine
 	.long	4
+# __TEXT._c4:
 _c4:	b	__cycle__in__spine
 	.long	5
+# __TEXT._c5:
 _c5:	b	__cycle__in__spine
 	.long	6
+# __TEXT._c6:
 _c6:	b	__cycle__in__spine
 	.long	7
+# __TEXT._c7:
 _c7:	b	__cycle__in__spine
 	.long	8
+# __TEXT._c8:
 _c8:	b	__cycle__in__spine
 	.long	9
+# __TEXT._c9:
 _c9:	b	__cycle__in__spine
 	.long	10
+# __TEXT._c10:
 _c10:	b	__cycle__in__spine
 	.long	11
+# __TEXT._c11:
 _c11:	b	__cycle__in__spine
 	.long	12
+# __TEXT._c12:
 _c12:	b	__cycle__in__spine
 	.long	13
+# __TEXT._c13:
 _c13:	b	__cycle__in__spine
 	.long	14
+# __TEXT._c14:
 _c14:	b	__cycle__in__spine
 	.long	15
+# __TEXT._c15:
 _c15:	b	__cycle__in__spine
 	.long	16
+# __TEXT._c16:
 _c16:	b	__cycle__in__spine
 	.long	17
+# __TEXT._c17:
 _c17:	b	__cycle__in__spine
 	.long	18
+# __TEXT._c18:
 _c18:	b	__cycle__in__spine
 	.long	19
+# __TEXT._c19:
 _c19:	b	__cycle__in__spine
 	.long	20
+# __TEXT._c20:
 _c20:	b	__cycle__in__spine
 	.long	21
+# __TEXT._c21:
 _c21:	b	__cycle__in__spine
 	.long	22
+# __TEXT._c22:
 _c22:	b	__cycle__in__spine
 	.long	23
+# __TEXT._c23:
 _c23:	b	__cycle__in__spine
 	.long	24
+# __TEXT._c24:
 _c24:	b	__cycle__in__spine
 	.long	25
+# __TEXT._c25:
 _c25:	b	__cycle__in__spine
 	.long	26
+# __TEXT._c26:
 _c26:	b	__cycle__in__spine
 	.long	27
+# __TEXT._c27:
 _c27:	b	__cycle__in__spine
 	.long	28
+# __TEXT._c28:
 _c28:	b	__cycle__in__spine
 	.long	29
+# __TEXT._c29:
 _c29:	b	__cycle__in__spine
 	.long	30
+# __TEXT._c30:
 _c30:	b	__cycle__in__spine
 	.long	31
+# __TEXT._c31:
 _c31:	b	__cycle__in__spine
 	.long	32
+# __TEXT._c32:
 _c32:	b	__cycle__in__spine
 
 # comment
@@ -4461,6 +4613,8 @@ _c32:	b	__cycle__in__spine
 # comment
 
 	.text
+# __TEXT.create_arrayB:
+
 create_arrayB:
 	mr	d2,d1
 	addi	d1,d1,3
@@ -4485,6 +4639,8 @@ no_collect_4575:
 	b	create_arrayBCI
 
 	.text
+# __TEXT.create_arrayC:
+
 create_arrayC:
 	mr	d2,d1
 	addi	d1,d1,3
@@ -4508,6 +4664,8 @@ no_collect_4578:
 	b	create_arrayBCI
 
 	.text
+# __TEXT.create_arrayI:
+
 create_arrayI:
 	subi	d7,d7,3
 	sub.	d7,d7,d1
@@ -4545,6 +4703,8 @@ skip_filli_array:
 	blr	
 
 	.text
+# __TEXT.create_arrayR:
+
 create_arrayR:
 	stfd	f14,-8(sp)
 	sub	d7,d7,d0
@@ -4589,6 +4749,8 @@ skip_fillr_array:
 	blr	
 
 	.text
+# __TEXT.create_array:
+
 create_array:
 	subi	d7,d7,3
 	sub.	d7,d7,d0
@@ -4896,6 +5058,8 @@ st_fillr5_array:
 	blr
 
 	.text
+# __TEXT.e__system__sAP:
+
 e__system__sAP:
 	lwz	a2,0(a1)
 	lwz	a2,4-2(a2)
@@ -4905,6 +5069,8 @@ e__system__sAP:
 # comment	_ARRAYS
 
 	.text
+# __TEXT._create_arrayB:
+
 _create_arrayB:
 	mr	d1,d0
 	addi	d0,d0,3
@@ -4929,6 +5095,8 @@ no_collect_3575:
 	blr	
 
 	.text
+# __TEXT._create_arrayC:
+
 _create_arrayC:
 	mr	d1,d0
 	addi	d0,d0,3
@@ -4952,6 +5120,8 @@ no_collect_3578:
 	blr	
 
 	.text
+# __TEXT._create_arrayI:
+
 _create_arrayI:
 	subi	d7,d7,3
 	sub.	d7,d7,d0
@@ -4973,6 +5143,8 @@ no_collect_3577:
 	blr	
 
 	.text
+# __TEXT._create_arrayR:
+
 _create_arrayR:
 	sub	d7,d7,d0
 	subi	d7,d7,3+1
@@ -5005,6 +5177,8 @@ no_collect_3579:
 # comment d3: element a size a0: a_element -> a0: array
 
 	.text
+# __TEXT._create_r_array:
+
 _create_r_array:
 	subi	d7,d7,3
 	mr	d5,d2
@@ -5128,6 +5302,8 @@ _st_fillr5_array:
 	blr
 
 	.text
+# __TEXT.yet_args_needed:
+
 yet_args_needed:
 # comment for more than 4 arguments
 	lwz	d1,0(a1)
@@ -5170,6 +5346,8 @@ gc_1:	mflr	r0
 	b	gc_r_1
 
 	.text
+# __TEXT.yet_args_needed_0:
+
 yet_args_needed_0:
 	subic.	d7,d7,2
 	blt	gc_20
@@ -5188,6 +5366,8 @@ gc_20:	mflr	r0
 	b	gc_r_20
 
 	.text
+# __TEXT.yet_args_needed_1:
+
 yet_args_needed_1:
 	subic.	d7,d7,3
 	blt	gc_21
@@ -5208,6 +5388,8 @@ gc_21:	mflr	r0
 	b	gc_r_21
 
 	.text
+# __TEXT.yet_args_needed_2:
+
 yet_args_needed_2:
 	subic.	d7,d7,5
 	blt	gc_22
@@ -5232,6 +5414,8 @@ gc_22:	mflr	r0
 	b	gc_r_22
 
 	.text
+# __TEXT.yet_args_needed_3:
+
 yet_args_needed_3:
 	subic.	d7,d7,6
 	blt	gc_23
@@ -5259,6 +5443,8 @@ gc_23:	mflr	r0
 	b	gc_r_23
 
 	.text
+# __TEXT.yet_args_needed_4:
+
 yet_args_needed_4:
 	subic.	d7,d7,7
 	blt	gc_24
@@ -5288,6 +5474,8 @@ gc_24:	mflr	r0
 	b	gc_r_24
 
 	.text
+# __TEXT.repl_args_b:
+
 repl_args_b:
 	cmpwi	0,d0,0
 	ble	repl_args_b_1
@@ -5324,6 +5512,8 @@ repl_args_b_1:
 	blr	
 
 	.text
+# __TEXT.push_arg_b:
+
 push_arg_b:
 	cmplwi	0,d1,2
 	blt	push_arg_b_1
@@ -5343,6 +5533,8 @@ push_arg_b_1:
 	blr	
 
 	.text
+# __TEXT.del_args:
+
 del_args:
 	lwz	d1,0(a0)
 	sub	d1,d1,d0
@@ -5470,6 +5662,8 @@ ea__S_P2_3:
  .endif
 
 	.text
+# __TEXT.acos_real:
+
 acos_real:
 	mflr	r0
 	stwu	r0,-4(sp)
@@ -5504,6 +5698,8 @@ acos_real:
 	blr
 
 	.text
+# __TEXT.asin_real:
+
 asin_real:
 	mflr	r0
 	stwu	r0,-4(sp)
@@ -5538,6 +5734,8 @@ asin_real:
 	blr
 
 	.text
+# __TEXT.atan_real:
+
 atan_real:
 	mflr	r0
 	stwu	r0,-4(sp)
@@ -5572,6 +5770,8 @@ atan_real:
 	blr
 
 	.text
+# __TEXT.cos_real:
+
 cos_real:
 	mflr	r0
 	stwu	r0,-4(sp)
@@ -5606,6 +5806,8 @@ cos_real:
 	blr
 
 	.text
+# __TEXT.sin_real:
+
 sin_real:
 	mflr	r0
 	stwu	r0,-4(sp)
@@ -5640,6 +5842,8 @@ sin_real:
 	blr
 
 	.text
+# __TEXT.tan_real:
+
 tan_real:
 	mflr	r0
 	stwu	r0,-4(sp)
@@ -5674,6 +5878,8 @@ tan_real:
 	blr
 
 	.text
+# __TEXT.ln_real:
+
 ln_real:
 	mflr	r0
 	stwu	r0,-4(sp)
@@ -5708,6 +5914,8 @@ ln_real:
 	blr
 
 	.text
+# __TEXT.log10_real:
+
 log10_real:
 	mflr	r0
 	stwu	r0,-4(sp)
@@ -5742,6 +5950,8 @@ log10_real:
 	blr
 
 	.text
+# __TEXT.exp_real:
+
 exp_real:
 	mflr	r0
 	stwu	r0,-4(sp)
@@ -5776,6 +5986,9 @@ exp_real:
 	blr
 
 	.text
+
+# __TEXT.sqrt_real:
+	
 sqrt_real:
 	mflr	r0
 	stwu	r0,-4(sp)
@@ -5810,6 +6023,9 @@ sqrt_real:
 	blr
 
 	.text
+	
+# __TEXT.pow_real:
+
 pow_real:
 	mflr	r0
 	stwu	r0,-4(sp)
@@ -5845,6 +6061,9 @@ pow_real:
 	blr
 
 	.text
+
+# __TEXT.entier_real:
+
 entier_real:
 	lea	o0,entier_constants_and_buffers
 	fctiwz	f2,f14
