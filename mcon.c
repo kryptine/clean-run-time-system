@@ -9,7 +9,7 @@
 #ifdef MACHO
 # define MACOSX
 #endif
-#ifdef MACHO
+#ifdef MACOSX
 # define FLUSH_PORT_BUFFER
 #endif
 #if defined (MACOSX) || defined (MACHO)
@@ -20,6 +20,10 @@
 # define NEWLINE_CHAR '\r'
 #else
 # define NEWLINE_CHAR '\n'
+#endif
+
+#ifdef MACHO
+# define MAYBE_USE_STDIO
 #endif
 
 #ifdef MACOSX
@@ -44,14 +48,15 @@ extern void sprintf (char *,...);
 #include <events.h>
 #include <windows.h>
 #ifndef NEW_HEADERS
-# include <desk.h>
+//# include <desk.h>
+#include <devices.h>
 #endif
 #include <memory.h>
 #include <resources.h>
 #include <menus.h>
 #include <OSUtils.h>
 #ifndef NEW_HEADERS
-# include <OSEvents.h>
+//# include <OSEvents.h>
 #endif
 #ifdef STACK_OVERFLOW_EXCEPTION_HANDLER
 # ifdef MACHO
@@ -442,10 +447,24 @@ QDGlobals qd;
 
 #endif
 
+#ifdef MAYBE_USE_STDIO
+static int use_stdio;
+#define oputc(c) ((c=='\n') ? putchar('\r') : ((c=='\r') ? putchar('\n') : putchar(c)))
+#define eputc(c) ((c=='\n') ? putc('\r',stderr) : ((c=='\r') ? putc('\n',stderr) : putc(c,stderr)))
+inline void oputs(const char *s) {while (*s) {oputc(*s);s++;}}
+inline void eputs(const char *s) {while (*s) {eputc(*s);s++;}}
+#endif
+
 void w_print_char (char c)
 {
 	GrafPtr port;
 	
+#ifdef MAYBE_USE_STDIO
+	if (use_stdio){
+		oputc (c);
+		return;
+	}
+#endif
 #ifdef MACOSX
 	GetPort (&port);
 	SetPort (GetWindowPort (c_window));
@@ -494,6 +513,19 @@ void w_print_text (char *s,unsigned long length)
 	char *end_s,c;
 	GrafPtr port;
 	
+#ifdef MAYBE_USE_STDIO
+	if (use_stdio){
+		int l;
+		
+		l=length;
+		if (l)
+			do {
+				oputc (*s);
+				++s;
+			} while (--l);
+		return;
+	}
+#endif
 #ifdef MACOSX
 	GetPort (&port);
 	SetPort (GetWindowPort (c_window));
@@ -570,6 +602,12 @@ void ew_print_char (char c)
 {
 	GrafPtr port;
 	
+#ifdef MAYBE_USE_STDIO
+	if (use_stdio){
+		eputc (c);
+		return;
+	}
+#endif
 #ifdef MACOSX
 	GetPort (&port);
 	SetPort (GetWindowPort (e_window));
@@ -636,6 +674,20 @@ void ew_print_text (char *s,unsigned long length)
 {
 	GrafPtr port;
 	
+#ifdef MAYBE_USE_STDIO
+	if (use_stdio){
+		int l;
+		
+		l=length;
+		if (l){
+			do {
+				eputc (*s);
+				++s;
+			} while (--l);
+		}
+		return;
+	}
+#endif
 #ifdef MACOSX
 	GetPort (&port);
 	SetPort (GetWindowPort (e_window));
@@ -841,6 +893,12 @@ int w_get_char()
 {
 	int c;
 
+#ifdef MAYBE_USE_STDIO
+	if (use_stdio){
+		return getchar();
+	}
+#endif
+
 	if (input_buffer_length==0){
 		GrafPtr port;
 		
@@ -881,7 +939,11 @@ int w_get_int (int *i_p)
 	unsigned int i;
 	
 	c=w_get_char();
+#ifdef MAYBE_USE_STDIO
+	while (c==' ' || c=='\t' || c=='\n' || c=='\r')
+#else
 	while (c==' ' || c=='\t' || c==NEWLINE_CHAR)
+#endif
 		c=w_get_char();
 	
 	negative=0;
@@ -894,9 +956,17 @@ int w_get_int (int *i_p)
 		}
 	
 	if (!is_digit (c)){
+#ifdef MAYBE_USE_STDIO
+		if (use_stdio){
+			if (c!=EOF)
+				ungetc (c,stdin);
+		} else {
+#endif
 		--input_buffer_pos;
 		++input_buffer_length;
-	
+#ifdef MAYBE_USE_STDIO
+		}
+#endif	
 		*i_p=0;
 		return 0;
 	}
@@ -911,8 +981,17 @@ int w_get_int (int *i_p)
 	if (negative)
 		i=-i;
 
+#ifdef MAYBE_USE_STDIO
+	if (use_stdio){
+		if (c!=EOF)
+			ungetc (c,stdin);
+	} else {
+#endif
 	--input_buffer_pos;
 	++input_buffer_length;
+#ifdef MAYBE_USE_STDIO
+		}
+#endif	
 
 	*i_p=i;
 	return -1;
@@ -926,7 +1005,11 @@ int w_get_real (double *r_p)
 	n=0;
 	
 	c=w_get_char();
+#ifdef MAYBE_USE_STDIO
+	while (c==' ' || c=='\t' || c=='\n' || c=='\r')
+#else
 	while (c==' ' || c=='\t' || c==NEWLINE_CHAR)
+#endif
 		c=w_get_char();
 	
 	if (c=='+')
@@ -986,8 +1069,17 @@ int w_get_real (double *r_p)
 	if (n>=256)
 		result=0;
 
+#ifdef MAYBE_USE_STDIO
+	if (use_stdio){
+		if (c!=EOF)
+			ungetc (c,stdin);
+	} else {
+#endif
 	--input_buffer_pos;
 	++input_buffer_length;
+#ifdef MAYBE_USE_STDIO
+	}
+#endif
 
 	*r_p=0.0;
 	
@@ -1011,6 +1103,19 @@ unsigned long w_get_text (char *string,unsigned long max_length)
 	char *sp,*dp;
 	GrafPtr port;
 	
+#ifdef MAYBE_USE_STDIO
+	if (use_stdio){
+		int length;
+		
+		fgets (string,(int)max_length,stdin);
+		
+		for (length=0; length<max_length; ++length)
+			if (string[length]=='\0')
+				break;
+		
+		return length;
+	}
+#endif
 #ifdef MACOSX
 	GetPort (&port);
 	SetPort (GetWindowPort (c_window));
@@ -1050,6 +1155,12 @@ void w_print_string (char *s)
 	char *end_s,c;
 	GrafPtr port;
 	
+#ifdef MAYBE_USE_STDIO
+	if (use_stdio){
+		oputs (s);
+		return;
+	}
+#endif
 #ifdef MACOSX
 	GetPort (&port);
 	SetPort (GetWindowPort (c_window));
@@ -1086,6 +1197,12 @@ void ew_print_string (char *s)
 	char *end_s,c;
 	GrafPtr port;
 	
+#ifdef MAYBE_USE_STDIO
+	if (use_stdio){
+		eputs (s);
+		return;
+	}
+#endif
 #ifdef MACOSX
 	GetPort (&port);
 	SetPort (GetWindowPort (e_window));
@@ -1128,6 +1245,12 @@ void w_print_int (int n)
 	char int_string [32];
 	GrafPtr port;
 	
+#ifdef MAYBE_USE_STDIO
+	if (use_stdio){
+		printf ("%d",n);
+		return;
+	}
+#endif
 #ifdef MACOSX
 	GetPort (&port);
 	SetPort (GetWindowPort (c_window));
@@ -1174,6 +1297,12 @@ void ew_print_int (int n)
 	char int_string [32];
 	GrafPtr port;
 
+#ifdef MAYBE_USE_STDIO
+	if (use_stdio){
+		fprintf (stderr,"%d",n);
+		return;
+	}
+#endif
 #ifdef MACOSX
 	GetPort (&port);
 	SetPort (GetWindowPort (e_window));
@@ -1220,6 +1349,12 @@ void w_print_real (double r)
 	char real_string [40];
 	GrafPtr port;
 	
+#ifdef MAYBE_USE_STDIO
+	if (use_stdio){
+		printf ("%.15g",r);
+		return;
+	}
+#endif
 #ifdef MACOSX
 	GetPort (&port);
 	SetPort (GetWindowPort (c_window));
@@ -1266,6 +1401,12 @@ void ew_print_real (double r)
 	char real_string [40];
 	GrafPtr port;
 	
+#ifdef MAYBE_USE_STDIO
+	if (use_stdio){
+		fprintf (stderr,"%.15g",r);
+		return;
+	}
+#endif
 #ifdef MACOSX
 	GetPort (&port);
 	SetPort (GetWindowPort (e_window));
@@ -1328,6 +1469,16 @@ static int init_terminal()
 	int three,ten;
 
 #ifndef NO_INIT	
+# ifdef MAYBE_USE_STDIO
+	if (use_stdio){
+		FlushEvents (everyEvent,0);
+		InitCursor();
+		error_window_visible=0;
+		console_window_visible=0;
+
+		return 1;
+	}
+# endif
 # ifndef MACOSX
 	InitGraf (&qd.thePort);
 	InitFonts();
@@ -1513,6 +1664,10 @@ void wait_for_key_press (VOID)
 
 static void exit_terminal()
 {
+#ifdef MAYBE_USE_STDIO
+	if (use_stdio)
+		return;
+#endif
 	DisposeWindow (c_window);
 	DisposeWindow (e_window);
 /*
@@ -1804,7 +1959,14 @@ static void install_clean_exception_handler (void)
 }
 #endif
 
+#ifdef MACHO
+int global_argc;
+char **global_argv;
+
+int main (int argc, char **argv)
+#else
 int main (void)
+#endif
 {
 	Handle stack_handle,font_handle;
 #ifdef WRITE_HEAP
@@ -1812,6 +1974,26 @@ int main (void)
 #endif
 	long *stack_p;
 	
+#ifdef MACHO
+	global_argc = argc;
+	global_argv = argv;
+#endif
+#ifdef MAYBE_USE_STDIO
+	{
+	int i;
+	
+	use_stdio=1;
+	for (i=1; i<argc; ++i){
+		char *s;
+		
+		s=argv[i];
+		if (s[0]=='-' && s[1]=='p' && s[2]=='s' && s[3]=='n'){
+			use_stdio=0;
+			break;
+		}
+	}
+	}
+#endif
 	exit_tcpip_function=NULL;
 	execution_aborted=0;
 
@@ -1955,7 +2137,12 @@ int main (void)
 		my_pointer_glue (exit_tcpip_function);
 #endif
 
-	if (!(flags & 16) || (flags & 8) || execution_aborted!=0){
+	if (
+#ifdef MAYBE_USE_STDIO	
+		(!use_stdio) &&
+#endif
+		!(flags & 16) || (flags & 8) || execution_aborted!=0)
+	{
 #ifdef COMMUNICATION
 		if (my_processor_id==0)
 #endif
