@@ -3,12 +3,6 @@
 /	Author:	John van Groningen
 /	Machine:	Intel 386
 
-#ifdef _WINDOWS_
-# define WRITE_HEAP
-#else
-# undef WRITE_HEAP
-#endif
-
 #define K6_0 0
 
 #define d0 %eax
@@ -41,6 +35,8 @@
 #define SHARE_CHAR_INT
 #define MY_ITOS
 #define FINALIZERS
+#define STACK_OVERFLOW_EXCEPTION_HANDLER
+#define WRITE_HEAP
 #undef MEASURE_GC
 #undef DEBUG
 #undef PREFETCH2
@@ -161,11 +157,14 @@
 	.comm	heap_end_write_heap,4
 	.comm	d3_flag_write_heap,4
 	.comm	heap2_begin_and_end,8
-#endif 
+#endif
 
-#if 1
+#ifdef STACK_OVERFLOW_EXCEPTION_HANDLER
 	.comm	a_stack_guard_page,4
 #endif
+
+	.globl	profile_stack_pointer
+	.comm	profile_stack_pointer,4
 
 	.data
 	align	(2)
@@ -495,7 +494,7 @@ start_address:
 	.globl	write_profile_information,write_profile_stack
 #endif
 	.globl	__driver
-	
+
 / from system.abc:	
 	.global	INT
 	.global	CHAR
@@ -730,7 +729,7 @@ init_clean:
 #ifdef USE_CLIB
 	call	@malloc
 #else
-# if 0
+# ifndef STACK_OVERFLOW_EXCEPTION_HANDLER
 	call	@allocate_memory
 # else
 	call	@allocate_memory_with_guard_page_at_end
@@ -742,7 +741,7 @@ init_clean:
 	je	no_memory_3
 	
 	mov	d0,stack_mbp
-#if 1
+#ifdef STACK_OVERFLOW_EXCEPTION_HANDLER
 	addl	@ab_stack_size,d0
 	addl	$3+4095,d0
 	andl	$-4096,d0
@@ -2794,7 +2793,7 @@ no_total_compact_gc_bytes_carry:
 	lea	(d0,d1,4),d0
 	jmp	end_garbage_collect
 
-#if 1
+#ifdef STACK_OVERFLOW_EXCEPTION_HANDLER
 	.globl	_clean_exception_handler?4
 _clean_exception_handler?4:
 	movl	4(%esp),%eax
