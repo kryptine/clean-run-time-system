@@ -12,6 +12,8 @@
 # define ULONG unsigned long
 # define OS(w,o) w
 
+# include "wfileIO3.h"
+
 # ifndef FILE_END
 #  define FILE_END 2
 # endif
@@ -29,10 +31,11 @@ extern void IO_error (char*);
 extern void *allocate_memory (int);
 extern void free_memory (void*);
 
-#define EOF (-1)
+extern int std_input_from_file;
+extern int std_output_to_file;
+extern HANDLE std_input_handle,std_output_handle,std_error_handle;
 
-#define CLEAN_TRUE 1
-#define CLEAN_BOOL int
+#define EOF (-1)
 
 #define MAX_N_FILES 20
 
@@ -43,27 +46,6 @@ extern void free_memory (void*);
 #define F_SEEK_SET 0
 #define F_SEEK_CUR 1
 #define F_SEEK_END 2
-
-struct file {								/* 48 bytes */
-	unsigned char *	file_read_p;			/* offset 0 */
-	unsigned char *	file_write_p;			/* offset 4 */
-	unsigned char *	file_end_buffer_p;		/* offset 8 */
-	short				file_mode;				/* offset 12 */
-	char				file_unique;			/* offset 14 */
-	char				file_error;				/* offset 15 */
-
-	unsigned char *	file_buffer_p;
-
-	unsigned long		file_offset;
-	unsigned long		file_length;
-
-	char *				file_name;
-	long				file_number;
-	unsigned long		file_position;
-	unsigned long		file_position_2;
-
-	HFILE			file_refnum;
-};
 
 struct clean_string {
 	long	length;
@@ -204,8 +186,10 @@ struct file *open_file (struct clean_string *file_name,unsigned int file_mode)
 		IO_error ("fopen: out of memory");
 	}
 	
-	f->file_buffer_p=buffer;
-	f->file_end_buffer_p=buffer;
+	f->file_read_buffer_p=buffer;
+	f->file_write_buffer_p=buffer;
+	f->file_end_read_buffer_p=buffer;
+	f->file_end_write_buffer_p=buffer;
 	f->file_read_p=buffer;
 	f->file_write_p=buffer;
 
@@ -276,7 +260,8 @@ struct file *open_file (struct clean_string *file_name,unsigned int file_mode)
 	f->file_length=file_length;
 	f->file_position=-2;
 	f->file_position_2=-1;
-	f->file_refnum=file_handle;
+	f->file_read_refnum=file_handle;
+	f->file_write_refnum=file_handle;
 	
 	if (fn>=number_of_files)
 		number_of_files=fn+1;
@@ -285,6 +270,45 @@ struct file *open_file (struct clean_string *file_name,unsigned int file_mode)
 }
 
 static int stdio_open=0;
+
+void init_std_io_from_or_to_file (void)
+{
+	struct file *f;
+	unsigned char *buffer;
+	
+	f=&file_table[1];
+
+	buffer=allocate_memory (FILE_IO_BUFFER_SIZE<<1);
+	if (buffer==NULL){
+		std_input_from_file=0;
+		std_output_to_file=0;
+		return;
+	}
+
+	f->file_read_buffer_p=buffer;
+	f->file_end_read_buffer_p=buffer;
+	f->file_read_p=buffer;
+
+	buffer+=FILE_IO_BUFFER_SIZE;
+
+	f->file_write_buffer_p=buffer;
+	f->file_end_write_buffer_p=buffer;
+	f->file_write_p=buffer;
+
+	f->file_mode=(1<<F_READ_TEXT) | (1<<F_WRITE_TEXT);
+	f->file_unique=1;
+	f->file_error=0;
+
+	f->file_offset=0;
+	f->file_length=0;
+
+	f->file_name="stdio";
+	f->file_position=-2;
+	f->file_position_2=-1;
+
+	f->file_read_refnum=std_input_handle;
+	f->file_write_refnum=std_output_handle;
+}
 
 struct file *open_stdio (void)
 {
@@ -305,8 +329,8 @@ static int flush_write_buffer (struct file *f)
 	if (f->file_mode & ((1<<F_WRITE_TEXT)|(1<<F_WRITE_DATA)|(1<<F_APPEND_TEXT)|(1<<F_APPEND_DATA))){
 		unsigned char *buffer;
 		
-		buffer=f->file_buffer_p;
-		if (buffer!=f->file_end_buffer_p){
+		buffer=f->file_write_buffer_p;
+		if (buffer!=f->file_end_write_buffer_p){
 			OS(DWORD,APIRET) error;
 			long count;
 
@@ -316,18 +340,17 @@ static int flush_write_buffer (struct file *f)
 				error=0;
 			else {
 #ifdef WINDOWS
-				error=!WriteFile (f->file_refnum,buffer,count,&count,NULL);
+				error=!WriteFile (f->file_write_refnum,buffer,count,&count,NULL);
 #else
-				error=DosWrite (f->file_refnum,buffer,count,&count);
+				error=DosWrite (f->file_write_refnum,buffer,count,&count);
 #endif
 				f->file_offset += count;
 			}
 			
 			if (f->file_offset > f->file_length)
 				f->file_length=f->file_offset;
-		
-			f->file_end_buffer_p=buffer;
-			f->file_read_p=buffer;
+
+			f->file_end_write_buffer_p=buffer;
 
 			if (error!=0 || count!=f->file_write_p-buffer){
 				f->file_write_p=buffer;
@@ -344,10 +367,14 @@ static int flush_write_buffer (struct file *f)
 
 CLEAN_BOOL flush_file_buffer (struct file *f)
 {
-	if (is_special_file (f))
+	if (is_special_file (f)){
+		if (f==&file_table[1] && std_output_to_file)
+			return flush_write_buffer (f);
+		
 		return 1;
-	else
-		return flush_write_buffer (f);
+	}
+	
+	return flush_write_buffer (f);
 }
 
 CLEAN_BOOL close_file (struct file *f)
@@ -357,6 +384,21 @@ CLEAN_BOOL close_file (struct file *f)
 			if (!stdio_open)
 				IO_error ("fclose: file not open (stdio)");
 			stdio_open=0;
+
+			if (std_input_from_file || std_output_to_file){
+				int result;
+
+				result=CLEAN_TRUE;
+
+				if (f->file_error)
+					result=0;
+				
+				if (std_output_to_file)
+					if (! flush_write_buffer (f))
+						result=0;
+
+				return result;
+			}
 		}
 		return CLEAN_TRUE;
 	} else {
@@ -374,15 +416,15 @@ CLEAN_BOOL close_file (struct file *f)
 			result=0;
 
 #ifdef WINDOWS
-		if (!CloseHandle (f->file_refnum))
+		if (!CloseHandle (f->file_read_refnum))
 			result=0;
 #else
-		if (DosClose (f->file_refnum)!=0)
+		if (DosClose (f->file_read_refnum)!=0)
 			result=0;
 #endif
 
 		free_memory (f->file_name);
-		free_memory (f->file_buffer_p);
+		free_memory (f->file_read_buffer_p);
 		
 		f->file_mode=0;
 
@@ -432,12 +474,13 @@ CLEAN_BOOL re_open_file (struct file *f,unsigned int file_mode)
 		if (f->file_mode!=0){	
 			flush_write_buffer (f);
 
-			OS(CloseHandle,DosClose) (f->file_refnum);
+			OS(CloseHandle,DosClose) (f->file_read_refnum);
 		} else {	
 			buffer=allocate_memory (FILE_IO_BUFFER_SIZE);
 			if (buffer==NULL)
 				IO_error ("freopen: out of memory");
-			f->file_buffer_p=buffer;
+			f->file_read_buffer_p=buffer;
+			f->file_write_buffer_p=buffer;
 		}
 
 		f->file_mode=0;
@@ -447,7 +490,7 @@ CLEAN_BOOL re_open_file (struct file *f,unsigned int file_mode)
 								file_action_reopen[file_mode],FILE_ATTRIBUTE_NORMAL,NULL);
 		if (file_handle==INVALID_HANDLE_VALUE){
 			free_memory (f->file_name);
-			free_memory (f->file_buffer_p);
+			free_memory (f->file_read_buffer_p);
 			return 0;
 		}
 #else
@@ -456,7 +499,7 @@ CLEAN_BOOL re_open_file (struct file *f,unsigned int file_mode)
 	
 		if (error!=0){
 			free_memory (f->file_name);
-			free_memory (f->file_buffer_p);
+			free_memory (f->file_read_buffer_p);
 			return 0;
 		}
 #endif
@@ -475,7 +518,7 @@ CLEAN_BOOL re_open_file (struct file *f,unsigned int file_mode)
 			
 				if (file_length==-1){
 					free_memory (f->file_name);
-					free_memory (f->file_buffer_p);
+					free_memory (f->file_read_buffer_p);
 					OS(CloseHandle,DosClose) (file_handle);
 					IO_error ("freopen: can't seek to eof");
 				}
@@ -484,7 +527,7 @@ CLEAN_BOOL re_open_file (struct file *f,unsigned int file_mode)
 			
 				if (error!=0){
 					free_memory (f->file_name);
-					free_memory (f->file_buffer_p);
+					free_memory (f->file_read_buffer_p);
 					OS(CloseHandle,DosClose) (file_handle);
 					IO_error ("freopen: can't seek to eof");
 				}
@@ -498,7 +541,7 @@ CLEAN_BOOL re_open_file (struct file *f,unsigned int file_mode)
 
 				if (file_length==-1){
 					free_memory (f->file_name);
-					free_memory (f->file_buffer_p);
+					free_memory (f->file_read_buffer_p);
 					OS(CloseHandle,DosClose) (file_handle);
 					IO_error ("freopen: can't get eof");
 				}
@@ -509,7 +552,7 @@ CLEAN_BOOL re_open_file (struct file *f,unsigned int file_mode)
 				
 				if (error!=0){
 					free_memory (f->file_name);
-					free_memory (f->file_buffer_p);
+					free_memory (f->file_read_buffer_p);
 					OS(CloseHandle,DosClose) (file_handle);
 					IO_error ("freopen: can't get eof");
 				}
@@ -519,15 +562,17 @@ CLEAN_BOOL re_open_file (struct file *f,unsigned int file_mode)
 			}
 		}
 	
-		f->file_refnum=file_handle;
+		f->file_read_refnum=file_handle;
+		f->file_write_refnum=file_handle;
 		f->file_mode=1<<file_mode;
 		f->file_length=file_length;
 		f->file_position=-2;
 		f->file_position_2=-1;
 		f->file_error=0;
 
-		buffer=f->file_buffer_p;
-		f->file_end_buffer_p=buffer;
+		buffer=f->file_read_buffer_p;
+		f->file_end_read_buffer_p=buffer;
+		f->file_end_write_buffer_p=buffer;
 		f->file_read_p=buffer;
 		f->file_write_p=buffer;
 		
@@ -543,22 +588,21 @@ static void char_to_new_buffer (int c,struct file *f)
 	flush_write_buffer (f);
 
 	count=FILE_IO_BUFFER_SIZE - (f->file_offset & (FILE_IO_BUFFER_SIZE-1));
-	buffer=f->file_buffer_p;
+	buffer=f->file_write_buffer_p;
 	
 	*buffer=c;
 	f->file_write_p=buffer+1;
 	buffer+=count;
-	f->file_end_buffer_p=buffer;
-	f->file_read_p=buffer;
+	f->file_end_write_buffer_p=buffer;
 }
 
 #if defined (__MWERKS__) || defined (powerc)
-#define write_char(c,f) if ((f)->file_write_p<(f)->file_end_buffer_p) \
+#define write_char(c,f) if ((f)->file_write_p<(f)->file_end_write_buffer_p) \
 		*((f)->file_write_p)++=(c); \
 	else \
 		char_to_new_buffer((c),(f))
 #else
-#define write_char(c,f) ((f)->file_write_p<(f)->file_end_buffer_p ? (*((f)->file_write_p)++=(c)) : char_to_new_buffer((c),(f)))
+#define write_char(c,f) ((f)->file_write_p<(f)->file_end_write_buffer_p ? (*((f)->file_write_p)++=(c)) : char_to_new_buffer((c),(f)))
 #endif
 
 static int char_from_new_buffer (struct file *f)
@@ -569,12 +613,12 @@ static int char_from_new_buffer (struct file *f)
 	int c;
 	
 	count=FILE_IO_BUFFER_SIZE - (f->file_offset & (FILE_IO_BUFFER_SIZE-1));
-	buffer=f->file_buffer_p;
+	buffer=f->file_read_buffer_p;
 	
 #ifdef WINDOWS
-	error=!ReadFile (f->file_refnum,buffer,count,&count,NULL);
+	error=!ReadFile (f->file_read_refnum,buffer,count,&count,NULL);
 #else
-	error=DosRead (f->file_refnum,buffer,count,&count);
+	error=DosRead (f->file_read_refnum,buffer,count,&count);
 #endif
 
 	f->file_offset += count;
@@ -583,26 +627,24 @@ static int char_from_new_buffer (struct file *f)
 		f->file_error=-1;
 
 	if (error!=0 || count==0){
-		f->file_end_buffer_p=buffer;
+		f->file_end_read_buffer_p=buffer;
 		f->file_read_p=buffer;
-		f->file_write_p=buffer;
 		return EOF;
 	}
 
 	c=*buffer;
 	f->file_read_p=buffer+1;
 	buffer+=count;
-	f->file_end_buffer_p=buffer;
-	f->file_write_p=buffer;
+	f->file_end_read_buffer_p=buffer;
 
 	return c;
 }
 
-#define read_char(f) ((f)->file_read_p<(f)->file_end_buffer_p ? *((f)->file_read_p)++ : char_from_new_buffer(f))
+#define read_char(f) ((f)->file_read_p<(f)->file_end_read_buffer_p ? *((f)->file_read_p)++ : char_from_new_buffer(f))
 
 int file_read_char (struct file *f)
 {
-	if (f->file_read_p < f->file_end_buffer_p){
+	if (f->file_read_p < f->file_end_read_buffer_p){
 		unsigned char c;
 		
 		c=*(f->file_read_p)++;
@@ -611,35 +653,50 @@ int file_read_char (struct file *f)
 			if (read_char (f)=='\n')
 				c='\n';
 			else
-				if (f->file_read_p > f->file_buffer_p)
+				if (f->file_read_p > f->file_read_buffer_p)
 					--f->file_read_p;
 		}
 		
 		return c;
 	} else {
 		if (is_special_file (f)){
-			if (f==file_table){
+			if (f==&file_table[1]){
+				if (std_input_from_file){
+					int c;
+
+					c=char_from_new_buffer (f);
+
+					if (c=='\r'){
+						if (read_char (f)=='\n')
+							c='\n';
+						else
+							if (f->file_read_p > f->file_read_buffer_p)
+								--f->file_read_p;
+					}
+					
+					return c;
+				} else
+					return w_get_char();
+			} else if (f==file_table){
 				IO_error ("freadc: can't read from stderr");
 				return 0;
-			} else if (f==&file_table[1])
-				return w_get_char();
-			else {
+			} else {
 				IO_error ("freadc: can't open this file");
 				return 0;
 			}
 		} else {
 			int c;
-			
+
 			if (f->file_mode & ~((1<<F_READ_TEXT) | (1<<F_READ_DATA)))
 				IO_error ("freadc: read from an output file");
-		
+
 			c=char_from_new_buffer (f);
 			
 			if (c=='\r' && f->file_mode & (1<<F_READ_TEXT)){
 				if (read_char (f)=='\n')
 					c='\n';
 				else
-					if (f->file_read_p > f->file_buffer_p)
+					if (f->file_read_p > f->file_read_buffer_p)
 						--f->file_read_p;
 			}
 			
@@ -653,87 +710,88 @@ int file_read_char (struct file *f)
 CLEAN_BOOL file_read_int (struct file *f,int *i_p)
 {
 	if (is_special_file (f)){
-		if (f==file_table){
+		if (f==&file_table[1]){
+			if (!std_input_from_file)
+				return w_get_int (i_p);
+		} else if (f==file_table){
 			IO_error ("freadi: can't read from stderr");
 			return 0;
-		} else if (f==&file_table[1])
-			return w_get_int (i_p);
-		else {
+		} else {
 			IO_error ("freadi: can't open this file");
 			return 0;
 		}
-	} else {
-		*i_p=0;
-		
-		if (f->file_mode & (1<<F_READ_DATA)){
-			int i;
-			
-			if ((i=read_char (f))==EOF){
-				f->file_error=-1;
-				return 0;
-			}
-			((char*)i_p)[0]=i;
-			if ((i=read_char (f))==EOF){
-				f->file_error=-1;
-				return 0;
-			}
-			((char*)i_p)[1]=i;
-			if ((i=read_char (f))==EOF){
-				f->file_error=-1;
-				return 0;
-			}
-			((char*)i_p)[2]=i;
-			if ((i=read_char (f))==EOF){
-				f->file_error=-1;
-				return 0;
-			}
-			((char*)i_p)[3]=i;	
-		} else if (f->file_mode & (1<<F_READ_TEXT)){
-			int c,negative,result;
-			
-			result=CLEAN_TRUE;
-			
-			while ((c=read_char (f))==' ' || c=='\t' || c=='\n' || c=='\r')
-				;
-			
-			negative=0;
-			if (c=='+')
-				c=read_char (f);
-			else
-				if (c=='-'){
-					c=read_char (f);
-					negative=1;
-				}
-			
-			if (!is_digit (c)){
-				result=0;
-				f->file_error=-1;
-			} else {
-				unsigned int i;
-				
-				i=c-'0';
-				
-				while (is_digit (c=read_char (f))){
-					i+=i<<2;
-					i+=i;
-					i+=c-'0';
-				};
-			
-				if (negative)
-					i=-i;
-				
-				*i_p=i;
-			}
-
-			if (f->file_read_p > f->file_buffer_p)
-				--f->file_read_p;
-
-			return result;
-		} else
-			IO_error ("freadi: read from an output file");
-		
-		return CLEAN_TRUE;
 	}
+
+	*i_p=0;
+
+	if (f->file_mode & (1<<F_READ_DATA)){
+		int i;
+		
+		if ((i=read_char (f))==EOF){
+			f->file_error=-1;
+			return 0;
+		}
+		((char*)i_p)[0]=i;
+		if ((i=read_char (f))==EOF){
+			f->file_error=-1;
+			return 0;
+		}
+		((char*)i_p)[1]=i;
+		if ((i=read_char (f))==EOF){
+			f->file_error=-1;
+			return 0;
+		}
+		((char*)i_p)[2]=i;
+		if ((i=read_char (f))==EOF){
+			f->file_error=-1;
+			return 0;
+		}
+		((char*)i_p)[3]=i;	
+	} else if (f->file_mode & (1<<F_READ_TEXT)){
+		int c,negative,result;
+		
+		result=CLEAN_TRUE;
+		
+		while ((c=read_char (f))==' ' || c=='\t' || c=='\n' || c=='\r')
+			;
+		
+		negative=0;
+		if (c=='+')
+			c=read_char (f);
+		else
+			if (c=='-'){
+				c=read_char (f);
+				negative=1;
+			}
+		
+		if (!is_digit (c)){
+			result=0;
+			f->file_error=-1;
+		} else {
+			unsigned int i;
+			
+			i=c-'0';
+			
+			while (is_digit (c=read_char (f))){
+				i+=i<<2;
+				i+=i;
+				i+=c-'0';
+			};
+		
+			if (negative)
+				i=-i;
+			
+			*i_p=i;
+		}
+
+		if (f->file_read_p > f->file_read_buffer_p)
+			--f->file_read_p;
+
+		return result;
+	} else
+		IO_error ("freadi: read from an output file");
+	
+	return CLEAN_TRUE;
 }
 
 extern int convert_string_to_real (char *s,double *r_p);
@@ -741,115 +799,116 @@ extern int convert_string_to_real (char *s,double *r_p);
 CLEAN_BOOL file_read_real (struct file *f,double *r_p)
 {
 	if (is_special_file (f)){
-		if (f==file_table){
+		if (f==&file_table[1]){
+			if (!std_input_from_file)
+				return w_get_real (r_p);
+		} else if (f==file_table){
 			IO_error ("freadr: can't read from stderr");
 			return 0;
-		} else if (f==&file_table[1])
-			return w_get_real (r_p);
-		else {
+		} else {
 			IO_error ("freadr: can't open this file");
 			return 0;
 		}
-	} else {
-		*r_p=0.0;
-		
-		if (f->file_mode & (1<<F_READ_DATA)){
-			int n;
+	}
+	
+	*r_p=0.0;
+	
+	if (f->file_mode & (1<<F_READ_DATA)){
+		int n;
 
-			for (n=0; n<8; ++n){
-				int i;
-				
-				if ((i=read_char (f))==EOF){
-					f->file_error=-1;
-					return 0;
-				}
-				((char*)r_p)[n]=i;
+		for (n=0; n<8; ++n){
+			int i;
+			
+			if ((i=read_char (f))==EOF){
+				f->file_error=-1;
+				return 0;
 			}
-		} else if (f->file_mode & (1<<F_READ_TEXT)){
-			int c,dot,digits,result,n;
-			char s[256+1];
-			
-			n=0;
-			
-			while ((c=read_char (f))==' ' || c=='\t' || c=='\n' || c=='\r')
-				;
-			
-			if (c=='+')
+			((char*)r_p)[n]=i;
+		}
+	} else if (f->file_mode & (1<<F_READ_TEXT)){
+		int c,dot,digits,result,n;
+		char s[256+1];
+		
+		n=0;
+		
+		while ((c=read_char (f))==' ' || c=='\t' || c=='\n' || c=='\r')
+			;
+		
+		if (c=='+')
+			c=read_char (f);
+		else
+			if (c=='-'){
+				s[n++]=c;
 				c=read_char (f);
-			else
-				if (c=='-'){
-					s[n++]=c;
-					c=read_char (f);
+			}
+		
+		dot=0;
+		digits=0;
+		
+		while (is_digit (c) || c=='.'){
+			if (c=='.'){
+				if (dot){
+					dot=2;
+					break;
 				}
-			
-			dot=0;
-			digits=0;
-			
-			while (is_digit (c) || c=='.'){
-				if (c=='.'){
-					if (dot){
-						dot=2;
-						break;
-					}
-					dot=1;
-				} else
-					digits=-1;
+				dot=1;
+			} else
+				digits=-1;
+			if (n<256)
+				s[n++]=c;
+			c=read_char (f);
+		}
+	
+		result=0;
+		if (digits)
+			if (dot==2 || ! (c=='e' || c=='E'))
+				result=CLEAN_TRUE;
+			else {
 				if (n<256)
 					s[n++]=c;
 				c=read_char (f);
-			}
-		
-			result=0;
-			if (digits)
-				if (dot==2 || ! (c=='e' || c=='E'))
-					result=CLEAN_TRUE;
-				else {
-					if (n<256)
-						s[n++]=c;
+				
+				if (c=='+')
 					c=read_char (f);
-					
-					if (c=='+')
+				else
+					if (c=='-'){
+						if (n<256)
+							s[n++]=c;
 						c=read_char (f);
-					else
-						if (c=='-'){
-							if (n<256)
-								s[n++]=c;
-							c=read_char (f);
-						}
-					
-					if (is_digit (c)){
-						do {
-							if (n<256)
-								s[n++]=c;
-							c=read_char (f);
-						} while (is_digit (c));
-		
-						result=CLEAN_TRUE;
 					}
+				
+				if (is_digit (c)){
+					do {
+						if (n<256)
+							s[n++]=c;
+						c=read_char (f);
+					} while (is_digit (c));
+	
+					result=CLEAN_TRUE;
 				}
-		
-			if (n>=256)
-				result=0;
-		
-			if (f->file_read_p > f->file_buffer_p)
-				--f->file_read_p;
-					
-			*r_p=0.0;
-			
-			if (result){
-				s[n]='\0';
-				result= convert_string_to_real (s,r_p)==&s[n];
 			}
-			
-			if (!result)
-				f->file_error=-1;
-
-			return result;
-		} else
-			IO_error ("freadr: read from an output file");
+	
+		if (n>=256)
+			result=0;
+	
+		if (f->file_read_p > f->file_read_buffer_p)
+			--f->file_read_p;
+				
+		*r_p=0.0;
 		
-		return CLEAN_TRUE;
-	}
+		if (result){
+			s[n]='\0';
+			result= convert_string_to_real (s,r_p)==&s[n];
+		}
+		
+		if (!result)
+			f->file_error=-1;
+
+		return result;
+	} else
+		IO_error ("freadr: read from an output file");
+
+	return CLEAN_TRUE;
 }
 
 #define OLD_READ_STRING 0
@@ -866,173 +925,175 @@ unsigned long file_read_characters (struct file *f,unsigned long *length_p,char 
 	max_length=*length_p;
 #endif
 	if (is_special_file (f)){
-		if (f==file_table){
-			IO_error ("freads: can't read from stderr");
-			return 0;
-		} else if (f==&file_table[1]){
-			char *string;
-			unsigned long length;
-			
-			length=0;
+		if (f==&file_table[1]){
+			if (!std_input_from_file){
+				char *string;
+				unsigned long length;
+				int c;
+				
+				length=0;
 #if OLD_READ_STRING
-			string=s->characters;
+				string=s->characters;
 #else
-			string=s;
+				string=s;
 #endif
-			while (length!=max_length){
-				*string++=w_get_char();
-				++length;
-			}
+				while (length!=max_length && (c=w_get_char(),c!=-1)){
+					*string++=c;
+					++length;
+				}
 
 #if OLD_READ_STRING
-			s->length=length;
+				s->length=length;
 #else
-			*length_p=length;
+				*length_p=length;
 #endif
-			return length;
+				return length;
+			}
+		} else if (f==file_table){
+			IO_error ("freads: can't read from stderr");
+			return 0;
 		} else {
 			IO_error ("freads: can't open this file");
 			return 0;
 		}
 	} else {
-		unsigned char *string,*end_string,*begin_string;
-
 		if (f->file_mode & ~((1<<F_READ_TEXT) | (1<<F_READ_DATA)))
 			IO_error ("freads: read from an output file");
-		
-#if OLD_READ_STRING
-		string=s->characters;
-#else
-		string=s;
-#endif
-		begin_string=string;
-		end_string=string+max_length;
+	}
+	{
+	unsigned char *string,*end_string,*begin_string;
 
-		if (f->file_mode & (1<<F_READ_DATA)){
-			while (string<end_string){
-				if (f->file_read_p < f->file_end_buffer_p){
-					unsigned char *read_p;
-					long n;
-	
-					read_p=f->file_read_p;
-					
-					n=f->file_end_buffer_p-read_p;
-					if (n > end_string-string)
-						n=end_string-string;
-					
-					do {
-						*string++ = *read_p++;
-					} while (--n);
+#if OLD_READ_STRING
+	string=s->characters;
+#else
+	string=s;
+#endif
+	begin_string=string;
+	end_string=string+max_length;
+
+	if (f->file_mode & (1<<F_READ_DATA)){
+		while (string<end_string){
+			if (f->file_read_p < f->file_end_read_buffer_p){
+				unsigned char *read_p;
+				long n;
+
+				read_p=f->file_read_p;
 				
-					f->file_read_p=read_p;
-				} else {
-					if (end_string-string>=FILE_IO_BUFFER_SIZE && f->file_offset & (FILE_IO_BUFFER_SIZE-1)==0){
-						OS(DWORD,APIRET) error;
-						long count;
-						unsigned char *buffer;
-						
-						count=(end_string-string) & (~(FILE_IO_BUFFER_SIZE-1));
+				n=f->file_end_read_buffer_p-read_p;
+				if (n > end_string-string)
+					n=end_string-string;
+				
+				do {
+					*string++ = *read_p++;
+				} while (--n);
+			
+				f->file_read_p=read_p;
+			} else {
+				if (end_string-string>=FILE_IO_BUFFER_SIZE && (f->file_offset & (FILE_IO_BUFFER_SIZE-1))==0){
+					OS(DWORD,APIRET) error;
+					long count;
+					unsigned char *buffer;
+					
+					count=(end_string-string) & (~(FILE_IO_BUFFER_SIZE-1));
 #ifdef WINDOWS										
-						error=!ReadFile (f->file_refnum,string,count,&count,NULL);
+					error=!ReadFile (f->file_read_refnum,string,count,&count,NULL);
 #else
-						error=DosRead (f->file_refnum,string,count,&count);
+					error=DosRead (f->file_read_refnum,string,count,&count);
 #endif
-						f->file_offset += count;
-	
-						if (error!=0)
-							f->file_error=-1;
-	
-						buffer=f->file_buffer_p;
-						f->file_end_buffer_p=buffer;
-						f->file_read_p=buffer;
-						f->file_write_p=buffer;
-						
-						string+=count;
-	
-						if (error!=0 || count==0)
-#if OLD_READ_STRING
-							return (s->length=string-begin_string);
-#else
-							return (*length_p=string-begin_string);
-#endif
-					} else {
-						int c;
-						
-						c=char_from_new_buffer (f);
-						if (c==EOF)
-							break;
-						*string++=c;
-					}
-				}
-			}
-		} else {
-			while (string<end_string){
-				if (f->file_read_p < f->file_end_buffer_p){
-					unsigned char *read_p;
-					long n;
-	
-					read_p=f->file_read_p;
-					
-					n=f->file_end_buffer_p-read_p;
-					if (n > end_string-string)
-						n=end_string-string;
-					
-					do {
-						char c;
+					f->file_offset += count;
 
-						c = *read_p++;
-						if (c=='\r'){
-							if (n>1){
-								if (*read_p=='\n'){
-									*string++='\n';
-									++read_p;
-									--n;
-								} else
-									*string++ = c;									
-							} else {
-								int c2;
-								
-								f->file_read_p=read_p;
-								c2=read_char (f);
-								read_p=f->file_read_p;
-								
-								if (c2=='\n')
-									*string++=c2;
-								else {
-									*string++=c;
-									if (read_p > f->file_buffer_p)
-										--read_p;
-								}
-								break;
-							}
-						} else
-							*string++ = c;
-					} while (--n);
-				
-					f->file_read_p=read_p;
+					if (error!=0)
+						f->file_error=-1;
+
+					buffer=f->file_read_buffer_p;
+					f->file_end_read_buffer_p=buffer;
+					f->file_read_p=buffer;
+					string+=count;
+
+					if (error!=0 || count==0)
+#if OLD_READ_STRING
+						return (s->length=string-begin_string);
+#else
+						return (*length_p=string-begin_string);
+#endif
 				} else {
 					int c;
 					
 					c=char_from_new_buffer (f);
 					if (c==EOF)
 						break;
-
-					if (c=='\r'){
-						if (read_char (f)=='\n')
-							c='\n';
-						else
-							if (f->file_read_p > f->file_buffer_p)
-								--f->file_read_p;
-					}
-					
 					*string++=c;
 				}
 			}
 		}
+	} else {
+		while (string<end_string){
+			if (f->file_read_p < f->file_end_read_buffer_p){
+				unsigned char *read_p;
+				long n;
+
+				read_p=f->file_read_p;
+				
+				n=f->file_end_read_buffer_p-read_p;
+				if (n > end_string-string)
+					n=end_string-string;
+				
+				do {
+					char c;
+
+					c = *read_p++;
+					if (c=='\r'){
+						if (n>1){
+							if (*read_p=='\n'){
+								*string++='\n';
+								++read_p;
+								--n;
+							} else
+								*string++ = c;									
+						} else {
+							int c2;
+							
+							f->file_read_p=read_p;
+							c2=read_char (f);
+							read_p=f->file_read_p;
+							
+							if (c2=='\n')
+								*string++=c2;
+							else {
+								*string++=c;
+								if (read_p > f->file_read_buffer_p)
+									--read_p;
+							}
+							break;
+						}
+					} else
+						*string++ = c;
+				} while (--n);
+			
+				f->file_read_p=read_p;
+			} else {
+				int c;
+				
+				c=char_from_new_buffer (f);
+				if (c==EOF)
+					break;
+
+				if (c=='\r'){
+					if (read_char (f)=='\n')
+						c='\n';
+					else
+						if (f->file_read_p > f->file_read_buffer_p)
+							--f->file_read_p;
+				}
+				
+				*string++=c;
+			}
+		}
+	}
 #if OLD_READ_STRING
-		return (s->length=string-begin_string);
+	return (s->length=string-begin_string);
 #else
-		return (*length_p=string-begin_string);
+	return (*length_p=string-begin_string);
 #endif
 	}
 }
@@ -1040,234 +1101,248 @@ unsigned long file_read_characters (struct file *f,unsigned long *length_p,char 
 unsigned long file_read_line (struct file *f,unsigned long max_length,char *string)
 {
 	if (is_special_file (f)){
-		if (f==file_table){
-			IO_error ("freadline: can't read from stderr");
-			return 0;
-		} else if (f==&file_table[1]){
-			unsigned long length;
-
-			length=0;
-
-			while (length!=max_length){
+		if (f==&file_table[1]){
+			if (!std_input_from_file){
+				unsigned long length;
 				int c;
 
-				c=w_get_char();
-				*string++=c;
-				++length;
-				if (c=='\n')
-					return length;
-			}
+				length=0;
+				c=0;
 
-			return -1;
+				while (length!=max_length && (c=w_get_char(),c!=-1)){
+					*string++=c;
+					++length;
+					if (c=='\n')
+						return length;
+				}
+
+				if (c!=-1)
+					return -1;
+			
+				return length;
+			}
+		} else if (f==file_table){
+			IO_error ("freadline: can't read from stderr");
+			return 0;
 		} else {
 			IO_error ("freadline: can't open this file");
 			return 0;
 		}
-	} else {
-		unsigned char *end_string,*begin_string;
-		int c;
+	}
+	
+	{
+	unsigned char *end_string,*begin_string;
+	int c;
 
-		begin_string=string;
-		end_string=string+max_length;
-		
-		c=0;
+	begin_string=string;
+	end_string=string+max_length;
+	
+	c=0;
 
-		if (f->file_mode & (1<<F_READ_TEXT)){
-			while ((unsigned char*)string<end_string){
-				if (f->file_read_p < f->file_end_buffer_p){
-					unsigned char *read_p;
-					long n;
+	if (f->file_mode & (1<<F_READ_TEXT)){
+		while ((unsigned char*)string<end_string){
+			if (f->file_read_p < f->file_end_read_buffer_p){
+				unsigned char *read_p;
+				long n;
+				
+				read_p=f->file_read_p;
+				
+				n=f->file_end_read_buffer_p-read_p;
+				if (n > end_string-(unsigned char*)string)
+					n=end_string-(unsigned char*)string;
+
+				do {
+					char ch;
 					
-					read_p=f->file_read_p;
+					ch=*read_p++;
 					
-					n=f->file_end_buffer_p-read_p;
-					if (n > end_string-(unsigned char*)string)
-						n=end_string-(unsigned char*)string;
-
-					do {
-						char ch;
-						
-						ch=*read_p++;
-						
-						if (ch=='\r'){
-							if (n>1 || read_p < f->file_end_buffer_p){
-								if (*read_p=='\n'){
-									f->file_read_p=++read_p;
-									*string++='\n';
-									return (unsigned char*)string-begin_string;
-								} else {
-									*string++=ch;	
-								}
+					if (ch=='\r'){
+						if (n>1 || read_p < f->file_end_read_buffer_p){
+							if (*read_p=='\n'){
+								f->file_read_p=++read_p;
+								*string++='\n';
+								return (unsigned char*)string-begin_string;
 							} else {
-								int c;
-							
-								f->file_read_p=read_p;
-								c=char_from_new_buffer(f);
-								read_p=f->file_read_p;
-
-								if (c=='\n'){
-									*string++=c;
-									return (unsigned char*)string-begin_string;								
-								} else {
-									*string++=ch;
-									
-									if (f->file_read_p > f->file_buffer_p)
-										--read_p;							
-								}
+								*string++=ch;	
 							}
 						} else {
-							*string++=ch;
-							if (ch=='\n'){
-								f->file_read_p=read_p;
-								return (unsigned char*)string-begin_string;
+							int c;
+						
+							f->file_read_p=read_p;
+							c=char_from_new_buffer(f);
+							read_p=f->file_read_p;
+
+							if (c=='\n'){
+								*string++=c;
+								return (unsigned char*)string-begin_string;								
+							} else {
+								*string++=ch;
+								
+								if (f->file_read_p > f->file_read_buffer_p)
+									--read_p;							
 							}
 						}
-					} while (--n);
-					
-					c=0;
-					f->file_read_p=read_p;
-				} else {
-					c=char_from_new_buffer(f);
-					if (c==EOF)
-						break;
-					
-					if (c=='\r'){
-						if (read_char (f)=='\n')
-							c='\n';
-						else
-							if (f->file_read_p > f->file_buffer_p)
-								--f->file_read_p;
-					}
-
-					*string++=c;				
-					if (c=='\n')
-						return (unsigned char*)string-begin_string;
-				}
-			}
-		} else if (f->file_mode & (1<<F_READ_DATA)){
-			while (string<end_string){
-				if (f->file_read_p < f->file_end_buffer_p){
-					unsigned char *read_p;
-					long n;
-
-					read_p=f->file_read_p;
-
-					n=f->file_end_buffer_p-read_p;
-					if (n > end_string-(unsigned char*)string)
-						n=end_string-(unsigned char*)string;
-					do {
-						char ch;
-
-						ch=*read_p++;
-
-						*string++=ch;	
-						if (ch=='\xd'){
-							if (n>1){
-								if (*read_p=='\xa'){
-									*string++='\xa';
-									++read_p;
-								}
-								f->file_read_p=read_p;
-								return (unsigned char*)string-begin_string;
-							} else if (read_p < f->file_end_buffer_p){
-								f->file_read_p=read_p;
-								if (*read_p!='\xa'){
-									return (unsigned char*)string-begin_string;
-								} else {
-									return -1; /* return \xd, read \xa next time */
-								}
-							} else {
-								int c;
-
-								f->file_read_p=read_p;
-								c=char_from_new_buffer(f);
-								read_p=f->file_read_p;
-
-								if (c!='\xa'){
-									if (read_p > f->file_buffer_p)
-										--read_p;							
-
-									f->file_read_p=read_p;
-									return (unsigned char*)string-begin_string;
-								} else {
-									if (string<end_string){
-										*string++='\xa';
-										f->file_read_p=read_p;
-										return (unsigned char*)string-begin_string;											
-									} else {
-										if (read_p > f->file_buffer_p)
-											--read_p;							
-
-										f->file_read_p=read_p;
-										return -1; /* return \xd, read \xa next time */
-									}
-								}
-							}
-						} else if (ch=='\xa'){
+					} else {
+						*string++=ch;
+						if (ch=='\n'){
 							f->file_read_p=read_p;
 							return (unsigned char*)string-begin_string;
 						}
-					} while (--n);
-
-					c=0;
-					f->file_read_p=read_p;
-				} else {
-					c=char_from_new_buffer(f);
-					if (c==EOF)
-						break;
-
-					*string++=c;		
-
-					if (c=='\xd'){
-						c = read_char (f);
-						if (string<end_string){
-							if (c=='\xa')
-								*string++=c;				
-							else
-								if (f->file_read_p > f->file_buffer_p)
-									--f->file_read_p;
-						} else {
-							if (f->file_read_p > f->file_buffer_p)
-								--f->file_read_p;
-							
-							if (c=='\xa')
-								return -1;
-						}
-
-						return (unsigned char*)string-begin_string;
-					} else if (c=='\xa')
-						return (unsigned char*)string-begin_string;
+					}
+				} while (--n);
+				
+				c=0;
+				f->file_read_p=read_p;
+			} else {
+				c=char_from_new_buffer(f);
+				if (c==EOF)
+					break;
+				
+				if (c=='\r'){
+					if (read_char (f)=='\n')
+						c='\n';
+					else
+						if (f->file_read_p > f->file_read_buffer_p)
+							--f->file_read_p;
 				}
-			}
-		} else
-			IO_error ("freadline: read from an output file");
 
-		if (c!=EOF)
-			return -1;
-		
-		return (unsigned char*)string-begin_string;
+				*string++=c;				
+				if (c=='\n')
+					return (unsigned char*)string-begin_string;
+			}
+		}
+	} else if (f->file_mode & (1<<F_READ_DATA)){
+		while (string<end_string){
+			if (f->file_read_p < f->file_end_read_buffer_p){
+				unsigned char *read_p;
+				long n;
+
+				read_p=f->file_read_p;
+
+				n=f->file_end_read_buffer_p-read_p;
+				if (n > end_string-(unsigned char*)string)
+					n=end_string-(unsigned char*)string;
+				do {
+					char ch;
+
+					ch=*read_p++;
+
+					*string++=ch;	
+					if (ch=='\xd'){
+						if (n>1){
+							if (*read_p=='\xa'){
+								*string++='\xa';
+								++read_p;
+							}
+							f->file_read_p=read_p;
+							return (unsigned char*)string-begin_string;
+						} else if (read_p < f->file_end_read_buffer_p){
+							f->file_read_p=read_p;
+							if (*read_p!='\xa'){
+								return (unsigned char*)string-begin_string;
+							} else {
+								return -1; /* return \xd, read \xa next time */
+							}
+						} else {
+							int c;
+
+							f->file_read_p=read_p;
+							c=char_from_new_buffer(f);
+							read_p=f->file_read_p;
+
+							if (c!='\xa'){
+								if (read_p > f->file_read_buffer_p)
+									--read_p;							
+
+								f->file_read_p=read_p;
+								return (unsigned char*)string-begin_string;
+							} else {
+								if (string<end_string){
+									*string++='\xa';
+									f->file_read_p=read_p;
+									return (unsigned char*)string-begin_string;											
+								} else {
+									if (read_p > f->file_read_buffer_p)
+										--read_p;							
+
+									f->file_read_p=read_p;
+									return -1; /* return \xd, read \xa next time */
+								}
+							}
+						}
+					} else if (ch=='\xa'){
+						f->file_read_p=read_p;
+						return (unsigned char*)string-begin_string;
+					}
+				} while (--n);
+
+				c=0;
+				f->file_read_p=read_p;
+			} else {
+				c=char_from_new_buffer(f);
+				if (c==EOF)
+					break;
+
+				*string++=c;		
+
+				if (c=='\xd'){
+					c = read_char (f);
+					if (string<end_string){
+						if (c=='\xa')
+							*string++=c;				
+						else
+							if (f->file_read_p > f->file_read_buffer_p)
+								--f->file_read_p;
+					} else {
+						if (f->file_read_p > f->file_read_buffer_p)
+							--f->file_read_p;
+						
+						if (c=='\xa')
+							return -1;
+					}
+
+					return (unsigned char*)string-begin_string;
+				} else if (c=='\xa')
+					return (unsigned char*)string-begin_string;
+			}
+		}
+	} else
+		IO_error ("freadline: read from an output file");
+
+	if (c!=EOF)
+		return -1;
+	
+	return (unsigned char*)string-begin_string;
 	}
 }
 
 void file_write_char (int c,struct file *f)
 {	
-	if (f->file_write_p < f->file_end_buffer_p){
+	if (f->file_write_p < f->file_end_write_buffer_p){
 		if (c=='\n' && f->file_mode & ((1<<F_WRITE_TEXT)|(1<<F_APPEND_TEXT))){
 			*(f->file_write_p)++='\r';
 
-			if (f->file_write_p < f->file_end_buffer_p)
+			if (f->file_write_p < f->file_end_write_buffer_p)
 				*(f->file_write_p)++=c;
 			else
 				char_to_new_buffer (c,f);				
 		} else {
 			*(f->file_write_p)++=c;
 		}
-	} else {	
+	} else {
 		if (is_special_file (f)){
-			if (f==file_table)
+			if (f==&file_table[1]){
+				if (!std_output_to_file)
+					w_print_char (c);
+				else {
+					if (c=='\n'){
+						char_to_new_buffer ('\r',f);
+						write_char (c,f);
+					} else
+						char_to_new_buffer (c,f);				
+				}
+			} else if (f==file_table)
 				ew_print_char (c);
-			else if (f==&file_table[1])
-				w_print_char (c);
 			else
 				IO_error ("fwritec: can't open this file");
 		} else {
@@ -1289,74 +1364,82 @@ extern char *convert_real_to_string (double d,char *s_p);
 void file_write_int (int i,struct file *f)
 {	
 	if (is_special_file (f)){
-		if (f==file_table)
+		if (f==&file_table[1]){
+			if (!std_output_to_file){
+				w_print_int (i);
+				return;
+			}
+		} else if (f==file_table){
 			ew_print_int (i);
-		else if (f==&file_table[1])
-			w_print_int (i);
-		else
+			return;
+		} else
 			IO_error ("fwritei: can't open this file");
 	} else {
 		if (f->file_mode & ~((1<<F_WRITE_TEXT)|(1<<F_WRITE_DATA)|(1<<F_APPEND_TEXT)|(1<<F_APPEND_DATA)))
 			IO_error ("fwritei: write to an input file");
+	}
+
+	if (f->file_mode & ((1<<F_WRITE_DATA)|(1<<F_APPEND_DATA))){
+		int v=i;
+
+		write_char (((char*)&v)[0],f);
+		write_char (((char*)&v)[1],f);
+		write_char (((char*)&v)[2],f);
+		write_char (((char*)&v)[3],f);
+	} else {
+		unsigned char string[24],*end_p,*s;
+		int length;
+
+		end_p=convert_int_to_string (string,i);
+		length=end_p-string;
 		
-		if (f->file_mode & ((1<<F_WRITE_DATA)|(1<<F_APPEND_DATA))){
-			int v=i;
-
-			write_char (((char*)&v)[0],f);
-			write_char (((char*)&v)[1],f);
-			write_char (((char*)&v)[2],f);
-			write_char (((char*)&v)[3],f);
-		} else {
-			unsigned char string[24],*end_p,*s;
-			int length;
-
-			end_p=convert_int_to_string (string,i);
-			length=end_p-string;
-			
-			s=string;
-			do {
-				write_char (*s++,f);
-			} while (--length);
-		}
+		s=string;
+		do {
+			write_char (*s++,f);
+		} while (--length);
 	}
 }
 
 void file_write_real (double r,struct file *f)
 {	
 	if (is_special_file (f)){
-		if (f==file_table)
+		if (f==&file_table[1]){
+			if (!std_output_to_file){
+				w_print_real (r);
+				return;
+			}
+		} else if (f==file_table){
 			ew_print_real (r);
-		else if (f==&file_table[1])
-			w_print_real (r);
-		else
+			return;
+		} else
 			IO_error ("fwriter: can't open this file");
-	} else {	
+	} else {
 		if (f->file_mode & ~((1<<F_WRITE_TEXT)|(1<<F_WRITE_DATA)|(1<<F_APPEND_TEXT)|(1<<F_APPEND_DATA)))
 			IO_error ("fwriter: write to an input file");
-		
-		if (f->file_mode & ((1<<F_WRITE_DATA)|(1<<F_APPEND_DATA))){
-			double v=r;
+	}
 
-			write_char (((char*)&v)[0],f);
-			write_char (((char*)&v)[1],f);
-			write_char (((char*)&v)[2],f);
-			write_char (((char*)&v)[3],f);
-			write_char (((char*)&v)[4],f);
-			write_char (((char*)&v)[5],f);
-			write_char (((char*)&v)[6],f);
-			write_char (((char*)&v)[7],f);
-		} else {
-			unsigned char string[32],*end_p,*s;
-			int length;
+	if (f->file_mode & ((1<<F_WRITE_DATA)|(1<<F_APPEND_DATA))){
+		double v=r;
 
-			end_p=convert_real_to_string (r,string);
-			length=end_p-string;
+		write_char (((char*)&v)[0],f);
+		write_char (((char*)&v)[1],f);
+		write_char (((char*)&v)[2],f);
+		write_char (((char*)&v)[3],f);
+		write_char (((char*)&v)[4],f);
+		write_char (((char*)&v)[5],f);
+		write_char (((char*)&v)[6],f);
+		write_char (((char*)&v)[7],f);
+	} else {
+		unsigned char string[32],*end_p,*s;
+		int length;
 
-			s=string;
-			do {
-				write_char (*s++,f);
-			} while (--length);
-		}
+		end_p=convert_real_to_string (r,string);
+		length=end_p-string;
+
+		s=string;
+		do {
+			write_char (*s++,f);
+		} while (--length);
 	}
 }
 
@@ -1367,106 +1450,112 @@ void file_write_characters (unsigned char *p,int length,struct file *f)
 #endif
 {	
 	if (is_special_file (f)){
-		if (f==file_table)
+		if (f==&file_table[1]){
+			if (!std_output_to_file){
+#if OLD_WRITE_STRING
+				w_print_text (s->characters,s->length);
+#else
+				w_print_text (p,length);
+#endif
+				return;
+			}
+		} else if (f==file_table){
 #if OLD_WRITE_STRING
 			ew_print_text (s->characters,s->length);
 #else
 			ew_print_text (p,length);
 #endif
-		else if (f==&file_table[1])
-#if OLD_WRITE_STRING
-			w_print_text (s->characters,s->length);
-#else
-			w_print_text (p,length);
-#endif
-		else
+			return;
+		} else
 			IO_error ("fwrites: can't open this file");
 	} else {
-#if OLD_WRITE_STRING
-		unsigned char *p,*end_p;
-#else
-		unsigned char *end_p;
-#endif
-
 		if (f->file_mode & ~((1<<F_WRITE_TEXT)|(1<<F_WRITE_DATA)|(1<<F_APPEND_TEXT)|(1<<F_APPEND_DATA)))
 			IO_error ("fwrites: write to an input file");
+	}
 
+	{
 #if OLD_WRITE_STRING
-		p=s->characters;
-		end_p=p+s->length;
+	unsigned char *p,*end_p;
 #else
-		end_p=p+length;
+	unsigned char *end_p;
 #endif
 
-		if (f->file_mode & ((1<<F_WRITE_DATA)|(1<<F_APPEND_DATA))){
-			while (p<end_p){
-				if (f->file_write_p < f->file_end_buffer_p){
-					unsigned char *write_p;
-					long n;
-					
-					write_p=f->file_write_p;
-					
-					n=f->file_end_buffer_p-write_p;
-					if (n>end_p-p)
-						n=end_p-p;
-					
-					do {
-						*write_p++ = *p++;
-					} while (--n);
-	
-					f->file_write_p=write_p;	
-				} else
-					char_to_new_buffer (*p++,f);
-			}
-		} else {
-			while (p<end_p){
-				if (f->file_write_p < f->file_end_buffer_p){
-					unsigned char *write_p;
-					long n;
-					
-					write_p=f->file_write_p;
-					
-					n=f->file_end_buffer_p-write_p;
-					if (n>end_p-p)
-						n=end_p-p;
-					
-					do {
-						char c;
-						
-						c = *p++;
-						if (c=='\n'){
-							*write_p++ = '\r';
-							if (--n){
-								*write_p++ = c;
-							} else {
-								f->file_write_p=write_p;
-								write_char (c,f);								
-								write_p=f->file_write_p;
-								break;
-							}
-						} else
-							*write_p++ = c;
-					} while (--n);
-	
-					f->file_write_p=write_p;	
-				} else {
+#if OLD_WRITE_STRING
+	p=s->characters;
+	end_p=p+s->length;
+#else
+	end_p=p+length;
+#endif
+
+	if (f->file_mode & ((1<<F_WRITE_DATA)|(1<<F_APPEND_DATA))){
+		while (p<end_p){
+			if (f->file_write_p < f->file_end_write_buffer_p){
+				unsigned char *write_p;
+				long n;
+				
+				write_p=f->file_write_p;
+				
+				n=f->file_end_write_buffer_p-write_p;
+				if (n>end_p-p)
+					n=end_p-p;
+				
+				do {
+					*write_p++ = *p++;
+				} while (--n);
+
+				f->file_write_p=write_p;	
+			} else
+				char_to_new_buffer (*p++,f);
+		}
+	} else {
+		while (p<end_p){
+			if (f->file_write_p < f->file_end_write_buffer_p){
+				unsigned char *write_p;
+				long n;
+				
+				write_p=f->file_write_p;
+				
+				n=f->file_end_write_buffer_p-write_p;
+				if (n>end_p-p)
+					n=end_p-p;
+				
+				do {
 					char c;
 					
-					c=*p++;
+					c = *p++;
 					if (c=='\n'){
-						char_to_new_buffer ('\r',f);
-						write_char (c,f);
+						*write_p++ = '\r';
+						if (--n){
+							*write_p++ = c;
+						} else {
+							f->file_write_p=write_p;
+							write_char (c,f);								
+							write_p=f->file_write_p;
+							break;
+						}
 					} else
-						char_to_new_buffer (c,f);
-				}
+						*write_p++ = c;
+				} while (--n);
+
+				f->file_write_p=write_p;	
+			} else {
+				char c;
+				
+				c=*p++;
+				if (c=='\n'){
+					char_to_new_buffer ('\r',f);
+					write_char (c,f);
+				} else
+					char_to_new_buffer (c,f);
 			}
 		}
+	}
 	}
 }
 
 CLEAN_BOOL file_end (struct file *f)
 {
-	if (f->file_read_p < f->file_end_buffer_p)
+	if (f->file_read_p < f->file_end_read_buffer_p)
 		return 0;
 
 	if (is_special_file (f)){
@@ -1489,7 +1578,12 @@ CLEAN_BOOL file_end (struct file *f)
 CLEAN_BOOL file_error (struct file *f)
 {
 	if (is_special_file (f)){
-		if (f==file_table || f==&file_table[1])
+		if (f==&file_table[1]){
+			if ((std_input_from_file || std_output_to_file) && f->file_error)
+				return CLEAN_TRUE;
+			else
+				return 0;
+		} else if (f==file_table)
 			return 0;
 		else
 			return CLEAN_TRUE;
@@ -1512,9 +1606,9 @@ unsigned long file_position (struct file *f)
 		unsigned long position;
 		
 		if (f->file_mode & ((1<<F_READ_TEXT) | (1<<F_READ_DATA)))
-			position=f->file_offset - (f->file_end_buffer_p - f->file_read_p);
+			position=f->file_offset - (f->file_end_read_buffer_p - f->file_read_p);
 		else
-			position=f->file_offset + (f->file_write_p - f->file_buffer_p);
+			position=f->file_offset + (f->file_write_p - f->file_write_buffer_p);
 		
 		return position;
 	}
@@ -1536,7 +1630,7 @@ CLEAN_BOOL file_seek (struct file *f,unsigned long position,unsigned long seek_m
 		unsigned long buffer_size;
 	
 		if (f->file_mode & ((1<<F_READ_TEXT) | (1<<F_READ_DATA))){
-			current_position=f->file_offset - (f->file_end_buffer_p - f->file_read_p);
+			current_position=f->file_offset - (f->file_end_read_buffer_p - f->file_read_p);
 			
 			switch (seek_mode){
 				case F_SEEK_SET:
@@ -1551,9 +1645,9 @@ CLEAN_BOOL file_seek (struct file *f,unsigned long position,unsigned long seek_m
 					IO_error ("fseek: invalid mode");
 			}
 			
-			buffer_size=f->file_end_buffer_p - f->file_buffer_p;
+			buffer_size=f->file_end_read_buffer_p - f->file_read_buffer_p;
 			if ((unsigned long)(position - (f->file_offset-buffer_size)) < buffer_size){
-				f->file_read_p = f->file_buffer_p + (position - (f->file_offset-buffer_size));
+				f->file_read_p = f->file_read_buffer_p + (position - (f->file_offset-buffer_size));
 				
 				return CLEAN_TRUE;
 			} else {
@@ -1565,13 +1659,11 @@ CLEAN_BOOL file_seek (struct file *f,unsigned long position,unsigned long seek_m
 					return 0;
 				}
 				
-				buffer=f->file_buffer_p;
-				f->file_end_buffer_p=buffer;
+				buffer=f->file_read_buffer_p;
+				f->file_end_read_buffer_p=buffer;
 				f->file_read_p=buffer;
-				f->file_write_p=buffer;
-
 #ifdef WINDOWS
-	 			file_position=SetFilePointer (f->file_refnum,position,NULL,FILE_BEGIN);
+	 			file_position=SetFilePointer (f->file_read_refnum,position,NULL,FILE_BEGIN);
 
 				if (file_position==-1){
 					f->file_error=-1;
@@ -1580,7 +1672,7 @@ CLEAN_BOOL file_seek (struct file *f,unsigned long position,unsigned long seek_m
 				
 				f->file_offset=file_position;
 #else
-	 			error=DosSetFilePtr (f->file_refnum,position,FILE_BEGIN,&f->file_offset);
+	 			error=DosSetFilePtr (f->file_read_refnum,position,FILE_BEGIN,&f->file_offset);
 
 				if (error!=0){
 					f->file_error=-1;
@@ -1595,7 +1687,7 @@ CLEAN_BOOL file_seek (struct file *f,unsigned long position,unsigned long seek_m
 
 			result=CLEAN_TRUE;
 
-			current_position=f->file_offset + (f->file_write_p - f->file_buffer_p);
+			current_position=f->file_offset + (f->file_write_p - f->file_write_buffer_p);
 			
 			if (current_position > f->file_length)
 				f->file_length=current_position;
@@ -1626,7 +1718,7 @@ CLEAN_BOOL file_seek (struct file *f,unsigned long position,unsigned long seek_m
 				return 0;
 			}
 #ifdef WINDOWS
-			file_position=SetFilePointer (f->file_refnum,position,NULL,FILE_BEGIN);
+			file_position=SetFilePointer (f->file_write_refnum,position,NULL,FILE_BEGIN);
 
 			if (file_position==-1){
 				f->file_error=-1;
@@ -1634,7 +1726,7 @@ CLEAN_BOOL file_seek (struct file *f,unsigned long position,unsigned long seek_m
 			} else
 				f->file_offset=file_position;
 #else
-			error=DosSetFilePtr (f->file_refnum,position,FILE_BEGIN,&f->file_offset);
+			error=DosSetFilePtr (f->file_write_refnum,position,FILE_BEGIN,&f->file_offset);
 
 			if (error!=0){
 				f->file_error=-1;
@@ -1646,7 +1738,6 @@ CLEAN_BOOL file_seek (struct file *f,unsigned long position,unsigned long seek_m
 	}
 }
 
-/* added 13-1-1999 */
 static int equal_string (char *s1,char*s2)
 {
 	char c;
@@ -1659,8 +1750,6 @@ static int equal_string (char *s1,char*s2)
 
 	return 0;
 }
-
-/* */
 
 struct file *open_s_file (struct clean_string *file_name,unsigned int file_mode)
 {
@@ -1729,8 +1818,10 @@ struct file *open_s_file (struct clean_string *file_name,unsigned int file_mode)
 		IO_error ("sfopen: out of memory");
 	}
 
-	f->file_buffer_p=buffer;
-	f->file_end_buffer_p=buffer;
+	f->file_read_buffer_p=buffer;
+	f->file_write_buffer_p=buffer;
+	f->file_end_read_buffer_p=buffer;
+	f->file_end_write_buffer_p=buffer;
 	f->file_read_p=buffer;
 	f->file_write_p=buffer;
 
@@ -1758,7 +1849,8 @@ struct file *open_s_file (struct clean_string *file_name,unsigned int file_mode)
 		IO_error ("sfopen: can't get eof");
 	}
 
-	f->file_refnum=file_handle;
+	f->file_read_refnum=file_handle;
+	f->file_write_refnum=file_handle;
 	f->file_mode=1<<file_mode;
 	f->file_unique=0;
 	f->file_error=0;
@@ -1786,9 +1878,9 @@ static int simple_seek (struct file *f,long position)
 
 	result=1;
 	
-	buffer_size=f->file_end_buffer_p - f->file_buffer_p;
+	buffer_size=f->file_end_read_buffer_p - f->file_read_buffer_p;
 	if ((unsigned long)(position - (f->file_offset-buffer_size)) < buffer_size){
-		f->file_read_p = f->file_buffer_p + (position - (f->file_offset-buffer_size));
+		f->file_read_p = f->file_read_buffer_p + (position - (f->file_offset-buffer_size));
 		f->file_position=position;
 	} else {
 		unsigned char *buffer;
@@ -1798,13 +1890,12 @@ static int simple_seek (struct file *f,long position)
 			f->file_error=-1;
 			result=0;
 		} else {
-			buffer=f->file_buffer_p;
-			f->file_end_buffer_p=buffer;
+			buffer=f->file_read_buffer_p;
+			f->file_end_read_buffer_p=buffer;
 			f->file_read_p=buffer;
-			f->file_write_p=buffer;
 
 #ifdef WINDOWS
-			file_position=SetFilePointer (f->file_refnum,position,NULL,FILE_BEGIN);
+			file_position=SetFilePointer (f->file_read_refnum,position,NULL,FILE_BEGIN);
 
 			if (file_position==-1){
 				f->file_error=-1;
@@ -1812,7 +1903,7 @@ static int simple_seek (struct file *f,long position)
 			} else
 				f->file_offset=file_position;
 #else
-			error=DosSetFilePtr (f->file_refnum,position,FILE_BEGIN,&f->file_offset);
+			error=DosSetFilePtr (f->file_read_refnum,position,FILE_BEGIN,&f->file_offset);
 			
 			if (error!=0){
 				f->file_error=-1;
@@ -1852,7 +1943,7 @@ int file_read_s_char (struct file *f,unsigned long *position_p)
 					if (position!=f->file_position_2)
 						position=f->file_position_2;
 					else {
-						position=f->file_offset + (f->file_write_p - f->file_buffer_p);
+						position=f->file_offset + (f->file_write_p - f->file_write_buffer_p);
 						f->file_position_2=position;
 						break;
 					}
@@ -1862,7 +1953,7 @@ int file_read_s_char (struct file *f,unsigned long *position_p)
 			}
 		}
 
-		if (f->file_read_p < f->file_end_buffer_p){
+		if (f->file_read_p < f->file_end_read_buffer_p){
 			c=*f->file_read_p++;
 			++position;
 		} else {
@@ -1876,7 +1967,7 @@ int file_read_s_char (struct file *f,unsigned long *position_p)
 				c='\n';
 				++position;
 			} else
-				if (f->file_read_p > f->file_buffer_p)
+				if (f->file_read_p > f->file_read_buffer_p)
 					--f->file_read_p;
 		}
 
@@ -1912,7 +2003,7 @@ CLEAN_BOOL file_read_s_int (struct file *f,int *i_p,unsigned long *position_p)
 					if (position!=f->file_position_2)
 						position=f->file_position_2;
 					else {
-						position=position=f->file_offset + (f->file_write_p - f->file_buffer_p);
+						position=f->file_offset + (f->file_write_p - f->file_write_buffer_p);
 						f->file_position_2=position;
 						break;
 					}
@@ -1999,7 +2090,7 @@ CLEAN_BOOL file_read_s_int (struct file *f,int *i_p,unsigned long *position_p)
 
 			position+=n_characters;
 
-			if (f->file_read_p > f->file_buffer_p)
+			if (f->file_read_p > f->file_read_buffer_p)
 				--f->file_read_p;
 		}
 
@@ -2034,7 +2125,7 @@ CLEAN_BOOL file_read_s_real (struct file *f,double *r_p,unsigned long *position_
 					if (position!=f->file_position_2)
 						position=f->file_position_2;
 					else {
-						position=position=f->file_offset + (f->file_write_p - f->file_buffer_p);
+						position=f->file_offset + (f->file_write_p - f->file_write_buffer_p);
 						f->file_position_2=position;
 						break;
 					}
@@ -2140,7 +2231,7 @@ CLEAN_BOOL file_read_s_real (struct file *f,double *r_p,unsigned long *position_
 
 			position+=n_characters;
 		
-			if (f->file_read_p > f->file_buffer_p)
+			if (f->file_read_p > f->file_read_buffer_p)
 				--f->file_read_p;
 					
 			*r_p=0.0;
@@ -2190,7 +2281,7 @@ unsigned long file_read_s_string
 					if (position!=f->file_position_2)
 						position=f->file_position_2;
 					else {
-						position=f->file_offset + (f->file_write_p - f->file_buffer_p);
+						position=f->file_offset + (f->file_write_p - f->file_write_buffer_p);
 						f->file_position_2=position;
 						break;
 					}
@@ -2216,7 +2307,7 @@ unsigned long file_read_s_string
 						++position;
 						c='\n';
 					} else
-						if (f->file_read_p > f->file_buffer_p)
+						if (f->file_read_p > f->file_read_buffer_p)
 							--f->file_read_p;
 				}
 			
@@ -2264,7 +2355,7 @@ unsigned long file_read_s_line (struct file *f,unsigned long max_length,char *st
 					if (position!=f->file_position_2)
 						position=f->file_position_2;
 					else {
-						position=f->file_offset + (f->file_write_p - f->file_buffer_p);
+						position=f->file_offset + (f->file_write_p - f->file_write_buffer_p);
 						f->file_position_2=position;
 						break;
 					}
@@ -2283,7 +2374,7 @@ unsigned long file_read_s_line (struct file *f,unsigned long max_length,char *st
 					++position;
 					c='\n';
 				} else
-					if (f->file_read_p > f->file_buffer_p)
+					if (f->file_read_p > f->file_read_buffer_p)
 						--f->file_read_p;
 			}
 
@@ -2317,7 +2408,7 @@ CLEAN_BOOL file_s_end (struct file *f,unsigned long position)
 			if (f->file_mode & ~((1<<F_READ_TEXT) | (1<<F_READ_DATA)))
 				IO_error ("sfend: not allowed for output files");
 			
-			if (f->file_read_p < f->file_end_buffer_p)
+			if (f->file_read_p < f->file_end_read_buffer_p)
 				return 0;
 			
 			if (f->file_offset < f->file_length)
@@ -2329,7 +2420,7 @@ CLEAN_BOOL file_s_end (struct file *f,unsigned long position)
 				if (f->file_position_2!=-1l)
 					position=f->file_position_2;
 				else {
-					position=f->file_offset + (f->file_end_buffer_p - f->file_read_p);
+					position=f->file_offset + (f->file_end_read_buffer_p - f->file_read_p);
 					f->file_position=position;
 					f->file_position_2=position;
 				}
@@ -2351,9 +2442,9 @@ unsigned long file_s_position (struct file *f,unsigned long position)
 	} else {
 		if (f->file_unique){
 			if (f->file_mode & ((1<<F_READ_TEXT) | (1<<F_READ_DATA)))
-				position=f->file_offset - (f->file_end_buffer_p - f->file_read_p);
+				position=f->file_offset - (f->file_end_read_buffer_p - f->file_read_p);
 			else
-				position=f->file_offset + (f->file_write_p - f->file_buffer_p);
+				position=f->file_offset + (f->file_write_p - f->file_write_buffer_p);
 		
 			return position;
 		} else {
@@ -2361,7 +2452,7 @@ unsigned long file_s_position (struct file *f,unsigned long position)
 				if (f->file_position_2!=-1l)
 					return f->file_position_2;
 				else {
-					position=f->file_offset - (f->file_end_buffer_p - f->file_read_p);
+					position=f->file_offset - (f->file_end_read_buffer_p - f->file_read_p);
 
 					f->file_position=position;
 					f->file_position_2=position;
@@ -2399,7 +2490,7 @@ CLEAN_BOOL file_s_seek (struct file *f,unsigned long position,unsigned long seek
 		if (f->file_unique)
 			IO_error ("sfseek: can't seek on a unique file");
 		
-		current_position=f->file_offset - (f->file_end_buffer_p - f->file_read_p);
+		current_position=f->file_offset - (f->file_end_read_buffer_p - f->file_read_p);
 		
 		if (*position_p==-1l){
 			if (f->file_position_2!=-1l)
@@ -2423,9 +2514,9 @@ CLEAN_BOOL file_s_seek (struct file *f,unsigned long position,unsigned long seek
 				IO_error ("sfseek: invalid mode");
 		}
 		
-		buffer_size=f->file_end_buffer_p - f->file_buffer_p;
+		buffer_size=f->file_end_read_buffer_p - f->file_read_buffer_p;
 		if ((unsigned long)(position - (f->file_offset-buffer_size)) < buffer_size){
-			f->file_read_p = f->file_buffer_p + (position - (f->file_offset-buffer_size));
+			f->file_read_p = f->file_read_buffer_p + (position - (f->file_offset-buffer_size));
 			f->file_position=position;
 		} else {
 			unsigned char *buffer;
@@ -2436,13 +2527,12 @@ CLEAN_BOOL file_s_seek (struct file *f,unsigned long position,unsigned long seek
 				result=0;
 				f->file_position=current_position;
 			} else {
-				buffer=f->file_buffer_p;
-				f->file_end_buffer_p=buffer;
+				buffer=f->file_read_buffer_p;
+				f->file_end_read_buffer_p=buffer;
 				f->file_read_p=buffer;
-				f->file_write_p=buffer;
 
 #ifdef WINDOWS
-				file_position=SetFilePointer (f->file_refnum,position,NULL,FILE_BEGIN);
+				file_position=SetFilePointer (f->file_read_refnum,position,NULL,FILE_BEGIN);
 				
 				if (file_position==-1){
 					f->file_error=-1;
@@ -2450,7 +2540,7 @@ CLEAN_BOOL file_s_seek (struct file *f,unsigned long position,unsigned long seek
 				} else
 					f->file_offset=file_position;
 #else
-				error=DosSetFilePtr (f->file_refnum,position,FILE_BEGIN,&f->file_offset);
+				error=DosSetFilePtr (f->file_read_refnum,position,FILE_BEGIN,&f->file_offset);
 				
 				if (error!=0){
 					f->file_error=-1;

@@ -35,6 +35,7 @@
    } WIN32_FIND_DATA;
 #  endif
 # endif
+# include "wfileIO3.h"
 #else
 # define INCL_DOSFILEMGR
 # include <os2.h>
@@ -50,6 +51,9 @@
 #ifdef WINDOWS
 HANDLE std_input_handle,std_output_handle,std_error_handle;
 int console_window_visible,console_allocated,console_flag=0;
+int std_input_from_file=0;
+int std_output_to_file=0;
+extern void init_std_io_from_or_to_file (void);
 #endif
 
 extern int c_entier (double);
@@ -125,6 +129,11 @@ static void make_console_window_visible ()
 void w_print_char (char c)
 {
 #ifdef WINDOWS
+	if (std_output_to_file){
+		file_write_char (c,&file_table[1]);
+		return;
+	}
+	
 	if (!console_window_visible)
 		make_console_window_visible();
 #endif
@@ -135,6 +144,11 @@ void w_print_char (char c)
 void w_print_text (char *s,unsigned long length)
 {
 #ifdef WINDOWS
+	if (std_output_to_file){
+		file_write_characters (s,length,&file_table[1]);
+		return;
+	}
+
 	if (!console_window_visible)
 		make_console_window_visible();
 #endif
@@ -170,6 +184,9 @@ int w_get_char (void)
 	char c;
 
 #ifdef WINDOWS
+	if (std_input_from_file)
+		return file_read_char (&file_table[1]);
+
 	if (!console_window_visible)
 		make_console_window_visible();
 #endif
@@ -195,7 +212,12 @@ int w_get_int (int *i_p)
 {
 	int c,negative;
 	unsigned int i;
-	
+
+#ifdef WINDOWS	
+	if (std_input_from_file)
+		return file_read_int (&file_table[1],i_p);
+#endif
+
 	c=w_get_char();
 	while (c==' ' || c=='\t' || c=='\n')
 		c=w_get_char();
@@ -326,6 +348,11 @@ int w_get_real (double *r_p)
 {
 	char s[256+1];
 	int c,dot,digits,result,n;
+
+#ifdef WINDOWS
+	if (std_input_from_file)
+		return file_read_real (&file_table[1],r_p);
+#endif
 	
 	n=0;
 	
@@ -409,6 +436,13 @@ unsigned long w_get_text (char *string,unsigned long max_length)
 	length=0;
 
 #ifdef WINDOWS
+	if (std_input_from_file){
+		unsigned long length;
+		
+		length=max_length;
+		return file_read_characters (&file_table[1],&length,string);
+	}
+
 	if (!console_window_visible)
 		make_console_window_visible();
 #endif
@@ -459,6 +493,13 @@ void w_print_string (char *s)
 	char *p;
 
 #ifdef WINDOWS
+	if (std_output_to_file){
+		for (p=s; *p!=0; ++p)
+			;
+		file_write_characters (p,p-s,&file_table[1]);
+		return;
+	}
+
 	if (!console_window_visible)
 		make_console_window_visible();
 #endif
@@ -516,6 +557,11 @@ static void print_integer (int n,OS(HANDLE,int) file_number)
 void w_print_int (int n)
 {
 #ifdef WINDOWS
+	if (std_output_to_file){
+		file_write_int (n,&file_table[1]);
+		return;
+	}
+
 	if (!console_window_visible)
 		make_console_window_visible();
 #endif
@@ -562,7 +608,17 @@ static unsigned int dtoi_divmod_1e9 (double d,unsigned int *rem_p)
 {
 	double a[1];
 	unsigned int q,r;
-	
+# if 0
+	asm (
+		"fistpq (%3); "
+		"movl	$1000000000,%%ebx; "
+		"movl 4(%3),%%edx; "
+		"movl (%3),%%eax; "
+		"divl %%ebx; "
+		: "=&a" (q), "=&d" (r) : "t" (d), "r" (a)
+		:  "%ebx","st"
+		);
+# else
 	asm (
 		"fistpq (%3); "
 		"movl	$1000000000,%%ebx; "
@@ -573,6 +629,7 @@ static unsigned int dtoi_divmod_1e9 (double d,unsigned int *rem_p)
 		: "&=g" (q), "&=d" (r) : "t" (d), "r" (a)
 		:  "%eax","%ebx","%ecx","%edx","st"
 		);
+# endif
 
 	*rem_p=r;
 	return q;
@@ -902,6 +959,11 @@ void w_print_real (double r)
 	char s[32],*end_s;
 
 #ifdef WINDOWS
+	if (std_output_to_file){
+		file_write_real (r,&file_table[1]);
+		return;
+	}
+
 	if (!console_window_visible)
 		make_console_window_visible();
 #endif
@@ -1203,6 +1265,12 @@ int clean_main (void)
 	else
 		std_error_handle=GetStdHandle (STD_ERROR_HANDLE);
 
+	std_input_from_file = GetFileType (std_input_handle)==FILE_TYPE_DISK;
+	std_output_to_file = GetFileType (std_output_handle)==FILE_TYPE_DISK;
+
+	if (std_input_from_file || std_output_to_file)
+		init_std_io_from_or_to_file();
+
 	console_window_visible=flags & NO_RESULT_MASK ? 0 : 1;
 
 	if (heap_size_multiple<MINIMUM_HEAP_SIZE_MULTIPLE)
@@ -1325,6 +1393,9 @@ int clean_main (void)
 	if ( (!(flags & NO_RESULT_MASK) || (flags & SHOW_EXECUTION_TIME_MASK) || execution_aborted) && !console_flag)
 # endif
 		wait_for_key_press();
+
+	if (std_output_to_file)
+		flush_file_buffer (&file_table[1]);
 
 	if (return_code==0 && execution_aborted)
 		return_code= -1;
