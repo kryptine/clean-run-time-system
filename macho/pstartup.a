@@ -1731,11 +1731,13 @@ calculate_digits:
 	lis	o0,-13107
 	subi	o0,o0,13107
 	mulhwu	o0,o0,d0
+
+	rlwinm	o1,o0,0,0,31-3
 	srwi	o0,o0,3
 
-	slwi	o1,o0,1
 	sub	a1,d0,o1
-	slwi	o1,o0,3
+	slwi	o1,o0,1
+
 	sub	a1,a1,o1
 #else
 	li	o1,10
