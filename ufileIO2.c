@@ -940,8 +940,12 @@ int file_error (long fn)
 {
 	if (fn<FIRST_REAL_FILE){
 		switch (fn){
-			case 0:
 			case 1:
+				if (ferror (stdin) || ferror (stdout))
+					return -1;
+				else
+					return 0;
+			case 0:
 				return 0;
 			default:
 				return -1;
