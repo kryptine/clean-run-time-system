@@ -2278,6 +2278,8 @@ static void install_clean_exception_handler (void)
 int global_argc;
 char **global_argv;
 
+int return_code;
+
 int main (int argc, char **argv)
 #else
 int main (void)
@@ -2292,6 +2294,8 @@ int main (void)
 #ifdef MACHO
 	global_argc = argc;
 	global_argv = argv;
+
+	return_code=0;
 #endif
 #ifdef MAYBE_USE_STDIO
 	{
@@ -2467,7 +2471,14 @@ int main (void)
 	first_function();
 #endif
 
+#ifdef MACHO
+	if (return_code==0 && execution_aborted!=0)
+		return_code= -1;
+
+	return return_code;
+#else
 	return 0;
+#endif
 }
 
 #if defined (TIME_PROFILE) || defined (MACHO)
