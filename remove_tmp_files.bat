@@ -11,8 +11,9 @@ del ifileIO3.cpp
 del wfileIO3.a
 del wfileIO3.s
 del _startup1.s
-del _startup2.s
 del _startup1.go
+del _startup2.s
+del _startup2.go
 del itrace.a
 del itrace.cpp
 del wcon_imports.a
