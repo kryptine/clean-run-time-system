@@ -12,6 +12,11 @@
 // # saved registers: %ebx %esi %edi %ebp
 // #                   d1   a3   a4   a2
 
+#ifdef LINUX
+# define OLD_READ_STRING
+# define OLD_WRITE_STRING
+#endif
+
 	.data
 #if defined (DOS) || defined (_WINDOWS_) || defined (ELF)
 	.align	8
@@ -39,7 +44,7 @@ fwritestring_error:
 	.globl	readFI
 	.globl	readFR
 	.globl	readFS
-#ifndef LINUX
+#ifndef OLD_READ_STRING
 	.globl	readFString
 #endif
 	.globl	readLineF
@@ -47,7 +52,7 @@ fwritestring_error:
 	.globl	writeFI
 	.globl	writeFR
 	.globl	writeFS
-#ifndef LINUX
+#ifndef OLD_WRITE_STRING
 	.globl	writeFString
 #endif
 	.globl	endF
@@ -78,7 +83,7 @@ fwritestring_error:
 	.globl	@file_read_char
 	.globl	@file_read_int
 	.globl	@file_read_real
-#ifdef LINUX
+#ifdef OLD_READ_STRING
 	.globl	@file_read_string
 #else
 	.globl	@file_read_characters
@@ -87,7 +92,7 @@ fwritestring_error:
 	.globl	@file_write_char
 	.globl	@file_write_int
 	.globl	@file_write_real
-#ifdef LINUX
+#ifdef OLD_WRITE_STRING
 	.globl	@file_write_string
 #else
 	.globl	@file_write_characters
@@ -210,7 +215,7 @@ readFR:
 	movl	$-1,(sp)	
 	jmp	*a2
 
-#ifndef LINUX
+#ifndef OLD_READ_STRING
 readFString:
 	movl	4(a0),a2
 	cmpl	a2,d1
@@ -256,7 +261,7 @@ readFS:	popl	a1
 	ja	readFS_gc
 readFS_r_gc:
 
-#ifdef LINUX
+#ifdef OLD_READ_STRING
 	movl	$__STRING__+2,(a4)
 	addl	$4,a4
 	
@@ -412,7 +417,7 @@ writeFR:
 
 writeFS:
 	pushl	d1
-#ifdef LINUX
+#ifdef OLD_WRITE_STRING
 	addl	$4,a0
 	pushl	a0
 	call	@file_write_string
@@ -427,7 +432,7 @@ writeFS:
 	movl	$-1,d0
 	ret
 
-#ifndef LINUX
+#ifndef OLD_WRITE_STRING
 writeFString:
 	movl	4(a0),a2
 	cmpl	a2,d1

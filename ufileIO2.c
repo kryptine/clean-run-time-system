@@ -593,7 +593,7 @@ int file_read_real (long fn,double *r_p)
 			}
 		} else if (f->mode & (1<<F_READ_TEXT)){
 			if (fscanf (f->file,"%lg",r_p)!=1)
-				return 0;			
+				return 0;
 		} else
 			IO_error ("FReadR: read from an output file");
 		
@@ -601,8 +601,19 @@ int file_read_real (long fn,double *r_p)
 	}
 }
 
+#define OLD_READ_STRING 1
+#define OLD_WRITE_STRING 1
+
+#if OLD_READ_STRING
 unsigned long file_read_string (long fn,unsigned long max_length,struct clean_string *s)
 {	
+#else
+unsigned long file_read_characters (long fn,unsigned long *length_p,char *s)
+{
+    unsigned long max_length;
+
+    max_length=*length_p;
+#endif
 	unsigned long length;
 
 	if (fn<FIRST_REAL_FILE){
@@ -610,8 +621,13 @@ unsigned long file_read_string (long fn,unsigned long max_length,struct clean_st
 			case 0:
 				IO_error ("FReadS: can't read from StdErr");
 			case 1:
-				length = fread (s->characters,1,max_length,stdin);	
+#if OLD_READ_STRING
+				length = fread (s->characters,1,max_length,stdin);
 				s->length=length;
+#else
+				length = fread (s,1,max_length,stdin);
+				*length_p=length;
+#endif
 				return length;
 			default:
 				IO_error ("FReadS: can't open this file");
@@ -626,9 +642,13 @@ unsigned long file_read_string (long fn,unsigned long max_length,struct clean_st
 			IO_error ("FReadS: read from an output file");
 		
 		fd=f->file;
+#if OLD_READ_STRING
 		length = fread (s->characters,1,max_length,fd);	
 		s->length=length;
-		
+#else
+		length = fread (s,1,max_length,fd);	
+		*length_p=length;
+#endif
 		return length;
 	}
 }
@@ -646,6 +666,25 @@ unsigned long file_read_line (long fn,unsigned long max_length,char *string)
 				int c;
 				length=0;
 
+#if 0
+				fgets (string,max_length,stdin);
+				
+				string [max_length-1]='\0';
+				while (string[length]!='\0')
+					++length;
+
+				if (length<max_length-1 || string[length-1]=='\n')
+					return length;
+
+				c=getchar();
+				if (c!=EOF){
+					string[length++]=c;
+					if (c!='\n')
+						return -1;
+				}
+
+				return length;
+#else
 				flockfile (stdin);
 
 				while (length!=max_length && (c=getchar_unlocked(),c!=EOF)){
@@ -661,6 +700,7 @@ unsigned long file_read_line (long fn,unsigned long max_length,char *string)
 
 				if (c!=EOF)
 					return -1;
+#endif
 		
 				return length;
 			}
@@ -864,15 +904,27 @@ void file_write_real (double r,long fn)
 	}
 }
 
+#if OLD_WRITE_STRING
 void file_write_string (struct clean_string *s,long fn)
+#else
+void file_write_characters (unsigned char *p,int length,long fn)
+#endif
 {	
 	if (fn<FIRST_REAL_FILE){
 		switch (fn){
 			case 0:
+#if OLD_WRITE_STRING
 				ew_print_text (s->characters,s->length);
+#else
+				ew_print_text (p,length);
+#endif
 				break;
 			case 1:
+#if OLD_WRITE_STRING
 				w_print_text (s->characters,s->length);
+#else
+				w_print_text (p,length);
+#endif
 				break;
 			default:
 				IO_error ("FWriteS: can't open this file");
@@ -884,8 +936,11 @@ void file_write_string (struct clean_string *s,long fn)
 
 		if (f->mode & ~((1<<F_WRITE_TEXT)|(1<<F_WRITE_DATA)|(1<<F_APPEND_TEXT)|(1<<F_APPEND_DATA)))
 			IO_error ("FWriteS: write to an input file");
-		
+#if OLD_WRITE_STRING
 		fwrite (s->characters,sizeof (char),s->length,f->file);
+#else
+		fwrite (p,sizeof (char),length,f->file);
+#endif
 	}
 }
 
