@@ -1257,8 +1257,14 @@ print_real_node:
 	push	8(a0)
 	push	4(a0)
 print_real_:
-	finit
-	
+	ffree	%st(0)
+	ffree	%st(1)
+	ffree	%st(2)
+	ffree	%st(3)
+	ffree	%st(4)
+	ffree	%st(5)
+	ffree	%st(6)
+	ffree	%st(7)
 	call	@w_print_real
 	add	$8,sp
 	ret
@@ -1412,7 +1418,16 @@ RtoAC:
 #endif
 	subl	$8,sp
 	fstl	0(sp)
-	finit
+	
+	ffree	%st(0)
+	ffree	%st(1)
+	ffree	%st(2)
+	ffree	%st(3)
+	ffree	%st(4)
+	ffree	%st(5)
+	ffree	%st(6)
+	ffree	%st(7)
+	
 #ifdef USE_CLIB
 	push	$printf_real_string
 	push	$sprintf_buffer	
@@ -5181,7 +5196,14 @@ r_to_i_real:
 tan_real:
 	sub	$8,sp
 	fstpl	(sp)
-	finit
+	ffree	%st(0)
+	ffree	%st(1)
+	ffree	%st(2)
+	ffree	%st(3)
+	ffree	%st(4)
+	ffree	%st(5)
+	ffree	%st(6)
+	ffree	%st(7)
 	call	@tan
 	add	$8,sp
 	ret
@@ -5189,7 +5211,14 @@ tan_real:
 asin_real:
 	sub	$8,sp
 	fstpl	(sp)
-	finit
+	ffree	%st(0)
+	ffree	%st(1)
+	ffree	%st(2)
+	ffree	%st(3)
+	ffree	%st(4)
+	ffree	%st(5)
+	ffree	%st(6)
+	ffree	%st(7)
 	call	@asin
 	add	$8,sp
 	ret
@@ -5197,7 +5226,14 @@ asin_real:
 acos_real:
 	sub	$8,sp
 	fstpl	(sp)
-	finit
+	ffree	%st(0)
+	ffree	%st(1)
+	ffree	%st(2)
+	ffree	%st(3)
+	ffree	%st(4)
+	ffree	%st(5)
+	ffree	%st(6)
+	ffree	%st(7)
 	call	@acos
 	add	$8,sp
 	ret
@@ -5205,7 +5241,14 @@ acos_real:
 atan_real:
 	sub	$8,sp
 	fstpl	(sp)
-	finit
+	ffree	%st(0)
+	ffree	%st(1)
+	ffree	%st(2)
+	ffree	%st(3)
+	ffree	%st(4)
+	ffree	%st(5)
+	ffree	%st(6)
+	ffree	%st(7)
 	call	@atan
 	add	$8,sp
 	ret
@@ -5213,7 +5256,14 @@ atan_real:
 ln_real:
 	sub	$8,sp
 	fstpl	(sp)
-	finit
+	ffree	%st(0)
+	ffree	%st(1)
+	ffree	%st(2)
+	ffree	%st(3)
+	ffree	%st(4)
+	ffree	%st(5)
+	ffree	%st(6)
+	ffree	%st(7)
 	call	@log
 	add	$8,sp
 	ret
@@ -5221,7 +5271,14 @@ ln_real:
 log10_real:
 	sub	$8,sp
 	fstpl	(sp)
-	finit
+	ffree	%st(0)
+	ffree	%st(1)
+	ffree	%st(2)
+	ffree	%st(3)
+	ffree	%st(4)
+	ffree	%st(5)
+	ffree	%st(6)
+	ffree	%st(7)
 	call	@log10
 	add	$8,sp
 	ret
@@ -5229,7 +5286,14 @@ log10_real:
 exp_real:
 	sub	$8,sp
 	fstpl	(sp)
-	finit
+	ffree	%st(0)
+	ffree	%st(1)
+	ffree	%st(2)
+	ffree	%st(3)
+	ffree	%st(4)
+	ffree	%st(5)
+	ffree	%st(6)
+	ffree	%st(7)
 	call	@exp
 	add	$8,sp
 	ret
@@ -5238,7 +5302,14 @@ pow_real:
 	sub	$16,sp
 	fstpl	8(sp)
 	fstpl	(sp)
-	finit
+	ffree	%st(0)
+	ffree	%st(1)
+	ffree	%st(2)
+	ffree	%st(3)
+	ffree	%st(4)
+	ffree	%st(5)
+	ffree	%st(6)
+	ffree	%st(7)
 	call	@pow
 	add	$16,sp
 	ret
@@ -5246,7 +5317,14 @@ pow_real:
 entier_real:
 	sub	$8,sp
 	fstpl	(sp)
-	finit
+	ffree	%st(0)
+	ffree	%st(1)
+	ffree	%st(2)
+	ffree	%st(3)
+	ffree	%st(4)
+	ffree	%st(5)
+	ffree	%st(6)
+	ffree	%st(7)
 	call	@floor
 	add	$8,sp
 
