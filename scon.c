@@ -596,8 +596,7 @@ int w_get_real (double *r_p)
 	
 	if (result){
 		s[n]='\0';
-		if (sscanf (s,"%lg",r_p)!=1)
-			result=0;
+		*r_p=atof (s);
 	}
 	
 	return result;
