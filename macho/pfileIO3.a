@@ -135,6 +135,7 @@ stderrF:	mflr	r0
 	stwu	sp,-64(sp)
  .endif
 	bl	_open_stderr
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -165,6 +166,7 @@ openF:	mr	o1,d0
 	stwu	sp,-64(sp)
  .endif
 	bl	_open_file
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -202,6 +204,7 @@ closeF:	mr	o0,d1
 	stwu	sp,-64(sp)
  .endif
 	bl	_close_file
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -232,6 +235,7 @@ reopenF:
 	stwu	sp,-64(sp)
  .endif
 	bl	_re_open_file
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -263,6 +267,7 @@ readFC:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_read_char
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -307,6 +312,7 @@ readFI:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_read_int
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -338,6 +344,7 @@ readFR:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_read_real
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -387,6 +394,7 @@ readFString:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_read_characters
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -448,6 +456,7 @@ readFS_r_gc:
  .else
 	bl	_file_read_characters
  .endif
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -507,6 +516,7 @@ readLineF_r_gc:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_read_line
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -572,6 +582,7 @@ end_copy_string1:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_read_line
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -630,6 +641,7 @@ writeFC:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_write_char
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -660,6 +672,7 @@ writeFI:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_write_int
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -690,6 +703,7 @@ writeFR:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_write_real
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -733,6 +747,7 @@ writeFS:
  .else
 	bl	_file_write_characters
  .endif
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -775,6 +790,7 @@ writeFString:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_write_characters
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -809,6 +825,7 @@ endF:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_end
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -839,6 +856,7 @@ errorF:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_error
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -869,6 +887,7 @@ positionF:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_position
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -902,6 +921,7 @@ seekF:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_seek
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -932,6 +952,7 @@ shareF:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_share
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -962,6 +983,7 @@ openSF:
 	stwu	sp,-64(sp)
  .endif
 	bl	_open_s_file
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -1002,6 +1024,7 @@ readSFC:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_read_s_char
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -1046,6 +1069,7 @@ readSFI:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_read_s_int
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -1080,6 +1104,7 @@ readSFR:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_read_s_real
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -1127,6 +1152,7 @@ readSFS_r_gc:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_read_s_string
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -1187,6 +1213,7 @@ readLineSF_r_gc:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_read_s_line
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -1253,6 +1280,7 @@ end_copy_string2:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_read_s_line
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -1310,6 +1338,7 @@ endSF:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_s_end
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -1340,6 +1369,7 @@ positionSF:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_s_position
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
@@ -1375,6 +1405,7 @@ seekSF:
 	stwu	sp,-64(sp)
  .endif
 	bl	_file_s_seek
+	lwz	r0,60(sp)
  .if MACOSX
  	lwz	sp,0(sp)
  .else
