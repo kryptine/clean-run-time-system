@@ -380,7 +380,7 @@ profile_n_:
 	add	d0,time_lo(a2)
 	adc	a1,time_hi(a2)
 
-	incl	n_profiler_calls(d1)
+	incl	n_profiler_calls(a2)
 
 #ifdef ALLOCATION_PROFILE
  	mov	end_heap,a0
