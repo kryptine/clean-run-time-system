@@ -112,7 +112,7 @@ static char *clean_to_c_string (struct clean_string *cs)
 		int n;
 		
 		if (!get_file_number_and_device_number (file_name,file_number_p,device_number_p))
-			return -1;
+			return -2;
 		
 		for (n=FIRST_REAL_FILE; n<number_of_files; ++n)
 			if (file_table[n].file!=NULL &&
@@ -193,7 +193,7 @@ static char *clean_to_c_string (struct clean_string *cs)
 		int n;
 		
 		if (!get_file_number (file_name,file_number_p))
-			return -1;
+			return -2;
 			
 		if (!get_volume_number (file_name,volume_number_p))
 			IO_error ("can't determine volume number while opening file");
@@ -260,18 +260,25 @@ long open_file (struct clean_string *file_name,unsigned int file_mode)
 	}
 	f=&file_table[fn];
 
+	fd=fopen (file_name_s,file_mode_string[file_mode]);
+	if (fd==NULL){
+		free (file_name_s);
+		return -1;
+	}
+
+	if (existing_fn==-2)
+#ifdef GNU_C
+		get_file_number_and_device_number (file_name_s,&file_number,&device_number);
+#else
+		get_file_number_and_device_number (file_name_s,&file_number,&volume_number);
+#endif
+
 	f->file_number=file_number;
 #ifdef GNU_C
 	f->device_number=device_number;
 #else
 	f->volume_number=volume_number;	
 #endif
-	
-	fd=fopen (file_name_s,file_mode_string[file_mode]);
-	if (fd==NULL){
-		free (file_name_s);
-		return -1;
-	}
 
 #ifdef LINUX
 	{
@@ -386,7 +393,7 @@ int close_file (long fn)
 		int result;
 	
 		f=&file_table[fn];
-
+		
 		if (f->file==NULL)
 			IO_error ("FClose: File not open");
 
@@ -1035,14 +1042,8 @@ long open_s_file (struct clean_string *file_name,unsigned int file_mode)
 		if (fn>=MAX_N_FILES)
 			IO_error ("SFOpen: too many files");
 	}
-	f=&file_table[fn];
 
-	f->file_number=file_number;
-#ifdef GNU_C
-	f->device_number=device_number;
-#else
-	f->volume_number=volume_number;	
-#endif
+	f=&file_table[fn];
 	
 	fd=fopen (file_name_s,file_mode_string[file_mode]);
 	if (fd==NULL){
@@ -1050,6 +1051,19 @@ long open_s_file (struct clean_string *file_name,unsigned int file_mode)
 
 		return -1;
 	}
+	if (existing_fn==-2)
+#ifdef GNU_C
+		get_file_number_and_device_number (file_name_s,&file_number,&device_number);
+#else
+		get_file_number_and_device_number (file_name_s,&file_number,&volume_number);
+#endif
+
+	f->file_number=file_number;
+#ifdef GNU_C
+	f->device_number=device_number;
+#else
+	f->volume_number=volume_number;	
+#endif
 
 #ifdef LINUX
 	{
