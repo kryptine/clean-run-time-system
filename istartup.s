@@ -163,6 +163,10 @@
 	.comm	heap2_begin_and_end,8
 #endif 
 
+#if 1
+	.comm	a_stack_guard_page,4
+#endif
+
 	.data
 	align	(2)
 
@@ -528,6 +532,7 @@ start_address:
 	.globl	@strlen
 #else
 	.globl	@allocate_memory
+	.globl	@allocate_memory_with_guard_page_at_end
 	.globl	@free_memory
 #endif
 
@@ -701,7 +706,7 @@ init_clean:
 	andl	$-8,d0
 	movl	d0,@heap_size
 	add	$7,d0
-	
+
 	push	d0
 #ifdef USE_CLIB
 	call	@malloc
@@ -720,11 +725,16 @@ init_clean:
 
 	mov	@ab_stack_size,a2
 	add	$3,a2
+
 	push	a2
 #ifdef USE_CLIB
 	call	@malloc
 #else
+# if 0
 	call	@allocate_memory
+# else
+	call	@allocate_memory_with_guard_page_at_end
+# endif
 #endif
 	add	$4,sp
 	
@@ -732,8 +742,16 @@ init_clean:
 	je	no_memory_3
 	
 	mov	d0,stack_mbp
+#if 1
+	addl	@ab_stack_size,d0
+	addl	$3+4095,d0
+	andl	$-4096,d0
+	movl	d0,a_stack_guard_page
+	subl	@ab_stack_size,d0
+#endif
 	add	$3,d0
 	andl	$-4,d0
+
 	mov	d0,a3
 	mov	d0,stack_p
 
@@ -2775,6 +2793,42 @@ no_total_compact_gc_bytes_carry:
 	movl	n_allocated_words,d1
 	lea	(d0,d1,4),d0
 	jmp	end_garbage_collect
+
+#if 1
+	.globl	_clean_exception_handler?4
+_clean_exception_handler?4:
+	movl	4(%esp),%eax
+	movl	(%eax),%eax
+	cmpl	$0xc00000fd,(%eax)	//	EXCEPTION_STACK_OVERFLOW
+	je  	stack_overflow_exception
+
+	cmpl	$0x80000001,(%eax)	//	EXCEPTION_GUARD_PAGE
+	je  	guard_page_or_access_violation_exception
+
+	cmpl	$0xc0000005,(%eax)	//	EXCEPTION_ACCESS_VIOLATION
+	je  	guard_page_or_access_violation_exception
+
+no_stack_overflow_exception:
+	movl	$0,%eax				//	EXCEPTION_CONTINUE_SEARCH
+	ret 	$4
+
+guard_page_or_access_violation_exception:
+	movl	0x18(%eax),%eax
+	andl	$-4096,%eax
+	cmpl	%eax,a_stack_guard_page
+	jne 	no_stack_overflow_exception
+	
+	cmpl	$0,a_stack_guard_page
+	je  	no_stack_overflow_exception
+
+stack_overflow_exception:
+	movl	4(%esp),%eax
+	movl	4(%eax),%eax
+	movl	$stack_overflow,0xb8(%eax)
+
+	movl	$-1,%eax			//	EXCEPTION_CONTINUE_EXECUTION
+	ret 	$4
+#endif
 
 stack_overflow:
 	call	add_execute_time
