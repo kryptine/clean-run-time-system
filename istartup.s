@@ -2420,7 +2420,7 @@ gc1:
 	movl	$__ARRAY__+2,60(d0)		// ARRAY-descP
 	
 	pushl	d0
-	call	_write_heap
+	call	@write_heap
 	
 	addl	$68,sp
 	
