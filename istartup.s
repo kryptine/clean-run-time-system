@@ -72,6 +72,12 @@
 # define NOCLIB
 #endif
 
+#ifdef LINUX
+# define section(n) .section	.text.##n,"ax",@progbits
+#else
+# define section(n) .text
+#endif
+
 #if 1
 # define DESCRIPTOR_ARITY_OFFSET	(-2)
 # define ZERO_ARITY_DESCRIPTOR_OFFSET	(-8)
@@ -531,7 +537,9 @@ start_address:
 	.globl	@strlen
 #else
 	.globl	@allocate_memory
+# ifdef STACK_OVERFLOW_EXCEPTION_HANDLER
 	.globl	@allocate_memory_with_guard_page_at_end
+# endif
 	.globl	@free_memory
 #endif
 
@@ -726,13 +734,13 @@ init_clean:
 	add	$3,a2
 
 	push	a2
-#ifdef USE_CLIB
-	call	@malloc
-#else
-# ifndef STACK_OVERFLOW_EXCEPTION_HANDLER
-	call	@allocate_memory
-# else
+#ifdef STACK_OVERFLOW_EXCEPTION_HANDLER
 	call	@allocate_memory_with_guard_page_at_end
+#else
+# ifdef USE_CLIB
+	call	@malloc
+# else
+	call	@allocate_memory
 # endif
 #endif
 	add	$4,sp
@@ -2793,7 +2801,7 @@ no_total_compact_gc_bytes_carry:
 	lea	(d0,d1,4),d0
 	jmp	end_garbage_collect
 
-#ifdef STACK_OVERFLOW_EXCEPTION_HANDLER
+#ifdef _WINDOWS_
 	.globl	_clean_exception_handler?4
 _clean_exception_handler?4:
 	movl	4(%esp),%eax
@@ -3331,6 +3339,7 @@ eval_upd_32:
 /	STRINGS
 /
 
+	section	(catAC)
 catAC:
 	mov	4(a0),a2
 	add	4(a1),a2
@@ -3417,6 +3426,7 @@ empty_string:
 	movl	$zero_length_string,a0
 	ret
 
+	section	(sliceAC)
 sliceAC:
 	mov	4(a0),a2
 	test	d1,d1
@@ -3467,7 +3477,7 @@ gc_4:
 	shr	$2,a2
 	jmp	r_gc_4
 
-
+	section	(updateAC)
 updateAC:
 	mov	4(a0),a2
 	cmp	a2,d1
@@ -3516,6 +3526,7 @@ update_string_error:
 update_string_error_2:
 	jmp	print_error
 
+	section	(eqAC)
 eqAC:
 	mov	4(a0),d0
 	cmp	4(a1),d0
@@ -3555,6 +3566,7 @@ equal_string_ne:
 	xorl	d0,d0
 	ret
 
+	section	(cmpAC)
 cmpAC:
 	mov	4(a0),d1
 	mov	4(a1),a2
@@ -3621,6 +3633,7 @@ cmp_string_r1:
 	mov	$1,d0
 	ret
 
+	section	(string_to_string_node)
 string_to_string_node:
 	movl	(a0),d0
 	addl	$4,a0
@@ -5246,6 +5259,7 @@ r_to_i_real:
 	fstp	%st(0)
 	ret
 #else
+	section	(tan_real)
 tan_real:
 	sub	$8,sp
 	fstpl	(sp)
@@ -5260,7 +5274,8 @@ tan_real:
 	call	@tan
 	add	$8,sp
 	ret
-	
+
+	section	(asin_real)	
 asin_real:
 	sub	$8,sp
 	fstpl	(sp)
@@ -5276,6 +5291,7 @@ asin_real:
 	add	$8,sp
 	ret
 
+	section	(acos_real)
 acos_real:
 	sub	$8,sp
 	fstpl	(sp)
@@ -5291,6 +5307,7 @@ acos_real:
 	add	$8,sp
 	ret
 
+	section	(atan_real)
 atan_real:
 	sub	$8,sp
 	fstpl	(sp)
@@ -5306,6 +5323,7 @@ atan_real:
 	add	$8,sp
 	ret
 
+	section	(ln_real)
 ln_real:
 	sub	$8,sp
 	fstpl	(sp)
@@ -5321,6 +5339,7 @@ ln_real:
 	add	$8,sp
 	ret
 
+	section	(log10_real)
 log10_real:
 	sub	$8,sp
 	fstpl	(sp)
@@ -5336,6 +5355,7 @@ log10_real:
 	add	$8,sp
 	ret
 
+	section	(exp_real)
 exp_real:
 	sub	$8,sp
 	fstpl	(sp)
@@ -5351,6 +5371,7 @@ exp_real:
 	add	$8,sp
 	ret
 
+	section	(pow_real)
 pow_real:
 	sub	$16,sp
 	fstpl	8(sp)
@@ -5367,6 +5388,7 @@ pow_real:
 	add	$16,sp
 	ret
 
+	section	(entier_real)
 entier_real:
 	sub	$8,sp
 	fstpl	(sp)
