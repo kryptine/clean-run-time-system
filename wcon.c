@@ -87,7 +87,37 @@ static void print_text (char *s,unsigned long length,OS(HANDLE,int) file_number)
 			char c;
 
 			if (n>0)
+#ifdef WINDOWS
+				/* workaround for bug in windows */
+				{
+					char *s_p;
+					int i;
+					
+					s_p=s;
+					i=n;
+					
+					do {
+						if (DosWrite (file_number,s_p,i,&n_chars)!=0 || GetLastError()!=ERROR_NOT_ENOUGH_MEMORY || n_chars==i)
+							break;
+						
+						if (n_chars==0){
+							int m;
+
+							m=i;
+							do
+								m=m>>1;
+							while (m>0 && !DosWrite (file_number,s_p,m,&n_chars) && GetLastError()==ERROR_NOT_ENOUGH_MEMORY && n_chars==0);
+
+							if (n_chars==0)
+								return;
+						}
+						i-=n_chars;
+						s_p+=n_chars;
+					} while (i>0);
+				}
+#else
 				DosWrite (file_number,s,n,&n_chars);
+#endif
 			c=13;
 			DosWrite (file_number,&c,1,&n_chars);
 
@@ -97,7 +127,36 @@ static void print_text (char *s,unsigned long length,OS(HANDLE,int) file_number)
 		}
 
 	if (length>0)
+#ifdef WINDOWS
+		{
+			/* workaround for bug in windows */
+			char *s_p;
+			int i;
+			
+			s_p=s;
+			i=length;
+			do {
+				if (DosWrite (file_number,s_p,i,&n_chars)!=0 || GetLastError()!=ERROR_NOT_ENOUGH_MEMORY || n_chars==i)
+					break;
+
+				if (n_chars==0){
+					int m;
+
+					m=i;
+					do
+						m=m>>1;
+					while (m>0 && !DosWrite (file_number,s_p,m,&n_chars) && GetLastError()==ERROR_NOT_ENOUGH_MEMORY && n_chars==0);
+
+					if (n_chars==0)
+						return;
+				}
+				i-=n_chars;
+				s_p+=n_chars;
+			} while (i>0);
+		}
+#else
 		DosWrite (file_number,s,length,&n_chars);
+#endif
 }
 
 #ifdef WINDOWS
