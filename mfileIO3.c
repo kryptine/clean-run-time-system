@@ -38,6 +38,8 @@ extern void IO_error (char*);
 #define F_SEEK_CUR 1
 #define F_SEEK_END 2
 
+#define WRITE_STDERR_TO_FILE_MASK 128
+
 #define pb_RefNum (((HIOParam*)&pb)->ioRefNum)
 #define pb_Permssn (((HIOParam*)&pb)->ioPermssn)
 #define pb_Misc (((HIOParam*)&pb)->ioMisc)
@@ -537,7 +539,7 @@ extern long flags;
 
 struct file *open_stderr (void)
 {
-	if ((flags & 128) && file_table[3].file_mode==0 && !open_stderr_file_failed)
+	if ((flags & WRITE_STDERR_TO_FILE_MASK) && file_table[3].file_mode==0 && !open_stderr_file_failed)
 		open_stderr_file();
 	
 	return file_table;
@@ -632,7 +634,7 @@ int close_file (struct file *f)
 
 void close_stderr_file (void)
 {
-	if ((flags & 128) && file_table[3].file_mode!=0){
+	if ((flags & WRITE_STDERR_TO_FILE_MASK) && file_table[3].file_mode!=0){
 		HParamBlockRec pb;
 		struct file *f;
 		
@@ -1414,11 +1416,17 @@ void file_write_char (int c,struct file *f)
 	else {
 		if (is_special_file (f)){
 			if (f==file_table){
+#if MACOSX
+				if (!(flags & WRITE_STDERR_TO_FILE_MASK)){
+					ew_print_char (c);
+					return;
+				}
+#else
 				ew_print_char (c);
 				
-				if (!(flags & 128))
+				if (!(flags & WRITE_STDERR_TO_FILE_MASK))
 					return;
-				
+#endif
 				f=&file_table[3];
 				if (f->file_mode==0){
 					if (open_stderr_file_failed || !open_stderr_file())
@@ -1456,11 +1464,17 @@ void file_write_int (int i,struct file *f)
 {	
 	if (is_special_file (f)){
 		if (f==file_table){
+#if MACOSX
+			if (!(flags & WRITE_STDERR_TO_FILE_MASK)){
+				ew_print_int (i);
+				return;
+			}
+#else
 			ew_print_int (i);
 
-			if (!(flags & 128))
+			if (!(flags & WRITE_STDERR_TO_FILE_MASK))
 				return;
-
+#endif
 			f=&file_table[3];			
 			if (f->file_mode==0){
 				if (open_stderr_file_failed || !open_stderr_file())
@@ -1522,11 +1536,17 @@ void file_write_real (double r,struct file *f)
 {	
 	if (is_special_file (f)){
 		if (f==file_table){
+#if MACOSX
+			if (!(flags & WRITE_STDERR_TO_FILE_MASK)){
+				ew_print_real (r);
+				return;
+			}
+#else
 			ew_print_real (r);
 
-			if (!(flags & 128))
+			if (!(flags & WRITE_STDERR_TO_FILE_MASK))
 				return;
-			
+#endif			
 			f=&file_table[3];
 			if (f->file_mode==0){
 				if (open_stderr_file_failed || !open_stderr_file())
@@ -1604,14 +1624,21 @@ void file_write_characters (unsigned char *p,int length,struct file *f)
 {	
 	if (is_special_file (f)){
 		if (f==file_table){
-#if OLD_WRITE_STRING
-			ew_print_text (s->characters,s->length);
-#else
-			ew_print_text (p,length);
-#endif
-			if (!(flags & 128))
+#if MACOSX
+			if (!(flags & WRITE_STDERR_TO_FILE_MASK)){
+				ew_print_text (p,length);
 				return;
-			
+			}
+#else
+# if OLD_WRITE_STRING
+			ew_print_text (s->characters,s->length);
+# else
+			ew_print_text (p,length);
+# endif
+			if (!(flags & WRITE_STDERR_TO_FILE_MASK))
+				return;
+#endif
+		
 			f=&file_table[3];
 			if (f->file_mode==0){
 				if (open_stderr_file_failed || !open_stderr_file())
@@ -2623,9 +2650,15 @@ int file_s_seek (struct file *f,unsigned long position,unsigned long seek_mode,u
 
 void er_print_char (char c)
 {
+#if MACOSX
+	if (!(flags & WRITE_STDERR_TO_FILE_MASK))
+		ew_print_char (c);
+	else {
+#else
 	ew_print_char (c);
 	
-	if (flags & 128){
+	if (flags & WRITE_STDERR_TO_FILE_MASK){
+#endif
 		struct file *f;
 		
 		f=&file_table[3];
@@ -2643,9 +2676,15 @@ void er_print_char (char c)
 
 void er_print_int (int i)
 {
+#if MACOSX
+	if (!(flags & WRITE_STDERR_TO_FILE_MASK))
+		ew_print_int (i);
+	else {
+#else
 	ew_print_int (i);
 
-	if (flags & 128){
+	if (flags & WRITE_STDERR_TO_FILE_MASK){
+#endif
 		if (file_table[3].file_mode==0){
 			if (open_stderr_file_failed || !open_stderr_file())
 				return;
@@ -2680,9 +2719,15 @@ static void write_chars (unsigned char *p,unsigned char *end_p,struct file *f)
 
 void er_print_text (char *s,unsigned long length)
 {
+#if MACOSX	
+	if (!(flags & WRITE_STDERR_TO_FILE_MASK))
+		ew_print_text (s,length);
+	else {
+#else
 	ew_print_text (s,length);
 	
-	if (flags & 128){
+	if (flags & WRITE_STDERR_TO_FILE_MASK){
+#endif
 		struct file *f;
 		
 		f=&file_table[3];
@@ -2697,9 +2742,15 @@ void er_print_text (char *s,unsigned long length)
 
 void er_print_string (char *s)
 {
+#if MACOSX	
+	if (!(flags & WRITE_STDERR_TO_FILE_MASK))
+		ew_print_string (s);
+	else {	
+#else
 	ew_print_string (s);
 	
-	if (flags & 128){
+	if (flags & WRITE_STDERR_TO_FILE_MASK){
+#endif
 		unsigned char *end_p;
 		struct file *f;
 		
