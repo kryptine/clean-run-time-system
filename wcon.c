@@ -592,14 +592,16 @@ int xam_and_fstsw (double d)
 	return i;
 }
 
+#if 0
 int fbstp (double d,char *buffer)
 {
-#if 0
+# if 0
 	asm ("movl %0,%%eax ; fbstp (%%eax) ; fld1" : : "g" (buffer) , "f" (d) : "%eax");
-#else
+# else
 	asm ("fbstp (%0)" : : "r" (buffer) , "t" (d) : "st");
-#endif
+# endif
 }
+#endif
 
 #define N_DIGITS 15
 
@@ -608,7 +610,7 @@ static unsigned int dtoi_divmod_1e9 (double d,unsigned int *rem_p)
 {
 	double a[1];
 	unsigned int q,r;
-# if 0
+# if 1
 	asm (
 		"fistpq (%3); "
 		"movl	$1000000000,%%ebx; "
@@ -667,7 +669,7 @@ static unsigned int to4_28 (int i)
 	return r;
 }
 
-static void dtoa (double d,char *s)
+static void d_to_a (double d,char *s)
 {
 	unsigned int i1,i2,n,r;
 
@@ -870,7 +872,7 @@ char *convert_real_to_string (double d,char *s_p)
 	}
 
 #if 1
-	dtoa (d,s_p);
+	d_to_a (d,s_p);
 #else
 	{
 		unsigned char bcd_buffer[16];
