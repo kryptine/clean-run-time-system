@@ -457,8 +457,6 @@ static int use_stdio;
 #define swap_nl_cr(c) (((c)=='\n' || (c)=='\r') ? ((c) ^ ((char)('\n' ^ '\r'))) : (c))
 #define oputc(c) putchar(swap_nl_cr(c))
 #define eputc(c) putc(swap_nl_cr (c),stderr)
-inline void oputs(const char *s) {while (*s) {oputc(*s);s++;}}
-inline void eputs(const char *s) {while (*s) {eputc(*s);s++;}}
 #endif
 
 void w_print_char (char c)
@@ -524,11 +522,19 @@ void w_print_text (char *s,unsigned long length)
 		int l;
 		
 		l=length;
-		if (l)
+		if (l){
+			flockfile (stdout);
+			
 			do {
-				oputc (*s);
+				int c;
+				
+				c=*s;
+				putchar_unlocked (swap_nl_cr (c));
 				++s;
 			} while (--l);
+			
+			funlockfile (stdout);
+		}
 		return;
 	}
 #endif
@@ -686,10 +692,17 @@ void ew_print_text (char *s,unsigned long length)
 		
 		l=length;
 		if (l){
+			flockfile (stderr);
+		
 			do {
-				eputc (*s);
+				int c;
+				
+				c=*s;
+				putc (swap_nl_cr (c),stderr);
 				++s;
 			} while (--l);
+			
+			funlockfile (stderr);
 		}
 		return;
 	}
@@ -902,7 +915,7 @@ int w_get_char (void)
 #ifdef MAYBE_USE_STDIO
 	if (use_stdio){
 		c=getchar();
-		return swap_nl_cr(c);
+		return swap_nl_cr (c);
 	}
 #endif
 
@@ -936,6 +949,80 @@ int w_get_char (void)
 	--input_buffer_length;
 	
 	return c;
+}
+
+unsigned long w_get_string (char *string,unsigned long max_length)
+{
+	unsigned long length;
+
+#ifdef MAYBE_USE_STDIO
+	if (use_stdio){
+		int i;
+		
+		length=fread (string,1,max_length,stdin);
+		
+		for (i=0; i<length; ++i){
+			int c;
+			
+			c=string[i];
+			string[i]=swap_nl_cr (c);
+		}
+		
+		return length;
+	}	
+#endif
+
+	length=0;
+	while (length!=max_length){
+		*string++=w_get_char();
+		++length;
+	}
+
+	return length;
+}
+
+unsigned long w_get_line (char *string,unsigned long max_length)
+{
+	unsigned long length;
+
+#ifdef MAYBE_USE_STDIO
+	if (use_stdio){
+		int c;
+		length=0;
+
+		flockfile (stdin);
+
+		while (length!=max_length && (c=getchar_unlocked(),c!=EOF)){
+			*string++=c;
+			++length;
+			if (c=='\n'){
+				funlockfile (stdin);
+				return length;
+			}
+		}
+
+		funlockfile (stdin);
+
+		if (c!=EOF)
+			return -1;
+
+		return length;
+	}
+#endif
+
+	length=0;
+
+	while (length!=max_length){
+		int c;
+
+		c=w_get_char();
+		*string++=c;
+		++length;
+		if (c==NEWLINE_CHAR)
+			return length;
+	}
+
+	return -1;		
 }
 
 #define is_digit(n) ((unsigned)((n)-'0')<(unsigned)10)
@@ -1164,7 +1251,17 @@ void w_print_string (char *s)
 	
 #ifdef MAYBE_USE_STDIO
 	if (use_stdio){
-		oputs (s);
+		int c;
+		
+		flockfile (stdin);
+		
+		while ((c=*s)!='\0'){
+			putchar_unlocked (swap_nl_cr (c));
+			++s;
+		}
+		
+		funlockfile (stdin);
+		
 		return;
 	}
 #endif
@@ -1206,7 +1303,17 @@ void ew_print_string (char *s)
 	
 #ifdef MAYBE_USE_STDIO
 	if (use_stdio){
-		eputs (s);
+		int c;
+		
+		flockfile (stderr);
+		
+		while ((c=*s)!='\0'){
+			putc_unlocked (swap_nl_cr (c),stderr);
+			++s;
+		}
+		
+		funlockfile (stderr);
+
 		return;
 	}
 #endif

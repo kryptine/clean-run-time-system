@@ -1,7 +1,9 @@
 extern int w_get_char();
 extern int w_get_int (int *i_p);
 extern int w_get_real (double *r_p);
+extern unsigned long w_get_string (char *string,unsigned long max_length);
 extern unsigned long w_get_text (char *string,unsigned long max_length);
+extern unsigned long w_get_line (char *string,unsigned long max_length);
 extern void w_print_char (char c);
 extern void w_print_int (int i);
 extern void w_print_real (double r);

@@ -8,6 +8,7 @@
 
 #if defined(powerc) || defined (MACHO)
 #	define USE_CLIB 1
+#	include <stdio.h>
 #else
 #	define USE_CLIB 0
 #endif
@@ -1115,26 +1116,16 @@ unsigned long file_read_characters (struct file *f,unsigned long *length_p,char 
 		if (f==file_table)
 			IO_error ("freads: can't read from stderr");
 		else if (f==&file_table[1]){
-			char *string;
 			unsigned long length;
-			
-			length=0;
 
 #if OLD_READ_STRING
-			string=s->characters;
-#else
-			string=s;
-#endif
-			while (length!=max_length){
-				*string++=w_get_char();
-				++length;
-			}
-
-#if OLD_READ_STRING
+			length=w_get_string (s->characters,max_length);
 			s->length=length;
 #else
+			length=w_get_string (s,max_length);
 			*length_p=length;
 #endif
+
 			return length;
 		} else
 			IO_error ("freads: can't open this file");
@@ -1242,23 +1233,9 @@ unsigned long file_read_line (struct file *f,unsigned long max_length,char *stri
 	if (is_special_file (f)){
 		if (f==file_table)
 			IO_error ("freadline: can't read from stderr");
-		else if (f==&file_table[1]){
-			unsigned long length;
-
-			length=0;
-
-			while (length!=max_length){
-				int c;
-
-				c=w_get_char();
-				*string++=c;
-				++length;
-				if (c==NEWLINE_CHAR)
-					return length;
-			}
-
-			return -1;
-		} else
+		else if (f==&file_table[1])
+			return w_get_line (string,max_length);
+		else
 			IO_error ("freadline: can't open this file");
 	} else {
 		unsigned char *end_string,*begin_string;
@@ -2691,6 +2668,26 @@ void er_print_int (int i)
 		}
 
 		file_write_int (i,&file_table[3]);
+	}
+}
+
+void er_print_real (double r)
+{
+#if MACOSX
+	if (!(flags & WRITE_STDERR_TO_FILE_MASK))
+		ew_print_real (r);
+	else {
+#else
+	ew_print_real (r);
+
+	if (flags & WRITE_STDERR_TO_FILE_MASK){
+#endif
+		if (file_table[3].file_mode==0){
+			if (open_stderr_file_failed || !open_stderr_file())
+				return;
+		}
+
+		file_write_real (r,&file_table[3]);
 	}
 }
 
