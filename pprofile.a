@@ -6,7 +6,7 @@
 	lwz	&r,&a{TC}(RTOC)
 	endm
 
-MACOSX		set	1
+; MACOSX		set	1
 ; POWER601		set	1
 ALLOCATION_PROFILE	set	1
 USE_TEMPORARY_MEMORY	set	1
@@ -627,7 +627,7 @@ profile_n_:
 	subis	r9,r8,hi1e9
 	cmpwi	0,r9,lo1e9
 
-	lwz	r6,FunctionProfile.n_profiler_calls(r4)
+	lwz	r6,FunctionProfile.n_profiler_calls(r3)
 
 	blt+	@no_carry
 
@@ -637,13 +637,13 @@ profile_n_:
 @no_carry:
  else
 	addc	r8,r8,r10
-	lwz	r6,FunctionProfile.n_profiler_calls(r4)
+	lwz	r6,FunctionProfile.n_profiler_calls(r3)
 	adde	r7,r7,r9
  endif
 	addi	r6,r6,1
 	stw	r7,FunctionProfile.time_hi(r3)
 	stw	r8,FunctionProfile.time_lo(r3)
-	stw	r6,FunctionProfile.n_profiler_calls(r4)
+	stw	r6,FunctionProfile.n_profiler_calls(r3)
 
  if ALLOCATION_PROFILE
 	lwz	r11,Globals.n_words_free(r5)
