@@ -446,16 +446,10 @@ void w_print_char (char c)
 	putchar (c);
 }
 
-void w_print_text (register char *s,unsigned long length)
+void w_print_text (char *s,unsigned long length)
 {
-	register int l;
-	
-	l=length;
-	if (l)
-		do {
-			putchar (*s);
-			++s;
-		} while (--l);
+	if (length)
+		fwrite (s,1,length,stdout);
 }
 
 void ew_print_char (char c)
@@ -463,16 +457,10 @@ void ew_print_char (char c)
 	putc (c,stderr);
 }
 
-void ew_print_text (register char *s,unsigned long length)
+void ew_print_text (char *s,unsigned long length)
 {
-	register int l;
-	
-	l=length;
-	if (l)
-		do {
-			putc (*s,stderr);
-			++s;
-		} while (--l);
+	if (length)
+		fwrite (s,1,length,stderr);
 }
 
 int w_get_char()
@@ -486,21 +474,25 @@ int w_get_int (int *i_p)
 {
 	int c,negative;
 	unsigned int i;
+
+	flockfile (stdin);
 	
-	c=getchar();
+	c=getchar_unlocked();
 	while (c==' ' || c=='\t' || c=='\n')
-		c=getchar();
+		c=getchar_unlocked();
 	
 	negative=0;
 	if (c=='+')
-		c=getchar();
+		c=getchar_unlocked();
 	else
 		if (c=='-'){
-			c=getchar();
+			c=getchar_unlocked();
 			negative=1;
 		}
 	
 	if (!is_digit (c)){
+		funlockfile (stdin);
+
 		if (c!=EOF)
 			ungetc (c,stdin);
 
@@ -509,7 +501,7 @@ int w_get_int (int *i_p)
 	}
 	
 	i=c-'0';
-	while (c=getchar(),is_digit (c)){
+	while (c=getchar_unlocked(),is_digit (c)){
 		i+=i<<2;
 		i+=i;
 		i+=c-'0';
@@ -517,6 +509,8 @@ int w_get_int (int *i_p)
 
 	if (negative)
 		i=-i;
+
+	funlockfile (stdin);
 
 	if (c!=EOF)
 		ungetc (c,stdin);
@@ -531,17 +525,19 @@ int w_get_real (double *r_p)
 	int c,dot,digits,result,n;
 	
 	n=0;
+
+	flockfile (stdin);
 	
-	c=getchar();
+	c=getchar_unlocked();
 	while (c==' ' || c=='\t' || c=='\n')
-		c=getchar();
+		c=getchar_unlocked();
 	
 	if (c=='+')
-		c=getchar();
+		c=getchar_unlocked();
 	else
 		if (c=='-'){
 			s[n++]=c;
-			c=getchar();
+			c=getchar_unlocked();
 		}
 	
 	dot=0;
@@ -558,7 +554,7 @@ int w_get_real (double *r_p)
 			digits=-1;
 		if (n<256)
 			s[n++]=c;
-		c=getchar();
+		c=getchar_unlocked();
 	}
 
 	result=0;
@@ -568,22 +564,22 @@ int w_get_real (double *r_p)
 		else {
 			if (n<256)
 				s[n++]=c;
-			c=getchar();
+			c=getchar_unlocked();
 			
 			if (c=='+')
-				c=getchar();
+				c=getchar_unlocked();
 			else
 				if (c=='-'){
 					if (n<256)
 						s[n++]=c;
-					c=getchar();
+					c=getchar_unlocked();
 				}
 			
 			if (is_digit (c)){
 				do {
 					if (n<256)
 						s[n++]=c;
-					c=getchar();
+					c=getchar_unlocked();
 				} while (is_digit (c));
 
 				result=-1;
