@@ -13,6 +13,10 @@ ppcasm -d MACOSX=1 -d POWER601=0 -d LINUX=0 -sym off -typecheck pprofile.a -o pp
 PPCLink -sym off -xm library mcon.c.x mwrite_heap.c.x pprofile.a.o pstartup.a.o	-o _startupProfile.xo
 setfile -t CgOb -c 3PRM _startupProfile.xo
 
+ppcasm -d MACOSX=1 -d POWER601=1 -d LINUX=0 -sym off -typecheck pprofile.a -o pprofile.a.o
+PPCLink -sym off -xm library mcon.c.x mwrite_heap.c.x pprofile.a.o pstartup.a.o	-o _startupProfile601.xo
+setfile -t CgOb -c 3PRM _startupProfile601.xo
+
 ppcasm -d MACOSX=1 -sym off -typecheck ptrace.a -o ptrace.a.o
 PPCLink -sym off -xm library mcon.c.x mwrite_heap.c.x ptrace.a.o pstartup.a.o -o _startupTrace.xo
 setfile -t CgOb -c 3PRM _startupTrace.xo
