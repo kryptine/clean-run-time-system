@@ -1663,7 +1663,7 @@ void wait_for_key_press (VOID)
 	if (use_stdio)
 		return;
 #endif
-	SetWTitle (flags & 16 ? e_window : c_window,"\ppress any key to exit");
+	SetWTitle ((flags & 16) && error_window_visible ? e_window : c_window,"\ppress any key to exit");
 	wait_key();	
 }
 
