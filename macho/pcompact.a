@@ -1069,7 +1069,7 @@ copy_non_pointers_in_record:
 	lwz	o0,0(a0)
 	addi	a0,a0,4
 	stw	o0,0(a6)
-#	subi.	d2,d2,1
+;	subi.	d2,d2,1
 	subic.	d1,d1,1
 	addi	a6,a6,4
 	bge	copy_non_pointers_in_record
