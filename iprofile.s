@@ -30,8 +30,11 @@
 	.global profile_t
 	.global	write_profile_information
 	.global	write_profile_stack
-
+#ifdef LINUX
+	.global	@malloc
+#else
 	.global	@allocate_memory
+#endif
 	.global	__STRING__
 	.global	openF
 	.global	closeF
@@ -427,7 +430,11 @@ allocate_function_profile_record:
 	push	a1
 
 	pushl	$128*FunctionProfile
+#ifdef LINUX
+	call	@malloc
+#else
 	call	@allocate_memory
+#endif
 	add	$4,sp
 
 	test	d0,d0
@@ -690,7 +697,11 @@ init_profiler:
 	jz	no_tsc_error
 
 	pushl	@ab_stack_size
+#ifdef LINUX
+	call	@malloc
+#else
 	call	@allocate_memory
+#endif
 	add	$4,sp
 	
 	test	d0,d0
@@ -758,7 +769,7 @@ profile_file_name:
 	align	(2)
 #ifdef MODULE_NAMES
 # if 0
-/ m_system also defined in cgistartup.s
+/ m_system also defined in istartup.s
 m_system:
 	.long	6
 	.ascii	"System"
