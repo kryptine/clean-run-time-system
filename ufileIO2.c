@@ -386,6 +386,8 @@ int close_file (long fn)
 			if (!stdio_open)
 				IO_error ("fclose: file not open (stdio)");
 			stdio_open=0;
+			if (ferror (stdin) || ferror (stdout))
+				return 0;
 		}
 		return -1;
 	} else {
