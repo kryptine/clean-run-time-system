@@ -54,7 +54,7 @@
 #define	n_strict_calls	16
 #define	n_lazy_calls	20
 #define	n_curried_calls	24
-#define	n_bytes_allocated	28
+#define	n_words_allocated	28
 #define	name		32
 #define	FunctionProfile	36
 	
@@ -88,9 +88,10 @@ profile_t:
 	sub	a4,a0
 	mov	global_n_bytes_free,d0
 	add	$32,a0	
-	sub	a0,d0	
+	sub	a0,d0
 	mov	a0,global_n_bytes_free
-	add	d0,n_bytes_allocated(d1)
+	sar	$2,d0
+	add	d0,n_words_allocated(d1)
 #endif
 
 	pop	d1
@@ -132,9 +133,10 @@ profile_r:
 	sub	a4,a0
 	mov	global_n_bytes_free,d0
 	add	$32,a0	
-	sub	a0,d0	
+	sub	a0,d0
 	mov	a0,global_n_bytes_free
-	add	d0,n_bytes_allocated(d1)
+	sar	$2,d0
+	add	d0,n_words_allocated(d1)
 #endif
 
 	pop	d1
@@ -390,9 +392,10 @@ profile_n_:
 	sub	a4,a0
 	mov	global_n_bytes_free,d0
 	add	$32,a0	
-	sub	a0,d0	
+	sub	a0,d0
 	mov	a0,global_n_bytes_free
-	add	d0,n_bytes_allocated(a2)
+	sar	$2,d0
+	add	d0,n_words_allocated(a2)
 #endif
 
 	pop	a0
@@ -462,7 +465,7 @@ no_alloc:
 	mov	d0,n_strict_calls(d1)
 	mov	d0,n_lazy_calls(d1)
 	mov	d0,n_curried_calls(d1)
-	mov	d0,n_bytes_allocated(d1)
+	mov	d0,n_words_allocated(d1)
 
 	mov	global_profile_records,d0
 	mov	a2,name(d1)
@@ -583,7 +586,7 @@ l2:	mov	d0,a0
 	call	writeFI_space
 
 	mov	(sp),d1
-	mov	n_bytes_allocated(d1),d1
+	mov	n_words_allocated(d1),d1
 	call	writeFI_space
 
 	mov	(sp),d1
