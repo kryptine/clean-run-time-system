@@ -75,6 +75,7 @@ MACOSX		set	1
 SHARE_CHAR_INT	set	1
 MY_ITOS	set	1
 FINALIZERS	set	1
+STACK_OVERFLOW_EXCEPTION_HANDLER set	1
 MEASURE_GC	set	0
 
 COPIED_VECTOR	set	1
@@ -326,6 +327,9 @@ entier_constants_and_buffers:
 	comm	finalizer_list,4
 	export	free_finalizer_list
 	comm	free_finalizer_list,4
+ endif
+ if STACK_OVERFLOW_EXCEPTION_HANDLER
+	import	.allocate_a_stack
  endif
 
 	align	1
@@ -618,7 +622,11 @@ abc_main:
  	ori	sp,sp,28
  	stwu	g0,-(64+28)(sp)
 
+  if STACK_OVERFLOW_EXCEPTION_HANDLER
+	bl	.allocate_a_stack
+  else
 	bl	.NewPtr
+  endif
 	nop
 
  	lwz	sp,0(sp)
@@ -3483,6 +3491,9 @@ no_copy_garbage_collection:
 	b	end_garbage_collect
 
 stack_overflow:
+	lea	o0,halt_sp
+	lwz	sp,0(o0)
+
 	bl	.add_execute_time
 
 	lea	o0,stack_overflow_string
@@ -3546,7 +3557,6 @@ print_error:
 	addi	sp,sp,64
  endif
 halt:
-
  if PROFILE
 	mflr	r0
 	stwu	r0,-4(sp)
@@ -3561,8 +3571,9 @@ halt:
 	bne	e__Exceptions__sraise__exception
  endif
  
-	lea	o0,halt_sp
+ 	lea	o0,halt_sp
 	lwz	sp,0(o0)
+
  if 0
 	lea	o0,flags
 	lwz	d0,0(o0)
@@ -5964,6 +5975,103 @@ entier_real_2:
 	lwz	RTOC,4(r3)
 	bctr
 
+
+ if MACOSX
+ 	export	.call_function_0{PR}
+	csect	.call_function_0{PR}
+	mflr	r0
+	stw	r0,8(sp)
+	subi	sp,sp,64
+
+	stw	RTOC,20(sp)
+	lwz	RTOC,4(r3)
+	lwz	r3,0(r3)
+	mtctr	r3
+	bctrl
+	lwz	RTOC,20(sp)
+
+	lwz	r0,64+8(sp)
+	addi	sp,sp,64
+	mtlr	r0
+	blr
+
+ 	export	.call_function_2{PR}
+	csect	.call_function_2{PR}
+	mflr	r0
+	stw	r0,8(sp)
+	subi	sp,sp,64
+
+	stw	RTOC,20(sp)
+	lwz	RTOC,4(r5)
+	lwz	r5,0(r5)
+	mtctr	r5
+	bctrl
+	lwz	RTOC,20(sp)
+
+	lwz	r0,64+8(sp)
+	addi	sp,sp,64
+	mtlr	r0
+	blr
+
+ 	export	.call_function_3{PR}
+	csect	.call_function_3{PR}
+	mflr	r0
+	stw	r0,8(sp)
+	subi	sp,sp,64
+
+	stw	RTOC,20(sp)
+	lwz	RTOC,4(r6)
+	lwz	r6,0(r6)
+	mtctr	r6
+	bctrl
+	lwz	RTOC,20(sp)
+
+	lwz	r0,64+8(sp)
+	addi	sp,sp,64
+	mtlr	r0
+	blr
+
+ 	export	.call_function_5{PR}
+	csect	.call_function_5{PR}
+	mflr	r0
+	stw	r0,8(sp)
+	subi	sp,sp,64
+
+	stw	RTOC,20(sp)
+	lwz	RTOC,4(r8)
+	lwz	r8,0(r8)
+	mtctr	r8
+	bctrl
+	lwz	RTOC,20(sp)
+
+	lwz	r0,64+8(sp)
+	addi	sp,sp,64
+	mtlr	r0
+	blr
+
+ 	export	.call_function_7{PR}
+	csect	.call_function_7{PR}
+	mflr	r0
+	stw	r0,8(sp)
+	subi	sp,sp,64
+
+	stw	RTOC,20(sp)
+	lwz	RTOC,4(r10)
+	lwz	r10,0(r10)
+	mtctr	r10
+	bctrl
+	lwz	RTOC,20(sp)
+
+	lwz	r0,64+8(sp)
+	addi	sp,sp,64
+	mtlr	r0
+	blr
+
+ 	export	.get_TOC{PR}
+	csect	.get_TOC{PR}
+	mr	r3,RTOC
+	blr
+ endif
 
 	macro
 	te	&address

@@ -7,6 +7,7 @@
 #define NEW_HEADERS
 #define G_POWER
 #define FLUSH_PORT_BUFFER
+#define STACK_OVERFLOW_EXCEPTION_HANDLER
 
 #ifdef MACHO
 # define NEWLINE_CHAR '\r'
@@ -44,6 +45,170 @@ extern void sprintf (char *,...);
 #include <OSUtils.h>
 #ifndef NEW_HEADERS
 # include <OSEvents.h>
+#endif
+#ifdef STACK_OVERFLOW_EXCEPTION_HANDLER
+# ifdef MACHO
+#  include <mach/mach.h>
+# else
+#	include <Files.h>
+#	include <Folders.h>
+#	include <CFBundle.h>
+#	include <CFNumber.h>
+#	include <CFURL.h>
+#	define SIGBUS  10
+#	define SIGSEGV 11
+#	define SIG_DFL         (void (*)())0
+#	define SIG_IGN         (void (*)())1
+	struct  sigaction {
+		void    (*sa_handler)();
+		unsigned int sa_mask;
+		int     sa_flags;
+	};	
+	struct  sigaltstack {
+		char    *ss_sp;
+		int     ss_size;
+		int     ss_flags;
+	};
+	struct sigcontext {
+		int     sc_onstack;
+		int     sc_mask;
+		int     sc_ir;
+		int     sc_psw;
+		int		sc_sp;
+		void    *sc_regs;
+	};
+	struct vm_region_basic_info {
+		int             protection;
+		int             max_protection;
+		unsigned int    inheritance;
+		int             shared;
+		int             reserved;
+		int				offset;
+		int 	        behavior;
+		unsigned short  user_wired_count;
+	};
+
+	static CFBundleRef systemBundle=NULL;
+
+	static int initSystemBundle (void)
+	{
+		FSRefParam fileRefParam;
+		FSRef fileRef;
+		OSErr error;
+		CFURLRef url;
+		
+		{
+			int i;
+			char *p;
+			
+			p=(char*)&fileRefParam;
+			for (i=0; i<sizeof (fileRefParam); ++i)
+				p[i]=0;
+	
+			p=(char*)&fileRef;
+			for (i=0; i<sizeof (fileRef); ++i)
+				p[i]=0;
+		}
+		
+		fileRefParam.ioNamePtr = "\pSystem.framework";;
+		fileRefParam.newRef = &fileRef;
+	
+		error = FindFolder (kSystemDomain,kFrameworksFolderType,false,&fileRefParam.ioVRefNum,&fileRefParam.ioDirID);
+		if (error!=noErr)
+			return 0;
+		
+		error = PBMakeFSRefSync (&fileRefParam);
+		if (error!=noErr)
+			return 0;
+	
+		url = CFURLCreateFromFSRef (NULL/*kCFAllocatorDefault*/,&fileRef);
+		if (url==NULL)
+			return 0;
+	
+		systemBundle = CFBundleCreate(NULL/*kCFAllocatorDefault*/, url);
+		if (systemBundle==NULL)
+			return 0;	
+		
+		CFRelease (url);
+		
+		return 1;
+	}
+
+	static int (*sigaction_p) (int,void *,void *)=NULL;
+
+	static int sigaction (int a1,void *a2,void *a3)
+	{
+		if (sigaction_p==NULL){
+			if (systemBundle==NULL)
+				initSystemBundle();
+			sigaction_p = (int(*)(int,void*,void*)) CFBundleGetFunctionPointerForName (systemBundle,CFSTR ("sigaction"));
+			if (sigaction_p==NULL)
+				return -1;
+		}
+		
+		return call_function_3 (a1,a2,a3,sigaction_p);
+	}
+
+	static int (*sigaltstack_p) (void *,void *);
+
+	int sigaltstack (void *a1,void *a2)
+	{
+		if (sigaltstack_p==NULL){
+			if (systemBundle==NULL)
+				initSystemBundle();
+			sigaltstack_p = (int(*)(void*,void*)) CFBundleGetFunctionPointerForName (systemBundle,CFSTR ("sigaltstack"));
+			if (sigaltstack_p==NULL)
+				return -1;
+		}
+		
+		return call_function_2 (a1,a2,sigaltstack_p);
+	}
+	
+	static int (*mach_task_self_p) (void)=NULL;
+
+	int mach_task_self (void)
+	{
+		if (mach_task_self_p==NULL){
+			if (systemBundle==NULL)
+				initSystemBundle();
+			mach_task_self_p = (int(*)(void)) CFBundleGetFunctionPointerForName (systemBundle,CFSTR ("mach_task_self"));
+			if (mach_task_self_p==NULL)
+				return -1;
+		}
+		
+		return call_function_0 (mach_task_self_p);
+	}
+
+	static int (*vm_region_p) (int,void*,void *,int,void *,void *,void *);
+	
+	int vm_region (int a1,void *a2,void *a3,int a4,void *a5,void *a6,void *a7)
+	{
+		if (vm_region_p==NULL){
+			if (systemBundle==NULL)
+				initSystemBundle();
+			vm_region_p = (int(*)(int,void*,void *,int,void *,void *,void *)) CFBundleGetFunctionPointerForName (systemBundle,CFSTR ("vm_region"));
+			if (vm_region_p==NULL)
+				return -1;
+		}
+		
+		return call_function_7 (a1,a2,a3,a4,a5,a6,a7,vm_region_p);
+	}
+
+	static int (*vm_protect_p) (int,int,int,int,int);
+
+	int vm_protect (int a1,int a2,int a3,int a4,int a5)
+	{
+		if (vm_protect_p==NULL){
+			if (systemBundle==NULL)
+				initSystemBundle();
+			vm_protect_p = (int(*)(int,int,int,int,int)) CFBundleGetFunctionPointerForName (systemBundle,CFSTR ("vm_protect"));
+			if (vm_protect_p==NULL)
+				return -1;
+		}
+		
+		return call_function_5 (a1,a2,a3,a4,a5,vm_protect_p);
+	}
+# endif
 #endif
 
 #ifdef MACOSX
@@ -1424,6 +1589,214 @@ extern void my_pointer_glue (void (*function) (void));
 
 int execution_aborted;
 
+#ifdef STACK_OVERFLOW_EXCEPTION_HANDLER
+int *a_stack_guard_page,*b_stack_guard_page;
+
+void *allocate_a_stack (int size)
+{
+	int alloc_size;
+	char *p,*end_p;
+	
+	alloc_size=(size+4096+4095) & -4096;
+	
+# ifdef MACHO
+	p=malloc (alloc_size);
+# else
+	p=NewPtr (alloc_size);
+# endif
+	if (p==NULL)
+		return NULL;
+
+	end_p=(char*)(((int)p+size+4095) & -4096);
+
+	vm_protect (mach_task_self(),(int)end_p,4096,0,0);
+
+	a_stack_guard_page=(int*)end_p;
+
+	return (void*)((int)end_p-size);
+}
+
+extern int *halt_sp;
+extern void stack_overflow (void);
+
+struct sigaction old_BUS_sa,old_SEGV_sa;
+
+static void clean_exception_handler (int sig,void *sip,struct sigcontext *scp)
+{
+	struct sigaction *old_sa_p;
+	unsigned int instruction;
+	int *registers,a;
+		
+	instruction=*(unsigned int*)(scp->sc_ir);
+	registers = &((int *)scp->sc_regs)[2];
+	
+	switch (instruction>>26){
+		case 36: /* stw */	case 37: /* stwu */
+		case 38: /* stb */	case 39: /* stbu */
+		case 44: /* sth */	case 45: /* sthu */
+		case 47: /* stmw */
+		case 54: /* stfd */	case 55: /* stfdu */
+		{
+			int reg_a,a_aligned_4k;
+			
+			reg_a=(instruction>>16) & 31;
+			a=(short)instruction;
+			if (reg_a)
+				a+=registers[reg_a];
+			
+			a_aligned_4k = (int)a & -4096;
+			
+			if (a_aligned_4k==(int)b_stack_guard_page || a_aligned_4k==(int)a_stack_guard_page){
+				scp->sc_ir = (int)&stack_overflow;
+				registers[1]=(int)halt_sp;
+				return;
+			}
+		}
+	}
+	
+	old_sa_p = sig==SIGBUS ? &old_BUS_sa : &old_SEGV_sa;
+
+	if (old_sa_p->sa_handler==SIG_DFL || old_sa_p->sa_handler==SIG_IGN)
+		sigaction (sig,old_sa_p,NULL);
+	else
+# ifdef MACHO
+		old_sa_p->sa_handler (sig,sip,scp);
+# else
+		call_function_3 (sig,sip,scp,old_sa_p->sa_handler);
+# endif
+}
+
+# ifndef MACHO
+extern int *get_TOC (void);
+# endif
+
+static void install_clean_exception_handler (void)
+{
+	{
+		struct vm_region_basic_info vm_region_info;
+# ifdef MACHO
+		vm_address_t vm_address,previous_address;
+		mach_msg_type_number_t info_count;
+		memory_object_name_t object_name;
+		vm_size_t vm_size;
+# else
+		int vm_address,previous_address;
+		int info_count;
+		int object_name;
+		int vm_size;
+		int *stack_top;
+# endif
+		int r,var_on_stack;
+	
+	 	vm_address=(int)&var_on_stack;
+	 
+		info_count=sizeof (vm_region_info);
+# ifdef MACHO
+		r=vm_region (mach_task_self(),&vm_address,&vm_size,VM_REGION_BASIC_INFO,(vm_region_info_t)&vm_region_info,&info_count,&object_name);
+# else
+		r=vm_region (mach_task_self(),&vm_address,&vm_size,10,(void*)&vm_region_info,&info_count,&object_name);
+# endif
+		if (r!=0)
+			return;
+
+#ifndef MACHO
+		stack_top=(int*)(vm_address+vm_size);
+#endif
+
+		do {
+			previous_address=vm_address;
+			vm_address=vm_address-1;
+
+			info_count=sizeof (vm_region_info);
+# ifdef MACHO
+			r=vm_region (mach_task_self(),&vm_address,&vm_size,VM_REGION_BASIC_INFO,(vm_region_info_t)&vm_region_info,&info_count,&object_name);
+# else
+			r=vm_region (mach_task_self(),&vm_address,&vm_size,10,(void*)&vm_region_info,&info_count,&object_name);
+# endif
+		} while (vm_address!=previous_address && r==0);
+
+		b_stack_guard_page=(int*)((int)previous_address-4096);
+
+#ifndef MACHO
+		{
+			int stack_size_aligned_4k;
+
+			stack_size_aligned_4k = (stack_size+4095) & -4096;
+			if ((unsigned int)b_stack_guard_page < (unsigned int)((int)stack_top-stack_size_aligned_4k-4096)){
+				b_stack_guard_page=(int*)((int)stack_top-stack_size_aligned_4k-4096);
+				vm_protect (mach_task_self(),(int)b_stack_guard_page,4096,0,0);
+			}
+		}
+#endif
+	}
+
+	{
+		struct sigaltstack sa_stack;
+		void *signal_stack;
+		struct sigaction sa;
+
+# ifdef MACHO
+		signal_stack=(int*)malloc (MINSIGSTKSZ);
+# else
+		signal_stack=(int*)NewPtr (8192);
+# endif
+		if (signal_stack!=NULL){
+# ifndef MACHO
+			int *handler_trampoline;
+# endif
+
+			sa_stack.ss_sp=signal_stack;
+# ifdef MACHO
+			sa_stack.ss_size=MINSIGSTKSZ;
+# else
+			sa_stack.ss_size=8192;
+# endif
+			sa_stack.ss_flags=0;
+
+			sigaltstack (&sa_stack,NULL);
+
+# ifdef MACHO
+			sa.sa_handler=&clean_exception_handler;
+			sigemptyset (&sa.sa_mask);
+			sa.sa_flags=SA_ONSTACK;//SA_SIGINFO;
+# else
+			handler_trampoline = (int*) NewPtr (24);
+			if (handler_trampoline!=NULL){
+				int *handler_address,*toc_register;
+
+				handler_address=*(int**)&clean_exception_handler;
+				toc_register=get_TOC();
+
+# define i_dai_i(i,rd,ra,si)((i<<26)|((rd)<<21)|((ra)<<16)|((unsigned short)(si)))
+# define addis_i(rd,ra,si)	i_dai_i (15,rd,ra,si)
+# define addi_i(rd,ra,si)	i_dai_i (14,rd,ra,si)
+# define lis_i(rd,si)		addis_i (rd,0,si)
+# define bctr_i()			((19<<26)|(20<<21)|(528<<1))
+# define mtspr_i(spr,rs)	((31<<26)|((rs)<<21)|(spr<<16)|(467<<1))
+# define mtctr_i(rs)		mtspr_i (9,rs)
+
+				handler_trampoline[0]=lis_i (6,((int)handler_address-(short)handler_address)>>16);
+				handler_trampoline[1]=addi_i (6,6,(short)handler_address);
+				handler_trampoline[2]=mtctr_i (6);
+				handler_trampoline[3]=lis_i (2,((int)toc_register-(short)toc_register)>>16);
+				handler_trampoline[4]=addi_i (2,2,(short)toc_register);
+				handler_trampoline[5]=bctr_i();
+
+				__icbi (handler_trampoline,0);
+				__icbi (handler_trampoline,20);
+				
+				sa.sa_handler=(void(*)())handler_trampoline;
+				sa.sa_mask=0;
+				sa.sa_flags=1;
+			}
+# endif
+			sigaction (SIGSEGV,&sa,&old_SEGV_sa);
+			sigaction (SIGBUS,&sa,&old_BUS_sa);
+		}
+	}
+}
+#endif
+
 int main (void)
 {
 	Handle stack_handle,font_handle;
@@ -1451,6 +1824,10 @@ int main (void)
 	stack_size=(stack_p[0]+3) & ~3;
 	heap_size=(stack_p[2]+7) & ~7;
 	flags=stack_p[3];
+
+#ifdef STACK_OVERFLOW_EXCEPTION_HANDLER
+	install_clean_exception_handler();
+#endif
 
 #ifdef SIMULATE
 	n_processors=stack_p[1];
@@ -1484,6 +1861,7 @@ int main (void)
 #endif
 	
 	font_id=-1;
+
 	
 	font_handle=GetResource ('Font',128);
 	if (font_handle!=NULL){
@@ -1502,8 +1880,6 @@ int main (void)
 	
 	if (!init_terminal())
 		return 1;
-
-/*	srand (TickCount()); */
 
 #ifdef G_POWER
 	wait_next_event_available=1;
@@ -1587,7 +1963,7 @@ int main (void)
 	return 0;
 }
 
-#ifdef TIME_PROFILE
+#if defined (TIME_PROFILE) || defined (MACHO)
 void create_profile_file_name (unsigned char *profile_file_name)
 {
 	unsigned char *cur_ap_name,*end_profile_file_name;

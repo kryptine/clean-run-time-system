@@ -155,7 +155,8 @@ ZERO_ARITY_DESCRIPTOR_OFFSET	=	(-12)
 	.comm	end_a_stack,4
 	.comm	end_b_stack,4
  .endif
-	.comm	halt_sp,4
+	.comm	_halt_sp,4
+	.globl	_halt_sp
 # comment number of long words requested from the garbage collector
 	.comm	alloc_size,4
 	.comm	basic_only,4
@@ -431,6 +432,7 @@ entier_constants_and_buffers:
 	.globl	_IO_error
 	.globl	print_error
 	.globl	stack_overflow
+	.globl	_stack_overflow
 
 	.globl	out_of_memory_4
 
@@ -617,7 +619,11 @@ _abc_main:
 	lwz	o0,0(o0)
 	
 	stwu	sp,-64(sp)
+  .if 1
+	bl	_allocate_a_stack
+  .else
 	bl	L_NewPtr$stub
+  .endif
 	addi	sp,sp,64
 
 	cmpwi	0,o0,0
@@ -786,7 +792,7 @@ no_mark2:
 	add	d0,a6,d0
 	stw	d0,0(o0)
 
-	lea	o0,halt_sp
+	lea	o0,_halt_sp
 	stw	sp,0(o0)
 
  .if EXCEPTIONS
@@ -2494,7 +2500,7 @@ collect:
 	lwz	a0,0(o0)
 	sub	o0,a4,a0
  .if MACOSX
-	lea	o1,halt_sp
+	lea	o1,_halt_sp
 	lwz	d0,0(o1)
  .else
 	lea	o1,_stack_size
@@ -3392,7 +3398,11 @@ no_copy_garbage_collection:
 	add	d0,d0,d1
 	b	end_garbage_collect
 
+_stack_overflow:
 stack_overflow:
+	lea	o0,_halt_sp
+	lwz	sp,0(o0)
+
 	bl	_add_execute_time
 
 	lea	o0,stack_overflow_string
@@ -3455,7 +3465,11 @@ print_error:
  .else
 	baddi	sp,64
  .endif
+
 halt:
+
+	lea	o0,_halt_sp
+	lwz	sp,0(o0)
 
  .if PROFILE
 	mflr	r0
@@ -3471,8 +3485,6 @@ halt:
 	bne	e__Exceptions__sraise__exception
  .endif
  
-	lea	o0,halt_sp
-	lwz	sp,0(o0)
  .if 0
 	lea	o0,_flags
 	lwz	d0,0(o0)
