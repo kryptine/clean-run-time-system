@@ -497,7 +497,7 @@ int file_read_char (long fn)
 			case 0:
 				IO_error ("FReadC: can't read from StdErr");
 			case 1:
-				return w_get_char();
+				return getchar();
 			default:
 				IO_error ("FReadC: can't open this file");
 		}
@@ -608,28 +608,15 @@ unsigned long file_read_string (long fn,unsigned long max_length,struct clean_st
 			case 0:
 				IO_error ("FReadS: can't read from StdErr");
 			case 1:
-			{
-				char *string;
-				
-				length=0;
-				string=s->characters;
-				
-				while (length!=max_length){
-					*string++=w_get_char();
-					++length;
-				}
-
+				length = fread (s->characters,1,max_length,stdin);	
 				s->length=length;
 				return length;
-			}
 			default:
 				IO_error ("FReadS: can't open this file");
 		}
 	} else {
 		struct file *f;
 		FILE *fd;
-		char *string;
-		int c;
 
 		f=&file_table[fn];
 
@@ -637,14 +624,7 @@ unsigned long file_read_string (long fn,unsigned long max_length,struct clean_st
 			IO_error ("FReadS: read from an output file");
 		
 		fd=f->file;
-		length=0;
-		string=s->characters;
-
-		while (length!=max_length && (c=getc (fd),c!=EOF)){
-			*string++=c;
-			++length;
-		}
-		
+		length = fread (s->characters,1,max_length,fd);	
 		s->length=length;
 		
 		return length;
@@ -661,19 +641,26 @@ unsigned long file_read_line (long fn,unsigned long max_length,char *string)
 				IO_error ("FReadLine: can't read from StdErr");
 			case 1:
 			{
+				int c;
 				length=0;
 
-				while (length!=max_length){
-					int c;
+				flockfile (stdin);
 
-					c=w_get_char();
+				while (length!=max_length && (c=getchar_unlocked(),c!=EOF)){
 					*string++=c;
 					++length;
-					if (c=='\n')
+					if (c=='\n'){
+						funlockfile (stdin);
 						return length;
+					}
 				}
 
-				return -1;
+				funlockfile (stdin);
+
+				if (c!=EOF)
+					return -1;
+		
+				return length;
 			}
 			default:
 				IO_error ("FReadLine: can't open this file");
@@ -690,21 +677,29 @@ unsigned long file_read_line (long fn,unsigned long max_length,char *string)
 
 		c=0;
 		if (f->mode & (1<<F_READ_TEXT)){
-			while (length!=max_length && (c=getc (fd),c!=EOF)){
+			flockfile (fd);
+			while (length!=max_length && (c=getc_unlocked (fd),c!=EOF)){
 				*string++=c;
 				++length;
-				if (c=='\n')
+				if (c=='\n'){
+					funlockfile (fd);
 					return length;
+				}
 			}
+			funlockfile (fd);
 		} else if (f->mode & (1<<F_READ_DATA)){
-			while (length!=max_length && (c=getc (fd),c!=EOF)){
+			flockfile (fd);
+			while (length!=max_length && (c=getc_unlocked (fd),c!=EOF)){
 				*string++=c;
 				++length;
-				if (c=='\xa')
+				if (c=='\xa'){
+					funlockfile (fd);
 					return length;
+				}
 				else if (c=='\xd'){
 					if (length!=max_length){
-						if ((c=getc (fd),c!=EOF)){
+						if ((c=getc_unlocked (fd),c!=EOF)){
+							funlockfile (fd);
 							if (c=='\xa'){
 								*string++=c;
 								++length;
@@ -712,10 +707,13 @@ unsigned long file_read_line (long fn,unsigned long max_length,char *string)
 								ungetc (c,fd);
 						
 							return length;
-						} else
+						} else {
+							funlockfile (fd);
 							return length;
+						}
 					} else {
-						if ((c=getc (fd),c!=EOF)){
+						if ((c=getc_unlocked (fd),c!=EOF)){
+							funlockfile (fd);
 							if (c=='\xa'){
 								ungetc (c,fd);
 								return -1;
@@ -723,11 +721,14 @@ unsigned long file_read_line (long fn,unsigned long max_length,char *string)
 								ungetc (c,fd);
 						
 							return length;
-						} else
-							return length;					
+						} else {
+							funlockfile (fd);
+							return length;
+						}
 					}
 				}
 			}
+			funlockfile (fd);
 		} else
 			IO_error ("freadline: read from an output file");
 
