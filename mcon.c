@@ -450,8 +450,9 @@ QDGlobals qd;
 
 #ifdef MAYBE_USE_STDIO
 static int use_stdio;
-#define oputc(c) ((c=='\n') ? putchar('\r') : ((c=='\r') ? putchar('\n') : putchar(c)))
-#define eputc(c) ((c=='\n') ? putc('\r',stderr) : ((c=='\r') ? putc('\n',stderr) : putc(c,stderr)))
+#define swap_nl_cr(c) (((c)=='\n' || (c)=='\r') ? ((c) ^ ((char)('\n' ^ '\r'))) : (c))
+#define oputc(c) putchar(swap_nl_cr(c))
+#define eputc(c) putc(swap_nl_cr (c),stderr)
 inline void oputs(const char *s) {while (*s) {oputc(*s);s++;}}
 inline void eputs(const char *s) {while (*s) {eputc(*s);s++;}}
 #endif
@@ -890,13 +891,14 @@ static void w_read_line()
 	}
 }
 
-int w_get_char()
+int w_get_char (void)
 {
 	int c;
 
 #ifdef MAYBE_USE_STDIO
 	if (use_stdio){
-		return getchar();
+		c=getchar();
+		return swap_nl_cr(c);
 	}
 #endif
 
@@ -960,7 +962,7 @@ int w_get_int (int *i_p)
 #ifdef MAYBE_USE_STDIO
 		if (use_stdio){
 			if (c!=EOF)
-				ungetc (c,stdin);
+				ungetc (swap_nl_cr (c),stdin);
 		} else {
 #endif
 		--input_buffer_pos;
@@ -985,7 +987,7 @@ int w_get_int (int *i_p)
 #ifdef MAYBE_USE_STDIO
 	if (use_stdio){
 		if (c!=EOF)
-			ungetc (c,stdin);
+			ungetc (swap_nl_cr (c),stdin);
 	} else {
 #endif
 	--input_buffer_pos;
@@ -1073,7 +1075,7 @@ int w_get_real (double *r_p)
 #ifdef MAYBE_USE_STDIO
 	if (use_stdio){
 		if (c!=EOF)
-			ungetc (c,stdin);
+			ungetc (swap_nl_cr (c),stdin);
 	} else {
 #endif
 	--input_buffer_pos;
@@ -1657,9 +1659,11 @@ static void wait_key()
 
 void wait_for_key_press (VOID)
 {
-#if 1
-	SetWTitle (flags & 16 ? e_window : c_window,"\ppress any key to exit");
+#ifdef MAYBE_USE_STDIO
+	if (use_stdio)
+		return;
 #endif
+	SetWTitle (flags & 16 ? e_window : c_window,"\ppress any key to exit");
 	wait_key();	
 }
 
@@ -2138,12 +2142,7 @@ int main (void)
 		my_pointer_glue (exit_tcpip_function);
 #endif
 
-	if (
-#ifdef MAYBE_USE_STDIO	
-		(!use_stdio) &&
-#endif
-		!(flags & 16) || (flags & 8) || execution_aborted!=0)
-	{
+	if (!(flags & 16) || (flags & 8) || execution_aborted!=0){
 #ifdef COMMUNICATION
 		if (my_processor_id==0)
 #endif
