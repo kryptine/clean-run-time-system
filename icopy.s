@@ -56,7 +56,7 @@ copy_lp1:
 
 	mov	(a2),d0
 	add	$4,a2
-	testb	$2,d0
+	testb	$2,d0b
 	je	not_in_hnf_1
 in_hnf_1:
 	movzwl	-2(d0),d1
@@ -75,7 +75,7 @@ in_hnf_1:
 	
 	mov	4(a2),d0
 
-	testb	$1,d0
+	testb	$1,d0b
 
 	jne	node_without_arguments_part
 
@@ -300,7 +300,7 @@ copy_lp2:
 / selectors:
 continue_after_selector_2:
 	movl	(a1),a0
-	testb	$2,a0
+	testb	$2,a0b
 	je	not_in_hnf_2
 
 in_hnf_2:
@@ -361,7 +361,7 @@ copy_hnf_node2_3:
 	add	$12-1,a4
 	mov	(a0),a1
 	
-	testb	$1,a1
+	testb	$1,a1b
 	jne	arguments_already_copied_2
 
 	mov	a4,-4(a4)
@@ -640,7 +640,7 @@ record_arguments_already_copied_2:
 	ret
 
 not_in_hnf_2:
-	testb	$1,a0
+	testb	$1,a0b
 	jne	already_copied_2
 
 	mov	-4(a0),d0
@@ -697,13 +697,13 @@ copy_indirection_2:
 	mov	4(a1),a1
 
 	mov	(a1),a0
-	testb	$2,a0
+	testb	$2,a0b
 	jne	in_hnf_2
 
-	testb	$1,a0
+	testb	$1,a0b
 	jne	already_copied_2
 
-	cmp	$-2,-4(a0)
+	cmpl	$-2,-4(a0)
 	je	skip_indirections_2
 
 	mov	-4(a0),d0
@@ -715,12 +715,12 @@ skip_indirections_2:
 	mov	4(a1),a1
 
 	mov	(a1),a0
-	testb	$2,a0
+	testb	$2,a0b
 	jne	update_indirection_list_2
-	testb	$1,a0
+	testb	$1,a0b
 	jne	update_indirection_list_2
 
-	cmp	$-2,-4(a0)
+	cmpl	$-2,-4(a0)
 	je	skip_indirections_2
 
 update_indirection_list_2:
@@ -740,7 +740,7 @@ copy_selector_2:
 	mov	4(a1),d0
 	
 	mov	(d0),d0
- 	testb	$2,d0
+ 	testb	$2,d0b
 	je	copy_arity_1_node2_
 
 	cmpw	$2,-2(d0)
@@ -773,7 +773,7 @@ copy_record_selector_2:
 	movl	(d0),d0
 	je	copy_strict_record_selector_2
 
- 	testb	$2,d0
+ 	testb	$2,d0b
 	je	copy_arity_1_node2_
 
 	cmpw	$258,-2(d0)
@@ -806,7 +806,7 @@ copy_record_selector_2:
  	jmp	copy_selector_2_
 
 copy_strict_record_selector_2:
-	testb	$2,d0
+	testb	$2,d0b
 	je	copy_arity_1_node2_
 
 	cmpw	$258,-2(d0)
@@ -848,7 +848,7 @@ copy_strict_record_selector_2_:
 
 	movl	a0,a1
 	movl	(a0),a0
-	testb	$2,a0
+	testb	$2,a0b
 	jne	in_hnf_2
 	hlt
 
@@ -1019,6 +1019,37 @@ copy_bool_array_2:
 
 end_copy1:
 	mov	a3,heap_end_after_gc
+
+#ifdef FINALIZERS
+	movl	$finalizer_list,a0
+	movl	$free_finalizer_list,a1
+	movl	finalizer_list,a2
+
+determine_free_finalizers_after_copy:
+	movl	(a2),d0
+	testb	$1,d0b
+	je	finalizer_not_used_after_copy
+
+	movl	4(a2),a2
+	subl	$1,d0
+	movl	d0,(a0)
+	lea	4(d0),a0
+	jmp	determine_free_finalizers_after_copy
+
+finalizer_not_used_after_copy:
+	cmpl	$__Nil-8,a2
+	je	end_finalizers_after_copy
+
+	movl	a2,(a1)
+	lea	4(a2),a1
+	movl	4(a2),a2
+	jmp	determine_free_finalizers_after_copy	
+
+end_finalizers_after_copy:
+	movl	a2,(a0)
+	movl	a2,(a1)
+#endif
+
 	lea	-32(a3),a2
 	movl	a2,end_heap
 

@@ -283,7 +283,7 @@ mark_stack_nodes:
 
 mark_arguments:
 	movl	(a0),d0
-	testb	$2,d0
+	testb	$2,d0b
 	je	mark_lazy_node
 
 	movzwl	-2(d0),a2
@@ -410,7 +410,7 @@ mark_selector_node_1:
 	jc	mark_hnf_1
 #endif
 	movl	(a1),d1
-	testb	$2,d1
+	testb	$2,d1b
 	je	mark_hnf_1
 
 	cmpw	$2,-2(d1)
@@ -492,7 +492,7 @@ mark_record_selector_node_1:
 	jc	mark_hnf_1
 #endif
 	movl	(a1),d1
-	testb	$2,d1
+	testb	$2,d1b
 	je	mark_hnf_1
 
 	cmpw	$258,-2(d1)
@@ -519,7 +519,7 @@ mark_strict_record_selector_node_1:
 	jc	mark_hnf_1
 #endif
 	movl	(a1),d1
-	testb	$2,d1
+	testb	$2,d1b
 	je	mark_hnf_1
 
 	cmpw	$258,-2(d1)
@@ -692,7 +692,7 @@ mark_hnf_0:
 	shrl	$2,d1
 	btr	d1,(a4)
 #endif
-	lea	-2+ZERO_ARITY_DESCRIPTOR_OFFSET(d0),a0
+	lea	ZERO_ARITY_DESCRIPTOR_OFFSET-2(d0),a0
 	jmp	mark_next_node_after_static
 
 mark_int_3:
@@ -866,9 +866,6 @@ mark_parent:
 	movl	a3,d1
 	andl	$3,d1
 
-/	xorl	d1,a3
-/	test	a3,a3
-
 	andl	$-4,a3
 	je	mark_stack_nodes2
 
@@ -899,7 +896,6 @@ argument_part_parent:
 	movl	a0,a3
 	movl	a1,a0
 
-/	movl	(a1),a2
 skip_upward_pointers:
 	movl	a2,d0
 	andl	$3,d0
@@ -907,7 +903,6 @@ skip_upward_pointers:
 	jne	no_upward_pointer
 
 	leal	-3(a2),a1
-/	movl	(a1),a2
 	movl	-3(a2),a2
 	jmp	skip_upward_pointers
 
@@ -1059,6 +1054,87 @@ end_mark_nodes:
 / compact the heap
 
 compact_heap:
+
+#ifdef FINALIZERS
+	movl	$finalizer_list,a0
+	movl	$free_finalizer_list,a1
+
+	movl	(a0),a2
+determine_free_finalizers_after_compact1:
+	cmpl	$__Nil-8,a2
+	je	end_finalizers_after_compact1
+
+	movl	neg_heap_p3,d0
+	addl	a2,d0
+	movl	d0,d1
+	andl	$31*4,d0
+	shrl	$7,d1
+	movl	bit_set_table(d0),a3
+	testl	(a4,d1,4),a3
+	je	finalizer_not_used_after_compact1
+
+	movl	(a2),d0
+	movl	a2,a3
+	jmp	finalizer_find_descriptor
+
+finalizer_find_descriptor_lp:
+	andl	$-4,d0
+	movl	d0,a3
+	movl	(d0),d0
+finalizer_find_descriptor:
+	test	$1,d0
+	jne	finalizer_find_descriptor_lp
+
+	movl	$e____system__kFinalizerGCTemp+2,(a3)
+
+	cmpl	a0,a2
+	ja	finalizer_no_reverse
+
+	movl	(a2),d0
+	leal	1(a0),a3
+	movl	a3,(a2)
+	movl	d0,(a0)
+
+finalizer_no_reverse:
+	lea	4(a2),a0
+	movl	4(a2),a2
+	jmp	determine_free_finalizers_after_compact1
+
+finalizer_not_used_after_compact1:
+	movl	$e____system__kFinalizerGCTemp+2,(a2)
+
+	movl	a2,(a1)
+	lea	4(a2),a1
+
+	movl	4(a2),a2
+	movl	a2,(a0)
+
+	jmp	determine_free_finalizers_after_compact1
+
+end_finalizers_after_compact1:
+	movl	a2,(a1)	
+
+	movl	finalizer_list,a0
+	cmpl	$__Nil-8,a0
+	je	finalizer_list_empty
+	testl	$3,a0
+	jne	finalizer_list_already_reversed
+	movl	(a0),d0
+	movl	$finalizer_list+1,(a0)
+	movl	d0,finalizer_list
+finalizer_list_already_reversed:
+finalizer_list_empty:
+
+	movl	$free_finalizer_list,a2
+	cmpl	$__Nil-8,(a2)
+	je	free_finalizer_list_empty
+
+	movl	$free_finalizer_list+4,end_vector
+	call	mark_stack_nodes
+
+free_finalizer_list_empty:
+#endif
+
 	movl	heap_size_33,d0
 	movl	d0,d1
 	shl	$5,d1
@@ -1533,7 +1609,7 @@ update_up_list_2:
 	movl	(d0),d0
 	inc	d0
 	movl	a4,(a1)
-	testb	$3,d0
+	testb	$3,d0b
 	jne	copy_argument_part_2
 
 	subl	$4,d0
@@ -1607,7 +1683,7 @@ end_update_list_2:
 	movl	d0,(a4)
 	addl	$4,a4
 
-	testb	$2,d0
+	testb	$2,d0b
 	je	move_lazy_node
 
 	movzwl	-2(d0),d1
@@ -2190,3 +2266,17 @@ move_closure_with_unboxed_arguments_1:
 	jmp	find_non_zero_long	
 
 end_copy:
+
+#ifdef FINALIZERS
+	movl	finalizer_list,a0
+
+restore_finalizer_descriptors:
+	cmpl	$__Nil-8,a0
+	je	end_restore_finalizer_descriptors
+
+	movl	$e____system__kFinalizer+2,(a0)
+	movl	4(a0),a0
+	jmp	restore_finalizer_descriptors
+
+end_restore_finalizer_descriptors:
+#endif

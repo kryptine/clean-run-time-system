@@ -177,6 +177,42 @@ restore_array_size_1:
 	jne	restore_arrays
 
 end_restore_arrays:
+
+#ifdef FINALIZERS
+	movl	heap_vector,a4
+	movl	$finalizer_list,a0
+	movl	$free_finalizer_list,a1
+
+	movl	(a0),a2
+determine_free_finalizers_after_mark:
+	cmpl	$__Nil-8,a2
+	je	end_finalizers_after_mark
+
+	movl	neg_heap_p3,d0
+	addl	a2,d0
+	movl	d0,d1
+	andl	$31*4,d0
+	shrl	$7,d1
+	movl	bit_set_table(d0),a3
+	testl	(a4,d1,4),a3
+	je	finalizer_not_used_after_mark
+
+	lea	4(a2),a0
+	movl	4(a2),a2
+	jmp	determine_free_finalizers_after_mark
+
+finalizer_not_used_after_mark:
+	movl	a2,(a1)
+	lea	4(a2),a1
+
+	movl	4(a2),a2
+	movl	a2,(a0)
+	jmp	determine_free_finalizers_after_mark
+
+end_finalizers_after_mark:
+	movl	a2,(a1)
+#endif
+
 	call	add_garbage_collect_time
 
 
@@ -282,7 +318,7 @@ no_larger_heap:
 
 	shrl	$5,a2
 
-	testb	$31,d0
+	testb	$31,d0b
 	je	no_extra_word
 
 	movl	$0,(a4,a2,4)
@@ -322,6 +358,11 @@ no_total_gc_bytes_carry2:
 	addl	$4,sp
 
 _no_heap_use_message2:
+
+#ifdef FINALIZERS
+	call	call_finalizers
+#endif
+
 	movl	n_allocated_words,a3
 	xorl	d1,d1
 
@@ -1118,7 +1159,7 @@ __mark_using_reversal:
 
 __mark_arguments:
 	movl	(a0),d0
-	testb	$2,d0
+	testb	$2,d0b
 	je	__mark_lazy_node
 
 	movzwl	-2(d0),a2
@@ -1240,7 +1281,7 @@ __mark_selector_node_1:
 	jne	__mark_no_selector_2
 
 	movl	(a2),d1
-	testb	$2,d1
+	testb	$2,d1b
 	je	__mark_no_selector_2
 
 	cmpw	$2,-2(d1)
@@ -1283,7 +1324,7 @@ __mark_record_selector_node_1:
 	jne	__mark_no_selector_2
 
 	movl	(a2),d1
-	testb	$2,d1
+	testb	$2,d1b
 	je	__mark_no_selector_2
 	
 	cmpw	$258,-2(d1)
@@ -1301,7 +1342,7 @@ __mark_strict_record_selector_node_1:
 	jne	__mark_no_selector_2
 
 	movl	(a2),d1
-	testb	$2,d1
+	testb	$2,d1b
 	je	__mark_no_selector_2
 
 	cmpw	$258,-2(d1)
@@ -1417,7 +1458,7 @@ __argument_part_parent:
 	movl	(a2),d1
 	movl	d1,-4(a2)
 	movl	a1,(a2)
-	lea	(-4)+2(a2),a3
+	lea	2-4(a2),a3
 	jmp	__mark_node
 
 __mark_lazy_node:
@@ -1534,7 +1575,7 @@ __no_char_3:
 	jmp	__mark_next_node
 #endif
 
-	lea	-2+ZERO_ARITY_DESCRIPTOR_OFFSET(d0),a0
+	lea	ZERO_ARITY_DESCRIPTOR_OFFSET-2(d0),a0
 	jmp	__mark_next_node
 	
 __mark_real_file_or_string:
