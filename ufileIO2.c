@@ -601,8 +601,10 @@ int file_read_real (long fn,double *r_p)
 	}
 }
 
-#define OLD_READ_STRING 1
-#define OLD_WRITE_STRING 1
+#ifndef LINUX
+# define OLD_READ_STRING 1
+# define OLD_WRITE_STRING 1
+#endif
 
 #if OLD_READ_STRING
 unsigned long file_read_string (long fn,unsigned long max_length,struct clean_string *s)

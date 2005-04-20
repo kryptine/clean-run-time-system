@@ -12,11 +12,6 @@
 // # saved registers: %ebx %esi %edi %ebp
 // #                   d1   a3   a4   a2
 
-#ifdef LINUX
-# define OLD_READ_STRING
-# define OLD_WRITE_STRING
-#endif
-
 	.data
 #if defined (DOS) || defined (_WINDOWS_) || defined (ELF)
 	.align	8
