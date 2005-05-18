@@ -73,7 +73,7 @@
 #endif
 
 #ifdef LINUX
-# define section(n) .section	.text.n,"ax",@progbits
+# define section(n) .section	.text.n
 #else
 # define section(n) .text
 #endif
