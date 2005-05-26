@@ -73,7 +73,7 @@
 #endif
 
 #ifdef LINUX
-# define section(n) .section	.text.n
+# define section(n) .section    .text.n,"ax"
 #else
 # define section(n) .text
 #endif
