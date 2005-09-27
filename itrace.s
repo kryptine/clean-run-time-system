@@ -43,36 +43,14 @@
 #define	next		0
 #define	name		4
 #define	FunctionProfile	8
-	
+
 	.text
 profile_t:
-	push	a0
-	mov	profile_stack_pointer,a0
-
-	push	d1	
-	mov	-4(a0),d1
-	
-	sub	$4,a0
-
-	mov	a0,profile_stack_pointer
-	
-	pop	d1
-	pop	a0
+	subl	$4,profile_stack_pointer
 	ret
 
 profile_r:
-	push	a0
-	mov	profile_stack_pointer,a0
-
-	push	d1	
-	mov	-4(a0),d1
-
-	sub	$4,a0
-
-	mov	a0,profile_stack_pointer
-
-	pop	d1
-	pop	a0
+	subl	$4,profile_stack_pointer
 	ret
 
 profile_l:
@@ -82,19 +60,16 @@ profile_l:
 	test	d1,d1
 	je	allocate_function_profile_record_l
 allocate_function_profile_record_lr:
-	push	a0
-	
-	mov	profile_stack_pointer,a0
+	mov	profile_stack_pointer,a2
 
 #ifdef DEBUG_PROFILER
 	testl	(d1),d1
 #endif
-	mov	d1,(a0)
-	add	$4,a0
+	mov	d1,(a2)
+	add	$4,a2
 	
-	mov	a0,profile_stack_pointer
+	mov	a2,profile_stack_pointer
 
-	pop	a0
 	pop	d1
 	ret
 
@@ -108,21 +83,18 @@ profile_l2:
 
 	test	d1,d1
 	je	allocate_function_profile_record_l2
-allocate_function_profile_record_l2r:
-	push	a0
-	
-	mov	profile_stack_pointer,a0
+allocate_function_profile_record_l2r:	
+	mov	profile_stack_pointer,a2
 	
 #ifdef DEBUG_PROFILER
 	testl	(d1),d1
 #endif
-	mov	d1,(a0)
-	mov	d1,4(a0)
-	add	$8,a0
+	mov	d1,(a2)
+	mov	d1,4(a2)
+	add	$8,a2
 
-	mov	a0,profile_stack_pointer
+	mov	a2,profile_stack_pointer
 
-	pop	a0
 	pop	d1
 	ret
 
@@ -137,19 +109,16 @@ profile_n:
 	test	d1,d1
 	je	allocate_function_profile_record_n
 allocate_function_profile_record_nr:
-	push	a0
-	
-	mov	profile_stack_pointer,a0
+	mov	profile_stack_pointer,a2
 
 #ifdef DEBUG_PROFILER
 	testl	(d1),d1
 #endif
-	mov	d1,(a0)
-	add	$4,a0
+	mov	d1,(a2)
+	add	$4,a2
 
-	mov	a0,profile_stack_pointer
+	mov	a2,profile_stack_pointer
 
-	pop	a0
 	pop	d1
 	ret
 
@@ -163,21 +132,18 @@ profile_n2:
 
 	test	d1,d1
 	je	allocate_function_profile_record_n2
-allocate_function_profile_record_n2r:
-	push	a0
-	
-	mov	profile_stack_pointer,a0
+allocate_function_profile_record_n2r:	
+	mov	profile_stack_pointer,a2
 
 #ifdef DEBUG_PROFILER
 	testl	(d1),d1
 #endif
-	mov	d1,(a0)
-	mov	d1,4(a0)
-	add	$8,a0
+	mov	d1,(a2)
+	mov	d1,4(a2)
+	add	$8,a2
 
-	mov	a0,profile_stack_pointer
+	mov	a2,profile_stack_pointer
 
-	pop	a0
 	pop	d1
 	ret
 
@@ -192,19 +158,16 @@ profile_s2:
 	test	d1,d1
 	je	allocate_function_profile_record_s2
 allocate_function_profile_record_s2r:
-	push	a0
-
-	mov	profile_stack_pointer,a0
+	mov	profile_stack_pointer,a2
 	
 #ifdef DEBUG_PROFILER
 	testl	(d1),d1
 #endif
-	movl	d1,(a0)
-	movl	d1,4(a0)
-	add	$8,a0
-	mov	a0,profile_stack_pointer
+	movl	d1,(a2)
+	movl	d1,4(a2)
+	add	$8,a2
+	mov	a2,profile_stack_pointer
 
-	pop	a0
 	pop	d1
 	ret
 
@@ -219,19 +182,16 @@ profile_s:
 	test	d1,d1
 	je	allocate_function_profile_record_s
 allocate_function_profile_record_sr:
-	push	a0
-
-	mov	profile_stack_pointer,a0
+	mov	profile_stack_pointer,a2
 	
 #ifdef DEBUG_PROFILER
 	testl	(d1),d1
 #endif
-	movl	d1,(a0)
-	add	$4,a0
+	movl	d1,(a2)
+	add	$4,a2
 
-	mov	a0,profile_stack_pointer
+	mov	a2,profile_stack_pointer
 
-	pop	a0
 	pop	d1
 	ret
 
