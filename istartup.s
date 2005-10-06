@@ -37,6 +37,7 @@
 #define FINALIZERS
 #define STACK_OVERFLOW_EXCEPTION_HANDLER
 #define WRITE_HEAP
+
 #undef MEASURE_GC
 #undef DEBUG
 #undef PREFETCH2
@@ -47,6 +48,8 @@
 #define MARK_AND_COPY_GC
 
 #define UNBOXED_CLOSURES
+
+#define NEW_DESCRIPTORS
 
 / #define PROFILE
 #define MODULE_NAMES_IN_TIME_PROFILER
@@ -78,12 +81,11 @@
 # define section(n) .text
 #endif
 
-#if 1
-# define DESCRIPTOR_ARITY_OFFSET	(-2)
-# define ZERO_ARITY_DESCRIPTOR_OFFSET	(-8)
+#define DESCRIPTOR_ARITY_OFFSET	(-2)
+#ifdef NEW_DESCRIPTORS
+# define ZERO_ARITY_DESCRIPTOR_OFFSET	(-4)
 #else
-# define DESCRIPTOR_ARITY_OFFSET	(-8)
-# define ZERO_ARITY_DESCRIPTOR_OFFSET	(-12)
+# define ZERO_ARITY_DESCRIPTOR_OFFSET	(-8)
 #endif
 
 	.comm	semi_space_size,4
@@ -1142,7 +1144,11 @@ printD:	testb	$2,d0b
 	jmp	print_string_a2
 
 DtoAC_record:
+#ifdef NEW_DESCRIPTORS
+	movl	-6(d0),a2
+#else
 	movl	-4(a2),a2
+#endif
 	jmp	DtoAC_string_a2
 
 DtoAC:	testb	$2,d0b
@@ -1151,15 +1157,22 @@ DtoAC:	testb	$2,d0b
 	mov	d0,a2
 	jmp	DtoAC_string_a2
 
-DtoAC_:	lea	-2(d0),a2
-	movswl	(a2),d1
+DtoAC_:
+#ifdef NEW_DESCRIPTORS
+	cmpw	$256,-2(d0)
+	jae	DtoAC_record
+
+  	movzwl	(d0),d1
+  	lea	10(d0,d1),a2
+#else
+	movswl	-2(d0),d1
+	lea	-2(d0),a2
 	cmp	$256,d1
 	jae	DtoAC_record
 
 	shl	$3,d1
 	sub	d1,a2
 
-#if 1
  	movzwl	DESCRIPTOR_ARITY_OFFSET(a2),d1
 	lea	4(a2,d1,8),a2
 #endif
@@ -1193,23 +1206,35 @@ print_symbol_2:
 	test	d1,d1
 	jne	end_print_symbol
 
-printD_:	lea	-2(d0),a2
-	movswl	(a2),d1
+printD_:
+#ifdef NEW_DESCRIPTORS
+	cmpw	$256,-2(d0)
+	jae	print_record
+
+  	movzwl	(d0),d1
+  	lea	10(d0,d1),a2
+	jmp	print_string_a2
+
+print_record:
+	movl	-6(d0),a2
+	jmp	print_string_a2
+#else
+	movswl	-2(d0),d1
+	lea	-2(d0),a2
 	cmp	$256,d1
 	jae	no_print_record
 
 	shl	$3,d1
 	sub	d1,a2
 
-#if 1
   	movzwl	DESCRIPTOR_ARITY_OFFSET(a2),d1
 	lea	4(a2,d1,8),a2
 	jmp	print_string_a2
-#endif
 
 no_print_record:
 	mov	-4(a2),a2
 	jmp	print_string_a2
+#endif
 
 end_print_symbol:
 	ret
@@ -5404,3 +5429,5 @@ r_to_i_real:
 	movl	int_to_real_scratch,d0
 	ret
 #endif
+
+#include "iap.s"
