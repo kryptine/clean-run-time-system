@@ -4815,6 +4815,8 @@ st_fillr5_array:
 
 #endif
 
+#ifndef NEW_DESCRIPTORS
+
 yet_args_needed:
 / for more than 4 arguments
 	mov	(a1),d1
@@ -4957,6 +4959,8 @@ gc_r_24:
 
 gc_24:	call	collect_2
 	jmp	gc_r_24
+
+#endif
 
 repl_args_b:
 	test	d0,d0
