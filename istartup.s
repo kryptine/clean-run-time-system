@@ -2327,7 +2327,7 @@ no_pages:
 	jne	no_small_heap1
 
 	cmpl	$(MINIMUM_HEAP_SIZE_2),d0
-	jge	not_too_small1
+	jae	not_too_small1
 	movl	$(MINIMUM_HEAP_SIZE_2),d0
 not_too_small1:
 	subl	d0,d1
@@ -2711,12 +2711,15 @@ no_mark5:
 	subl	n_allocated_words,d1
 	jc	out_of_memory_4
 
+	cmpl	$107374182,d1
+	jae	not_out_of_memory
 	movl	d1,d0
 	shl	$2,d0
 	addl	d1,d0
 	shl	$3,d0
 	cmpl	@heap_size,d0
 	jc	out_of_memory_4
+not_out_of_memory:
 
 #if defined (MARK_GC) || defined (COMPACT_GC_ONLY)
 # if defined (MARK_GC) && defined (ADJUST_HEAP_SIZE)
@@ -5434,4 +5437,6 @@ r_to_i_real:
 	ret
 #endif
 
-#include "iap.s"
+#ifdef NEW_DESCRIPTORS
+# include "iap.s"
+#endif
