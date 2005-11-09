@@ -98,210 +98,330 @@ ap_32:
 	movl	$32*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap32
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_31:
 	movl	(a1),a2
 	movl	$31*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap31
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_30:
 	movl	(a1),a2
 	movl	$30*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap30
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_29:
 	movl	(a1),a2
 	movl	$29*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap29
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_28:
 	movl	(a1),a2
 	movl	$28*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap28
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_27:
 	movl	(a1),a2
 	movl	$27*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap27
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_26:
 	movl	(a1),a2
 	movl	$26*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap26
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_25:
 	movl	(a1),a2
 	movl	$25*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap25
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_24:
 	movl	(a1),a2
 	movl	$24*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap24
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_23:
 	movl	(a1),a2
 	movl	$23*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap23
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_22:
 	movl	(a1),a2
 	movl	$22*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap22
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_21:
 	movl	(a1),a2
 	movl	$21*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap21
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_20:
 	movl	(a1),a2
 	movl	$20*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap20
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_19:
 	movl	(a1),a2
 	movl	$19*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap19
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_18:
 	movl	(a1),a2
 	movl	$18*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap18
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_17:
 	movl	(a1),a2
 	movl	$17*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap17
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_16:
 	movl	(a1),a2
 	movl	$16*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap16
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_15:
 	movl	(a1),a2
 	movl	$15*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap15
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_14:
 	movl	(a1),a2
 	movl	$14*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap14
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_13:
 	movl	(a1),a2
 	movl	$13*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap13
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_12:
 	movl	(a1),a2
 	movl	$12*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap12
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_11:
 	movl	(a1),a2
 	movl	$11*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap11
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_10:
 	movl	(a1),a2
 	movl	$10*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap10
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_9:
 	movl	(a1),a2
 	movl	$9*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap9
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_8:
 	movl	(a1),a2
 	movl	$8*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap8
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_7:
 	movl	(a1),a2
 	movl	$7*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap7
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_6:
 	movl	(a1),a2
 	movl	$6*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap6
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_5:
 	movl	(a1),a2
 	movl	$5*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap5
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_4:
 	movl	(a1),a2
 	movl	$4*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap4
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_3:
 	movl	(a1),a2
 	movl	$3*8,d1
 	cmpw	d1w,(a2)
 	je	fast_ap
-	jmp	no_fast_ap3
+
+	call	*2(a2)
+	movl	a0,a1
+	movl	-4(a3),a0
+	subl	$4,a3
 
 ap_2:
 	movl	(a1),a2
@@ -405,186 +525,6 @@ repl_args_5:
 	addl	$12,a3
 	jmp	*a2
 
-no_fast_ap32:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap31:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap30:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap29:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap28:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap27:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap26:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap25:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap24:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap23:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap22:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap21:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap20:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap19:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap18:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap17:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap16:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap15:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap14:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap13:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap12:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap11:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap10:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap9:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap8:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap7:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap6:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap5:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap4:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
-no_fast_ap3:
-	call	*2(a2)
-	movl	(a0),a2
-	movl	a0,a1
-	movl	-4(a3),a0
-	subl	$4,a3
 no_fast_ap2:
 	call	*2(a2)
 	movl	(a0),a2
