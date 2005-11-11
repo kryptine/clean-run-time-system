@@ -1,4 +1,6 @@
 
+#define COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
+
 	push	a3
 
 	mov	heap_p2,a4
@@ -119,25 +121,38 @@ copy_record_21:
 
 	subl	$1,d1
 	ja	copy_lp2_lp1
+#ifdef COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
+	jmp	copy_node_arity1
+#else
 	je	copy_node_arity1
 	addl	$8,a2
 	jmp	copy_lp1
+#endif
 
 copy_record_arguments_1:
+#ifdef COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
+	dec	d1
+	jmp	copy_lp2_lp1
+#else
 	dec	d1
 	je	copy_lp2_lp1
 	addl	$4,a2
 	jmp	copy_lp1
+#endif
 
 copy_record_arguments_3:
 	testb	$1,4(a2)
 	jne	record_node_without_arguments_part
 
 	movzwl	-2+2(d0),a1
+#ifdef COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
+	subl	$1,a1
+#else
 	test	a1,a1
 	je	copy_record_arguments_3b
 	subl	$1,a1
 	je	copy_record_arguments_3abb
+#endif
 
 	lea	3*4(a2,d1,4),a0
 	pushl	a0
@@ -154,6 +169,7 @@ copy_record_arguments_3:
 	popl	a2
 	jmp	copy_lp1
 
+#ifndef COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
 copy_record_arguments_3abb:
 	pushl	d1
 	sub	d1,d1
@@ -168,22 +184,25 @@ copy_record_arguments_3abb:
 copy_record_arguments_3b:
 	lea	3*4(a2,d1,4),a2
 	jmp	copy_lp1
+#endif
 
 record_node_without_arguments_part:
 	andl	$-2,4(a2)
-
+#ifndef COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
 	cmpw	$0,-2+2(d0)
 	je	record_node_without_arguments_part_3b
-
+#endif
 	sub	d1,d1
 	call	copy_lp2
 	
 	addl	$4,a2
 	jmp	copy_lp1
 
+#ifndef COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
 record_node_without_arguments_part_3b:
 	addl	$8,a2
 	jmp	copy_lp1
+#endif
 
 not_in_hnf_1:
 	mov	-4(d0),d1
@@ -539,6 +558,66 @@ copy_record_2:
 	subl	$258,d0
 	ja	copy_record_node2_3
 
+#ifdef COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
+	jb	copy_record_node2_1
+
+	cmpw	$0,-2+2(a0)
+	je	copy_real_or_file_2
+
+	movl	a4,(a2)
+	movl	a0,(a4)
+
+	lea	1(a4),a0
+	movl	4(a1),d0
+
+	movl	a0,(a1)
+
+	movl	d0,4(a4)
+	movl	8(a1),d0
+
+	addl	$4,a2
+	movl	d0,8(a4)
+
+	addl	$12,a4	
+	sub	$1,d1
+	jae	copy_lp2
+	ret
+
+copy_record_node2_1:
+	movl	4(a1),d0
+
+	cmpw	$0,-2+2(a0)
+	je	copy_record_node2_1_b
+
+	movl	a4,(a2)
+	movl	a0,(a4)
+
+	lea	1(a4),a0
+	movl	d0,4(a4)
+
+	movl	a0,(a1)
+	addl	$4,a2
+
+	addl	$8,a4
+	sub	$1,d1
+	jae	copy_lp2
+	ret
+
+copy_record_node2_1_b:
+	mov	a0,-8(a3)
+	add	$4,a2
+
+	mov	d0,-4(a3)
+	sub	$7,a3
+
+	mov	a3,(a1)
+	dec	a3
+	
+	mov	a3,-4(a2)
+	sub	$1,d1
+	jae	copy_lp2
+	ret
+#else
 	movl	a4,(a2)
 	movl	a0,(a4)
 
@@ -567,8 +646,14 @@ copy_record_node2_1:
 	sub	$1,d1
 	jae	copy_lp2
 	ret
+#endif
 
 copy_record_node2_3:
+#ifdef COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
+	cmpw	$1,-2+2(a0)
+	jbe	copy_record_node2_3_ab_or_b
+#endif
+
 	pushl	d0
 	lea	1(a4),d0
 	
@@ -578,6 +663,15 @@ copy_record_node2_3:
 	movl	a0,(a4)
 	movl	4(a1),a1
 
+#ifdef COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
+	movl	a1,4(a4)
+	movl	a4,(a2)
+	addl	$4,a2
+
+	movl	d0,a0
+	testl	$1,(d0)
+	jne	record_arguments_already_copied_2
+#else
 	movl	d0,a0
 	subl	heap_p1,d0
 
@@ -600,6 +694,8 @@ copy_record_node2_3:
 	jne	record_arguments_already_copied_2
 
 	or	d0,(a1)
+#endif
+
 	lea	12(a4),a1
 
 	popl	d0
@@ -638,6 +734,140 @@ record_arguments_already_copied_2:
 	subl	$1,d1
 	jae	copy_lp2
 	ret
+
+#ifdef COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
+copy_record_node2_3_ab_or_b:
+	jb	copy_record_node2_3_b
+
+copy_record_node2_3_ab:
+	pushl	d0
+	lea	1(a4),d0
+	
+	movl	d0,(a1)
+	movl	8(a1),d0
+
+	movl	a0,(a4)
+	movl	4(a1),a1
+
+	movl	d0,a0
+	subl	heap_p1,d0
+
+	shr	$3,d0
+	movl	a1,4(a4)
+
+	mov	d0,a1
+	and	$31,d0
+
+	shr	$3,a1
+	movl	a4,(a2)
+
+	andl	$-4,a1
+	mov	bit_set_table(,d0,4),d0
+
+	addl	heap_copied_vector,a1
+	addl	$4,a2
+
+	test	(a1),d0
+	jne	record_arguments_already_copied_2
+
+	or	d0,(a1)
+	popl	d0
+
+	subl	$4,a3
+
+	shl	$2,d0
+	subl	d0,a3
+
+	pushl	a3
+	addl	$1,a3
+
+	movl	a3,8(a4)
+	addl	$12,a4
+
+	movl	(a0),a1
+	jmp	cp_record_arg_lp3_c
+
+copy_record_node2_3_b:
+	pushl	d0
+	lea	-12+1(a3),d0
+	
+	movl	d0,(a1)
+	movl	8(a1),d0
+
+	movl	a0,-12(a3)
+	movl	4(a1),a1
+
+	movl	d0,a0
+	subl	heap_p1,d0
+
+	shr	$3,d0
+	movl	a1,-8(a3)
+
+	mov	d0,a1
+	and	$31,d0
+	subl	$12,a3
+
+	shr	$3,a1
+	movl	a3,(a2)
+
+	andl	$-4,a1
+	mov	bit_set_table(,d0,4),d0
+
+	addl	heap_copied_vector,a1
+	addl	$4,a2
+
+	test	(a1),d0
+	jne	record_arguments_already_copied_3_b
+
+	or	d0,(a1)
+	popl	d0
+
+	movl	a3,a1
+	subl	$4,a3
+
+	shl	$2,d0
+	subl	d0,a3
+
+	movl	a3,8(a1)
+
+	movl	(a0),a1
+
+	pushl	a3
+	addl	$1,a3
+
+cp_record_arg_lp3_c:
+	movl	a3,(a0)
+	addl	$4,a0
+	movl	a1,-1(a3)
+
+	addl	$3,a3
+
+cp_record_arg_lp3:
+	movl	(a0),a1
+	addl	$4,a0
+
+	movl	a1,(a3)
+	addl	$4,a3
+
+	subl	$4,d0
+	jne	cp_record_arg_lp3
+
+	popl	a3
+
+	subl	$1,d1
+	jae	copy_lp2
+	ret
+
+record_arguments_already_copied_3_b:
+	movl	(a0),a1
+	popl	d0
+
+	movl	a1,8(a3)
+
+	subl	$1,d1
+	jae	copy_lp2
+	ret
+#endif
 
 not_in_hnf_2:
 	testb	$1,a0b
@@ -804,6 +1034,9 @@ copy_selector_2_:
 	cmpw	$2,-2(d0)
 	jbe	copy_selector_2_
 
+#ifdef COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
+copy_selector_2__:
+#endif
 	mov	4(a1),d0
 	mov	8(d0),d0
 	testb	$1,(d0)
@@ -840,6 +1073,11 @@ copy_record_selector_2:
 	jbe	copy_record_selector_2_
 #else
 	jbe	copy_selector_2_
+#endif
+
+#ifdef COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
+	cmpw	$2,-2+2(d0)
+	jae	copy_selector_2__
 #endif
 
  	movl	4(a1),d0
@@ -894,6 +1132,20 @@ copy_strict_record_selector_2:
 
 	cmpw	$258,-2(d0)
 	jbe	copy_strict_record_selector_2_
+
+#ifdef COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
+	cmpw	$2,-2+2(d0)
+	jb	copy_strict_record_selector_2_b
+
+ 	movl	4(a1),d0
+	movl	8(d0),d0
+	testb	$1,(d0)
+	jne	copy_arity_1_node2_
+
+	jmp	copy_strict_record_selector_2_
+
+copy_strict_record_selector_2_b:
+#endif
 
  	movl	4(a1),d0
 	pushl	a1
