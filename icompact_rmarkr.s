@@ -394,6 +394,39 @@ rmarkr_large_tuple_or_record:
 	bt	d1,(a4)
 	jc	rmarkr_hnf_1
 #endif
+
+#ifdef NEW_DESCRIPTORS
+	movl	neg_heap_p3,d1
+	lea	-4(a0,d1),d1
+
+	push	a0
+
+	movl	-8(d0),d0
+
+	movl	d1,a0
+	andl	$31*4,a0
+	shrl	$7,d1
+	movl	bit_clear_table(a0),a0
+	andl	a0,(a4,d1,4)
+
+	movzwl	4(d0),d0
+	cmpl	$8,d0
+	jl	rmarkr_tuple_or_record_selector_node_2
+	movl	8(a1),a1
+	je	rmarkr_tuple_selector_node_2
+	movl	-12(a1,d0),a0
+	pop	a1
+	movl	$__indirection,-4(a1)
+	movl	a0,(a1)
+	jmp	rmarkr_node
+
+rmarkr_tuple_selector_node_2:
+	movl	(a1),a0
+	pop	a1
+	movl	$__indirection,-4(a1)
+	movl	a0,(a1)
+	jmp	rmarkr_node
+#else
 rmarkr_small_tuple_or_record:
 	movl	neg_heap_p3,d1
 	lea	-4(a0,d1),d1
@@ -422,6 +455,7 @@ rmarkr_small_tuple_or_record:
 	movl	a0,(a1)
 	
 	jmp	rmarkr_node
+#endif
 
 rmarkr_record_selector_node_1:
 	je	rmarkr_strict_record_selector_node_1
@@ -445,8 +479,52 @@ rmarkr_record_selector_node_1:
 	je	rmarkr_hnf_1
 
 	cmpw	$258,-2(d1)
+#ifdef NEW_DESCRIPTORS
+	jbe	rmarkr_small_tuple_or_record
+
+	movl	8(a1),d1
+	addl	neg_heap_p3,d1
+	shrl	$2,d1
+
+	push	d0
+	movl	d1,d0
+	shrl	$5,d1
+	andl	$31,d0
+	movl	bit_set_table(,d0,4),d0
+	movl	(a4,d1,4),d1
+	andl	d0,d1
+	pop	d0
+	jne	rmarkr_hnf_1
+
+rmarkr_small_tuple_or_record:
+	movl	neg_heap_p3,d1
+	lea	-4(a0,d1),d1
+
+	push	a0
+
+	movl	-8(d0),d0
+
+	movl	d1,a0
+	andl	$31*4,a0
+	shrl	$7,d1
+	movl	bit_clear_table(a0),a0
+	andl	a0,(a4,d1,4)
+
+	movzwl	4(d0),d0
+	cmpl	$8,d0
+	jle	rmarkr_tuple_or_record_selector_node_2
+	movl	8(a1),a1
+	subl	$12,d0
+rmarkr_tuple_or_record_selector_node_2:
+	movl	(a1,d0),a0
+	pop	a1
+	movl	$__indirection,-4(a1)
+	movl	a0,(a1)
+	jmp	rmarkr_node
+#else
 	jbe	rmarkr_small_tuple_or_record
 	jmp	rmarkr_large_tuple_or_record
+#endif
 
 rmarkr_strict_record_selector_node_1:
 #ifdef NO_BIT_INSTRUCTIONS
@@ -489,12 +567,38 @@ rmarkr_strict_record_selector_node_1:
 #endif
 
 rmarkr_select_from_small_record:
-/ changed 24-1-97
 	movl	-8(d0),d0
 	subl	$4,a0
-	
-	call	*4(d0)
 
+#ifdef NEW_DESCRIPTORS
+	movzwl	4(d0),d1
+	cmpl	$8,d1
+	jle	rmarkr_strict_record_selector_node_2
+	addl	8(a1),d1
+	movl	-12(d1),d1
+	jmp	rmarkr_strict_record_selector_node_3
+rmarkr_strict_record_selector_node_2:
+	movl	(a1,d1),d1
+rmarkr_strict_record_selector_node_3:
+	movl	d1,4(a0)
+
+	movzwl	6(d0),d1
+	testl	d1,d1
+	je	rmarkr_strict_record_selector_node_5
+	cmpl	$8,d1
+	jle	rmarkr_strict_record_selector_node_4
+	movl	8(a1),a1
+	subl	$12,d1
+rmarkr_strict_record_selector_node_4:
+	movl	(a1,d1),d1
+	movl	d1,8(a0)
+rmarkr_strict_record_selector_node_5:
+
+	movl	-4(d0),d0
+	movl	d0,(a0)
+#else
+	call	*4(d0)
+#endif
 	jmp	rmarkr_next_node
 
 / a2,d1: free

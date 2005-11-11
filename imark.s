@@ -617,7 +617,7 @@ fits_in_word_3:
 	je	_mark_node2
 
 _mark_selector_node_1:
-	addl	$2,a2
+	cmpl	$-2,a2
 	movl	(a0),a1
 	je	_mark_indirection_node
 
@@ -628,7 +628,7 @@ _mark_selector_node_1:
 	shrl	$7,d1
 	andl	$31*4,a3
 
-	addl	$1,a2
+	cmpl	$-3,a2
 
 	movl	bit_set_table(a3),a3
 	jle	_mark_record_selector_node_1
@@ -653,7 +653,37 @@ _large_tuple_or_record:
 	testl	(a4,d1,4),a2
 	jne	_mark_node3
 
+#ifdef NEW_DESCRIPTORS
+	movl	-8(d0),d0
+	movl	$__indirection,-4(a0)
+	movl	a0,a2
+
+	movzwl	4(d0),d0
+	cmpl	$8,d0
+	jl	_mark_tuple_selector_node_1
+	movl	8(a1),a1
+	je	_mark_tuple_selector_node_2
+	movl	-12(a1,d0),a0
+	movl	a0,(a2)
+	jmp	_mark_node
+
+_mark_tuple_selector_node_2:
+	movl	(a1),a0
+	movl	a0,(a2)
+	jmp	_mark_node
+#endif
+
 _small_tuple_or_record:
+#ifdef NEW_DESCRIPTORS
+	movl	-8(d0),d0
+	movl	$__indirection,-4(a0)
+	movl	a0,a2
+
+	movzwl	4(d0),d0
+_mark_tuple_selector_node_1:
+	movl	(a1,d0),a0
+	movl	a0,(a2)
+#else
 	movl	-8(d0),d0
 	pushl	a0
 	movl	a1,a0
@@ -662,6 +692,7 @@ _small_tuple_or_record:
 	
 	movl	$__indirection,-4(a1)
 	movl	a0,(a1)
+#endif
 	jmp	_mark_node
 
 _mark_record_selector_node_1:
@@ -675,8 +706,36 @@ _mark_record_selector_node_1:
 	je	_mark_node3
 
 	cmpw	$258,-2(a2)
+#ifdef NEW_DESCRIPTORS
+	jbe	_small_tuple_or_record
+
+	movl	8(a1),a2
+	addl	neg_heap_p3,a2
+	movl	a2,d1
+	andl	$31*4,a2
+	shrl	$7,d1
+	movl	bit_set_table(a2),a2
+	testl	(a4,d1,4),a2
+	jne	_mark_node3
+
+	movl	-8(d0),d0
+	movl	$__indirection,-4(a0)
+	movl	a0,a2
+
+	movzwl	4(d0),d0
+	cmpl	$8,d0
+	jle	_mark_record_selector_node_2
+	movl	8(a1),a1
+	subl	$12,d0
+_mark_record_selector_node_2:
+	movl	(a1,d0),a0
+
+	movl	a0,(a2)
+	jmp	_mark_node
+#else
 	jbe	_small_tuple_or_record
 	jmp	_large_tuple_or_record
+#endif
 
 _mark_strict_record_selector_node_1:
 	testl	(a4,d1,4),a3
@@ -700,10 +759,40 @@ _mark_strict_record_selector_node_1:
 	
 _select_from_small_record:
 	movl	-8(d0),d0
+
+#ifdef NEW_DESCRIPTORS
+	subl	$4,a0
+	
+	movzwl	4(d0),d1
+	cmpl	$8,d1
+	jle	_mark_strict_record_selector_node_2
+	addl	8(a1),d1
+	movl	-12(d1),d1
+	jmp	_mark_strict_record_selector_node_3
+_mark_strict_record_selector_node_2:
+	movl	(a1,d1),d1
+_mark_strict_record_selector_node_3:
+	movl	d1,4(a0)
+
+	movzwl	6(d0),d1
+	testl	d1,d1
+	je	_mark_strict_record_selector_node_5
+	cmpl	$8,d1
+	jle	_mark_strict_record_selector_node_4
+	movl	8(a1),a1
+	subl	$12,d1
+_mark_strict_record_selector_node_4:
+	movl	(a1,d1),d1
+	movl	d1,8(a0)
+_mark_strict_record_selector_node_5:
+
+	movl	-4(d0),d0
+	movl	d0,(a0)
+#else
 	subl	$4,a0
 
 	call	*4(d0)
-
+#endif
 	jmp	_mark_next_node
 
 _mark_indirection_node:
@@ -1259,10 +1348,10 @@ __mark_lazy_node_1:
 	je	__mark_no_selector_1
 
 __mark_selector_node_1:
-	addl	$2,a2
+	cmpl	$-2,a2
 	je	__mark_indirection_node
 
-	addl	$1,a2
+	cmpl	$-3,a2
 
 	pushl	d1
 	movl	(a0),a2
@@ -1298,7 +1387,44 @@ __large_tuple_or_record:
 	testl	(a4,d1,4),a2
 	jne	__mark_no_selector_2
 
+#ifdef NEW_DESCRIPTORS
+	movl	-8(d0),d0
+	movl	(a0),a1
+	movl	$__indirection,-4(a0)
+	movl	a0,a2
+
+	popl	d1
+
+	movzwl	4(d0),d0
+	cmpl	$8,d0
+	jl	__mark_tuple_selector_node_1
+	movl	8(a1),a1
+	je	__mark_tuple_selector_node_2
+	subl	$12,d0
+	movl	(a1,d0),a0
+	movl	a0,(a2)
+	jmp	__mark_node
+
+__mark_tuple_selector_node_2:
+	movl	(a1),a0
+	movl	a0,(a2)
+	jmp	__mark_node
+#endif
+
 __small_tuple_or_record:
+#ifdef NEW_DESCRIPTORS
+	movl	-8(d0),d0
+	movl	(a0),a1
+	movl	$__indirection,-4(a0)
+	movl	a0,a2
+
+	popl	d1
+
+	movzwl	4(d0),d0
+__mark_tuple_selector_node_1:
+	movl	(a1,d0),a0
+	movl	a0,(a2)
+#else
 	movl	-8(d0),d0
 	popl	d1
 
@@ -1309,6 +1435,7 @@ __small_tuple_or_record:
 
 	movl	$__indirection,-4(a1)
 	movl	a0,(a1)
+#endif
 	jmp	__mark_node
 
 __mark_record_selector_node_1:
@@ -1328,8 +1455,41 @@ __mark_record_selector_node_1:
 	je	__mark_no_selector_2
 	
 	cmpw	$258,-2(d1)
+#ifdef NEW_DESCRIPTORS
+	jbe	__small_record
+
+	movl	8(a2),a2
+	movl	neg_heap_p3,d1
+	addl	d1,a2
+	movl	a2,d1
+	andl	$31*4,a2
+	shrl	$7,d1
+	movl	bit_set_table(a2),a2
+	testl	(a4,d1,4),a2
+	jne	__mark_no_selector_2
+
+__small_record:
+	movl	-8(d0),d0
+	movl	(a0),a1
+	movl	$__indirection,-4(a0)
+	movl	a0,a2
+
+	popl	d1
+
+	movzwl	4(d0),d0
+	cmpl	$8,d0
+	jle	__mark_record_selector_node_2
+	movl	8(a1),a1
+	subl	$12,d0
+__mark_record_selector_node_2:
+	movl	(a1,d0),a0
+
+	movl	a0,(a2)
+	jmp	__mark_node
+#else
 	jbe	__small_tuple_or_record
 	jmp	__large_tuple_or_record
+#endif
 
 __mark_strict_record_selector_node_1:
 	addl	a2,d0
@@ -1359,11 +1519,44 @@ __mark_strict_record_selector_node_1:
 	jne	__mark_no_selector_2
 	
 __select_from_small_record:
+#ifdef NEW_DESCRIPTORS
+	movl	-8(d0),d0
+	movl	(a0),a1
+	popl	d1
+	subl	$4,a0
+
+	movzwl	4(d0),d1
+	cmpl	$8,d1
+	jle	__mark_strict_record_selector_node_2
+	addl	8(a1),d1
+	movl	-12(d1),d1
+	jmp	__mark_strict_record_selector_node_3
+__mark_strict_record_selector_node_2:
+	movl	(a1,d1),d1
+__mark_strict_record_selector_node_3:
+	movl	d1,4(a0)
+	
+	movzwl	6(d0),d1
+	testl	d1,d1
+	je	__mark_strict_record_selector_node_5
+	cmpl	$8,d1
+	jle	__mark_strict_record_selector_node_4
+	movl	8(a1),a1
+	subl	$12,d1
+__mark_strict_record_selector_node_4:
+	movl	(a1,d1),d1
+	movl	d1,8(a0)
+__mark_strict_record_selector_node_5:
+
+	movl	-4(d0),d0
+	movl	d0,(a0)
+#else
 	movl	-8(d0),d0
 	popl	d1
 	movl	(a0),a1
 	subl	$4,a0
 	call	*4(d0)
+#endif
 	jmp	__mark_node
 
 __mark_indirection_node:

@@ -489,22 +489,59 @@ rmark_large_tuple_or_record:
 	bt	d1,(a4)
 	jc	rmark_hnf_1
 #endif
+
+#ifdef NEW_DESCRIPTORS
+	movl	neg_heap_p3,d1
+	lea	-4(a0,d1),d1
+
+	pushl	a0
+
+	movl	-8(d0),d0
+
+	movl	d1,a0
+	andl	$31*4,a0
+	shrl	$7,d1
+	movl	bit_clear_table(a0),a0
+	andl	a0,(a4,d1,4)
+
+	movzwl	4(d0),d0
+	movl	pointer_compare_address,d1
+
+	cmpl	$8,d0
+	jl	rmark_tuple_or_record_selector_node_2
+	movl	8(a1),a1
+	je	rmark_tuple_selector_node_2
+	movl	-12(a1,d0),a0
+	pop	a1
+	movl	a0,(a3)
+	movl	$__indirection,-4(a1)
+	movl	a0,(a1)
+	jmp	rmark_node_d1
+
+rmark_tuple_selector_node_2:
+	movl	(a1),a0
+	pop	a1
+	movl	a0,(a3)
+	movl	$__indirection,-4(a1)
+	movl	a0,(a1)
+	jmp	rmark_node_d1
+#else
 rmark_small_tuple_or_record:
 	movl	neg_heap_p3,d1
 	lea	-4(a0,d1),d1
 
 	pushl	a0
 
-#ifdef NO_BIT_INSTRUCTIONS
+# ifdef NO_BIT_INSTRUCTIONS
 	movl	d1,a0
 	andl	$31*4,a0
 	shrl	$7,d1
 	movl	bit_clear_table(a0),a0
 	andl	a0,(a4,d1,4)
-#else
+# else
 	shrl	$2,d1
 	btr	d1,(a4)
-#endif
+# endif
 	movl	-8(d0),d0
 
 	movl	a1,a0
@@ -520,6 +557,7 @@ rmark_small_tuple_or_record:
 	movl	$__indirection,-4(a1)
 	movl	a0,(a1)
 	jmp	rmark_node_d1
+#endif
 
 rmark_record_selector_node_1:
 	je	rmark_strict_record_selector_node_1
@@ -541,8 +579,53 @@ rmark_record_selector_node_1:
 	je	rmark_hnf_1
 
 	cmpw	$258,-2(d1)
+#ifdef NEW_DESCRIPTORS
+	jbe	rmark_small_tuple_or_record
+
+	movl	8(a1),d1
+	addl	neg_heap_p3,d1
+	shrl	$2,d1
+
+	movl	d1,a2
+	shrl	$5,d1
+	andl	$31,a2
+	movl	bit_set_table(,a2,4),a2
+	movl	(a4,d1,4),d1
+	andl	a2,d1
+	jne	rmark_hnf_1
+
+rmark_small_tuple_or_record:
+	movl	neg_heap_p3,d1
+	lea	-4(a0,d1),d1
+
+	pushl	a0
+
+	movl	-8(d0),d0
+
+	movl	d1,a0
+	andl	$31*4,a0
+	shrl	$7,d1
+	movl	bit_clear_table(a0),a0
+	andl	a0,(a4,d1,4)
+
+	movzwl	4(d0),d0
+	movl	pointer_compare_address,d1
+
+	cmpl	$8,d0
+	jle	rmark_tuple_or_record_selector_node_2
+	movl	8(a1),a1
+	subl	$12,d0
+rmark_tuple_or_record_selector_node_2:
+	movl	(a1,d0),a0
+	pop	a1
+	movl	a0,(a3)
+	movl	$__indirection,-4(a1)
+	movl	a0,(a1)
+	jmp	rmark_node_d1
+#else
 	jbe	rmark_small_tuple_or_record
 	jmp	rmark_large_tuple_or_record
+#endif
 
 rmark_strict_record_selector_node_1:
 #ifdef NO_BIT_INSTRUCTIONS
@@ -587,6 +670,32 @@ rmark_select_from_small_record:
 	cmpl	pointer_compare_address,a0
 	ja	rmark_selector_pointer_not_reversed
 
+#ifdef NEW_DESCRIPTORS
+	movzwl	4(d1),d0
+	cmpl	$8,d0
+	jle	rmark_strict_record_selector_node_2
+	addl	8(a1),d0
+	movl	-12(d0),d0
+	jmp	rmark_strict_record_selector_node_3
+rmark_strict_record_selector_node_2:
+	movl	(a1,d0),d0
+rmark_strict_record_selector_node_3:
+	movl	d0,4(a0)
+
+	movzwl	6(d1),d0
+	testl	d0,d0
+	je	rmark_strict_record_selector_node_5
+	cmpl	$8,d0
+	jle	rmark_strict_record_selector_node_4
+	movl	8(a1),a1
+	subl	$12,d0
+rmark_strict_record_selector_node_4:
+	movl	(a1,d0),d0
+	movl	d0,8(a0)
+rmark_strict_record_selector_node_5:
+
+	movl	-4(d1),d0
+#else
 	movl	d0,(a0)
 	movl	a0,(a3)
 	
@@ -595,13 +704,42 @@ rmark_select_from_small_record:
 	popl	a3
 
 	movl	(a0),d0
+#endif
 	addl	$1,a3
 	movl	a3,(a0)
 	movl	d0,-1(a3)
 	jmp	rmark_next_node
 
 rmark_selector_pointer_not_reversed:
+#ifdef NEW_DESCRIPTORS
+	movzwl	4(d1),d0
+	cmpl	$8,d0
+	jle	rmark_strict_record_selector_node_6
+	addl	8(a1),d0
+	movl	-12(d0),d0
+	jmp	rmark_strict_record_selector_node_7
+rmark_strict_record_selector_node_6:
+	movl	(a1,d0),d0
+rmark_strict_record_selector_node_7:
+	movl	d0,4(a0)
+
+	movzwl	6(d1),d0
+	testl	d0,d0
+	je	rmark_strict_record_selector_node_9
+	cmpl	$8,d0
+	jle	rmark_strict_record_selector_node_8
+	movl	8(a1),a1
+	subl	$12,d0
+rmark_strict_record_selector_node_8:
+	movl	(a1,d0),d0
+	movl	d0,8(a0)
+rmark_strict_record_selector_node_9:
+
+	movl	-4(d1),d0
+	movl	d0,(a0)
+#else
 	call	*4(d1)
+#endif
 	jmp	rmark_next_node
 
 rmark_reverse_and_mark_next_node:

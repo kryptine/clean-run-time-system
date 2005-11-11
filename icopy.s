@@ -674,6 +674,10 @@ cp_arg_lp2:
 	jae	copy_lp2
 	ret
 
+#ifdef NEW_DESCRIPTORS
+copy_arity_1_node2__:
+	pop	d1
+#endif
 copy_arity_1_node2:
 copy_arity_1_node2_:
 	mov	a4,(a2)
@@ -733,12 +737,66 @@ update_indirection_list_2:
 	jmp	continue_after_selector_2
 
 copy_selector_2:
-	add	$2,d0
+	cmpl	$-2,d0
 	je	copy_indirection_2
 	jl	copy_record_selector_2
 
 	mov	4(a1),d0
+#ifdef NEW_DESCRIPTORS
+	push	d1
+
+	mov	(d0),d1
+ 	testb	$2,d1b
+	je	copy_arity_1_node2__
+
+	cmpw	$2,-2(d1)
+	jbe	copy_selector_2_
+
+	movl	8(d0),d1
+	testb	$1,(d1)
+	jne	copy_arity_1_node2__
+
+	movl	-8(a0),a0
+
+	movzwl	4(a0),a0
+	movl	$__indirection,(a1)
+
+	cmpl	$8,a0
+	jl	copy_selector_2_1
+	je	copy_selector_2_2
+
+	movl	-12(d1,a0),a0
+	pop	d1
+	movl	a0,4(a1)
+	movl	a0,a1
+	jmp	continue_after_selector_2
+
+copy_selector_2_1:
+	movl	4(d0),a0
+	pop	d1
+	movl	a0,4(a1)
+	movl	a0,a1
+	jmp	continue_after_selector_2
+
+copy_selector_2_2:
+	movl	(d1),a0
+	pop	d1
+	movl	a0,4(a1)
+	movl	a0,a1
+	jmp	continue_after_selector_2
 	
+copy_selector_2_:
+	movl	-8(a0),a0
+	pop	d1
+
+	movzwl	4(a0),a0
+	movl	$__indirection,(a1)
+
+	movl	(d0,a0),a0
+	movl	a0,4(a1)
+	movl	a0,a1
+	jmp	continue_after_selector_2
+#else
 	mov	(d0),d0
  	testb	$2,d0b
 	je	copy_arity_1_node2_
@@ -766,9 +824,10 @@ copy_selector_2_:
 
 	mov	a0,a1
 	jmp	continue_after_selector_2
+#endif
 
 copy_record_selector_2:
-	addl	$1,d0
+	cmpl	$-3,d0
  	movl	4(a1),d0
 	movl	(d0),d0
 	je	copy_strict_record_selector_2
@@ -777,7 +836,11 @@ copy_record_selector_2:
 	je	copy_arity_1_node2_
 
 	cmpw	$258,-2(d0)
+#ifdef NEW_DESCRIPTORS
+	jbe	copy_record_selector_2_
+#else
 	jbe	copy_selector_2_
+#endif
 
  	movl	4(a1),d0
 	pushl	a1
@@ -803,7 +866,27 @@ copy_record_selector_2:
 
 	jne	copy_arity_1_node2_
 
+#ifdef NEW_DESCRIPTORS
+copy_record_selector_2_:
+	movl	-8(a0),d0
+	movl	4(a1),a0
+	movl	$__indirection,(a1)
+
+	movzwl	4(d0),d0
+	cmpl	$8,d0
+	jle	copy_record_selector_3
+	movl	8(a0),a0
+	subl	$12,d0
+copy_record_selector_3:
+	movl	(a0,d0),a0
+
+	movl	a0,4(a1)
+
+	movl	a0,a1
+	jmp	continue_after_selector_2
+#else
  	jmp	copy_selector_2_
+#endif
 
 copy_strict_record_selector_2:
 	testb	$2,d0b
@@ -837,11 +920,45 @@ copy_strict_record_selector_2:
 	jne	copy_arity_1_node2_
 
 copy_strict_record_selector_2_:
-	mov	-8(a0),d0
+	movl	-8(a0),d0
 
+#ifdef NEW_DESCRIPTORS
+	push	d1
+	movl	4(a1),a0
+
+	movzwl	4(d0),d1
+	cmpl	$8,d1
+	jle	copy_strict_record_selector_3
+	addl	8(a0),d1
+	movl	-12(d1),d1
+	jmp	copy_strict_record_selector_4
+copy_strict_record_selector_3:
+	movl	(a0,d1),d1
+copy_strict_record_selector_4:
+	movl	d1,4(a1)
+
+	movzwl	6(d0),d1
+	testl	d1,d1
+	je	copy_strict_record_selector_6
+	cmpl	$8,d1
+	jle	copy_strict_record_selector_5
+	movl	8(a0),a0
+	subl	$12,d1
+copy_strict_record_selector_5:
+	movl	(a0,d1),d1
+	movl	d1,8(a1)
+copy_strict_record_selector_6:
+
+	movl	-4(d0),a0
+	movl	a0,(a1)
+	pop	d1
+	testb	$2,a0b
+	jne	in_hnf_2
+	hlt
+#else
  	movl	a1,a0
 	movl	4(a1),a1
-	
+
 	push	a2
 	call	*4(d0)
 	pop	a2
@@ -851,6 +968,7 @@ copy_strict_record_selector_2_:
 	testb	$2,a0b
 	jne	in_hnf_2
 	hlt
+#endif
 
 copy_arity_0_node2_:
 	jl	copy_selector_2
