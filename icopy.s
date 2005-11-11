@@ -1102,9 +1102,18 @@ copy_record_selector_2:
 	andl	(a1),d0
 	popl	a1
 
-	jne	copy_arity_1_node2_
-
 #ifdef NEW_DESCRIPTORS
+# ifdef COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
+	je	copy_record_selector_2_
+	jmp	copy_arity_1_node2_
+copy_selector_2__:
+	mov	4(a1),d0
+	mov	8(d0),d0
+	testb	$1,(d0)
+	jne	copy_arity_1_node2_
+# else
+	jne	copy_arity_1_node2_
+# endif
 copy_record_selector_2_:
 	movl	-8(a0),d0
 	movl	4(a1),a0
@@ -1123,6 +1132,7 @@ copy_record_selector_3:
 	movl	a0,a1
 	jmp	continue_after_selector_2
 #else
+	jne	copy_arity_1_node2_
  	jmp	copy_selector_2_
 #endif
 
@@ -1133,7 +1143,7 @@ copy_strict_record_selector_2:
 	cmpw	$258,-2(d0)
 	jbe	copy_strict_record_selector_2_
 
-#ifdef COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
+# ifdef COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
 	cmpw	$2,-2+2(d0)
 	jb	copy_strict_record_selector_2_b
 
@@ -1145,7 +1155,7 @@ copy_strict_record_selector_2:
 	jmp	copy_strict_record_selector_2_
 
 copy_strict_record_selector_2_b:
-#endif
+# endif
 
  	movl	4(a1),d0
 	pushl	a1
