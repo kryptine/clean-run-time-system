@@ -47,8 +47,6 @@
 #define MARK_GC
 #define MARK_AND_COPY_GC
 
-#define UNBOXED_CLOSURES
-
 #define NEW_DESCRIPTORS
 
 / #define PROFILE
