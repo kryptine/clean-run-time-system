@@ -368,8 +368,8 @@ rmark_selector_node_1:
 	ble	rmark_small_tuple_or_record
 
 rmark_large_tuple_or_record:	
-	lwz	o2,8-NODE_POINTER_OFFSET(a1)
-	sub	o2,o2,d6
+	lwz	a2,8-NODE_POINTER_OFFSET(a1)
+	sub	o2,a2,d6
 
 	srwi	d2,o2,5
 	lbzx	g1,o4,d2
@@ -377,15 +377,49 @@ rmark_large_tuple_or_record:
 	rlwnm.	r0,g1,g2,24,24
 	bne	rmark_hnf_1
 
+ if NEW_DESCRIPTORS
+  if LINUX
+	lwz	d0,-8(d0)
+  else
+	lha	d0,-6(d0)
+  endif
+	andc	o1,o1,o3
+	lea	g1,__indirection
+  if ! LINUX
+	lwzx	d0,rtoc,d0
+  endif
+	stbx	o1,o4,o0
+
+	lhz	d0,4(d0)
+	stw	g1,-4-NODE_POINTER_OFFSET(a0)
+	subi	d2,a0,4
+
+	cmplwi	0,d0,8
+	blt	rmark_tuple_or_record_selector_node_2
+	beq	rmark_tuple_selector_node_2
+
+rmark_tuple_or_record_selector_node_g2:
+	addi	a0,a2,-12
+	lwzx	a0,a0,d0
+	stw	a0,0(a3)
+	stw	a0,4-NODE_POINTER_OFFSET(d2)
+	b	rmark_node_d1
+
+rmark_tuple_selector_node_2:
+	lwz	a0,0(a2)
+	stw	a0,0(a3)
+	stw	a0,4-NODE_POINTER_OFFSET(d2)
+	b	rmark_node_d1
+ else
 rmark_small_tuple_or_record:
- if LINUX
+  if LINUX
 	lwz	g1,-8(d0)
 	mflr	r0
- else
+  else
 	lha	g1,-6(d0)
 	mflr	r0
 	lwzx	g1,rtoc,g1
- endif
+  endif
 	andc	o1,o1,o3
 
 	lwz	g1,4(g1)
@@ -409,6 +443,7 @@ rmark_small_tuple_or_record:
 	stw	a0,4-NODE_POINTER_OFFSET(d2)
 	stw	g1,0-NODE_POINTER_OFFSET(d2)
 	b	rmark_node_d1
+ endif
 
 rmark_record_selector_node_1:
 	srwi	d2,o2,5
@@ -426,7 +461,45 @@ rmark_record_selector_node_1:
 	lha	g1,-2(d2)
 	cmplwi	0,g1,258
 	ble	rmark_small_tuple_or_record
+
+ if NEW_DESCRIPTORS
+	lwz	a2,8-NODE_POINTER_OFFSET(a1)
+	sub	o2,a2,d6
+
+	srwi	d2,o2,5
+	lbzx	g1,o4,d2
+	rlwinm	g2,o2,32-2,29,31
+	rlwnm.	r0,g1,g2,24,24
+	bne	rmark_hnf_1
+
+rmark_small_tuple_or_record:
+  if LINUX
+	lwz	d0,-8(d0)
+  else
+	lha	d0,-6(d0)
+  endif
+	andc	o1,o1,o3
+	lea	g1,__indirection
+  if ! LINUX
+	lwzx	d0,rtoc,d0
+  endif
+	stbx	o1,o4,o0
+
+	lhz	d0,4(d0)
+	stw	g1,-4-NODE_POINTER_OFFSET(a0)
+	subi	d2,a0,4
+
+	cmplwi	0,d0,8
+	bgt	rmark_tuple_or_record_selector_node_g2
+
+rmark_tuple_or_record_selector_node_2:
+	lwzx	a0,a1,d0
+	stw	a0,0(a3)
+	stw	a0,4-NODE_POINTER_OFFSET(d2)
+	b	rmark_node_d1
+ else
 	b	rmark_large_tuple_or_record
+ endif
 
 rmark_strict_record_selector_node_1:
 	rlwnm.	r0,g1,g2,24,24
@@ -440,8 +513,8 @@ rmark_strict_record_selector_node_1:
 	cmplwi	0,g1,258
 	ble	rmark_select_from_small_record
 
-	lwz	o2,8-NODE_POINTER_OFFSET(a1)
-	sub	o2,o2,d6
+	lwz	a2,8-NODE_POINTER_OFFSET(a1)
+	sub	o2,a2,d6
 
 	srwi	d2,o2,5
 	lbzx	g1,o4,d2
@@ -452,17 +525,52 @@ rmark_strict_record_selector_node_1:
 rmark_select_from_small_record:
  if LINUX
 	lwz	g1,-8(d0)
-	mflr	r0
  else
 	lha	g1,-6(d0)
+ endif
+ if ! NEW_DESCRIPTORS
+  if LINUX
+	mflr	r0
+  else
 	mflr	r0
 	lwzx	g1,rtoc,g1
+  endif
  endif
 	subi	a0,a0,4
-
+ if NEW_DESCRIPTORS
+  if ! LINUX
+	lwzx	g1,rtoc,g1
+  endif
+ endif
 	cmplw	a0,d1
 	bgt	rmark_selector_pointer_not_reversed
 
+ if NEW_DESCRIPTORS
+	lhz	d0,4(g1)
+	cmplwi	0,d0,8
+	ble	rmark_strict_record_selector_node_2
+	addi	d0,d0,-12
+	lwzx	d0,a2,d0
+	b	rmark_strict_record_selector_node_3
+rmark_strict_record_selector_node_2:
+	lwzx	d0,a1,d0
+rmark_strict_record_selector_node_3:
+	stw	d0,4-NODE_POINTER_OFFSET(a0)
+
+	lhz	d0,6(g1)
+	tst	d0
+	beq	rmark_strict_record_selector_node_5
+	cmplwi	0,d0,8
+	ble	rmark_strict_record_selector_node_4
+	mr	a1,a2
+	addi	d0,d0,-12
+rmark_strict_record_selector_node_4:
+	lwzx	d0,a1,d0
+	stw	d0,8-NODE_POINTER_OFFSET(a0)
+rmark_strict_record_selector_node_5:
+
+	lwz	d0,-4(g1)
+ else
 	stw	d0,0(a0)
 
 	lwz	g1,4(g1)
@@ -478,19 +586,48 @@ rmark_select_from_small_record:
 	mtlr	r0
 
 	lwz	d0,0(a0)
+ endif
+
 	addi	a3,a3,1
 	stw	a3,0(a0)
 	stw	d0,-1(a3)
 	b	rmark_next_node
 
 rmark_selector_pointer_not_reversed:
+ if NEW_DESCRIPTORS
+	lhz	d0,4(g1)
+	cmplwi	0,d0,8
+	ble	rmark_strict_record_selector_node_6
+	addi	d0,d0,-12
+	lwzx	d0,a2,d0
+	b	rmark_strict_record_selector_node_7
+rmark_strict_record_selector_node_6:
+	lwzx	d0,a1,d0
+rmark_strict_record_selector_node_7:
+	stw	d0,4-NODE_POINTER_OFFSET(a0)
+
+	lhz	d0,6(g1)
+	tst	d0
+	beq	rmark_strict_record_selector_node_9
+	cmplwi	0,d0,8
+	ble	rmark_strict_record_selector_node_8
+	mr	a1,a2
+	addi	d0,d0,-12
+rmark_strict_record_selector_node_8:
+	lwzx	d0,a1,d0
+	stw	d0,8-NODE_POINTER_OFFSET(a0)
+rmark_strict_record_selector_node_9:
+
+	lwz	d0,-4(g1)
+	stw	d0,0-NODE_POINTER_OFFSET(a0)
+ else
 	lwz	g1,4(g1)
 
 	mtctr	g1
 	stwu	r0,-4(sp)
 	bctrl
 	mtlr	r0
-
+ endif
 	b	rmark_next_node
 
 rmark_reverse_and_mark_next_node:
@@ -510,6 +647,7 @@ rmark_next_node:
 	cmplwi	a0,1
 	bgt	rmark_node
 
+rmark_next_node_:
 	blr
 
 rmark_lazy_node:

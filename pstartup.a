@@ -93,8 +93,10 @@ WRITE_HEAP	set	0
 WRITE_HEAP	set	1
 STDERR_TO_FILE	set	1
  endif
+NEW_DESCRIPTORS	set	1
 ;PROFILE		set	1
-UNBOXED_CLOSURES	set	1
+PREFETCH		set	0
+MARK_WITH_STACK		set	1
 
 MODULE_NAMES_IN_TIME_PROFILER	set	1
 
@@ -104,11 +106,17 @@ MINIMUM_HEAP_SIZE	set	8000
 
  if 1
 DESCRIPTOR_ARITY_OFFSET	set	(-2)
+  if NEW_DESCRIPTORS
+ZERO_ARITY_DESCRIPTOR_OFFSET	set	(-4)
+  else
 ZERO_ARITY_DESCRIPTOR_OFFSET	set	(-8)
+  endif
  else
 DESCRIPTOR_ARITY_OFFSET	set	(-8)
 ZERO_ARITY_DESCRIPTOR_OFFSET	set	(-12)
  endif
+
+NO_PREFETCH_MASK	set	4096
 
 	export	r_to_i_buffer
 	comm	r_to_i_buffer,8
@@ -141,6 +149,10 @@ ZERO_ARITY_DESCRIPTOR_OFFSET	set	(-12)
  if MEASURE_GC
 	comm	compact_garbage_collect_time,4
 	comm	mark_compact_garbage_collect_time,4
+	comm	total_gc_bytes_lo,4
+	comm	total_gc_bytes_hi,4
+	comm	total_compact_gc_bytes_lo,4
+	comm	total_compact_gc_bytes_hi,4
  endif
 	export	saved_heap_p
 	comm	saved_heap_p,8
@@ -306,10 +318,6 @@ garbage_collector_name:
 	dc.b	0
 	align	2
  endif
- if WRITE_HEAP
-	comm	heap2_begin_and_end,8
- endif
-
 	align	3
 entier_constants_and_buffers:
 	dc.d	"0.0"
@@ -318,7 +326,18 @@ entier_constants_and_buffers:
 	dc.l	0x00000000
 	dc.l	0x43300000
 	dc.l	0x80000000
-
+ if MEASURE_GC
+f_power2_52:
+	dc.l	0x43300000
+	dc.l	0x00000000
+f_60:
+	dc.d	"60"
+f_1000000:
+	dc.d	"1000000"
+ endif
+ if WRITE_HEAP
+	comm	heap2_begin_and_end,8
+ endif
  if FINALIZERS
 	import	__Nil
 	import	e____system__kFinalizer
@@ -331,7 +350,6 @@ entier_constants_and_buffers:
  if STACK_OVERFLOW_EXCEPTION_HANDLER
 	import	.allocate_a_stack
  endif
-
 	align	1
 
 	csect	text{PR}
@@ -458,6 +476,7 @@ entier_constants_and_buffers:
  endif
 	export	__driver
 
+	export	.print_execution_time{PR}
 		
 ; from system.abc:	
 	import	INT
@@ -488,10 +507,12 @@ entier_constants_and_buffers:
 	import	.er_print_string
 	import	.er_print_int
 	import	.er_print_text
+	import	.er_print_real
  else
 	import	.ew_print_char
 	import	.ew_print_string
 	import	.ew_print_int
+	import	.ew_print_real
  endif
  if 0
 
@@ -865,7 +886,84 @@ exit:
  else
 	stwu	sp,-64(sp)
  endif
-		
+
+	bl	.print_execution_time
+
+ if MACOSX
+ 	lwz	sp,0(sp)
+ else
+	addi	sp,sp,64
+ endif
+no_print_execution_time:
+
+exit_3:
+exit_2:
+	lea	o0,heap_mbp
+ if MACOSX
+ 	mr	g0,sp
+ 	ori	sp,sp,28
+ 	stwu	g0,-(64+28)(sp)
+ else
+	stwu	sp,-64(sp)
+ endif
+	lwz	o0,0(o0)
+ if LINUX
+	bl	free
+ else
+	bl	.DisposePtr
+ endif
+	nop
+ if MACOSX
+ 	lwz	sp,0(sp)
+ else
+	addi	sp,sp,64
+ endif
+
+exit_1:
+ if STDERR_TO_FILE
+	lea	o0,flags
+	lwz	d0,0(o0)
+	andi.	g0,d0,128
+	beq	no_close_stderr_file
+
+ if MACOSX
+ 	mr	g0,sp
+ 	ori	sp,sp,28
+ 	stwu	g0,-(64+28)(sp)
+ else
+	stwu	sp,-64(sp)
+ endif
+	bl	.close_stderr_file
+	nop	
+ if MACOSX
+ 	lwz	sp,0(sp)
+ else
+	addi	sp,sp,64
+ endif
+
+no_close_stderr_file:
+ endif
+ if PROFILE
+	mflr	r0
+	stwu	r0,-4(sp)
+	bl	write_profile_information
+ endif
+
+	lwz	r0,76(sp)
+	mtlr	r0
+	lmw	r13,0(sp)
+	addi	sp,sp,80
+	blr
+
+
+	csect	.print_execution_time{PR}
+.print_execution_time:
+	mflr	r0
+	stw	r0,8(sp)
+	stwu	sp,-64(sp)
+
+	bl	.add_execute_time
+
 	lea	o0,time_string_1
  if STDERR_TO_FILE
 	bl	.er_print_string
@@ -948,6 +1046,76 @@ exit:
 
 	bl	_print_time
 
+ if MEASURE_GC
+	li	o0,13
+  if STDERR_TO_FILE
+	bl	.er_print_char
+  else
+	bl	.ew_print_char
+  endif
+	nop
+
+	lea	o0,total_gc_bytes_hi
+	lwz	o0,0(o0)
+  if STDERR_TO_FILE
+	bl	.er_print_int
+  else
+	bl	.ew_print_int
+  endif
+  	nop
+
+	li	o0,':'
+  if STDERR_TO_FILE
+	bl	.er_print_char
+  else
+	bl	.ew_print_char
+  endif
+	nop
+
+	lea	o0,total_gc_bytes_lo
+	lwz	o0,0(o0)
+  if STDERR_TO_FILE
+	bl	.er_print_int
+  else
+	bl	.ew_print_int
+  endif
+  	nop
+
+	li	o0,32
+  if STDERR_TO_FILE
+	bl	.er_print_char
+  else
+	bl	.ew_print_char
+  endif
+	nop
+	
+	lea	o0,total_compact_gc_bytes_hi
+	lwz	o0,0(o0)
+  if STDERR_TO_FILE
+	bl	.er_print_int
+  else
+	bl	.ew_print_int
+  endif
+  	nop
+
+	li	o0,':'
+  if STDERR_TO_FILE
+	bl	.er_print_char
+  else
+	bl	.ew_print_char
+  endif
+	nop
+
+	lea	o0,total_compact_gc_bytes_lo
+	lwz	o0,0(o0)
+  if STDERR_TO_FILE
+	bl	.er_print_int
+  else
+	bl	.ew_print_int
+  endif
+  	nop
+ endif
+
 	li	o0,13
  if STDERR_TO_FILE
 	bl	.er_print_char
@@ -956,71 +1124,240 @@ exit:
  endif
 	nop
 
- if MACOSX
- 	lwz	sp,0(sp)
- else
-	addi	sp,sp,64
- endif
-no_print_execution_time:
 
-exit_3:
-exit_2:
-	lea	o0,heap_mbp
- if MACOSX
- 	mr	g0,sp
- 	ori	sp,sp,28
- 	stwu	g0,-(64+28)(sp)
+	lea	g0,total_gc_bytes_hi
+	lea	g1,total_gc_bytes_lo
+	bl	fload_52_bit_int
+ if STDERR_TO_FILE
+	bl	.er_print_real
  else
-	stwu	sp,-64(sp)
- endif
-	lwz	o0,0(o0)
- if LINUX
-	bl	free
- else
-	bl	.DisposePtr
+	bl	.ew_print_real
  endif
 	nop
- if MACOSX
- 	lwz	sp,0(sp)
- else
-	addi	sp,sp,64
- endif
 
-exit_1:
+	li	o0,' '
+	bl	.er_print_char
+	nop
+
+	lea	g0,total_compact_gc_bytes_hi
+	lea	g1,total_compact_gc_bytes_lo
+	bl	fload_52_bit_int
  if STDERR_TO_FILE
-	lea	o0,flags
-	lwz	d0,0(o0)
-	andi.	g0,d0,128
-	beq	no_close_stderr_file
-
- if MACOSX
- 	mr	g0,sp
- 	ori	sp,sp,28
- 	stwu	g0,-(64+28)(sp)
+	bl	.er_print_real
  else
-	stwu	sp,-64(sp)
+	bl	.ew_print_real
  endif
-	bl	.close_stderr_file
-	nop	
- if MACOSX
- 	lwz	sp,0(sp)
+	nop
+
+	li	o0,' '
+	bl	.er_print_char
+	nop
+
+	lea	g1,garbage_collect_time
+	lea	o1,f_power2_52
+	lwz	g1,0(g1)
+	lis	o0,0x4330
+	stw	g1,-4(sp)
+	stw	o0,-8(sp)
+	lfd	f2,0(o1)
+	lfd	f1,-8(sp)
+	fsub	f1,f1,f2
+ if STDERR_TO_FILE
+	bl	.er_print_real
  else
+	bl	.ew_print_real
+ endif
+	nop
+
+	li	o0,' '
+	bl	.er_print_char
+	nop
+
+	lea	g1,mark_compact_garbage_collect_time
+	lea	o1,f_power2_52
+	lwz	g1,0(g1)
+	lis	o0,0x4330
+	stw	g1,-4(sp)
+	stw	o0,-8(sp)
+	lfd	f2,0(o1)
+	lfd	f1,-8(sp)
+	fsub	f1,f1,f2
+ if STDERR_TO_FILE
+	bl	.er_print_real
+ else
+	bl	.ew_print_real
+ endif
+	nop
+
+	li	o0,' '
+	bl	.er_print_char
+	nop
+
+	lea	g1,compact_garbage_collect_time
+	lea	o1,f_power2_52
+	lwz	g1,0(g1)
+	lis	o0,0x4330
+	stw	g1,-4(sp)
+	stw	o0,-8(sp)
+	lfd	f2,0(o1)
+	lfd	f1,-8(sp)
+	fsub	f1,f1,f2
+ if STDERR_TO_FILE
+	bl	.er_print_real
+ else
+	bl	.ew_print_real
+ endif
+	nop
+
+	li	o0,' '
+	bl	.er_print_char
+	nop
+
+	lea	g0,total_gc_bytes_hi
+	lea	g1,total_gc_bytes_lo
+	bl	fload_52_bit_int
+	lea	g1,garbage_collect_time
+	bl	compute_mb_per_second
+ if STDERR_TO_FILE
+	bl	.er_print_real
+ else
+	bl	.ew_print_real
+ endif
+	nop
+
+	li	o0,' '
+	bl	.er_print_char
+	nop
+
+	lea	g0,total_compact_gc_bytes_hi
+	lea	g1,total_compact_gc_bytes_lo
+	bl	fload_52_bit_int
+	lea	g1,mark_compact_garbage_collect_time
+	bl	compute_mb_per_second
+ if STDERR_TO_FILE
+	bl	.er_print_real
+ else
+	bl	.ew_print_real
+ endif
+	nop
+
+	li	o0,' '
+	bl	.er_print_char
+	nop
+
+	lea	g0,total_compact_gc_bytes_hi
+	lea	g1,total_compact_gc_bytes_lo
+	bl	fload_52_bit_int
+	lea	g1,compact_garbage_collect_time
+	bl	compute_mb_per_second
+ if STDERR_TO_FILE
+	bl	.er_print_real
+ else
+	bl	.ew_print_real
+ endif
+	nop
+
+	li	o0,' '
+	bl	.er_print_char
+	nop
+
+	lea	g0,total_compact_gc_bytes_hi
+	lea	g1,total_compact_gc_bytes_lo
+	bl	fload_52_bit_int
+	lea	g0,mark_compact_garbage_collect_time
+	lea	g1,compact_garbage_collect_time
+	lwz	g0,0(g0)
+	lwz	g1,0(g1)
+	lis	o0,0x4330
+	add	g1,g1,g0
+	stw	g1,-4(sp)
+	stw	o0,-8(sp)
+	lfd	f3,0(o1)
+	lfd	f2,-8(sp)
+	lea	o1,f_60
+	lea	o0,f_1000000
+	fsub	f2,f2,f3
+	lfd	f4,0(o1)
+	lfd	f3,0(o0)
+	fmul	f1,f1,f4
+	fmul	f2,f2,f3
+	fdiv	f1,f1,f2
+ if STDERR_TO_FILE
+	bl	.er_print_real
+ else
+	bl	.ew_print_real
+ endif
+	nop
+
+	li	o0,13
+	bl	.er_print_char
+	nop
+
+
+	lea	o1,execute_time
+	li	o0,0
+	stw	o0,0(o1)
+
+	lea	o1,garbage_collect_time
+	stw	o0,0(o1)
+ if MEASURE_GC
+	lea	o1,mark_compact_garbage_collect_time
+	stw	o0,0(o1)
+
+	lea	o1,compact_garbage_collect_time
+	stw	o0,0(o1)
+ endif
+	lea	o1,IO_time
+	stw	o0,0(o1)
+
+	lea	o1,total_gc_bytes_hi
+	stw	o0,0(o1)
+	lea	o1,total_gc_bytes_lo
+	stw	o0,0(o1)
+	lea	o1,total_compact_gc_bytes_hi
+	stw	o0,0(o1)
+	lea	o1,total_compact_gc_bytes_lo
+	stw	o0,0(o1)
+
+
+	lwz	r0,64+8(sp)
 	addi	sp,sp,64
- endif
-
-no_close_stderr_file:
- endif
- if PROFILE
-	mflr	r0
-	stwu	r0,-4(sp)
-	bl	write_profile_information
- endif
-
-	lwz	r0,76(sp)
 	mtlr	r0
-	lmw	r13,0(sp)
-	addi	sp,sp,80
 	blr
+
+fload_52_bit_int:
+	lea	o1,f_power2_52
+	lwz	g0,0(g0)
+	lwz	g1,0(g1)
+	lis	o0,0x4330
+	andc	g0,g0,o0
+	or	g0,g0,o0
+	stw	g1,-4(sp)
+	stw	g0,-8(sp)
+	lfd	f2,0(o1)
+	lfd	f1,-8(sp)
+	fsub	f1,f1,f2
+	blr
+
+compute_mb_per_second:
+	lwz	g1,0(g1)
+	lis	o0,0x4330
+	stw	g1,-4(sp)
+	stw	o0,-8(sp)
+	lfd	f3,0(o1)
+	lfd	f2,-8(sp)
+	lea	o1,f_60
+	lea	o0,f_1000000
+	fsub	f2,f2,f3
+	lfd	f4,0(o1)
+	lfd	f3,0(o0)
+	fmul	f1,f1,f4
+	fmul	f2,f2,f3
+	fdiv	f1,f1,f2
+	blr
+
+
+	csect	text{PR}
 
 __driver:
 	lea	o1,flags
@@ -1176,7 +1513,21 @@ print_symbol_2:
 	cmpwi	0,d1,0
 	bne	end_print_symbol
 
-printD_:	lha	d1,-2(d0)
+printD_:
+	lha	d1,-2(d0)
+ if NEW_DESCRIPTORS
+	cmplwi	0,d1,256
+	bge	print_record
+
+	lhz	d1,0(d0)
+	addi	a2,d0,10
+	add	a2,a2,d1
+	b	print_string_a2
+
+print_record:
+	lwz	a2,-6(d0)
+	b	print_string_a2
+ else
 	addi	a2,d0,-2
 
 	cmplwi	0,d1,256
@@ -1194,6 +1545,7 @@ printD_:	lha	d1,-2(d0)
 print_record:
 	lwz	a2,-4(a2)
 	b	print_string_a2
+ endif
 
 end_print_symbol:
 	lwz	r0,0(sp)
@@ -1486,13 +1838,23 @@ eprint__string__:
 	blr	
 
 	csect	.eprintD
-eprintD:	andi.	r0,d0,2
+eprintD:
+	andi.	r0,d0,2
 	bne	eprintD_
 
 	mr	a2,d0
 	b	eprint_string_a2
 
-eprintD_:	lha	d1,-2(d0)
+eprintD_:
+	lha	d1,-2(d0)
+ if NEW_DESCRIPTORS
+	cmplwi	0,d1,256
+	bge	eprint_record
+
+	lhz	d1,0(d0)
+	addi	a2,d0,10
+	add	a2,a2,d1
+ else
 	addi	a2,d0,-2
 
 	cmplwi	0,d1,256
@@ -1505,10 +1867,15 @@ eprintD_:	lha	d1,-2(d0)
 	addi	a2,a2,4
 	slwi	d1,d1,3
 	add	a2,a2,d1
+ endif
 	b	eprint_string_a2
 
 eprint_record:
+ if NEW_DESCRIPTORS
+	lwz	a2,-6(d0)
+ else
 	lwz	a2,-4(a2)
+ endif
 
 eprint_string_a2:
 	lwz	o1,0(a2)
@@ -1545,7 +1912,16 @@ eprint_string_a2:
 
 	csect	.DtoAC
 
-DtoAC:	lha	d1,-2(d0)
+DtoAC:
+	lha	d1,-2(d0)
+ if NEW_DESCRIPTORS
+	cmplwi	0,d1,256
+	bge	DtoAC_record
+
+	lhz	d1,0(d0)
+	addi	a0,d0,10
+	add	a0,a0,d1
+ else
 	addi	a0,d0,-2
 
 	cmplwi	0,d1,256
@@ -1553,12 +1929,13 @@ DtoAC:	lha	d1,-2(d0)
 
 	slwi	d1,d1,3
 	bsub	a0,d1
- if 1
+
 	lhz	d1,DESCRIPTOR_ARITY_OFFSET(a0)
 	baddi	a0,4
 	slwi	d1,d1,3
 	badd	a0,d1
  endif
+
 DtoAC_a0:
 	lwz	d2,0(a0)
 	mr	a2,a0
@@ -1597,7 +1974,11 @@ DtoAC_gc:	mflr	r0
 	b	DtoAC_r_gc
 
 DtoAC_record:
+ if NEW_DESCRIPTORS
+	lwz	a0,-6(d0)
+ else
 	lwz	a0,-4(a0)
+ endif
 	b	DtoAC_a0
 
 	csect	.push_a_r_args
@@ -2713,6 +3094,22 @@ end_zero_bit_vector:
 	stw	o4,0(o0)
 
 	sub	d7,o4,a6
+
+ if MEASURE_GC
+	lea	o1,heap_size_129
+	lea	o0,total_gc_bytes_lo
+	lwz	d0,0(o1)
+	lwz	o1,0(o0)
+	slwi	d0,d0,6
+	sub	d0,d0,d7
+	addc	o1,o1,d0
+	stw	o1,0(o0)
+	lea	o0,total_gc_bytes_hi
+ 	lwz	o1,0(o0)
+ 	addze	o1,o1
+ 	stw	o1,0(o0)	
+ endif
+
 	srwi	d7,d7,2
 
 	bl	.add_garbage_collect_time
@@ -3306,7 +3703,17 @@ no_zero_bits:
 
 no_smaller_heap:
   endif
+
+ if PREFETCH
+ 	lea	o0,flags
+	lwz	o0,0(o0)
+	andi.	r0,o0,NO_PREFETCH_MASK
+ 	beq	pmark
+ endif
 	include	'pmark.a'
+ if PREFETCH
+	include	'pmark_prefetch.a'
+ endif
 
 compact_gc:
 	lea	o0,zero_bits_before_mark
@@ -3323,7 +3730,6 @@ compact_gc:
    if MARK_AND_COPY_GC
 no_mark5:
    endif
-
 
 	include	'pcompact.a'
 
@@ -3484,6 +3890,17 @@ vector_at_end_2:
 no_copy_garbage_collection:
  if MEASURE_GC
  	bl	.add_compact_garbage_collect_time
+ 
+	sub	d0,a6,d6
+	
+ 	lea	o0,total_compact_gc_bytes_lo
+ 	lwz	o1,0(o0)
+ 	addc	o1,o1,d0
+ 	stw	o1,0(o0)
+	lea	o0,total_compact_gc_bytes_hi
+ 	lwz	o1,0(o0)
+ 	addze	o1,o1
+ 	stw	o1,0(o0)	
  else
 	bl	.add_garbage_collect_time
  endif
@@ -5223,6 +5640,7 @@ _st_fillr5_array:
 	bge	_fillr5_array_1
 	blr
 
+ if !NEW_DESCRIPTORS
 	csect	.yet_args_needed
 yet_args_needed:
 ; for more than 4 arguments
@@ -5382,6 +5800,7 @@ gc_r_24:
 gc_24:	mflr	r0
 	bl	collect_2
 	b	gc_r_24
+ endif
 
 	csect	.repl_args_b
 repl_args_b:
@@ -5982,6 +6401,9 @@ entier_real_2:
 	lwz	RTOC,4(r3)
 	bctr
 
+ if NEW_DESCRIPTORS
+	include	'pap.a'
+ endif
 
  if MACOSX
  	export	.call_function_0{PR}
@@ -6129,6 +6551,10 @@ entier_real_2:
  if MEASURE_GC
 	tc	compact_garbage_collect_time{TC},compact_garbage_collect_time{BS}
 	tc	mark_compact_garbage_collect_time{TC},mark_compact_garbage_collect_time{BS}
+	tc	total_gc_bytes_lo{TC},total_gc_bytes_lo{BS}
+	tc	total_gc_bytes_hi{TC},total_gc_bytes_hi{BS}
+	tc	total_compact_gc_bytes_lo{TC},total_compact_gc_bytes_lo{BS}
+	tc	total_compact_gc_bytes_hi{TC},total_compact_gc_bytes_hi{BS}
  endif
 	tc	heap_end_after_copy_gc{TC},heap_end_after_copy_gc{BS}
 	tc	caf_listp{TC},caf_listp{BS}
@@ -6195,6 +6621,10 @@ entier_real_2:
  if MEASURE_GC
 	te	time_string_2a
  endif
+ if PREFETCH
+	te	queue
+	te	rmarkp_queue
+ endif
 	te	time_string_3
 	te	time_string_4
 	te	true_c_string
@@ -6202,6 +6632,11 @@ entier_real_2:
 	te	zero_length_string
 	te	garbage_collect_flag
 	te	entier_constants_and_buffers
+ if MEASURE_GC
+	te	f_power2_52
+	te	f_60
+	te	f_1000000
+ endif
 
  if WRITE_HEAP
 	tc	first_function{TC},first_function{DS}
@@ -6211,3 +6646,8 @@ entier_real_2:
  if PROFILE
  	te	garbage_collector_name
  endif
+
+	export	print_execution_time{DS}
+	csect	print_execution_time{DS}
+	dc.l	.print_execution_time{PR}
+	dc.l	TOC{tc0}

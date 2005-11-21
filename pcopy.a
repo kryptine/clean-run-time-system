@@ -121,18 +121,26 @@ copy_record_1:
 
 	subic.	d5,d5,1
 	bgt	copy_lp2
-	
+ if 1
+	b	copy_node_arity1
+ else
 	beq-	copy_node_arity1
 
 	baddi	a2,8
 	b	copy_lp1
+ endif
 
 copy_record_arguments_1:
+ if 1
+	li	d5,0
+	b	copy_lp2
+ else
 	cmpwi	d5,0
 	li	d5,0
 	bne	copy_lp2
 	baddi	a2,4
 	b	copy_lp1
+ endif
 
 copy_record_arguments_3:
  if COPIED_VECTOR
@@ -146,11 +154,14 @@ copy_record_arguments_3:
 	cmpwi	6,,d1,0
  endif
 	baddi	d5,2+1
+ if 1
+	subi	d6,d1,1
+ else
 	beq	6,copy_record_arguments_3b
 
 	subic.	d6,d1,1
 	beq	copy_record_arguments_3abb
-
+ endif
 	slwi	d5,d5,2
 	add	d4,a2,d5
 
@@ -164,6 +175,7 @@ copy_record_arguments_3:
 	mr	a2,d4
 	b	copy_lp1
 
+ if 0
 copy_record_arguments_3abb:
 	subi	d5,d5,1
 	slwi	d6,d5,2
@@ -177,6 +189,7 @@ copy_record_arguments_3b:
 	slwi	d5,d5,2
 	add	a2,a2,d5
 	b	copy_lp1
+ endif
 
  if COPIED_VECTOR
 record_node_without_arguments_part:
@@ -307,13 +320,22 @@ in_hnf_2:	lhz	d2,-2(d0)
 	beq	copy_arity_0_node2
 
 	cmplwi	6,d2,256
- if NODE_POINTER_OFFSET==0
+ if 0
+  if NODE_POINTER_OFFSET==0
 	stw	a6,-4(a2)
- endif
+  endif
 	stw	d0,0(a6)
+ endif
 	bge	6,copy_record_2
 
+ if 1
+  if NODE_POINTER_OFFSET==0
+	stw	a6,-4(a2)
+  endif
+	stw	d0,0(a6)
+ endif
 	subic.	d2,d2,2
+
 	lwz	o0,4-NODE_POINTER_OFFSET(a1)
 
 	addi	a0,a6,1+NODE_POINTER_OFFSET
@@ -510,8 +532,277 @@ already_copied_2_:
 	bge	5,copy_lp2
 	blr	
 
-; to do: copy strict basic records to end of heap
+ if 1
+copy_record_2:
+	subic.	d2,d2,258
+	
+	lhz	o1,-2+2(d0)
+	
+	blt	copy_record_node2_1
+	bgt	copy_record_node2_3
 
+	cmpwi	o1,0
+	beq	copy_real_or_file_2
+
+  if NODE_POINTER_OFFSET==0
+	stw	a6,-4(a2)
+  endif
+	stw	d0,0(a6)
+	lwz	o0,4-NODE_POINTER_OFFSET(a1)
+
+	addi	a0,a6,1+NODE_POINTER_OFFSET
+	stw	a0,0-NODE_POINTER_OFFSET(a1)
+
+	lwz	o1,8-NODE_POINTER_OFFSET(a1)
+
+	stw	o0,4(a6)
+  if NODE_POINTER_OFFSET==0
+	stw	o1,8(a6)
+	baddi	a6,12
+  else
+	stwu	o1,8(a6)
+ 	stw	a6,-4(a2)
+	baddi	a6,4
+  endif
+	bge	5,copy_lp2
+	blr
+
+copy_record_node2_1:
+	cmpwi	o1,0
+
+	lwz	o0,4-NODE_POINTER_OFFSET(a1)
+
+	beq	copy_record_node2_1_b
+
+  if NODE_POINTER_OFFSET==0
+	stw	a6,-4(a2)
+  endif
+	stw	d0,0(a6)
+
+	addi	a0,a6,1+NODE_POINTER_OFFSET
+	stw	a0,0-NODE_POINTER_OFFSET(a1)
+
+	stw	o0,4-NODE_POINTER_OFFSET(a6)
+	baddi	a6,8
+  if NODE_POINTER_OFFSET
+ 	stw	a6,-4(a2)
+  endif
+	bge	5,copy_lp2
+	blr
+
+copy_record_node2_1_b:
+ if NODE_POINTER_OFFSET==0
+	stwu	d0,-8(o4)
+	addi	d2,o4,1
+	stw	d2,0-NODE_POINTER_OFFSET(a1)
+	stw	o0,4(o4)
+	stw	o4,-4(a2)
+ else
+	stw	o4,-4(a2)
+	addi	d2,o4,1
+	stw	d2,0-NODE_POINTER_OFFSET(a1)
+	stw	o0,-4(o4)
+	stwu	d0,-8(o4)
+ endif
+	bge	5,copy_lp2
+	blr
+
+copy_record_node2_3:
+	cmplwi	o1,1
+
+	lwz	o0,4-NODE_POINTER_OFFSET(a1)
+
+	ble	copy_record_node2_3_ab_or_b
+
+  if NODE_POINTER_OFFSET==0
+	stw	a6,-4(a2)
+  endif
+	stw	d0,0(a6)
+
+	addi	a0,a6,1+NODE_POINTER_OFFSET
+	stw	a0,0-NODE_POINTER_OFFSET(a1)
+
+	lwz	a0,8-NODE_POINTER_OFFSET(a1)
+	stw	o0,4(a6)
+
+  if 1
+	lwz	o1,0-NODE_POINTER_OFFSET(a0)
+
+	andi.	r0,o1,1  	
+	bne	record_arguments_already_copied_2	
+  else
+   if COPIED_VECTOR
+	lea	a1,heap_copied_vector
+	sub	d0,a0,a3
+	lwz	a1,0(a1)
+
+	tstmbit	a1,d0,d1,o0,o1,o2,3
+	bne	record_arguments_already_copied_2
+
+	li	o0,128
+	srw	o0,o0,o2
+	or	o1,o1,o0	
+	stbx	o1,a1,d1
+   endif
+  endif
+
+  if NODE_POINTER_OFFSET==0
+	addi	a1,a6,12
+	stw	a1,8(a6)
+  else
+	addi	a1,a6,12+NODE_POINTER_OFFSET
+	stwu	a1,8(a6)
+ 	stw	a6,-4(a2)
+  endif
+  if 0
+	lwz	o1,0-NODE_POINTER_OFFSET(a0)
+  endif
+	addi	a1,a1,1
+	stw	a1,0-NODE_POINTER_OFFSET(a0)
+  if NODE_POINTER_OFFSET==0
+	stwu	o1,12(a6)
+  else
+	stwu	o1,4(a6)
+  endif
+
+cp_record_arg_lp2:
+  if NODE_POINTER_OFFSET
+	lwz	o1,4-NODE_POINTER_OFFSET(a0)
+	baddi	a0,4
+  else
+	lwzu	o1,4(a0)
+  endif
+	subic.	d2,d2,1
+	stwu	o1,4(a6)
+	bgt	cp_record_arg_lp2
+
+	addi	a6,a6,4
+
+	bge	5,copy_lp2
+	blr
+
+  if COPIED_VECTOR
+record_arguments_already_copied_2:
+	lwz	o0,0-NODE_POINTER_OFFSET(a0)
+   if NODE_POINTER_OFFSET==0
+	addi	a6,a6,12
+
+	stw	o0,-4(a6)
+   else
+	stwu	o0,8(a6)
+ 	stw	a6,-4(a2)
+	addi	a6,a6,4
+   endif
+	bge	5,copy_lp2
+	blr	
+  endif
+
+copy_record_node2_3_ab_or_b:
+	blt	copy_record_node2_3_b
+
+copy_record_node2_3_ab:
+  if NODE_POINTER_OFFSET==0
+	stw	a6,-4(a2)
+  endif
+	stw	d0,0(a6)
+
+	addi	a0,a6,1+NODE_POINTER_OFFSET
+	stw	a0,0-NODE_POINTER_OFFSET(a1)
+
+	lwz	a0,8-NODE_POINTER_OFFSET(a1)
+	stw	o0,4(a6)
+
+  if COPIED_VECTOR
+	lea	a1,heap_copied_vector
+	sub	d0,a0,a3
+	lwz	a1,0(a1)
+
+	tstmbit	a1,d0,d1,o0,o1,o2,3
+	bne	record_arguments_already_copied_2
+
+	li	o0,128
+	srw	o0,o0,o2
+	or	o1,o1,o0	
+	stbx	o1,a1,d1
+  endif
+
+	slwi	o0,d2,2
+	lwz	o1,0-NODE_POINTER_OFFSET(a0)
+	sub	o0,o4,o0
+
+	subi	d0,o0,3
+	subi	o0,o0,4
+
+  if NODE_POINTER_OFFSET==0
+	stw	d0,8(a6)
+	addi	a6,a6,12
+  else
+	stwu	d0,8(a6)
+ 	stw	a6,-4(a2)
+ 	addi	a6,a6,4
+  endif
+
+	b	cp_record_arg_lp3_c
+
+copy_record_node2_3_b:
+	stwu	d0,-12(o4)
+	stw	o4,-4(a2)
+
+	addi	a0,o4,1+NODE_POINTER_OFFSET
+	stw	a0,0-NODE_POINTER_OFFSET(a1)
+
+	lwz	a0,8-NODE_POINTER_OFFSET(a1)
+	stw	o0,4(o4)
+
+  if COPIED_VECTOR
+	lea	a1,heap_copied_vector
+	sub	d0,a0,a3
+	lwz	a1,0(a1)
+
+	tstmbit	a1,d0,d1,o0,o1,o2,3
+	bne	record_arguments_already_copied_3
+
+	li	o0,128
+	srw	o0,o0,o2
+	or	o1,o1,o0	
+	stbx	o1,a1,d1
+  endif
+
+	slwi	o0,d2,2
+	lwz	o1,0-NODE_POINTER_OFFSET(a0)
+	sub	o0,o4,o0
+
+	subi	d0,o0,3
+	subi	o0,o0,4
+
+	stw	o0,8(o4)
+
+cp_record_arg_lp3_c:
+
+	stw	d0,0-NODE_POINTER_OFFSET(a0)
+	mr	o4,o0
+	stw	o1,0(o0)
+
+cp_record_arg_lp3:
+	lwzu	o1,4(a0)
+	subic.	d2,d2,1
+	stwu	o1,4(o0)
+	bgt	cp_record_arg_lp3
+
+	bge	5,copy_lp2
+	blr
+
+  if COPIED_VECTOR
+record_arguments_already_copied_3:
+	lwz	o0,0-NODE_POINTER_OFFSET(a0)
+	bsubi	o0,1
+	stw	o0,8(o4)
+	bge	5,copy_lp2
+	blr
+  endif
+
+
+ else
 copy_record_2:
 	subic.	d2,d2,258
 	lwz	o0,4-NODE_POINTER_OFFSET(a1)
@@ -525,23 +816,23 @@ copy_record_2:
 	lwz	o1,8-NODE_POINTER_OFFSET(a1)
 
 	stw	o0,4(a6)
- if NODE_POINTER_OFFSET==0
+  if NODE_POINTER_OFFSET==0
 	stw	o1,8(a6)
 	baddi	a6,12
- else
+  else
 	stwu	o1,8(a6)
  	stw	a6,-4(a2)
 	baddi	a6,4
- endif
+  endif
 	bge	5,copy_lp2
 	blr	
 
 copy_record_node2_1:
 	stw	o0,4-NODE_POINTER_OFFSET(a6)
 	baddi	a6,8
- if NODE_POINTER_OFFSET
+  if NODE_POINTER_OFFSET
  	stw	a6,-4(a2)
- endif
+  endif
 	bge	5,copy_lp2
 	blr
 
@@ -549,7 +840,7 @@ copy_record_node2_3:
 	lwz	a0,8-NODE_POINTER_OFFSET(a1)
 	stw	o0,4(a6)
 
- if COPIED_VECTOR
+  if COPIED_VECTOR
 	lea	a1,heap_copied_vector
 	sub	d0,a0,a3
 	lwz	a1,0(a1)
@@ -561,32 +852,32 @@ copy_record_node2_3:
 	srw	o0,o0,o2
 	or	o1,o1,o0	
 	stbx	o1,a1,d1
- endif
- if NODE_POINTER_OFFSET==0
+  endif
+  if NODE_POINTER_OFFSET==0
 	addi	a1,a6,12
 	stw	a1,8(a6)
- else
+  else
 	addi	a1,a6,12+NODE_POINTER_OFFSET
 	stwu	a1,8(a6)
  	stw	a6,-4(a2)
- endif
+  endif
 	lwz	o1,0-NODE_POINTER_OFFSET(a0)
 	addi	a1,a1,1
 	stw	a1,0-NODE_POINTER_OFFSET(a0)
- if NODE_POINTER_OFFSET==0
+  if NODE_POINTER_OFFSET==0
 	stwu	o1,12(a6)
- else
+  else
 	stwu	o1,4(a6)
- endif
+  endif
 	subi	d2,d2,1
 
 cp_record_arg_lp2:
- if NODE_POINTER_OFFSET
+  if NODE_POINTER_OFFSET
 	lwz	o1,4-NODE_POINTER_OFFSET(a0)
 	baddi	a0,4
- else
+  else
 	lwzu	o1,4(a0)
- endif
+  endif
 	subic.	d2,d2,1
 	stwu	o1,4(a6)
 	bge	cp_record_arg_lp2
@@ -596,20 +887,21 @@ cp_record_arg_lp2:
 	bge	5,copy_lp2
 	blr	
 
- if COPIED_VECTOR
+  if COPIED_VECTOR
 record_arguments_already_copied_2:
 	lwz	o0,0-NODE_POINTER_OFFSET(a0)
- if NODE_POINTER_OFFSET==0
+  if NODE_POINTER_OFFSET==0
 	addi	a6,a6,12
 
 	stw	o0,-4(a6)
- else
+  else
 	stwu	o0,8(a6)
  	stw	a6,-4(a2)
 	addi	a6,a6,4
- endif
+  endif
 	bge	5,copy_lp2
 	blr	
+  endif
  endif
 
 not_in_hnf_2:
@@ -718,10 +1010,6 @@ copy_selector_2:
 	beq	copy_indirection_2
 
 	mr	a0,d0
-
-; if no selectors
-;	b	copy_arity_1_node2_
-
 	blt	copy_record_selector_2
 
  if LINUX
@@ -730,6 +1018,9 @@ copy_selector_2:
 	lha	d2,-6(a0)
  endif
 	lwz	a0,4-NODE_POINTER_OFFSET(a1)
+ if ! LINUX
+	lwzx	d2,rtoc,d2
+ endif
 	lwz	d1,0-NODE_POINTER_OFFSET(a0)
 	andi.	r0,d1,2
 	beq	copy_arity_1_node2_
@@ -738,14 +1029,62 @@ copy_selector_2:
 	cmplwi	0,g1,2
 	ble	copy_selector_2_
 
+ if ! NEW_DESCRIPTORS
+copy_selector_2__:
+ endif
+ if 1
+	lwz	d1,8-NODE_POINTER_OFFSET(a0)
+	lwz	g1,0(d1)
+ else
 	lwz	g1,8-NODE_POINTER_OFFSET(a0)
-	lwz	g1,0-NODE_POINTER_OFFSET(g1)
+	lwz	g1,0(g1)
+ endif
 	andi.	r0,g1,1
 	bne	copy_arity_1_node2_
 
+ if NEW_DESCRIPTORS
+	lhz	d2,4(d2)
+	lea	g1,__indirection
+	stw	g1,0-NODE_POINTER_OFFSET(a1)
+	
+	cmplwi	0,d2,8
+	blt	copy_selector_2_1
+	beq	copy_selector_2_2
+
+	addi	d1,d1,-12
+	lwzx	a0,d1,d2
+	stw	a0,4-NODE_POINTER_OFFSET(a1)
+	lwz	d0,0-NODE_POINTER_OFFSET(a0)
+	mr	a1,a0
+	b	continue_after_selector_2
+
+copy_selector_2_1:
+	lwz	a0,4-NODE_POINTER_OFFSET(a0)
+	stw	a0,4-NODE_POINTER_OFFSET(a1)
+	lwz	d0,0-NODE_POINTER_OFFSET(a0)
+	mr	a1,a0
+	b	continue_after_selector_2
+
+copy_selector_2_2:
+	lwz	a0,0(d1)
+	stw	a0,4-NODE_POINTER_OFFSET(a1)
+	lwz	d0,0-NODE_POINTER_OFFSET(a0)
+	mr	a1,a0
+	b	continue_after_selector_2
+
 copy_selector_2_:
- if LINUX
+	lhz	d2,4(d2)
+	lea	g1,__indirection
+	stw	g1,0-NODE_POINTER_OFFSET(a1)
+
+	lwzx	a0,a0,d2
+	stw	a0,4-NODE_POINTER_OFFSET(a1)
+	lwz	d0,0-NODE_POINTER_OFFSET(a0)
+	mr	a1,a0
+	b	continue_after_selector_2
  else
+copy_selector_2_:
+ if ! LINUX
 	lwzx	d2,rtoc,d2
  endif
 	lwz	g1,4(d2)
@@ -766,6 +1105,7 @@ copy_selector_2_:
 	mr	a1,a0
 	lwz	d0,0-NODE_POINTER_OFFSET(a1)
 	b	continue_after_selector_2
+ endif
 
 copy_record_selector_2:
 	cmpwi	0,d2,-2-3
@@ -782,19 +1122,67 @@ copy_record_selector_2:
 	beq	copy_arity_1_node2_
 
 	lha	g1,-2(d1)
+  if ! LINUX
+	lwzx	d2,rtoc,d2
+  endif
 	cmplwi	0,g1,258
+ if NEW_DESCRIPTORS
+	ble	copy_record_selector_2_
+ else
 	ble	copy_selector_2_
+ endif
 
- if COPIED_VECTOR
+ if 1
+	lhz	g1,-2+2(d1)
+	cmplwi	0,g1,2
+	bge	copy_selector_2__
+ endif
+
 	lea	g1,heap_copied_vector
+ if 1
+	lwz	d1,8-NODE_POINTER_OFFSET(a0)
+	lwz	g1,0(g1)
+	sub	g0,d1,a3
+
+	tstmbit	g1,g0,o0,g1,o1,o2,3
+ else
 	lwz	g0,8-NODE_POINTER_OFFSET(a0)
 	lwz	g1,0(g1)
 	sub	g0,g0,a3
 
 	tstmbit	g1,g0,d1,o0,o1,o2,3
-	bne	copy_arity_1_node2_
  endif
+ if NEW_DESCRIPTORS
+  if 1
+ 	beq	copy_record_selector_2_
+	b	copy_arity_1_node2_
+copy_selector_2__:
+	lwz	d1,8-NODE_POINTER_OFFSET(a0)
+	lwz	g1,0(d1)
+	andi.	r0,g1,1
+	bne	copy_arity_1_node2_
+  else
+	bne	copy_arity_1_node2_
+  endif
+copy_record_selector_2_:
+	lhz	d2,4(d2)
+	lea	g1,__indirection
+	stw	g1,0-NODE_POINTER_OFFSET(a1)
+	
+	cmplwi	0,d2,8
+	ble	copy_record_selector_3
+	mr	a0,d1
+	addi	d2,d2,-12
+copy_record_selector_3:
+	lwzx	a0,a0,d2
+	stw	a0,4-NODE_POINTER_OFFSET(a1)
+	lwz	d0,0-NODE_POINTER_OFFSET(a0)
+	mr	a1,a0
+	b	continue_after_selector_2
+ else
+	bne	copy_arity_1_node2_
 	b	copy_selector_2_
+ endif
 
 copy_strict_record_selector_2:
 	lwz	a0,4-NODE_POINTER_OFFSET(a1)
@@ -803,24 +1191,66 @@ copy_strict_record_selector_2:
 	beq	copy_arity_1_node2_
 
 	lha	g1,-2(d1)
+  if ! LINUX
+	lwzx	d2,rtoc,d2
+  endif
 	cmplwi	0,g1,258
 	ble	copy_strict_record_selector_2_
 
- if COPIED_VECTOR
+ if 1
+	lhz	g1,-2+2(d1)
+	cmplwi	0,g1,2
+	blt	copy_strict_record_selector_2_b
+
+	lwz	d1,8-NODE_POINTER_OFFSET(a0)
+	lwz	g1,0(d1)
+	andi.	r0,g1,1
+	bne	copy_arity_1_node2_
+	b	copy_strict_record_selector_2_
+
+copy_strict_record_selector_2_b:
+ endif
+
 	lea	g1,heap_copied_vector
-	lwz	g0,8-NODE_POINTER_OFFSET(a0)
+	lwz	d1,8-NODE_POINTER_OFFSET(a0)
 	lwz	g1,0(g1)
-	sub	g0,g0,a3
+	sub	g0,d1,a3
 
 	tstmbit	g1,g0,d1,o0,o1,o2,3
 	bne	copy_arity_1_node2_
- endif
 
 copy_strict_record_selector_2_:
- if LINUX
+ if NEW_DESCRIPTORS
+	lhz	d0,4(d2)
+	cmplwi	0,d0,8
+	ble	copy_strict_record_selector_3
+	addi	d0,d0,-12
+	lwzx	d0,d1,d0
+	b	copy_strict_record_selector_4
+copy_strict_record_selector_3:
+	lwzx	d0,a0,d0
+copy_strict_record_selector_4:
+	stw	d0,4-NODE_POINTER_OFFSET(a1)
+
+	lhz	d0,6(d2)
+	cmplwi	0,d0,0
+	beq	copy_strict_record_selector_6
+	cmplwi	0,d0,d1
+	ble	copy_strict_record_selector_5
+	addi	d0,d0,-12
+	mr	a0,d1
+copy_strict_record_selector_5:
+	lwzx	d0,a0,d0
+	stw	d0,8-NODE_POINTER_OFFSET(a1)
+
+	lwz	d0,-4(d2)
+	stw	d0,0-NODE_POINTER_OFFSET(a1)
+	b	in_hnf_2
+copy_strict_record_selector_6:
  else
+  if ! LINUX
 	lwzx	d2,rtoc,d2
- endif
+  endif
 	mr	d0,a1
 	lwz	g1,4(d2)
 	mr	a1,a0
@@ -836,6 +1266,7 @@ copy_strict_record_selector_2_:
 	lwz	d0,0-NODE_POINTER_OFFSET(a0)
 	mr	a1,a0
 	b	in_hnf_2
+ endif
 
 copy_arity_0_node2_:
  if NODE_POINTER_OFFSET==0
@@ -912,7 +1343,7 @@ copy_array_2:
 	mullw	d2,d2,d0
 
 copy_array_a2:
-	addi	a1,a6,-NODE_POINTER_OFFSET
+	addi	a1,a6,0-NODE_POINTER_OFFSET
 
 	slwi	d1,d2,2
 	add	a6,a6,d1
