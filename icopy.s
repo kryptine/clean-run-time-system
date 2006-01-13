@@ -471,6 +471,9 @@ no_small_int_or_char_2:
 	add	$7,a4
 	add	$4,a2
 #else
+# ifdef COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
+copy_record_node2_1_b:
+# endif
 	mov	a0,-8(a3)
 	add	$4,a2
 
@@ -599,21 +602,6 @@ copy_record_node2_1:
 	addl	$4,a2
 
 	addl	$8,a4
-	sub	$1,d1
-	jae	copy_lp2
-	ret
-
-copy_record_node2_1_b:
-	mov	a0,-8(a3)
-	add	$4,a2
-
-	mov	d0,-4(a3)
-	sub	$7,a3
-
-	mov	a3,(a1)
-	dec	a3
-	
-	mov	a3,-4(a2)
 	sub	$1,d1
 	jae	copy_lp2
 	ret
