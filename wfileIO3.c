@@ -450,6 +450,15 @@ static OS(DWORD,ULONG) file_action_reopen[] ={
 #endif
 };
 
+static int clear_masks_for_stdio_reopen[6]={
+	~ (1<<F_READ_DATA),							/* F_READ_TEXT */
+	~ ((1<<F_WRITE_DATA) | (1<<F_APPEND_DATA)),	/* F_WRITE_TEXT */
+	~ ((1<<F_WRITE_DATA) | (1<<F_APPEND_DATA)),	/* F_APPEND_TEXT */
+	~ (1<<F_READ_TEXT),							/* F_READ_DATA */
+	~ ((1<<F_WRITE_TEXT) | (1<<F_APPEND_TEXT)),	/* F_WRITE_DATA */
+	~ ((1<<F_WRITE_TEXT) | (1<<F_APPEND_TEXT))	/* F_APPEND_DATA */
+};
+
 CLEAN_BOOL re_open_file (struct file *f,unsigned int file_mode)
 {
 	if (file_mode>5)
@@ -460,6 +469,14 @@ CLEAN_BOOL re_open_file (struct file *f,unsigned int file_mode)
 			IO_error ("freopen: stderr can't be opened for reading");
 		if (f==&file_table[2])
 			IO_error ("freopen: file not open");
+		if (f==&file_table[1]){
+			int m;
+			
+			m=file_table[1].file_mode;
+			m &= clear_masks_for_stdio_reopen[file_mode];
+			m |= 1<<file_mode;
+			file_table[1].file_mode=m;
+		}
 		return CLEAN_TRUE;
 	} else {	
 		long file_length;
