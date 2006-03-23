@@ -1326,8 +1326,15 @@ int clean_main (void)
 	else
 		std_error_handle=GetStdHandle (STD_ERROR_HANDLE);
 
-	std_input_from_file = GetFileType (std_input_handle)==FILE_TYPE_DISK;
-	std_output_to_file = GetFileType (std_output_handle)==FILE_TYPE_DISK;
+	{
+	int std_input_file_type,std_output_file_type;
+	
+	std_input_file_type=GetFileType (std_input_handle);
+	std_input_from_file=std_input_file_type==FILE_TYPE_DISK || std_input_file_type==FILE_TYPE_PIPE;
+
+	std_output_file_type=GetFileType (std_output_handle);
+	std_output_to_file=std_output_file_type==FILE_TYPE_DISK || std_output_file_type==FILE_TYPE_PIPE;
+	}
 
 	if (std_input_from_file || std_output_to_file)
 		init_std_io_from_or_to_file();
