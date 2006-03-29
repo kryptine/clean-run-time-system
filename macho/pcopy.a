@@ -29,7 +29,7 @@
 	li	o3,-32
  .endif
 	lwz	d0,0(o0)
-	cmpwi	0,d0,0
+	cmpwi	cr0,d0,0
 	beq	end_copy_cafs
 
 copy_cafs_lp:
@@ -77,13 +77,13 @@ copy_lp1:
 	beq	not_in_hnf_1
 
 in_hnf_1:
-	cmpwi	0,d5,0
+	cmpwi	cr0,d5,0
 	beq	copy_array_21
 
-	cmpwi	0,d5,2
+	cmpwi	cr0,d5,2
 	ble	b_copy_lp2
 
-	cmplwi	0,d5,256
+	cmplwi	cr0,d5,256
 	bge	copy_record_1
 
 	lwz	o0,4(a2)
@@ -193,7 +193,7 @@ record_node_without_arguments_part:
  .endif
 
 not_in_hnf_1:
-	cmpwi	0,d5,257
+	cmpwi	cr0,d5,257
 	bge	copy_unboxed_closure_arguments
 
 	subic.	d5,d5,1
@@ -226,7 +226,7 @@ copy_unboxed_closure_arguments1:
 
 copy_array_21:
 	lwz	d1,4(a2)
-	cmpwi	0,d1,0
+	cmpwi	cr0,d1,0
 
 	lwz	d5,0(a2)
 	baddi	a2,8
@@ -236,10 +236,10 @@ copy_array_21:
 	subi	d0,d0,256
 
 	lhz	d1,-2+2(d1)
-	cmpwi	0,d1,0
+	cmpwi	cr0,d1,0
 	beq	copy_array_21_b
 
-	cmpw	0,d0,d1
+	cmpw	cr0,d0,d1
 	beq	copy_array_21_r_a
 
 copy_array_21_ab:
@@ -299,9 +299,9 @@ continue_after_selector_2:
 	beq	not_in_hnf_2
 
 in_hnf_2:	lhz	d2,-2(d0)
-	cmpwi	5,d5,0
+	cmpwi	cr5,d5,0
 
-	cmpwi	0,d2,0
+	cmpwi	cr0,d2,0
 	beq	copy_arity_0_node2
 
 	cmplwi	cr6,d2,256
@@ -423,7 +423,7 @@ no_char_2:
 	lwz	o0,4-NODE_POINTER_OFFSET(a1)
 	bne	no_small_int_or_char_2
 
-	cmplwi	0,o0,33
+	cmplwi	cr0,o0,33
 	slwi	d2,o0,3
 	bge	no_small_int_or_char_2
 
@@ -500,7 +500,7 @@ copy_real_or_file_2:
 	blr
 
 already_copied_2:
-	cmpwi	5,d5,0
+	cmpwi	cr5,d5,0
 already_copied_2_:
 	subi	d0,d0,1
 	stw	d0,-4(a2)
@@ -615,7 +615,7 @@ not_in_hnf_2:
 	bne-	already_copied_2
 
 	lwz	d2,-4-NODE_POINTER_OFFSET(d0)
-	cmpwi	5,d5,0
+	cmpwi	cr5,d5,0
 
 	extsb.	d2,d2
 	beq	copy_arity_0_node2_
@@ -648,7 +648,7 @@ cp_arg_lp2:
 	blr	
 
 copy_arity_1_node2:
-	cmpwi	0,d2,-1-2
+	cmpwi	cr0,d2,-1-2
 	ble	copy_selector_2
 
 copy_arity_1_node2_:
@@ -686,7 +686,7 @@ copy_indirection_2:
 	extsb.	d2,d2
 	beq	copy_arity_0_node2_
 
-	cmpwi	0,d2,-2
+	cmpwi	cr0,d2,-2
 	bne	copy_node2_1_
 
 skip_indirections_2:
@@ -698,21 +698,21 @@ skip_indirections_2:
 
 	lwz	o0,-4(d0)
 	mr	a0,d0
-	cmpwi	0,o0,-2
+	cmpwi	cr0,o0,-2
 	beq	skip_indirections_2
 
 update_indirection_list_2:
 	addi	a0,d1,4
 	lwz	d1,0-NODE_POINTER_OFFSET(a0)
 	stw	a1,0-NODE_POINTER_OFFSET(a0)
-	cmpw	0,a1,d1
+	cmpw	cr0,a1,d1
 	bne	update_indirection_list_2
 
 	lwz	d0,0-NODE_POINTER_OFFSET(a1)
 	b	continue_after_selector_2
 
 copy_selector_2:
-	cmpwi	0,d2,-2-2
+	cmpwi	cr0,d2,-2-2
 	beq	copy_indirection_2
 
 	mr	a0,d0
@@ -730,7 +730,7 @@ copy_selector_2:
 	beq	copy_arity_1_node2_
 
 	lha	g1,-2(d1)
-	cmplwi	0,g1,2
+	cmplwi	cr0,g1,2
 	ble	copy_selector_2_
 
 	lwz	g1,8-NODE_POINTER_OFFSET(a0)
@@ -759,7 +759,7 @@ copy_selector_2_:
 	b	continue_after_selector_2
 
 copy_record_selector_2:
-	cmpwi	0,d2,-2-3
+	cmpwi	cr0,d2,-2-3
 
 	lwz	d2,-8(a0)
 
@@ -771,7 +771,7 @@ copy_record_selector_2:
 	beq	copy_arity_1_node2_
 
 	lha	g1,-2(d1)
-	cmplwi	0,g1,258
+	cmplwi	cr0,g1,258
 	ble	copy_selector_2_
 
  .if COPIED_VECTOR
@@ -792,7 +792,7 @@ copy_strict_record_selector_2:
 	beq	copy_arity_1_node2_
 
 	lha	g1,-2(d1)
-	cmplwi	0,g1,258
+	cmplwi	cr0,g1,258
 	ble	copy_strict_record_selector_2_
 
  .if COPIED_VECTOR
@@ -886,11 +886,11 @@ copy_array_2:
 
 	lwz	d0,8-NODE_POINTER_OFFSET(a0)
 	lwz	d2,4-NODE_POINTER_OFFSET(a0)
-	cmpwi	0,d0,0
+	cmpwi	cr0,d0,0
 	beq	copy_array_a2
 
 	lhz	d1,-2(d0)
-	cmpwi	0,d1,0
+	cmpwi	cr0,d1,0
 	beq	copy_strict_basic_array_2
 
 	subi	d0,d1,256
