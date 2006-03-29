@@ -64,7 +64,7 @@ _end_mark_cafs:
 restore_arrays:
 	lwz	d3,0(a0)	; size
 	lwz	d1,4(a0)	; second last element
-	cmplwi	0,d3,1
+	cmplwi	cr0,d3,1
 
 	lea	o0,__ARRAY__+2
 	lwz	d2,8(a0)	; last element
@@ -95,7 +95,7 @@ restore_lazy_array:
 
 	lhz	o1,-2(d0)
 	subi	o1,o1,256
-	cmpw	0,o1,o0
+	cmpw	cr0,o1,o0
 	beq	no_reorder_array
 	
 	mr	d0,o1
@@ -457,7 +457,7 @@ _no_mark_lazy_node:
 	tst	d2
 	beq	_mark_hnf_0
 
-	cmplwi	0,d2,256
+	cmplwi	cr0,d2,256
 	baddi	a0,4
 	bge	_mark_record
 
@@ -466,7 +466,7 @@ _no_mark_lazy_node:
 	blt	_mark_hnf_1
 
 _mark_hnf_3:
-	cmplwi	0,o3,4
+	cmplwi	cr0,o3,4
 
 	lwz	a1,4-NODE_POINTER_OFFSET(a0)
 	bor	o1,o3
@@ -498,7 +498,7 @@ _no_shared_argument_part:
 	addi	d2,d2,1
 
 	add	o2,d0,d2
-	cmplwi	0,o2,32
+	cmplwi	cr0,o2,32
 
 	add	d4,d4,d2
 
@@ -534,7 +534,7 @@ _push_hnf_args_lp:
 	b	__mark_using_reversal
 
 _mark_hnf_1:
-	cmplwi	0,o3,2
+	cmplwi	cr0,o3,2
 	bor	o1,o3
 	stwx	o1,o4,o0
 	bge+	fits_in_word_4
@@ -552,7 +552,7 @@ _shared_argument_part:
 	b	_mark_node
 
 _mark_lazy_node_1:
-	cmplwi	6,o3,4
+	cmplwi	cr6,o3,4
 
 	bor	o1,o3
 	baddi	a0,4
@@ -593,7 +593,7 @@ _mark_selector_node_1:
 	beq	_mark_node3
 
 	lhz	g1,-2(d2)
-	cmplwi	0,g1,2
+	cmplwi	cr0,g1,2
 	ble	_small_tuple_or_record
 
 _large_tuple_or_record:
@@ -639,7 +639,7 @@ _mark_record_selector_node_1:
 	beq	_mark_node3
 
 	lhz	g1,-2(d2)
-	cmplwi	0,g1,258
+	cmplwi	cr0,g1,258
 	ble	_small_tuple_or_record
 	b	_large_tuple_or_record
 
@@ -653,7 +653,7 @@ _no_mark_strict_record_selector_node_1:
 	beq	_mark_node3
 
 	lhz	g1,-2(d2)
-	cmplwi	0,g1,258
+	cmplwi	cr0,g1,258
 	ble	_select_from_small_record
 
 	lwz	d1,8-NODE_POINTER_OFFSET(a1)
@@ -775,7 +775,7 @@ __mark_lazy_node_lt0:
 	beq	__mark_node3
 
 	lhz	g1,-2(d2)
-	cmplwi	0,g1,2
+	cmplwi	cr0,g1,2
 	ble	__small_tuple_or_record
 
 __large_tuple_or_record:
@@ -824,12 +824,12 @@ __mark_record_selector_node_1:
 	beq	__mark_node3
 
 	lhz	g1,-2(d2)
-	cmplwi	0,g1,258
+	cmplwi	cr0,g1,258
 	ble	__small_tuple_or_record
 	b	__large_tuple_or_record
 
 __mark_node3:
-	cmplwi	6,o3,4
+	cmplwi	cr6,o3,4
 
 	bor	o1,o3
 	stwx	o1,o4,o0
@@ -862,7 +862,7 @@ __mark_strict_record_selector_node_1:
 	rlwnm.	r0,g1,d1,0,0
 	bne	__mark_node3
 
-	cmplwi	6,o3,4
+	cmplwi	cr6,o3,4
 
 	bor	o1,o3
 	stwx	o1,o4,o0
@@ -903,7 +903,7 @@ _mark_node3:
 	b	_mark_node
 
 _mark_hnf_2:
-	cmplwi	0,o3,4
+	cmplwi	cr0,o3,4
 	bor	o1,o3
 	stwx	o1,o4,o0
 	bge+	fits_in_word_6
@@ -951,15 +951,15 @@ _mark_lazy_node:
 	tst	d2
 	beq	_mark_real_or_file
 
- 	cmpwi	0,d2,1
+ 	cmpwi	cr0,d2,1
 	ble	_mark_lazy_node_1
 
-	cmplwi	0,d2,256
+	cmplwi	cr0,d2,256
 	bge	_mark_closure_with_unboxed_arguments
  	baddi	d2,1
 
 	add	o2,d1,d2
-	cmpwi	0,o2,32
+	cmpwi	cr0,o2,32
 
 	add	d4,d4,d2
 	bor	o1,o3
@@ -1001,7 +1001,7 @@ _mark_closure_with_unboxed_arguments:
 	baddi	d2,2
 
 	add	o2,d1,d2
-	cmpwi	0,o2,32
+	cmpwi	cr0,o2,32
 
 	badd	d4,d2
 	bor	o1,o3
@@ -1038,7 +1038,7 @@ _mark_hnf_0:
 	bgt	_mark_normal_hnf_0
 
 _mark_bool_or_small_string:
-	cmplwi	0,o3,2
+	cmplwi	cr0,o3,2
 	bor	o1,o3
 
 	stwx	o1,o4,o0
@@ -1064,7 +1064,7 @@ _mark_real_file_or_string:
 	ble	_mark_string_or_array
 
 _mark_real_or_file:
-	cmplwi	0,o3,4
+	cmplwi	cr0,o3,4
 	bor	o1,o3
 
 	stwx	o1,o4,o0
@@ -1084,7 +1084,7 @@ _mark_record:
 	blt	_mark_record_1
 
 _mark_record_3:
-	cmplwi	0,o3,4
+	cmplwi	cr0,o3,4
 
 	lhz	d1,-2+2(d0)
 
@@ -1118,7 +1118,7 @@ fits_in_word_13:
 	addi	d2,d2,1
 
 	add	o2,d0,d2
-	cmplwi	0,o2,32
+	cmplwi	cr0,o2,32
 
 	add	d4,d4,d2
 
@@ -1150,7 +1150,7 @@ _mark_record_3_bb:
 	addi	d2,d2,1
 
 	add	o2,d0,d2
-	cmplwi	0,o2,32
+	cmplwi	cr0,o2,32
 
 	add	d4,d4,d2
 	
@@ -1165,12 +1165,12 @@ _mark_record_3_bb:
 	b	_mark_next_node
 
 _mark_record_2:
-	cmplwi	0,o3,4
+	cmplwi	cr0,o3,4
 
 	lhz	g1,-2+2(d0)
 	bor	o1,o3
 
-	cmplwi	6,g1,1
+	cmplwi	cr6,g1,1
 
 	stwx	o1,o4,o0
 	bge+	fits_in_word_12
@@ -1311,7 +1311,7 @@ __mark__arguments:
 	tst	d2
 	beq	__mark__hnf__0
 
-	cmplwi	0,d2,256
+	cmplwi	cr0,d2,256
 	baddi	a0,4
 	bge	__mark__record
 
@@ -1320,7 +1320,7 @@ __mark__arguments:
 	blt	__mark__hnf__1
 
 __mark__hnf__3:
-	cmplwi	0,o3,4
+	cmplwi	cr0,o3,4
 
 	lwz	a1,4-NODE_POINTER_OFFSET(a0)
 	bor	o1,o3
@@ -1383,7 +1383,7 @@ __mark__lazy__node__1:
 	bne	__mark__selector__node__1
 
 __mark__selector__1:
-	cmplwi	0,o3,4
+	cmplwi	cr0,o3,4
 	bor	o1,o3
 	stwx	o1,o4,o0
 	baddi	d4,3
@@ -1396,7 +1396,7 @@ __mark__selector__1:
 	b	__shared__argument__part
 
 __mark__hnf__1:
-	cmplwi	0,o3,2
+	cmplwi	cr0,o3,2
 
 	bor	o1,o3
 	stwx	o1,o4,o0
@@ -1441,7 +1441,7 @@ __mark__selector__node__1:
 	beq-	__mark__selector__1
 
 	lha	g1,-2(d2)
-	cmplwi	0,g1,2
+	cmplwi	cr0,g1,2
 	ble	__small__tuple__or__record
 
 __large__tuple__or__record:	
@@ -1484,7 +1484,7 @@ __mark__record__selector__node__1:
 	beq-	__mark__selector__1
 
 	lhz	g1,-2(d2)
-	cmplwi	0,g1,258
+	cmplwi	cr0,g1,258
 	ble	__small__tuple__or__record
 	b	__large__tuple__or__record
 
@@ -1497,7 +1497,7 @@ __mark__strict__record__selector__node__1:
 	beq-	__mark__selector__1
 
 	lhz	g1,-2(d2)
-	cmplwi	0,g1,258
+	cmplwi	cr0,g1,258
 	ble	__select__from__small__record
 
 	lwz	o2,8-NODE_POINTER_OFFSET(a1)
@@ -1527,7 +1527,7 @@ __mark__indirection__node:
 	b	__mark__node
 
 __mark__hnf__2:
-	cmplwi	0,o3,4
+	cmplwi	cr0,o3,4
 
 	bor	o1,o3
 	stwx	o1,o4,o0
@@ -1584,16 +1584,16 @@ __mark__lazy__node:
 	tst	d2
 	beq	__mark__real__or__file
 
- 	cmpwi	0,d2,1
+ 	cmpwi	cr0,d2,1
 	baddi	a0,4
 	ble	__mark__lazy__node__1
 
- 	cmplwi	0,d2,256
+ 	cmplwi	cr0,d2,256
 	bge	__mark_closure_with_unboxed_arguments
 	baddi	d2,1
 
 	add	o2,d1,d2
-	cmplwi	0,o2,32
+	cmplwi	cr0,o2,32
 
 	add	d4,d4,d2
 
@@ -1632,7 +1632,7 @@ __mark_closure_with_unboxed_arguments:
 
 	baddi	d2,2
 	add	o2,d1,d2
-	cmplwi	0,o2,32
+	cmplwi	cr0,o2,32
 
 	badd	d4,d2
 
@@ -1662,12 +1662,12 @@ __mark__hnf__0:
 	bne	__no__int__3
 
 	lwz	d2,4-NODE_POINTER_OFFSET(a0)
-	cmplwi	0,d2,33
+	cmplwi	cr0,d2,33
 	slwi	d2,d2,3
 	blt	____small____int
 
 __mark__bool__or__small__string:
-	cmplwi	0,o3,2
+	cmplwi	cr0,o3,2
 
 	bor	o1,o3
 	stwx	o1,o4,o0
@@ -1710,7 +1710,7 @@ __mark__real__file__or__string:
 	ble	__mark__string__or__array
 
 __mark__real__or__file:
-	cmplwi	0,o3,4
+	cmplwi	cr0,o3,4
 	bor	o1,o3
 	stwx	o1,o4,o0
 	baddi	d4,3
@@ -1728,7 +1728,7 @@ __mark__record:
 	blt	__mark__record__1
 
 __mark__record__3:
-	cmplwi	0,o3,4
+	cmplwi	cr0,o3,4
 
 	bor	o1,o3
 	stwx	o1,o4,o0
@@ -1758,7 +1758,7 @@ fits__in__word__13:
 	addi	d2,d2,1
 
 	add	o2,d0,d2
-	cmplwi	6,o2,32
+	cmplwi	cr6,o2,32
 
 	add	d4,d4,d2
 
@@ -1814,12 +1814,12 @@ __shared__record__argument__part:
 	b	__mark__next__node
 
 __mark__record__2:
-	cmplwi	0,o3,4
+	cmplwi	cr0,o3,4
 
 	lhz	g1,-2+2(d0)
 	bor	o1,o3
 
-	cmplwi	6,g1,1
+	cmplwi	cr6,g1,1
 	baddi	d4,3
 
 	stwx	o1,o4,o0
@@ -1860,7 +1860,7 @@ __mark__array:
 	beq	__mark__b__record__array
 
 	subi	d0,d0,256
-	cmpw	0,d0,d1
+	cmpw	cr0,d0,d1
 	beq	__mark__a__record__array
 
 __mark__ab__record__array:
