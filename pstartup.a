@@ -1124,15 +1124,15 @@ no_close_stderr_file:
  endif
 	nop
 
-
+ if MEASURE_GC
 	lea	g0,total_gc_bytes_hi
 	lea	g1,total_gc_bytes_lo
 	bl	fload_52_bit_int
- if STDERR_TO_FILE
+  if STDERR_TO_FILE
 	bl	.er_print_real
- else
+  else
 	bl	.ew_print_real
- endif
+  endif
 	nop
 
 	li	o0,' '
@@ -1142,11 +1142,11 @@ no_close_stderr_file:
 	lea	g0,total_compact_gc_bytes_hi
 	lea	g1,total_compact_gc_bytes_lo
 	bl	fload_52_bit_int
- if STDERR_TO_FILE
+  if STDERR_TO_FILE
 	bl	.er_print_real
- else
+  else
 	bl	.ew_print_real
- endif
+  endif
 	nop
 
 	li	o0,' '
@@ -1182,11 +1182,11 @@ no_close_stderr_file:
 	lfd	f2,0(o1)
 	lfd	f1,-8(sp)
 	fsub	f1,f1,f2
- if STDERR_TO_FILE
+  if STDERR_TO_FILE
 	bl	.er_print_real
- else
+  else
 	bl	.ew_print_real
- endif
+  endif
 	nop
 
 	li	o0,' '
@@ -1202,11 +1202,11 @@ no_close_stderr_file:
 	lfd	f2,0(o1)
 	lfd	f1,-8(sp)
 	fsub	f1,f1,f2
- if STDERR_TO_FILE
+  if STDERR_TO_FILE
 	bl	.er_print_real
- else
+  else
 	bl	.ew_print_real
- endif
+  endif
 	nop
 
 	li	o0,' '
@@ -1218,11 +1218,11 @@ no_close_stderr_file:
 	bl	fload_52_bit_int
 	lea	g1,garbage_collect_time
 	bl	compute_mb_per_second
- if STDERR_TO_FILE
+  if STDERR_TO_FILE
 	bl	.er_print_real
- else
+  else
 	bl	.ew_print_real
- endif
+  endif
 	nop
 
 	li	o0,' '
@@ -1234,11 +1234,11 @@ no_close_stderr_file:
 	bl	fload_52_bit_int
 	lea	g1,mark_compact_garbage_collect_time
 	bl	compute_mb_per_second
- if STDERR_TO_FILE
+  if STDERR_TO_FILE
 	bl	.er_print_real
- else
+  else
 	bl	.ew_print_real
- endif
+  endif
 	nop
 
 	li	o0,' '
@@ -1250,11 +1250,11 @@ no_close_stderr_file:
 	bl	fload_52_bit_int
 	lea	g1,compact_garbage_collect_time
 	bl	compute_mb_per_second
- if STDERR_TO_FILE
+  if STDERR_TO_FILE
 	bl	.er_print_real
- else
+  else
 	bl	.ew_print_real
- endif
+  endif
 	nop
 
 	li	o0,' '
@@ -1282,17 +1282,17 @@ no_close_stderr_file:
 	fmul	f1,f1,f4
 	fmul	f2,f2,f3
 	fdiv	f1,f1,f2
- if STDERR_TO_FILE
+  if STDERR_TO_FILE
 	bl	.er_print_real
- else
+  else
 	bl	.ew_print_real
- endif
+  endif
 	nop
 
 	li	o0,13
 	bl	.er_print_char
 	nop
-
+ endif
 
 	lea	o1,execute_time
 	li	o0,0
@@ -1310,6 +1310,7 @@ no_close_stderr_file:
 	lea	o1,IO_time
 	stw	o0,0(o1)
 
+ if MEASURE_GC
 	lea	o1,total_gc_bytes_hi
 	stw	o0,0(o1)
 	lea	o1,total_gc_bytes_lo
@@ -1318,13 +1319,14 @@ no_close_stderr_file:
 	stw	o0,0(o1)
 	lea	o1,total_compact_gc_bytes_lo
 	stw	o0,0(o1)
-
+ endif
 
 	lwz	r0,64+8(sp)
 	addi	sp,sp,64
 	mtlr	r0
 	blr
 
+ if MEASURE_GC
 fload_52_bit_int:
 	lea	o1,f_power2_52
 	lwz	g0,0(g0)
@@ -1355,7 +1357,7 @@ compute_mb_per_second:
 	fmul	f2,f2,f3
 	fdiv	f1,f1,f2
 	blr
-
+ endif
 
 	csect	text{PR}
 
