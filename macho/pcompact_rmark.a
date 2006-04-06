@@ -717,7 +717,7 @@ rmark_char:
 	b	rmark_next_node
 		
 rmark_no_normal_hnf_0:
-	lea	g0,__ARRAY__2
+	lea	g0,__ARRAY__+2
 	cmplw	0,d0,g0
 	bne+	rmark_next_node
 

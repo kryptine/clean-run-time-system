@@ -24,7 +24,7 @@ rmark_array_using_reversal:
 	cmplw	0,a0,d1
 	stwu	a3,-8(sp)
 	bgt	rmark_no_undo_reverse_2
-	lea	d0,__ARRAY__2
+	lea	d0,__ARRAY__+2
 	stw	a0,0(a3)
 	stw	d0,0(a0)
 rmark_no_undo_reverse_2:
@@ -434,7 +434,7 @@ rmarkr_no_char_3:
 	b	rmarkr_next_node_after_static
 		
 rmarkr_no_normal_hnf_0:
-	lea	o0,__ARRAY__2
+	lea	o0,__ARRAY__+2
 	cmplw	0,d0,o0
 	bne+	rmarkr_next_node
 	b	rmarkr_array

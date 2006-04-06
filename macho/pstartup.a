@@ -3586,7 +3586,7 @@ halt:
 	bne	e__Exceptions__sraise__exception
  .endif
  
- 	lea	o0,halt_sp
+ 	lea	o0,_halt_sp
 	lwz	sp,0(o0)
 
  .if 0
