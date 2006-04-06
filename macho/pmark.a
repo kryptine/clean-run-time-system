@@ -41,7 +41,6 @@ _mark_cafs_lp:
 	addi	a2,d0,4
 	slwi	d0,d1,2
 	add	a4,a2,d0
-
 	bl	_mark_stack_nodes
 
 	addic.	d0,o5,0
@@ -54,6 +53,8 @@ _end_mark_cafs:
 	baddi	sp,4
 
 	bl	_mark_stack_nodes
+
+continue_mark_after_pmark:
 
 	lea	a0,lazy_array_list
 	lwz	a0,0(a0)
@@ -239,6 +240,7 @@ no_extra_word:
 	lwz	o2,0(o1)
 	addi	o2,o2,1
  .endif
+
 	lea	o0,_flags
 	lwz	o0,0(o0)
 	andi.	r0,o0,2
@@ -275,6 +277,7 @@ no_extra_word:
  .else
 	bl	_ew_print_string
  .endif
+
  .if MACOSX
  	lwz	sp,0(sp)
 	lwzu	o4,0(sp)
@@ -399,31 +402,44 @@ _end_scan:
 
 
 	.text
+; __TEXT.mark_gc:
 	.globl	_mark_stack_nodes
 
 ; a0,a1,a2,a3,a4
 ; d0,d1,d2,d3,d4,d5,d6,d7
 ; o0,o1,o2,o3,o4,o5
 ; g0,g1,g2
+
 ; g3 = 0x80000000
 
-; a5 not used, __cycle__in__spine
-; a6 not used, hp
+; o3 = bit mask
+; o4 = heap_vector
+; o5 = next_caf
 
+; d3,d5 = used during pointer reversal
+; d4 = n_marked_words
+; d6 = heap_p3
+; d7 = 32*heap_size_33
+
+; a2 = pointer to next node on stack
+; a3 = end_stack
+; a4 = end_vector
+
+; a5 = not used, __cycle__in__spine
+; a6 = not used, hp
 
 _mark_stack_nodes:
 	cmpw	a4,a2
 	beqlr
 
+_mark_stack_nodes_:
 	lwz	a0,0(a2)
 	addi	a2,a2,4
 
 	sub	d1,a0,d6
- .if SHARE_CHAR_INT
-	cmplw	d1,d7
+ 	cmplw	d1,d7
 	bge-	_mark_stack_nodes
- .endif
-
+ 
 	rlwinm	o0,d1,32-5,5,29
 	lwzx	o1,o4,o0
 	rlwinm	d1,d1,32-2,27,31
@@ -443,6 +459,43 @@ _mark_next_node:
  .else
 	li	g0,0
 	stwu	g0,-4(sp)
+
+	b	_mark_arguments
+
+_mark_hnf_2:
+	cmplwi	cr0,o3,4
+	bor	o1,o3
+	stwx	o1,o4,o0
+	bge+	fits_in_word_6
+
+	baddi	o0,4
+	lwzx	o1,o4,o0
+	bor	o1,g3
+	stwx	o1,o4,o0
+
+fits_in_word_6:
+	baddi	d4,3
+
+_mark_record_2_c:
+	lwz	o0,4-NODE_POINTER_OFFSET(a0)
+	cmplw	0,sp,a3
+
+	stwu	o0,-4(sp)
+	blt	__mark_using_reversal
+
+_mark_node2:	
+	lwz	a0,0-NODE_POINTER_OFFSET(a0)
+
+_mark_node:
+	sub	d1,a0,d6
+	cmplw	d1,d7
+	bge	_mark_next_node
+
+	rlwinm	o0,d1,32-5,5,29
+	lwzx	o1,o4,o0
+	rlwinm	d1,d1,32-2,27,31
+	rlwnm.	r0,o1,d1,0,0
+	bne	_mark_next_node
 
 _mark_arguments:
 	lwz	d0,0-NODE_POINTER_OFFSET(a0)
@@ -599,14 +652,45 @@ _mark_selector_node_1:
 _large_tuple_or_record:
 	lwz	d1,8(a1)
 
-	sub	d1,d1,d6
-	rlwinm	o0,d1,32-5,5,29
+	sub	o1,d1,d6
+	rlwinm	o0,o1,32-5,5,29
 	lwzx	g1,o4,o0
-	rlwinm	d1,d1,32-2,27,31
-	rlwnm.	r0,g1,d1,0,0
+	rlwinm	o1,o1,32-2,27,31
+	rlwnm.	r0,g1,o1,0,0
 	bne	_mark_node3
 
+ .if NEW_DESCRIPTORS
+	lwz	d0,-8(d0)
+	lea	g1,__indirection
+	stw	g1,-4-NODE_POINTER_OFFSET(a0)
+	subi	d2,a0,4
+	lhz	d0,4(d0)
+	cmplwi	cr0,d0,8
+	blt	_mark_tuple_selector_node_1
+	mr	a1,d1
+	beq	_mark_tuple_selector_node_2
+	addi	d0,d0,-12
+	lwzx	a0,a1,d0
+	stw	a0,4-NODE_POINTER_OFFSET(d2)
+	b	_mark_node
+
+_mark_tuple_selector_node_2:
+	lwz	a0,0-NODE_POINTER_OFFSET(a1)
+	stw	a0,4-NODE_POINTER_OFFSET(d2)
+	b	_mark_node
+ .endif
+
 _small_tuple_or_record:
+ .if NEW_DESCRIPTORS
+	lwz	d0,-8(d0)
+	lea	g1,__indirection
+	stw	g1,-4-NODE_POINTER_OFFSET(a0)
+	subi	d2,a0,4
+	lhz	d0,4(d0)
+_mark_tuple_selector_node_1:
+	lwzx	a0,a1,d0
+	stw	a0,4-NODE_POINTER_OFFSET(d2)
+ .else
 	lwz	g1,-8(d0)
 	subi	d2,a0,4
 	mr	a0,a1
@@ -621,9 +705,10 @@ _small_tuple_or_record:
 	lea	g1,__indirection
 	stw	a0,4-NODE_POINTER_OFFSET(d2)
 	stw	g1,0-NODE_POINTER_OFFSET(d2)
+ .endif
  .if REMOVE_INDIRECTION_LISTS
- 	addi	g2,d2,4
- 	b	__mark_node
+	addi	g2,d2,4
+	b	__mark_node
  .else
 	b	_mark_node
  .endif
@@ -641,7 +726,33 @@ _mark_record_selector_node_1:
 	lhz	g1,-2(d2)
 	cmplwi	cr0,g1,258
 	ble	_small_tuple_or_record
+
+ .if NEW_DESCRIPTORS
+	lwz	d1,8-NODE_POINTER_OFFSET(a1)
+
+	sub	o1,d1,d6
+	rlwinm	o0,o1,32-5,5,29
+	lwzx	g1,o4,o0
+	rlwinm	o1,o1,32-2,27,31
+	rlwnm.	r0,g1,o1,0,0
+	bne	_mark_node3
+
+	lwz	d0,-8(d0)
+	lea	g1,__indirection
+	stw	g1,-4-NODE_POINTER_OFFSET(a0)
+	mr	d2,a0
+	lhz	d0,4(d0)
+	cmplwi	cr0,d0,8
+	ble	_mark_record_selector_node_2
+	mr	a1,d1
+	addi	d0,d0,-12
+_mark_record_selector_node_2:
+	lwzx	a0,a1,d0
+	stw	a0,0-NODE_POINTER_OFFSET(d2)
+	b	_mark_node
+ .else
 	b	_large_tuple_or_record
+ .endif
 
 _mark_strict_record_selector_node_1:
 	rlwnm.	r0,o1,d1,0,0
@@ -658,14 +769,43 @@ _no_mark_strict_record_selector_node_1:
 
 	lwz	d1,8-NODE_POINTER_OFFSET(a1)
 
-	sub	d1,d1,d6
-	rlwinm	o0,d1,32-5,5,29
+	sub	o1,d1,d6
+	rlwinm	o0,o1,32-5,5,29
 	lwzx	g1,o4,o0
-	rlwinm	d1,d1,32-2,27,31
-	rlwnm.	r0,g1,d1,0,0
+	rlwinm	o1,o1,32-2,27,31
+	rlwnm.	r0,g1,o1,0,0
 	bne	_mark_node3
-	
+
 _select_from_small_record:
+ .if NEW_DESCRIPTORS
+	lwz	d0,-8(d0)
+	subi	a0,a0,4
+	lhz	g1,4(d0)
+	cmplwi	cr0,g1,8
+	ble	_mark_strict_record_selector_node_2
+	addi	g1,g1,-12
+	lwzx	g1,d1,g1
+	b	_mark_strict_record_selector_node_3
+_mark_strict_record_selector_node_2:
+	lwzx	g1,a1,g1
+_mark_strict_record_selector_node_3:
+	stw	g1,4-NODE_POINTER_OFFSET(a0)
+	
+	lhz	g1,6(d0)
+	tst	g1
+	beq	_mark_strict_record_selector_node_5
+	cmplwi	cr0,g1,8
+	ble	_mark_strict_record_selector_node_4
+	mr	a1,d1
+	addi	g1,g1,-12
+_mark_strict_record_selector_node_4:
+	lwzx	g1,a1,g1
+	stw	g1,8-NODE_POINTER_OFFSET(a0)
+_mark_strict_record_selector_node_5:
+
+	lwz	d0,-4(d0)
+	stw	d0,0-NODE_POINTER_OFFSET(a0)
+ .else
 	lwz	g1,-8(d0)
 	subi	a0,a0,4
 	lwz	g1,4(g1)
@@ -675,11 +815,11 @@ _select_from_small_record:
 	stwu	r0,-4(sp)
 	bctrl
 	mtlr	r0
+ .endif
 
 	b	_mark_next_node
 
 _mark_indirection_node:
-
 
 
  .if REMOVE_INDIRECTION_LISTS
@@ -688,10 +828,9 @@ __mark_indirection_node:
 	mr	a0,a1
 __mark_node:
 	sub	d1,a0,d6
-  .if SHARE_CHAR_INT
 	cmplw	d1,d7
 	bge-	__mark_next_node
-  .endif
+
 	rlwinm	o0,d1,32-5,5,29
 	lwzx	o1,o4,o0
 	rlwinm	d1,d1,32-2,27,31
@@ -789,16 +928,8 @@ __large_tuple_or_record:
 	bne	__mark_node3
 
 __small_tuple_or_record:
- .if LINUX
 	lwz	g1,-8(d0)
- .else
-	lha	g1,-6(d0)
- .endif
 	mr	d2,a0
- .if LINUX
- .else
-	lwzx	g1,rtoc,g1
- .endif
 	mr	a0,a1
 	lwz	g1,4(g1)
 
@@ -892,52 +1023,9 @@ __end_indirection_list5:
 	b	_no_mark_strict_record_selector_node_1
  .endif
 
-
-
-
-
-
-
 _mark_node3:
 	mr	a0,a1
 	b	_mark_node
-
-_mark_hnf_2:
-	cmplwi	cr0,o3,4
-	bor	o1,o3
-	stwx	o1,o4,o0
-	bge+	fits_in_word_6
-
-	baddi	o0,4
-	lwzx	o1,o4,o0
-	bor	o1,g3
-	stwx	o1,o4,o0
-
-fits_in_word_6:
-	baddi	d4,3
-
-_mark_record_2_c:
-	lwz	o0,4-NODE_POINTER_OFFSET(a0)
-	cmplw	0,sp,a3
-
-	stwu	o0,-4(sp)
-	blt	__mark_using_reversal
-
-_mark_node2:	
-	lwz	a0,0-NODE_POINTER_OFFSET(a0)
-
-_mark_node:
-	sub	d1,a0,d6
- .if SHARE_CHAR_INT
-	cmplw	d1,d7
-	bge-	_mark_next_node
- .endif
-
-	rlwinm	o0,d1,32-5,5,29
-	lwzx	o1,o4,o0
-	rlwinm	d1,d1,32-2,27,31
-	rlwnm.	r0,o1,d1,0,0
-	beq	_mark_arguments
 
 _mark_next_node:
 	lwz	a0,0(sp)
@@ -945,7 +1033,11 @@ _mark_next_node:
 	tst	a0
 	bne	_mark_node
 
-	b	_mark_stack_nodes
+	cmpw	a4,a2
+	bne	_mark_stack_nodes_
+
+_end_mark_nodes:
+	blr
 
 _mark_lazy_node:
 	tst	d2
@@ -1200,14 +1292,166 @@ _mark_string_or_array:
 _mark_array:
 	lwz	d1,8-NODE_POINTER_OFFSET(a0)
 	tst	d1
-	beq	__mark_array_using_reversal
+	beq	_mark_lazy_array
 
 	lhz	d0,-2(d1)
 	tst	d0
 	beq	_mark_strict_basic_array
 
 	lhz	d1,-2+2(d1)
+	tst	d1
 	beq	_mark_b_record_array
+
+	cmplw	0,sp,a3
+	blt	__mark_array_using_reversal
+
+	subi	d3,d0,256
+	lwz	d2,4-NODE_POINTER_OFFSET(a0)
+
+	cmplw	0,d1,d3
+	bor	o1,o3
+
+	stwx	o1,o4,o0
+	baddi	d4,1
+
+	mullw	d0,d2,d3
+
+	beq	_mark_lazy_or_a_record_array
+
+_mark_ab_record_array:
+	baddi	d0,3-1
+
+	badd	d4,d0
+	slwi	d0,d0,2
+
+	badd	d0,a0
+
+	sub	d0,d0,d6
+	rlwinm	d0,d0,32-5,5,29
+	
+	cmplw	0,o0,d0
+	bge	_end_set_ab_array_bits
+
+	baddi	o0,4
+	cmplw	0,o0,d0
+	bge	_last_ab_array_bits
+
+_mark_ab_array_lp:
+	stwx	g3,o4,o0
+	baddi	o0,4
+	cmplw	0,o0,d0	
+	blt	_mark_ab_array_lp
+
+_last_ab_array_bits:
+	lwzx	o1,o4,o0
+	bor	o1,g3
+	stwx	o1,o4,o0
+
+_end_set_ab_array_bits:
+	mflr	o1
+	stw	a2,-8(sp)
+
+	stw	a4,-4(sp)
+	slwi	d3,d3,2
+
+	addi	a2,a0,12-NODE_POINTER_OFFSET
+	stw	d3,-20(sp)
+
+	slwi	d1,d1,2
+	stw	d1,-16(sp)	
+
+	cmplwi	cr0,d2,0	
+
+	stw	o1,-12(sp)
+	subi	sp,sp,28
+
+	beq	_mark_ab_array_0
+
+_mark_ab_array:
+	lwz	d1,12(sp)
+	stw	d2,4(sp)
+	stw	a2,0(sp)
+	
+	add	a4,a2,d1
+	bl	_mark_stack_nodes
+	
+	lwz	d2,4(sp)
+	lwz	a2,0(sp)
+	subic.	d2,d2,1
+	lwz	d3,8(sp)
+	add	a2,a2,d3
+	bne	_mark_ab_array
+
+_mark_ab_array_0:
+	lwz	o1,16(sp)
+	baddi	sp,28
+
+	lwz	a2,-8(sp)
+	mtlr	o1
+	lwz	a4,-4(sp)
+	b	_mark_next_node
+
+_mark_lazy_array:
+	cmplw	0,sp,a3
+	blt	__mark_array_using_reversal
+
+	lwz	d0,4-NODE_POINTER_OFFSET(a0)
+	bor	o1,o3
+
+	stwx	o1,o4,o0
+	baddi	d4,1
+
+_mark_lazy_or_a_record_array:
+	mr	d2,d0
+	baddi	d0,3-1
+
+	badd	d4,d0
+	slwi	d0,d0,2
+
+	badd	d0,a0
+
+	sub	d0,d0,d6
+	rlwinm	d0,d0,32-5,5,29
+	
+	cmplw	0,o0,d0
+	bge	_end_set_lazy_array_bits
+
+	baddi	o0,4
+	cmplw	0,o0,d0	
+	bge	_last_lazy_array_bits
+
+_mark_lazy_array_lp:
+	stwx	g3,o4,o0
+	baddi	o0,4
+	cmplw	0,o0,d0	
+	blt	_mark_lazy_array_lp
+
+_last_lazy_array_bits:
+	lwzx	o1,o4,o0
+	bor	o1,g3
+	stwx	o1,o4,o0
+
+_end_set_lazy_array_bits:
+	mflr	d1
+	stw	a2,-8(sp)
+
+	addi	a2,a0,12-NODE_POINTER_OFFSET
+	stw	a4,-4(sp)
+
+	slwi	d2,d2,2
+	stwu	d1,-12(sp)
+
+	add	a4,a2,d2
+	bl	_mark_stack_nodes
+
+	lwz	d1,0(sp)
+	baddi	sp,12
+
+	lwz	a2,-8(sp)
+	mtlr	d1
+
+	lwz	a4,-4(sp)
+	b	_mark_next_node
 
 __mark_array_using_reversal:
 	li	d3,0
@@ -1444,9 +1688,9 @@ __mark__selector__node__1:
 	cmplwi	cr0,g1,2
 	ble	__small__tuple__or__record
 
-__large__tuple__or__record:	
-	lwz	o2,8-NODE_POINTER_OFFSET(a1)
-	sub	o2,o2,d6
+__large__tuple__or__record:
+	lwz	d1,8-NODE_POINTER_OFFSET(a1)
+	sub	o2,d1,d6
 
 	rlwinm	d2,o2,32-5,5,29
 	lwzx	g1,o4,d2
@@ -1456,7 +1700,38 @@ __large__tuple__or__record:
 	and.	r0,g2,g1
 	bne-	__mark__selector__1
 
+ .if NEW_DESCRIPTORS
+	lwz	d0,-8(d0)
+	lea	g1,__indirection
+	stw	g1,-4-NODE_POINTER_OFFSET(a0)
+	mr	d2,a0
+	lhz	d0,4(d0)
+	cmplwi	cr0,d0,8
+	blt	__mark_tuple_selector_node_1
+	mr	a1,d1
+	beq	__mark_tuple_selector_node_2
+	addi	d0,d0,-12
+	lwzx	a0,a1,d0
+	stw	a0,0(d2)
+	b	__mark__node
+
+__mark_tuple_selector_node_2:
+	lwz	a0,0(a1)
+	stw	a0,0(d2)
+	b	__mark__node
+ .endif
+
 __small__tuple__or__record:
+ .if NEW_DESCRIPTORS
+	lwz	d0,-8(d0)
+	lea	g1,__indirection
+	stw	g1,-4-NODE_POINTER_OFFSET(a0)
+	mr	d2,a0
+	lhz	d0,4(d0)
+__mark_tuple_selector_node_1:
+	lwzx	a0,a1,d0
+	stw	a0,0(d2)		
+ .else
 	lwz	g1,-8(d0)
 	subi	d2,a0,4
 	mr	a0,a1
@@ -1471,6 +1746,7 @@ __small__tuple__or__record:
 	lea	g1,__indirection
 	stw	a0,4-NODE_POINTER_OFFSET(d2)
 	stw	g1,0-NODE_POINTER_OFFSET(d2)
+ .endif
 	b	__mark__node
 
 __mark__record__selector__node__1:
@@ -1485,8 +1761,38 @@ __mark__record__selector__node__1:
 
 	lhz	g1,-2(d2)
 	cmplwi	cr0,g1,258
+ .if NEW_DESCRIPTORS
+	ble	__small__record
+
+	lwz	d1,8-NODE_POINTER_OFFSET(a1)
+	sub	o2,d1,d6
+
+	rlwinm	d2,o2,32-5,5,29
+	lwzx	g1,o4,d2
+	rlwinm	o2,o2,32-2,27,31
+	srw	g2,g3,o2
+
+	and.	r0,g2,g1
+	bne-	__mark__selector__1
+
+__small__record:
+	lwz	d0,-8(d0)
+	lea	g1,__indirection
+	stw	g1,-4-NODE_POINTER_OFFSET(a0)
+	mr	d2,a0
+	lhz	d0,4(d0)
+	cmplwi	cr0,d0,8
+	ble	__mark_record_selector_node_2
+	mr	a1,d1
+	addi	d0,d0,-12
+__mark_record_selector_node_2:
+	lwzx	a0,a1,d0
+	stw	a0,0(d2)
+	b	__mark__node
+ .else
 	ble	__small__tuple__or__record
 	b	__large__tuple__or__record
+ .endif
 
 __mark__strict__record__selector__node__1:
 	rlwnm.	r0,g1,o2,0,0
@@ -1500,16 +1806,45 @@ __mark__strict__record__selector__node__1:
 	cmplwi	cr0,g1,258
 	ble	__select__from__small__record
 
-	lwz	o2,8-NODE_POINTER_OFFSET(a1)
-	sub	o2,o2,d6
+	lwz	d1,8-NODE_POINTER_OFFSET(a1)
+	sub	o2,d1,d6
 
 	rlwinm	d2,o2,32-5,5,29
 	lwzx	g1,o4,d2
 	rlwinm	o2,o2,32-2,27,31
 	rlwnm.	r0,g1,o2,0,0
 	bne-	__mark__selector__1
-	
+
 __select__from__small__record:
+ .if NEW_DESCRIPTORS
+	lwz	d0,-8(d0)
+	subi	a0,a0,4
+	lhz	g1,4(d0)
+	cmplwi	cr0,g1,8
+	ble	__mark_strict_record_selector_node_2
+	addi	g1,g1,-12
+	lwzx	g1,d1,g1
+	b	__mark_strict_record_selector_node_3
+__mark_strict_record_selector_node_2:
+	lwzx	g1,a1,g1
+__mark_strict_record_selector_node_3:
+	stw	g1,4-NODE_POINTER_OFFSET(a0)
+
+	lhz	g1,6(d0)
+	tst	g1
+	beq	__mark_strict_record_selector_node_5
+	cmplwi	cr0,g1,8
+	ble	__mark_strict_record_selector_node_4
+	mr	a1,d1
+	addi	g1,g1,-12
+__mark_strict_record_selector_node_4:
+	lwzx	g1,a1,g1
+	stw	g1,8-NODE_POINTER_OFFSET(a0)
+__mark_strict_record_selector_node_5:
+
+	lwz	d0,-4(d0)
+	stw	d0,0-NODE_POINTER_OFFSET(a0)
+ .else
 	lwz	g1,-8(d0)
 	subi	a0,a0,4
 	lwz	g1,4(g1)
@@ -1519,7 +1854,7 @@ __select__from__small__record:
 	stwu	r0,-4(sp)
 	bctrl
 	mtlr	r0
-
+ .endif
 	b	__mark__node
 
 __mark__indirection__node:
@@ -1554,10 +1889,8 @@ __mark__record__2__c:
 
 __mark__node:
 	sub	d1,a0,d6
- .if SHARE_CHAR_INT
 	cmplw	d1,d7
 	bge-	__mark__next__node__after__static
- .endif
 
 	rlwinm	o0,d1,32-5,5,29
 	lwzx	o1,o4,o0
@@ -1905,8 +2238,6 @@ __mark__ab__record__array:
 	mullw	d1,a1,g1
 	badd	d4,d1
 	badd	d1,d0
-	
-; to do add n b elements to d4
 
 	slwi	d1,d1,2
 	add	d1,a0,d1

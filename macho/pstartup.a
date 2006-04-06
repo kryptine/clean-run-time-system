@@ -118,8 +118,8 @@ WRITE_HEAP		=	0
 WRITE_HEAP		=	0
 STDERR_TO_FILE	=	1
  .endif
+NEW_DESCRIPTORS	=	1
 ;	PROFILE	=	0
-UNBOXED_CLOSURES	=	1
 
 MODULE_NAMES_IN_TIME_PROFILER	=	1
 
@@ -129,7 +129,11 @@ MINIMUM_HEAP_SIZE	=	8000
 
  .if 1
 DESCRIPTOR_ARITY_OFFSET	=	(-2)
+  .if NEW_DESCRIPTORS
+ZERO_ARITY_DESCRIPTOR_OFFSET	=	(-4)
+  .else
 ZERO_ARITY_DESCRIPTOR_OFFSET	=	(-8)
+  .endif
  .else
 DESCRIPTOR_ARITY_OFFSET	=	(-8)
 ZERO_ARITY_DESCRIPTOR_OFFSET	=	(-12)
@@ -607,7 +611,7 @@ _abc_main:
  .else
 	addi	sp,sp,64
  .endif
-	cmpwi	0,o0,0
+	cmpwi	cr0,o0,0
 	beq	no_memory_1
 
 	lea	o1,heap_mbp
@@ -633,7 +637,7 @@ _abc_main:
   .endif
 	addi	sp,sp,64
 
-	cmpwi	0,o0,0
+	cmpwi	cr0,o0,0
 	beq	no_memory_1
 
 	mr	a4,o0
@@ -668,7 +672,7 @@ make_small_integers_lp:
 	stw	d1,0(a0)
 	stw	d0,4(a0)
 	addi	d0,d0,1
-	cmpwi	0,d0,33
+	cmpwi	cr0,d0,33
 	addi	a0,a0,8
 	bne	make_small_integers_lp
 
@@ -679,7 +683,7 @@ make_static_characters_lp:
 	stw	d1,0(a0)
 	stw	d0,4(a0)
 	addi	d0,d0,1
-	cmpwi	0,d0,256
+	cmpwi	cr0,d0,256
 	addi	a0,a0,8
 	bne	make_static_characters_lp
 
@@ -1074,7 +1078,7 @@ no_memory_1:
 print_sc:
 	lea	o0,basic_only
 	lwz	o1,0(o0)
-	cmpwi	0,o1,0
+	cmpwi	cr0,o1,0
 	bne	end_print
 print_:
 	mr	o0,d0
@@ -1132,41 +1136,54 @@ print_symbol_sc:
 print_symbol_2:
 	lwz	d0,0(a0)
 		
-	cmpw	0,int_reg,d0
+	cmpw	cr0,int_reg,d0
 	beq	print_int_node
 
-	cmpw	0,char_reg,d0
+	cmpw	cr0,char_reg,d0
 	beq	print_char_node
 
-	cmpw	0,bool_reg,d0
+	cmpw	cr0,bool_reg,d0
 	beq	print_bool
 
-	cmpw	0,real_reg,d0
+	cmpw	cr0,real_reg,d0
 	beq	print_real_node
 
-	cmpwi	0,d1,0
+	cmpwi	cr0,d1,0
 	bne	end_print_symbol
 
-printD_:	lha	d1,-2(d0)
+printD_:
+	lha	d1,-2(d0)
+ .if NEW_DESCRIPTORS
+	cmplwi	cr0,d1,256
+	bge	print_record
+
+	lhz	d1,0(d0)
+	addi	a2,d0,10
+	add	a2,a2,d1
+	b	print_string_a2
+
+print_record:
+	lwz	a2,-6(d0)
+	b	print_string_a2
+ .else
 	addi	a2,d0,-2
 
-	cmplwi	0,d1,256
+	cmplwi	cr0,d1,256
 	bge	print_record
 
 	slwi	d1,d1,3
 	sub	a2,a2,d1
 
- .if 1
  	lhz	d1,DESCRIPTOR_ARITY_OFFSET(a2)
 	addi	a2,a2,4
 	slwi	d1,d1,3
 	add	a2,a2,d1
 	b	print_string_a2
- .endif
 
 print_record:
 	lwz	a2,-4(a2)
 	b	print_string_a2
+ .endif
 
 end_print_symbol:
 	lwz	r0,0(sp)
@@ -1212,13 +1229,13 @@ print_int:
 print_char:
 	lea	o0,basic_only
 	lwz	d1,0(o0)
-	cmpwi	0,d1,0
+	cmpwi	cr0,d1,0
 	bne	print_char_node_bo
 
 	b	print_char_node_sc
 		
 print_char_node:
-	cmpwi	0,d1,0
+	cmpwi	cr0,d1,0
 	lwz	d0,4(a0)
 	bne	print_char_node_sc
 print_char_node_bo:
@@ -1284,7 +1301,7 @@ print_char_node_sc:
 		
 print_bool:
 	lbz	o0,7(a0)
-	cmpwi	0,o0,0
+	cmpwi	cr0,o0,0
 	beq	print_false
 
 print_true:
@@ -1362,7 +1379,7 @@ print_string_a2:
 print__chars__sc:
 	lea	o0,basic_only
 	lwz	d1,0(o0)
-	cmpwi	0,d1,0
+	cmpwi	cr0,d1,0
 	bne	no_print_chars
 
 print__string__:
@@ -1473,16 +1490,26 @@ eprint__string__:
 	.text
 ; __TEXT.eprintD:
 
-eprintD:	andi.	r0,d0,2
+eprintD:
+	andi.	r0,d0,2
 	bne	eprintD_
 
 	mr	a2,d0
 	b	eprint_string_a2
 
-eprintD_:	lha	d1,-2(d0)
+eprintD_:
+	lha	d1,-2(d0)
+ .if NEW_DESCRIPTORS
+	cmplwi	cr0,d1,256
+	bge	eprint_record
+
+	lhz	d1,0(d0)
+	addi	a2,d0,10
+	add	a2,a2,d1
+ .else
 	addi	a2,d0,-2
 
-	cmplwi	0,d1,256
+	cmplwi	cr0,d1,256
 	bge	eprint_record
 
 	slwi	d1,d1,3
@@ -1492,10 +1519,15 @@ eprintD_:	lha	d1,-2(d0)
 	addi	a2,a2,4
 	slwi	d1,d1,3
 	add	a2,a2,d1
+ .endif
 	b	eprint_string_a2
 
 eprint_record:
+ .if NEW_DESCRIPTORS
+	lwz	a2,-6(d0)
+ .else
 	lwz	a2,-4(a2)
+ .endif
 
 eprint_string_a2:
 	lwz	o1,0(a2)
@@ -1533,20 +1565,30 @@ eprint_string_a2:
 	.text
 ; __TEXT.DtoAC:
 
-DtoAC:	lha	d1,-2(d0)
+DtoAC:
+	lha	d1,-2(d0)
+ .if NEW_DESCRIPTORS
+	cmplwi	cr0,d1,256
+	bge	DtoAC_record
+
+	lhz	d1,0(d0)
+	addi	a0,d0,10
+	add	a0,a0,d1
+ .else
 	addi	a0,d0,-2
 
-	cmplwi	0,d1,256
+	cmplwi	cr0,d1,256
 	bge	DtoAC_record
 
 	slwi	d1,d1,3
 	bsub	a0,d1
- .if 1
+
 	lhz	d1,DESCRIPTOR_ARITY_OFFSET(a0)
 	baddi	a0,4
 	slwi	d1,d1,3
 	badd	a0,d1
  .endif
+
 DtoAC_a0:
 	lwz	d2,0(a0)
 	mr	a2,a0
@@ -1585,7 +1627,11 @@ DtoAC_gc:	mflr	r0
 	b	DtoAC_r_gc
 
 DtoAC_record:
+ .if NEW_DESCRIPTORS
+	lwz	a0,-6(d0)
+ .else
 	lwz	a0,-4(a0)
+ .endif
 	b	DtoAC_a0
 
 	.text
@@ -1648,7 +1694,7 @@ push_t_r_args:
 	sub	d2,d3,d1
 
 	slwi	d4,d3,2
-	cmplwi	0,d3,2
+	cmplwi	cr0,d3,2
 	add	a1,a0,d4
 	ble	small_record
 		
@@ -1757,7 +1803,7 @@ RtoAC:
 ItoAC:
  .if MY_ITOS
 	lea	a0,sprintf_buffer
-	cmpwi	0,d0,0
+	cmpwi	cr0,d0,0
 	bge	no_minus
 
 	li	o0,45
@@ -1770,7 +1816,7 @@ no_minus:
 	beq	zero_digit
 
 calculate_digits:
-	cmplwi	0,d0,10
+	cmplwi	cr0,d0,10
 	blt	last_digit
 
 #if 1
@@ -1797,11 +1843,10 @@ calculate_digits:
 
 	stb	a1,0(a2)
 	addi	a2,a2,1
-		
 	b	calculate_digits
 
 last_digit:
-	cmpwi	0,d0,0
+	cmpwi	cr0,d0,0
 	beq	no_zero
 zero_digit:
 	addi	d0,d0,48
@@ -1812,7 +1857,7 @@ no_zero:
 
 reverse_digits:
 	lbzu	d1,-1(a2)
-	cmpw	0,a2,a1
+	cmpw	cr0,a2,a1
 	stb	d1,0(a0)
 	addi	a0,a0,1
 	bne	reverse_digits
@@ -1896,19 +1941,19 @@ D_to_S_cp_str_2:
 
 eqD:	lwz	d0,0(a0)
 	lwz	o0,0(a1)
-	cmpw	0,d0,o0
+	cmpw	cr0,d0,o0
 	bne	eqD_false
 
-	cmpw	0,d0,int_reg
+	cmpw	cr0,d0,int_reg
 	beq	eqD_INT
 
-	cmpw	0,d0,char_reg
+	cmpw	cr0,d0,char_reg
 	beq	eqD_CHAR
 
-	cmpw	0,d0,bool_reg
+	cmpw	cr0,d0,bool_reg
 	beq	eqD_BOOL
 
-	cmpw	0,d0,real_reg
+	cmpw	cr0,d0,real_reg
 	beq	eqD_REAL
 
 	li	d0,-1
@@ -1921,7 +1966,7 @@ eqD_CHAR:
 eqD_INT:	lwz	d1,4(a0)
 	lwz	o0,4(a1)
 	li	d0,0
-	cmpw	0,d1,o0
+	cmpw	cr0,d1,o0
 
 	mfcr	d0
 	srwi	d0,d0,31-2
@@ -1934,7 +1979,7 @@ eqD_INT:	lwz	d1,4(a0)
 eqD_BOOL:	lbz	d1,7(a0)
 	lbz	o0,7(a1)
 	li	d0,0
-	cmpw	0,d1,o0
+	cmpw	cr0,d1,o0
 
 	mfcr	d0
 	srwi	d0,d0,31-2
@@ -2485,7 +2530,7 @@ no_mark3:
 	stw	d6,24(sp)
 
 	extsb	o0,o0
-	cmpwi	0,o0,0
+	cmpwi	cr0,o0,0
 	ble	collect
 
 	subi	o0,o0,2
@@ -2769,7 +2814,7 @@ switch_to_mark_scan_2:
 	li	o1,1
 	stb	o1,0(o0)
 		
-	cmpwi	0,d7,0
+	cmpwi	cr0,d7,0
 	bge	end_garbage_collect
 	
 	li	o1,-1
@@ -3178,7 +3223,7 @@ compacting_collector:
 	lea	o0,zero_bits_before_mark
 	li	g0,0
 	lwz	o1,0(o0)
-	cmpwi	0,o1,0
+	cmpwi	cr0,o1,0
 	beq	no_zero_bits
 
 	stw	g0,0(o0)
@@ -3379,7 +3424,7 @@ no_mark6:
 	lwz	o1,0(o0)
 	slwi	d1,d1,5
 	sub	d1,d1,o1
-	cmpw	0,d0,d1
+	cmpw	cr0,d0,d1
 
 	ble	no_copy_garbage_collection
 ;	b	no_copy_garbage_collection
@@ -3423,7 +3468,7 @@ no_mark6:
 	lwz	d0,0(o0)
 	lea	o0,heap_vector
 	lwz	o1,0(o0)
-	cmpw	0,d0,o1
+	cmpw	cr0,d0,o1
 	ble	vector_at_end_2
 
 	lea	o0,heap_vector
@@ -3527,10 +3572,6 @@ print_error:
  .endif
 
 halt:
-
-	lea	o0,_halt_sp
-	lwz	sp,0(o0)
-
  .if PROFILE
 	mflr	r0
 	stwu	r0,-4(sp)
@@ -3541,10 +3582,13 @@ halt:
  .if EXCEPTIONS
 	lea	o0,exception_info
 	lwz	o0,0(o0)
-	cmpwi	0,o0,0
+	cmpwi	cr0,o0,0
 	bne	e__Exceptions__sraise__exception
  .endif
  
+ 	lea	o0,halt_sp
+	lwz	sp,0(o0)
+
  .if 0
 	lea	o0,_flags
 	lwz	d0,0(o0)
@@ -4250,19 +4294,19 @@ empty_string:
 sliceAC:
 	lwz	d2,4-NODE_POINTER_OFFSET(a0)
 	addi	a2,a0,4-NODE_POINTER_OFFSET
-	cmpwi	0,d1,0
+	cmpwi	cr0,d1,0
 	bge	slice_string_1
 
 	li	d1,0
 
 slice_string_1:
-	cmpw	0,d1,d2
+	cmpw	cr0,d1,d2
 	bge	empty_string
-	cmpw	0,d0,d1
+	cmpw	cr0,d0,d1
 	addi	d0,d0,1
 	blt	empty_string
 
-	cmpw	0,d0,d2
+	cmpw	cr0,d0,d2
 	ble	slice_string_2
 
 	mr	d0,d2
@@ -4349,7 +4393,7 @@ gc_5:	mflr	r0
 		
 update_string_error:
 	lea	o0,high_index_string
-	cmpwi	0,d1,0
+	cmpwi	cr0,d1,0
 	bge	print_error
 
 	lea	o0,low_index_string
@@ -4362,7 +4406,7 @@ update_string_error_2:
 eqAC:
 	lwzu	d0,4-NODE_POINTER_OFFSET(a0)
 	lwzu	o0,4-NODE_POINTER_OFFSET(a1)
-	cmpw	0,d0,o0
+	cmpw	cr0,d0,o0
 	bne	equal_string_ne
 
 	andi.	d1,d0,3
@@ -4738,7 +4782,7 @@ no_collect_4579:
 	addi	a0,a6,4+NODE_POINTER_OFFSET
 	stw	o0,4(a6)
 
-	cmpwi	0,d0,0
+	cmpwi	cr0,d0,0
 
 	stw	d0,8(a6)
 	stwu	real_reg,12(a6)
@@ -4801,7 +4845,7 @@ no_collect_4581:
 	stw	o0,4(a6)
 	stw	d0,8(a6)
 	stwu	d1,12(a6)
-	cmpwi	0,d3,0
+	cmpwi	cr0,d3,0
 
 	lwz	r0,0(sp)
 	addi	sp,sp,4
@@ -4867,7 +4911,7 @@ r_array_2_bb:
 	b	st_fillr2_array
 
 st_fillr2_array:
-	cmpwi	0,d0,0
+	cmpwi	cr0,d0,0
 	beq	skip_fillr2_array_1
 
 	mtctr	d0
@@ -4896,7 +4940,7 @@ no_collect_4583:
 	stw	d0,8(a6)
 	stwu	d1,12(a6)
 
-	cmpwi	0,d3,0
+	cmpwi	cr0,d3,0
 
 	lwz	r0,0(sp)
 	addi	a2,sp,4
@@ -4918,7 +4962,7 @@ copy_a_to_b_lp3:
 
 r_array_3:
 	lwz	d1,0(sp)
-	cmpwi	0,d0,0
+	cmpwi	cr0,d0,0
 
 	lwz	d2,4(sp)
 	lwz	d3,8(sp)
@@ -4952,7 +4996,7 @@ no_collect_4584:
 	stw	d0,8(a6)
 	stwu	d1,12(a6)
 
-	cmpwi	0,d3,0
+	cmpwi	cr0,d3,0
 
 	lwz	r0,0(sp)
 	addi	a2,sp,4
@@ -4974,7 +5018,7 @@ copy_a_to_b_lp4:
 r_array_4:
 	lwz	d1,0(sp)
 	lwz	d2,4(sp)
-	cmpwi	0,d0,0
+	cmpwi	cr0,d0,0
 
 	lwz	d3,8(sp)
 	lwz	d4,12(sp)
@@ -5015,7 +5059,7 @@ no_collect_4585:
 	stw	d0,8(a6)
 	stwu	d1,12(a6)
 
-	cmpwi	0,d3,0
+	cmpwi	cr0,d3,0
 
 	lwz	r0,0(sp)
 	addi	a2,sp,4
@@ -5308,6 +5352,7 @@ _st_fillr5_array:
 	bge	_fillr5_array_1
 	blr
 
+ .if !NEW_DESCRIPTORS
 	.text
 ; __TEXT.yet_args_needed:
 
@@ -5479,12 +5524,13 @@ gc_r_24:
 gc_24:	mflr	r0
 	bl	collect_2
 	b	gc_r_24
+ .endif
 
 	.text
 ; __TEXT.repl_args_b:
 
 repl_args_b:
-	cmpwi	0,d0,0
+	cmpwi	cr0,d0,0
 	ble	repl_args_b_1
 
 	subic.	d0,d0,1
@@ -5506,7 +5552,7 @@ repl_args_b_3:
 	lwzu	o0,-4(a1)
 	addi	a4,a4,4
 	stw	o0,0-4(a4)
-	cmpwi	0,d0,0
+	cmpwi	cr0,d0,0
 	subi	d0,d0,1
 	bne	repl_args_b_3
 repl_args_b_4:
@@ -5522,11 +5568,11 @@ repl_args_b_1:
 ; __TEXT.push_arg_b:
 
 push_arg_b:
-	cmplwi	0,d1,2
+	cmplwi	cr0,d1,2
 	blt	push_arg_b_1
 	bne	push_arg_b_2
 
-	cmpw	0,d1,d0
+	cmpw	cr0,d1,d0
 	beq	push_arg_b_1
 push_arg_b_2:
 	lwz	a0,8(a0)
@@ -5605,7 +5651,7 @@ del_args_gc:
 o__S_P2:
 	lwz	d0,0(a0)
 	lha	d0,-2(d0)
-	cmpwi	0,d0,2
+	cmpwi	cr0,d0,2
 	lwz	a0,8(a0)
 	beq	o__S_P2_2
 	lwz	a0,0(a0)
@@ -6093,6 +6139,10 @@ entier_real_2:
 	lwz	r0,0(sp)
 	addi	sp,sp,4
 	blr
+
+ .if NEW_DESCRIPTORS
+#include	"pap.a"
+ .endif
 
 .picsymbol_stub
 L_sin$stub:

@@ -5,10 +5,10 @@ all: _startup.o _startupProfile.o _startupTrace.o _startup2.o _startup3.o _libra
 _startup.o: pstartup_.a
 	as pstartup_.a -o _startup.o
 
-pstartup_.a: pstartup.a pmark.a pcompact.a pcopy.a pmacros.a
+pstartup_.a: pstartup.a pmark.a pcompact.a pcompact_rmark.a pcompact_rmarkr.a pcopy.a pmacros.a pap.a
 	cpp -DPROFILE=0 pstartup.a > pstartup_.a
 
-pstartup_p.a: pstartup.a pmark.a pcompact.a pcopy.a pmacros.a
+pstartup_p.a: pstartup.a pmark.a pcompact.a pcopy.a pmacros.a pap.a
 	cpp -DPROFILE=1 pstartup.a > pstartup_p.a
 
 
