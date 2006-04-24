@@ -1436,7 +1436,7 @@ add_empty_node_9_gc_:
 	lwz	a3,-24(a4)
 	stw	a3,-20(a4)
 	stwu	a5,4(a6)
-	stw	a6,-24(a3)
+	stw	a6,-24(a4)
 	addi	a6,a6,8
 	addi	a4,a4,4
 	blr	
