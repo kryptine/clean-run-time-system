@@ -1372,7 +1372,7 @@ add_empty_node_7_gc_:
 	lwz	a3,-12(a4)
 	stw	a3,-8(a4)
 	lwz	a3,-16(a4)
-	stw	a3,-12(a3)
+	stw	a3,-12(a4)
 	stwu	a5,4(a6)
 	stw	a6,-16(a4)
 	addi	a6,a6,8
