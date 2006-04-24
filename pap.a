@@ -330,7 +330,7 @@ ap_21:
 ap_20:
 	lwz	a3,0(a2)
 	li	d1,20*8
- 	lhz	o1,0(a2)
+ 	lhz	o1,0(a3)
 	cmpw	0,o1,d1
 	beq	fast_ap
 
@@ -458,7 +458,7 @@ ap_13:
 ap_12:
 	lwz	a3,0(a2)
 	li	d1,12*8
- 	lhz	o1,0(a2)
+ 	lhz	o1,0(a3)
 	cmpw	0,o1,d1
 	beq	fast_ap
 
