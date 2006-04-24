@@ -1506,7 +1506,7 @@ add_empty_node_11_gc_:
 	lwz	a3,-32(a4)
 	stw	a3,-28(a4)
 	stwu	a5,4(a6)
-	stw	a6,-28(a4)
+	stw	a6,-32(a4)
 	addi	a6,a6,8
 	addi	a4,a4,4
 	blr	
