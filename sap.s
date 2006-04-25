@@ -1191,16 +1191,12 @@ no_fast_ap2:
 	call	a2
 	st	%o7,[sp]
 
-	
 	ld	[a0],a3
 	mov	a0,a1
 	ld	[a4-4],a0
-	dec	4,a4
 	ld	[a3+2],a2
-
-	ld	[sp],%o7
-	retl
-	inc	4,sp
+	jmp	a3
+	dec	4,a4
 
 add_empty_node_2:
 	deccc	3,d7
