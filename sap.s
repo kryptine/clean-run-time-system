@@ -1190,7 +1190,7 @@ no_fast_ap2:
 	mov	a0,a1
 	ld	[a4-4],a0
 	ld	[a3+2],a2
-	jmp	a3
+	jmp	a2
 	dec	4,a4
 
 add_empty_node_2:
