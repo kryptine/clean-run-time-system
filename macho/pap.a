@@ -1039,11 +1039,6 @@ no_fast_ap16:
 	mr	a1,a0
 	lwzu	a0,-4(a4)
 
-	li	d1,16*8
- 	lhz	o1,0(a3)
-	cmpw	0,o1,d1
-	beq	fast_ap_2
-
 	li	d1,15*8
  	lhz	o1,0(a3)
 	cmpw	0,o1,d1
