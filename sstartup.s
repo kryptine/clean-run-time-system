@@ -12,6 +12,13 @@
 #undef COUNT_GARBAGE_COLLECTIONS
 #define SP_G5
 #define MARK_GC
+#define NEW_DESCRIPTORS
+
+#ifdef NEW_DESCRIPTORS
+# define ZERO_ARITY_DESCRIPTOR_OFFSET (-4)
+#else
+# define ZERO_ARITY_DESCRIPTOR_OFFSET (-12)
+#endif
 
 #define ldg(g,r) sethi %hi g,%o0 ; ld [%o0+%lo g],r
 #define ldgr(g,r,ir) sethi %hi g,ir ; ld [ir+%lo g],r
@@ -38,6 +45,14 @@
 	ldub	[vector+byte_offset],byte ;\
 	and	bit_n,7,scratch ;\
 	srl	bit,scratch,bit ;\
+	btst	bit,byte
+
+#define tst_bit(vector,bit_n,byte_offset,bit,byte) \
+	mov	128,bit ;\
+	srl	bit_n,3,byte_offset ;\
+	ldub	[vector+byte_offset],byte ;\
+	and	bit_n,7,bit_n ;\
+	srl	bit,bit_n,bit ;\
 	btst	bit,byte
 
 #define clrmbit(vector,bit_n,byte_offset,bit,byte,scratch) \
@@ -837,11 +852,27 @@ DtoAC:	btst	2,d0
 	bne	DtoAC_
 	nop
 
-	ba	DtoAC_string_a2
-	mov	d0,a2
+	add	d0,4,a0
+	ba	build_string
+	ld	[d0],d0
 
-DtoAC_:	add	d0,-2,a2
-	ldsh	[a2],d1
+DtoAC_:
+	ldsh	[d0-2],d1
+#ifdef NEW_DESCRIPTORS
+	cmp	d1,256
+	bgeu,a	DtoAC_string_a0
+	ld	[d0-6],a0
+	
+	lduh	[d0],d1
+	add	d0,10,a0
+	add	a0,d1,a0
+
+DtoAC_string_a0:
+	ld	[a0],d0
+	ba	build_string
+	inc	4,a0
+#else
+	add	d0,-2,a2
 	cmp	d1,256
 	bgeu	DtoAC_record
 	sll	d1,3,d1
@@ -854,6 +885,7 @@ DtoAC_string_a2:
 	ld	[a2],d0
 	ba	build_string
 	add	a2,4,a0
+#endif
 
 print_symbol:
 	ba	print_symbol_2
@@ -885,8 +917,19 @@ print_symbol_2:
 	bne	end_print_symbol
 	nop
 
-printD_:	add	d0,-2,a2
-	ldsh	[a2],d1
+printD_:
+	ldsh	[d0-2],d1
+#ifdef NEW_DESCRIPTORS
+	cmp	d1,256
+	bgeu,a	print_string_a2
+	ld	[d0-6],a2
+
+	lduh	[d0],d1
+	add	d0,10,a2
+	ba	print_string_a2
+	add	a2,d1,a2
+#else
+	add	d0,-2,a2
 	cmp	d1,256
 	bgeu	print_record
 	sll	d1,3,d1
@@ -894,6 +937,7 @@ printD_:	add	d0,-2,a2
 print_record:
 	ba	print_string_a2
 	ld	[a2-4],a2
+#endif
 
 end_print_symbol:
 	ld	[sp],%o7
@@ -1235,9 +1279,9 @@ D_to_S_x:
 #ifdef MY_ITOS
 sprintf_buffer_to_string:
 	set	sprintf_buffer,a0
+#endif
 ! d0 : length, a0 : string
 build_string:
-#endif
 	add	d0,3,d1
 	srl	d1,2,d1
 	dec	2,d7
@@ -3535,10 +3579,10 @@ ea_ap:
 	ld	[%i4-4],a0
 	dec	4,%i4
 ap_1:	
-	ld	[a1],%i2
-	ld	[%i2+4-2],%i2
+	ld	[a1],a2
+	ld	[a2+4-2],a2
 	dec	4,sp
-	call	%i2
+	call	a2
 	st	%o7,[sp]
 
 	ld	[%i4-4],%i2
@@ -3557,9 +3601,9 @@ ap_1:
 #endif
 
 e__system__sAP:
-	ld	[a1],%i2
-	ld	[%i2+4-2],%i2
-	jmp	%i2
+	ld	[a1],a2
+	ld	[a2+4-2],a2
+	jmp	a2
 	nop
 
 _create_arrayB:
@@ -3818,6 +3862,7 @@ _st_fillr5_array:
 	jmp	a1+8
 	nop
 
+#ifndef NEW_DESCRIPTORS
 yet_args_needed:
 ! for more than 4 arguments
 	ld	[a1],d1
@@ -3989,6 +4034,7 @@ gc_24:	dec	4,sp
 	st	%o7,[sp]
 	ba	gc_r_24
 	nop
+#endif
 
 repl_args_b:
 	tst	d0
@@ -4164,4 +4210,8 @@ ea__S_P2_3:
 	ld	[sp],%o7
 	retl
 	inc	4,sp
+#endif
+
+#ifdef NEW_DESCRIPTORS
+# include "sap.s"
 #endif

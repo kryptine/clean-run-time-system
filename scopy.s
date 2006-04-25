@@ -1,21 +1,7 @@
 
 	ldg	(heap_p2,a6)
-
-#ifdef COPIED_VECTOR
-	ldg	(@flags,%o0)
-	btst	64,%o0
-	bne	no_copied_vector4
-	nop
-
 	ldg	(heap_size_129,d7)
-	ba	copied_vector4
 	sll	d7,6,d7
-no_copied_vector4:
-#endif
-	ldg	(@heap_size,d7)
-	srl	d7,1,d7
-
-copied_vector4:
 	add	a6,d7,%o4
 
 	set	INT+2,d3
@@ -139,25 +125,37 @@ copy_record_21:
 	bgu,a	copy_lp2+4
 	ld	[a2],a1
 
+#if 1
+	ba,a	copy_node_arity1
+#else
 	be	copy_node_arity1
 	nop
 	ba	copy_lp1
 	inc	8,a2
+#endif
 
 copy_record_arguments_1:
+#if 1
+	ba	copy_lp2
+	mov	0,d5
+#else
 	tst	d5
 	bne	copy_lp2
 	mov	0,d5
 	ba	copy_lp1
 	inc	4,a2
+#endif
 
 copy_record_arguments_3:
-#ifdef COPIED_VECTOR
 	ld	[a2+4],%o1
 	btst	1,%o1
 	bne	record_node_without_arguments_part
-#endif
+
 	lduh	[d0-2+2],d1
+#if 1
+	inc	2+1,d5
+	dec	1,d1
+#else
 	tst	d1
 	be	copy_record_arguments_3b
 	inc	2+1,d5
@@ -165,6 +163,7 @@ copy_record_arguments_3:
 	deccc	1,d1
 	be,a	copy_record_arguments_3abb
 	dec	1,d5
+#endif
 
 	sll	d5,2,d5
 	add	a2,d5,%o1
@@ -184,6 +183,7 @@ copy_record_arguments_3_c:
 	ba	copy_lp1
 	inc	copy_lp1-8-copy_record_arguments_3_c,%o7
 
+#if 0
 copy_record_arguments_3abb:
 	sll	d5,2,d6
 copy_record_arguments_3abb_c:
@@ -198,8 +198,8 @@ copy_record_arguments_3b:
 	sll	d5,2,d5
 	ba	copy_lp1
 	add	a2,d5,a2
+#endif
 
-#ifdef COPIED_VECTOR
 record_node_without_arguments_part:
 	bclr	1,%o1
 	st	%o1,[a2+4]
@@ -213,7 +213,6 @@ record_node_without_arguments_part_c:
 	inc	4,a2
 	ba	copy_lp1
 	inc	copy_lp1-8-record_node_without_arguments_part_c,%o7
-#endif
 
 not_in_hnf_1:
 	ld	[d0-4],d5
@@ -327,7 +326,7 @@ copy_array_21_a:
 	bcc,a	copy_lp2+4
 	ld	[a2],a1
 		
-	b,a	copy_lp1
+	ba,a	copy_lp1
 
 !
 !	Copy root nodes to the other semi-space
@@ -446,7 +445,7 @@ update_indirection_list_2:
 	bne	update_indirection_list_2
 	nop
 
-	b,a	continue_after_selector_2
+	ba,a	continue_after_selector_2
 
 copy_selector_2:
 	inccc	4,d2
@@ -468,13 +467,54 @@ copy_selector_2:
 	bleu	copy_selector_2_
 	nop
 
+#ifndef NEW_DESCRIPTORS
+copy_selector_2__:
+#endif
+#if 1
+	ld	[a0+8],d1
+	ld	[d1],%g1
+#else
 	ld	[a0+8],%g1
 	ld	[%g1],%g1
+#endif
+
 	btst	1,%g1
 	bne	copy_arity_1_node2_
 	nop
 
+#ifdef NEW_DESCRIPTORS
+	lduh	[d2+4],d2
+	set	__indirection,%g1
+	st	%g1,[a1]
+
+	cmp	d2,8
+	blu,a	copy_selector_2_1
+	ld	[a0+4],a0
+	beq,a	copy_selector_2_2
+	ld	[d1],a0
+
+	sub	d1,12,d1
+	ld	[d1+d2],a0
+copy_selector_2_1:
+copy_selector_2_2:
+	st	a0,[a1+4]
+	ld	[a0],d0
+	ba	continue_after_selector_2
+	mov	a0,a1
+
 copy_selector_2_:
+	lduh	[d2+4],d2
+	set	__indirection,%g1
+	st	%g1,[a1]
+
+	ld	[a0+d2],a0
+	st	a0,[a1+4]
+	ld	[a0],d0
+	ba	continue_after_selector_2
+	mov	a0,a1
+#else
+copy_selector_2_:
+#endif
 	ld	[d2+4],%g1
 	mov	a1,d2
 
@@ -505,10 +545,27 @@ copy_record_selector_2:
 
 	ldsh	[d1-2],%g1
 	cmp	%g1,258
+#ifdef NEW_DESCRIPTORS
+	bleu	copy_record_selector_2_
+#else
 	bleu	copy_selector_2_
+#endif
 	nop
 
-#ifdef COPIED_VECTOR
+#if 1
+	lduh	[d1-2+2],%g1
+	cmp	%g1,2
+	bgeu	copy_selector_2__
+	nop
+
+	ld	[a0+8],d1
+	ldg	(heap_p1,%o1)
+	ldg	(heap_copied_vector,%g1)
+	sub	d1,%o1,%o3
+	srl	%o3,2+1,%o3
+
+	tst_bit	(%g1,%o3,%o2,%o0,%o1)
+#else
 	ld	[a0+8],%o3
 	ldg	(heap_p1,%o1)
 	ldg	(heap_copied_vector,%g1)
@@ -516,10 +573,46 @@ copy_record_selector_2:
 	srl	%o3,2+1,%o3
 
 	tstmbit	(%g1,%o3,d1,%o0,%o1,%o2)
+#endif
+
+#ifdef NEW_DESCRIPTORS
+# if 1
+ 	beq	copy_record_selector_2_
+ 	nop
+	ba,a	copy_arity_1_node2_
+
+copy_selector_2__:
+	ld	[a0+8],d1
+	ld	[d1],%g1
+	btst	1,%g1
 	bne	copy_arity_1_node2_
 	nop
+# else
+	bne	copy_arity_1_node2_
+	nop
+# endif
+copy_record_selector_2_:
+	lduh	[d2+4],d2
+	set	__indirection,%g1
+	st	%g1,[a1]
+	
+	cmp	d2,8
+	bleu,a	copy_record_selector_3
+	ld	[a0+d2],a0
+
+	sub	d2,12,d2
+	ld	[d1+d2],a0
+copy_record_selector_3:
+	st	a0,[a1+4]
+	ld	[a0],d0
+	ba	continue_after_selector_2
+	mov	a0,a1
+#else
+	bne	copy_arity_1_node2_
+	nop
+
+ 	ba,a	copy_selector_2_
 #endif
- 	b,a	copy_selector_2_
 
 copy_strict_record_selector_2:
  	ld	[a1+4],a0
@@ -533,7 +626,31 @@ copy_strict_record_selector_2:
 	bleu	copy_strict_record_selector_2_
 	nop
 
-#ifdef COPIED_VECTOR
+#if 1
+	lduh	[d1-2+2],%g1
+	cmp	%g1,2
+	bltu	copy_strict_record_selector_2_b
+	nop
+
+	ld	[a0+8],d1
+	ld	[d1],%g1
+	btst	1,%g1
+	bne	copy_arity_1_node2_
+	nop
+	ba,a	copy_strict_record_selector_2_
+
+copy_strict_record_selector_2_b:
+#endif
+
+#if 1
+	ld	[a0+8],d1
+	ldg	(heap_p1,%o1)
+	ldg	(heap_copied_vector,%g1)
+	sub	d1,%o1,%o3
+	srl	%o3,2+1,%o3
+
+	tst_bit	(%g1,%o3,%o2,%o0,%o1)
+#else
 	ld	[a0+8],%o3
 	ldg	(heap_p1,%o1)
 	ldg	(heap_copied_vector,%g1)
@@ -541,11 +658,40 @@ copy_strict_record_selector_2:
 	srl	%o3,2+1,%o3
 
 	tstmbit	(%g1,%o3,d1,%o0,%o1,%o2)
+#endif
 	bne	copy_arity_1_node2_
 	nop
-#endif
 
 copy_strict_record_selector_2_:
+#ifdef NEW_DESCRIPTORS
+	lduh	[d2+4],d0
+	cmp	d0,8
+	bleu,a	copy_strict_record_selector_3
+	ld	[a0+d0],d0
+
+	sub	d0,12,d0
+	ld	[d1+d0],d0
+copy_strict_record_selector_3:
+copy_strict_record_selector_4:
+	st	d0,[a1+4]
+
+	lduh	[d2+6],d0
+	cmp	d0,0
+	beq	copy_strict_record_selector_6
+	cmp	d0,8
+	bleu,a	copy_strict_record_selector_5
+	ld	[a0+d0],d0
+
+	sub	d0,12,d0
+	ld	[d1+d0],d0
+copy_strict_record_selector_5:
+	st	d0,[a1+8]
+
+	ld	[d2-4],d0
+	ba	in_hnf_2
+	st	d0,[a1]
+copy_strict_record_selector_6:
+#else
 	ld	[d2+4],%g1
 
 	mov	a1,d0
@@ -563,6 +709,7 @@ copy_strict_record_selector_2_:
 	mov	a0,a1
 	ba	in_hnf_2
 	ld	[a1],d0
+#endif
 
 copy_arity_0_node2_:	
 	st	d0,[%o4-12]
@@ -733,16 +880,9 @@ no_small_int_or_char_2:
 	nop
 
 copy_normal_hnf_0_2:
-#ifdef SHARE_CHAR_INT
-	sub	d0,12+2,a0
+	sub	d0,2-ZERO_ARITY_DESCRIPTOR_OFFSET,a0
 	st	a0,[%i2]
-#else
-	st	d0,[%o4-4]
-	dec	4,%o4
-	st	%o4,[%i2]
-	or	%o4,1,d2
-	st	d2,[a1]
-#endif
+
 	deccc	%l5
 	bpos	copy_lp2
 	inc	4,%i2
@@ -911,10 +1051,13 @@ copy_bool_array_2:
 
 copy_record_2:
 	deccc	258-2,d2
-	bgu,a	copy_record_node2_3
+	bgu	copy_record_node2_3
 	lduh	[d0-2+2],%o0
 
 	bcs	copy_record_node2_1
+	cmp	%o0,0
+
+	beq	copy_real_or_file_2
 	nop
 
 	st	a6,[a2]
@@ -935,13 +1078,15 @@ copy_record_2:
 	nop
 
 copy_record_node2_1:
+	beq	copy_record_node2_1_b
+	ld	[a1+4],%o0
+
 	st	a6,[a2]
 	st	d0,[a6]
 	add	a6,1,a0
 	st	a0,[a1]
-	ld	[a1+4],%o1
 	inc	4,a2
-	st	%o1,[a6+4]
+	st	%o0,[a6+4]
 
 	deccc	d5
 	bge	copy_lp2
@@ -950,21 +1095,40 @@ copy_record_node2_1:
 	retl
 	nop
 
-copy_record_node2_3:
-	tst	%o0
-	beq	copy_strict_record_node2_3
+copy_record_node2_1_b:
+	st	d0,[%o4-8]
+	add	%o4,1-8,d2
+	st	d2,[a1]
+	inc	4,a2
+	st	%o0,[%o4-4]
+	dec	8,%o4
+
+	deccc	d5
+	bge	copy_lp2
+	st	%o4,[a2-4]
+
+	retl
 	nop
+
+copy_record_node2_3:
+	cmp	%o0,1
+	bleu	copy_record_node2_3_ab_or_b
+	ld	[a1+4],%o1
 
 	st	a6,[a2]
 	st	d0,[a6]
 	add	a6,1,d1
 	st	d1,[a1]
-	ld	[a1+4],%o1
 	inc	4,a2
 	st	%o1,[a6+4]
 	ld	[a1+8],a0
 
-#ifdef COPIED_VECTOR
+#if 1
+	ld	[a0],%o1
+	btst	1,%o1
+	bne	record_arguments_already_copied_2
+	nop
+#else
 	ldg	(heap_copied_vector,a1)
 	ldg	(heap_p1,%o1)
 	sub	a0,%o1,d0
@@ -977,7 +1141,9 @@ copy_record_node2_3:
 #endif
 	add	a6,12,a1
 	st	a1,[a6+8]
+#if 0
 	ld	[a0],%o1
+#endif
 	inc	1,a1
 	st	a1,[a0]
 	inc	4,a0
@@ -1000,47 +1166,82 @@ cp_record_arg_lp2:
 	retl
 	nop
 
-copy_strict_record_node2_3:
-	dec	12,%o4
-	st	%o4,[a2]
-	st	d0,[%o4]
-	add	%o4,1,d1
+copy_record_node2_3_ab_or_b:
+	bltu	copy_record_node2_3_b
+	nop
+
+copy_record_node2_3_ab:
+	st	a6,[a2]
+	st	d0,[a6]
+	add	a6,1,d1
 	st	d1,[a1]
-	ld	[a1+4],%o1
 	inc	4,a2
-	st	%o1,[%o4+4]
+	st	%o1,[a6+4]
 	ld	[a1+8],a0
 
-#ifdef COPIED_VECTOR
 	ldg	(heap_copied_vector,a1)
 	ldg	(heap_p1,%o1)
 	sub	a0,%o1,d0
 	srl	d0,2+1,d0
 	tstmbit	(a1,d0,d1,%o0,%o1,%o2)
-	bne	strict_record_arguments_already_copied_2
+	bne	record_arguments_already_copied_2
 	bset	%o0,%o1
 
 	stb	%o1,[a1+d1]
-#endif
+
 	inc	d2
 	sll	d2,2,d2
 	sub	%o4,d2,a1
+
+	st	a1,[a6+8]
+	ba	cp_record_arg_lp3_c
+	inc	12,a6
+
+copy_record_node2_3_b:
+	dec	12,%o4
+	st	%o4,[a2]
+	st	d0,[%o4]
+	add	%o4,1,d1
+	st	d1,[a1]
+	inc	4,a2
+	st	%o1,[%o4+4]
+	ld	[a1+8],a0
+
+	ldg	(heap_copied_vector,a1)
+	ldg	(heap_p1,%o1)
+	sub	a0,%o1,d0
+	srl	d0,2+1,d0
+	tstmbit	(a1,d0,d1,%o0,%o1,%o2)
+	bne	record_arguments_already_copied_3
+	bset	%o0,%o1
+
+	stb	%o1,[a1+d1]
+
+	inc	d2
+	sll	d2,2,d2
+	sub	%o4,d2,a1
+
 	st	a1,[%o4+8]
+
+cp_record_arg_lp3_c:
+
 	ld	[a0],%o1
 	add	a1,1,%o0
 	st	%o0,[a0]
+
 	inc	4,a0
 	st	%o1,[a1]
 	mov	a1,%o4
 	dec	8,d2
+
 	ld	[a0],%o1
 
-cp_strict_record_arg_lp2:
+cp_record_arg_lp3:
 	inc	4,a0
 	st	%o1,[a1+4]
 	inc	4,a1
 	deccc	4,d2
-	bcc,a	cp_strict_record_arg_lp2
+	bcc,a	cp_record_arg_lp3
 	ld	[a0],%o1
 
 	deccc	d5
@@ -1050,9 +1251,7 @@ cp_strict_record_arg_lp2:
 	retl
 	nop
 
-
-#ifdef COPIED_VECTOR
-strict_record_arguments_already_copied_2:
+record_arguments_already_copied_3:
 	ld	[a0],%o0
 	dec	1,%o0
 
@@ -1062,7 +1261,6 @@ strict_record_arguments_already_copied_2:
 
 	retl
 	nop
-
 
 record_arguments_already_copied_2:
 	ld	[a0],%o0
@@ -1074,7 +1272,6 @@ record_arguments_already_copied_2:
 
 	retl
 	nop
-#endif
 
 end_copy1:
 
@@ -1092,7 +1289,7 @@ determine_free_finalizers_after_copy:
 	ld	[a2+4],a2
 	dec	d0
 	st	d0,[a0]
-	b	determine_free_finalizers_after_copy
+	ba	determine_free_finalizers_after_copy
 	add	d0,4,a0
 
 finalizer_not_used_after_copy:
@@ -1103,7 +1300,7 @@ finalizer_not_used_after_copy:
 
 	st	a2,[a1]
 	add	a2,4,a1
-	b	determine_free_finalizers_after_copy	
+	ba	determine_free_finalizers_after_copy	
 	ld	[a2+4],a2
 
 end_finalizers_after_copy:

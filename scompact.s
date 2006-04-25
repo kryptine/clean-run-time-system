@@ -115,7 +115,7 @@ mark_record_3_ab:
 	setmbit	(%o4,d0,d1,%o0,%o1,%o2)
 
 	cmp	a1,a0
-	bgu	mark_hnf_1
+	bgu	rmarkr_hnf_1
 	nop
 
 	cmp	%o0,1
@@ -138,7 +138,7 @@ not_next_byte_2:
 	ld	[a1],%o0
 	add	a0,4+2+1,d0
 	st	%o0,[a0+4]
-	ba	mark_hnf_1
+	ba	rmarkr_hnf_1
 	st	d0,[a1]
 	
 not_yet_linked_ab: 
@@ -146,7 +146,7 @@ not_yet_linked_ab:
 	ld	[a1],%o0
 	add	a0,4+2+1,d0
 	st	%o0,[a0+4]
-	ba	mark_hnf_1
+	ba	rmarkr_hnf_1
 	st	d0,[a1]
 
 mark_record_3_aab:
@@ -172,7 +172,7 @@ mark_record_3_aab:
 	st	a0,[a1]
 	mov	a1,d3
 	mov	1,d5
-	ba	mark_node
+	ba	rmarkr_node
 	mov	d2,a0
 
 mark_record_2:
@@ -180,14 +180,14 @@ mark_record_2:
 	bgu,a	mark_hnf_2
 	ld	[a0],%o0
 
-	be	mark_hnf_1
+	be	rmarkr_hnf_1
 	nop
 	ba	mark_next_node
 	dec	4,a0
 
 mark_record_1:
 	tst	%g1
-	bne	mark_hnf_1
+	bne	rmarkr_hnf_1
 	nop
 	ba	mark_next_node
 	dec	4,a0
@@ -249,7 +249,7 @@ mark_arguments:
 	be,a	mark_hnf_2
 	ld	[a0],%o0
 
-	bcs	mark_hnf_1
+	bcs	rmarkr_hnf_1
 	nop
 
 mark_hnf_3:
@@ -288,31 +288,31 @@ no_shared_argument_part:
 	st	a0,[a1]
 	mov	a1,%l3
 	clr	%l5
-	ba	mark_node
+	ba	rmarkr_node
 	mov	d2,a0
 
 shared_argument_part:
 	cmp	a1,a0
-	bgu	mark_hnf_1
+	bgu	rmarkr_hnf_1
 	nop
 
 	ld	[a1],%o0
 	add	a0,4+2+1,d0
 	st	d0,[a1]
-	ba	mark_hnf_1
+	ba	rmarkr_hnf_1
 	st	%o0,[a0+4]
 
 mark_lazy_node_1:
 	bne	mark_selector_node_1
 	nop
 
-mark_hnf_1:
+rmarkr_hnf_1:
 	ld	[a0],d2
 	bset	d5,d3
 	st	d3,[a0]
 	mov	a0,d3
 	mov	2,d5
-	ba	mark_node
+	ba	rmarkr_node
 	mov	d2,a0
 
 mark_indirection_node:
@@ -328,7 +328,7 @@ mark_indirection_node:
 	bclr	%g3,%g1
 	stb	%g1,[%o4+d2]
 
-	ba	mark_node
+	ba	rmarkr_node
 	ld	[a0],a0
 
 mark_selector_node_1:
@@ -349,20 +349,20 @@ mark_selector_node_1:
 	mov	128,%g3
 	srl	%g3,%g2,%g3
 	btst	%g3,%g1
-	bne	mark_hnf_1
+	bne	rmarkr_hnf_1
 	nop
 
 	ld	[a1],d2
 	btst	2,d2
-	be	mark_hnf_1
+	be	rmarkr_hnf_1
 	nop
 
 	ldsh	[d2-2],%g1
 	cmp	%g1,2
-	bleu	small_tuple_or_record
+	bleu	rmarkr_small_tuple_or_record
 	nop
 
-large_tuple_or_record:
+rmarkr_large_tuple_or_record:
 	ld	[a1+8],d1
 	sub	d1,d6,%o1
 	srl	%o1,2,%o1
@@ -373,10 +373,45 @@ large_tuple_or_record:
 	mov	128,%g3
 	srl	%g3,%g2,%g3
 	btst	%g3,%g1
-	bne	mark_hnf_1
+	bne	rmarkr_hnf_1
 	nop
 
-small_tuple_or_record:
+#ifdef NEW_DESCRIPTORS
+	ld	[d0-8],d0
+
+	sub	a0,4,d2
+
+	set	__indirection,%g1
+	lduh	[d0+4],d0
+
+	sub	d2,d6,%o1
+	srl	%o1,2,%o1
+
+	st	%g1,[a0-4]
+
+	srl	%o1,3,a0
+	ldub	[%o4+a0],%g1
+	and	%o1,7,%g2
+	mov	128,%g3
+	srl	%g3,%g2,%g3
+	bclr	%g3,%g1
+
+	cmp	d0,8
+	bltu	rmarkr_tuple_or_record_selector_node_2
+	stb	%g1,[%o4+a0]
+
+	beq,a	rmarkr_tuple_selector_node_2
+	ld	[d1],a0
+
+rmarkr_tuple_or_record_selector_node_g2:
+	sub	d1,12,a0
+	ld	[a0+d0],a0
+
+rmarkr_tuple_selector_node_2:
+	ba	rmarkr_node
+	st	a0,[d2+4]
+#else
+rmarkr_small_tuple_or_record:
 	sub	a0,4,d2
 	sub	d2,d6,%o1
 	srl	%o1,2,%o1
@@ -399,8 +434,9 @@ small_tuple_or_record:
 
 	set	__indirection,%g1
 	st	%g1,[d2]
-	ba	mark_node
+	ba	rmarkr_node
 	st	a0,[d2+4]
+#endif
 
 mark_record_selector_node_1:
 	beq	mark_strict_record_selector_node_1
@@ -410,31 +446,77 @@ mark_record_selector_node_1:
 	mov	128,%g3
 	srl	%g3,%g2,%g3
 	btst	%g3,%g1
-	bne	mark_hnf_1
+	bne	rmarkr_hnf_1
 	nop
 
 	ld	[a1],d2
 	btst	2,d2
-	be	mark_hnf_1
+	be	rmarkr_hnf_1
 	nop
 
 	ldsh	[d2-2],%g1
 	cmp	%g1,258
-	bleu	small_tuple_or_record
+	bleu	rmarkr_small_tuple_or_record
 	nop
-	b,a	large_tuple_or_record
+
+#ifdef NEW_DESCRIPTORS
+	ld	[a1+8],d1
+
+	sub	d1,d6,%o1
+	srl	%o1,2,%o1
+
+	srl	%o1,3,d2
+	ldub	[%o4+d2],%g1
+	and	%o1,7,%g2
+	mov	128,%g3
+	srl	%g3,%g2,%g3
+	btst	%g3,%g1
+	bne	rmarkr_hnf_1
+	nop
+
+rmarkr_small_tuple_or_record:
+	ld	[d0-8],d0
+
+	sub	a0,4,d2
+
+	set	__indirection,%g1
+	lduh	[d0+4],d0
+
+	sub	d2,d6,%o1
+	srl	%o1,2,%o1
+
+	st	%g1,[a0-4]
+
+	srl	%o1,3,a0
+	ldub	[%o4+a0],%g1
+	and	%o1,7,%g2
+	mov	128,%g3
+	srl	%g3,%g2,%g3
+	bclr	%g3,%g1
+
+	cmp	d0,8
+	bgtu	rmarkr_tuple_or_record_selector_node_g2
+	stb	%g1,[%o4+a0]
+
+rmarkr_tuple_or_record_selector_node_2:
+	ld	[a1+d0],a0
+	ba	rmarkr_node
+	st	a0,[d2+4]
+#else
+	b,a	rmarkr_large_tuple_or_record
+#endif
 
 mark_strict_record_selector_node_1:
 	and	%o1,7,%g2
 	mov	128,%g3
 	srl	%g3,%g2,%g3
 	btst	%g3,%g1
-	bne	mark_hnf_1
+	bne	rmarkr_hnf_1
 	nop
 
 	ld	[a1],d2
 	btst	2,d2
-	be	mark_hnf_1
+	be	rmarkr_hnf_1
 	nop
 
 	ldsh	[d2-2],%g1
@@ -452,10 +534,40 @@ mark_strict_record_selector_node_1:
 	mov	128,%g3
 	srl	%g3,%g2,%g3
 	btst	%g3,%g1
-	bne	mark_hnf_1
+	bne	rmarkr_hnf_1
 	nop
 
 select_from_small_record:
+#ifdef NEW_DESCRIPTORS
+	ld	[d0-8],%g1
+	dec	4,a0
+	lduh	[%g1+4],d0
+	cmp	d0,8
+	bleu,a	rmarkr_strict_record_selector_node_2
+	ld	[a1+d0],d0
+
+	dec	12,d0
+	ld	[d1+d0],d0
+rmarkr_strict_record_selector_node_2:
+	st	d0,[a0+4]
+
+	lduh	[%g1+6],d0
+	tst	d0
+	beq	rmarkr_strict_record_selector_node_5
+	cmp	d0,8
+	bleu,a	rmarkr_strict_record_selector_node_4
+	ld	[a1+d0],d0
+
+	mov	d1,a1
+	dec	12,d0
+	ld	[a1+d0],d0
+rmarkr_strict_record_selector_node_4:
+	st	d0,[a0+8]
+rmarkr_strict_record_selector_node_5:
+	ld	[%g1-4],d0
+	ba	mark_next_node
+	st	d0,[a0]
+#else
 	ld	[d0-8],%g1
 	dec	4,a0
 	ld	[%g1+4],%g1
@@ -465,6 +577,7 @@ select_from_small_record:
 	st	%o7,[sp]
 
 	b,a	mark_next_node
+#endif
 
 mark_hnf_2:
 	bset	2,%o0
@@ -477,7 +590,7 @@ mark_hnf_2:
 	clr	d5
 	mov	d2,a0
 
-mark_node:
+rmarkr_node:
 	sub	a0,d6,d0
 #ifdef SHARE_CHAR_INT
 	cmp	d0,%l7
@@ -519,12 +632,12 @@ c_argument_part_cycle1:
 	add	%l3,4+1,d0
 	st	%o0,[%l3+4]
 	st	d0,[a0]
-	ba	mark_node
+	ba	rmarkr_node
 	andn	d2,3,a0
 
 no_reverse_1:
 	st	a0,[%l3+4]
-	ba	mark_node
+	ba	rmarkr_node
 	andn	d2,3,a0
 
 mark_lazy_node:
@@ -552,7 +665,7 @@ mark_closure_with_unboxed_arguments_:
 	st	%l3,[a0]
 	mov	a0,%l3
 	clr	%l5
-	ba	mark_node
+	ba	rmarkr_node
 	mov	d2,a0
 
 mark_closure_with_unboxed_arguments:
@@ -564,7 +677,7 @@ mark_closure_with_unboxed_arguments:
 	bgt	mark_closure_with_unboxed_arguments_
 	nop
 	
-	beq	mark_hnf_1
+	beq	rmarkr_hnf_1
 	nop
 	
 	b	mark_next_node	
@@ -628,7 +741,7 @@ no_char_3:
 	sub	a0,%l6,d1
 	srl	d1,2,d1
 
-	sub	d0,12+2,a0
+	sub	d0,2-ZERO_ARITY_DESCRIPTOR_OFFSET,a0
 
 	srl	d1,3,d0
 	ldub	[%o4+d0],%g1
@@ -771,7 +884,7 @@ mark_lr_array:
 	st	d3,[a0]
 	mov	a0,d3
 	mov	0,d5
-	ba	mark_node
+	ba	rmarkr_node
 	mov	d2,a0
 
 mark_array_length_0_1:
@@ -784,7 +897,7 @@ mark_array_length_0_1:
 	st	%o0,[a0+4]
 	st	%o1,[a0]
 	st	d1,[a0-4]
-	ba	mark_hnf_1
+	ba	rmarkr_hnf_1
 	dec	4,a0
 
 mark_parent:
@@ -858,12 +971,12 @@ no_reverse_3:
 	st	%o0,[a1+4]
 	add	a1,4+2+1,d0
 	st	d0,[a0]
-	ba	mark_node
+	ba	rmarkr_node
 	andn	d2,3,a0
 
 no_reverse_4:
 	st	a0,[a1+4]
-	ba	mark_node
+	ba	rmarkr_node
 	andn	d2,3,a0
 
 argument_part_cycle1:
@@ -900,7 +1013,7 @@ mark_next_node_after_static:
 
 c_argument_part_cycle2:
 	st	a0,[%l3+4]
-	ba	mark_node
+	ba	rmarkr_node
 	andn	d2,3,a0
 
 mark_parent_after_static:

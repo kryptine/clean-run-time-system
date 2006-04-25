@@ -389,10 +389,8 @@ _mark_record_2_c:
 
 _mark_node:
 	sub	a0,d6,d1
-# ifdef SHARE_CHAR_INT
 	cmp	d1,d7
 	bcc	_mark_next_node
-# endif
 	srl	d1,2,d1
 
 	srl	d1,3,%o0
@@ -559,19 +557,54 @@ _mark_selector_node_1:
 	
 _large_tuple_or_record:
 	ld	[a1+8],d1
-	sub	d1,d6,d1
-	srl	d1,5,%o0
-	srl	d1,2,d1
+	sub	d1,d6,%o0
+	srl	%o0,5,%g1
+	srl	%o0,2,%o0
 
-	andn	%o0,3,%o0
-	ld	[%o4+%o0],%g1
-	srl	%g3,d1,%o3
+	andn	%g1,3,%g1
+	ld	[%o4+%g1],%g1
+	srl	%g3,%o0,%o3
 
 	btst	%o3,%g1
 	bne,a	_mark_node
 	mov	a1,a0
 
+#ifdef NEW_DESCRIPTORS
+	ld	[d0-8],d0
+	set	__indirection,%g1
+	st	%g1,[a0-4]
+	sub	a0,4,d2
+	lduh	[d0+4],d0
+	cmp	d0,8
+	bltu,a	_mark_tuple_selector_node_1
+	ld	[a1+d0],a0
+
+	beq	_mark_tuple_selector_node_2
+	mov	d1,a1
+
+	sub	d0,12,d0
+	ld	[a1+d0],a0
+	ba	_mark_node
+	st	a0,[d2+4]
+
+_mark_tuple_selector_node_2:
+	ld	[a1],a0
+	ba	_mark_node
+	st	a0,[d2+4]
+#endif
+
 _small_tuple_or_record:
+#ifdef NEW_DESCRIPTORS
+	ld	[d0-8],d0
+	set	__indirection,%g1
+	st	%g1,[a0-4]
+	sub	a0,4,d2
+	lduh	[d0+4],d0
+	ld	[a1+d0],a0
+_mark_tuple_selector_node_1:
+	ba	_mark_node
+	st	a0,[d2+4]
+#else
 	sub	a0,4,d2
 
 	ld	[d0-8],%g1
@@ -586,6 +619,7 @@ _small_tuple_or_record:
 	st	%g1,[d2]
 	ba	_mark_node
 	st	a0,[d2+4]
+#endif
 
 _mark_record_selector_node_1:
 	beq	_mark_strict_record_selector_node_1
@@ -607,8 +641,40 @@ _mark_record_selector_node_1:
 	cmp	%g1,258
 	bleu	_small_tuple_or_record
 	nop
+
+#ifdef NEW_DESCRIPTORS
+	ld	[a1+8],d1
+
+	sub	d1,d6,%o0
+	srl	%o0,5,%g1
+	srl	%o0,2,%o0
+
+	andn	%g1,3,%g1
+	ld	[%o4+%g1],%g1
+	srl	%g3,%o0,%o3
+
+	btst	%o3,%g1
+	bne,a	_mark_node
+	mov	a1,a0
+
+	ld	[d0-8],d0
+	set	__indirection,%g1
+	st	%g1,[a0-4]
+	mov	a0,d2
+	lduh	[d0+4],d0
+	cmp	d0,8
+	bleu	_mark_record_selector_node_2
+	nop
 	
+	mov	d1,a1
+	sub	d0,12,d0
+_mark_record_selector_node_2:
+	ld	[a1+d0],a0
+	ba	_mark_node
+	st	a0,[d2]
+#else
 	b,a	_large_tuple_or_record
+#endif
 
 _mark_strict_record_selector_node_1:
 	ld	[%o4+%o0],%o1
@@ -642,6 +708,37 @@ _mark_strict_record_selector_node_1:
 	mov	a1,a0
 
 _select_from_small_record:
+#ifdef NEW_DESCRIPTORS
+	ld	[d0-8],d0
+	dec	4,a0
+	lduh	[d0+4],%g1
+	cmp	%g1,8
+	bleu,a	_mark_strict_record_selector_node_2
+	ld	[a1+%g1],%g1
+
+	dec	12,%g1
+	ld	[d1+%g1],%g1
+
+_mark_strict_record_selector_node_2:
+	st	%g1,[a0+4]
+	
+	lduh	[d0+6],%g1
+	tst	%g1
+	beq	_mark_strict_record_selector_node_5
+	ld	[d0-4],d0
+
+	cmp	%g1,8
+	bleu,a	_mark_strict_record_selector_node_4
+	ld	[a1+%g1],%g1
+
+	dec	12,%g1
+	ld	[d1+%g1],%g1
+_mark_strict_record_selector_node_4:
+	st	%g1,[a0+8]
+_mark_strict_record_selector_node_5:
+	ba	_mark_next_node
+	st	d0,[a0]
+#else
 	ld	[d0-8],%g1
 	dec	4,a0
 	ld	[%g1+4],%g1
@@ -651,6 +748,7 @@ _select_from_small_record:
 	st	%o7,[sp]
 
 	b,a	_mark_next_node
+#endif
 
 _mark_indirection_node:
 	ba	_mark_node
@@ -1334,8 +1432,8 @@ __mark__selector__node__1:
 	nop
 
 __large__tuple__or__record:
-	ld	[a1+8],%o2
-	sub	%o2,d6,%o2
+	ld	[a1+8],d1
+	sub	d1,d6,%o2
 	srl	%o2,5,d2
 	srl	%o2,2,%o2
 	andn	d2,3,d2
@@ -1346,7 +1444,43 @@ __large__tuple__or__record:
 	bne	__mark__selector__1
 	nop
 
+#ifdef NEW_DESCRIPTORS
+	ld	[d0-8],d0
+	set	__indirection,%g1
+	st	%g1,[a0-4]
+
+	mov	a0,d2
+	lduh	[d0+4],d0
+	cmp	d0,8
+	bltu,a	__mark_tuple_selector_node_1
+	ld	[a1+d0],a0
+
+	beq	__mark_tuple_selector_node_2
+	mov	d1,a1
+
+	dec	12,d0
+	ld	[a1+d0],a0
+	ba	__mark__node
+	st	a0,[d2]
+
+__mark_tuple_selector_node_2:
+	ld	[a1],a0
+	ba	__mark__node
+	st	a0,[d2]
+#endif
+
 __small__tuple__or__record:
+#ifdef NEW_DESCRIPTORS
+	ld	[d0-8],d0
+	set	__indirection,%g1
+	st	%g1,[a0-4]
+	mov	a0,d2
+	lduh	[d0+4],d0
+	ld	[a1+d0],a0
+__mark_tuple_selector_node_1:
+	ba	__mark__node
+	st	a0,[d2]
+#else
 	sub	a0,4,d2
 
 	ld	[d0-8],%g1
@@ -1361,6 +1495,7 @@ __small__tuple__or__record:
 	st	%g1,[d2]
 	ba	__mark__node
 	st	a0,[d2+4]
+#endif
 
 __mark__record__selector__node__1:
 	beq	__mark__strict__record__selector__node__1
@@ -1375,9 +1510,44 @@ __mark__record__selector__node__1:
 
 	ldsh	[d2-2],%g1
 	cmp	%g1,258
+#ifdef NEW_DESCRIPTORS
+	bleu	__small__record
+	nop
+
+	ld	[a1+8],d1
+
+	sub	d1,d6,%o0
+	srl	%o0,5,%g1
+	srl	%o0,2,%o0
+
+	andn	%g1,3,%g1
+	ld	[%o4+%g1],%g1
+	srl	%g3,%o0,%o3
+
+	btst	%o3,%g1
+	bne	__mark__selector__1
+	nop
+
+__small__record:
+	ld	[d0-8],d0
+	set	__indirection,%g1
+	st	%g1,[a0-4]
+	lduh	[d0+4],d0
+	cmp	d0,8
+	bleu	__mark_record_selector_node_2
+	mov	a0,d2
+
+	mov	d1,a1
+	dec	12,d0
+__mark_record_selector_node_2:
+	ld	[a1+d0],a0
+	ba	__mark__node
+	st	a0,[d2]
+#else
 	bleu	__small__tuple__or__record
 	nop
 	b,a	__large__tuple__or__record
+#endif
 
 __mark__strict__record__selector__node__1:
 	bne	__mark__selector__1
@@ -1406,6 +1576,37 @@ __mark__strict__record__selector__node__1:
 	nop
 
 __select__from__small__record:
+#ifdef NEW_DESCRIPTORS
+	ld	[d0-8],d0
+	dec	4,a0
+	lduh	[d0+4],%g1
+	cmp	%g1,8
+	bleu,a	__mark_strict_record_selector_node_2
+	ld	[a1+%g1],%g1
+
+	dec	12,%g1
+	ld	[d1+%g1],%g1
+__mark_strict_record_selector_node_2:
+	st	%g1,[a0+4]
+
+	lduh	[d0+6],%g1
+	tst	%g1
+	beq	__mark_strict_record_selector_node_5
+	ld	[d0-4],d0
+
+	cmp	%g1,8
+	bleu,a	__mark_strict_record_selector_node_4
+	ld	[a1+%g1],%g1
+
+	mov	d1,a1
+	dec	12,%g1
+	ld	[a1+%g1],%g1
+__mark_strict_record_selector_node_4:
+	st	%g1,[a0+8]
+__mark_strict_record_selector_node_5:
+	ba	__mark__node
+	st	d0,[a0]
+#else
 	ld	[d0-8],%g1
 	dec	4,a0
 	ld	[%g1+4],%g1
@@ -1415,6 +1616,7 @@ __select__from__small__record:
 	st	%o7,[sp]
 
 	b,a	__mark__node
+#endif
 
 __mark__indirection__node:
 	ba	__mark__node
@@ -1608,7 +1810,7 @@ __no__char__3:
 	nop
 
 	ba	__mark__next__node__after__static
-	sub	d0,12+2,a0
+	sub	d0,2-ZERO_ARITY_DESCRIPTOR_OFFSET,a0
 
 __mark__real__file__or__string:
 	set	__STRING__+2,%g1
