@@ -1235,7 +1235,7 @@ copy_strict_record_selector_4:
 	lhz	d0,6(d2)
 	cmplwi	0,d0,0
 	beq	copy_strict_record_selector_6
-	cmplwi	0,d0,d1
+	cmplwi	0,d0,8
 	ble	copy_strict_record_selector_5
 	addi	d0,d0,-12
 	mr	a0,d1
