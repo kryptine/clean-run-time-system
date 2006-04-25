@@ -710,10 +710,10 @@ no_fast_ap32:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	31*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,31*8
+	beq,a	fast_ap_2
+	mov	31*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap31:
@@ -726,10 +726,10 @@ no_fast_ap31:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	30*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,30*8
+	beq,a	fast_ap_2
+	mov	30*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap30:
@@ -742,10 +742,10 @@ no_fast_ap30:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	29*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,29*8
+	beq,a	fast_ap_2
+	mov	29*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap29:
@@ -758,10 +758,10 @@ no_fast_ap29:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	28*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,28*8
+	beq,a	fast_ap_2
+	mov	28*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap28:
@@ -774,10 +774,10 @@ no_fast_ap28:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	27*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,27*8
+	beq,a	fast_ap_2
+	mov	27*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap27:
@@ -790,10 +790,10 @@ no_fast_ap27:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	26*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,26*8
+	beq,a	fast_ap_2
+	mov	26*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap26:
@@ -806,10 +806,10 @@ no_fast_ap26:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	25*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,25*8
+	beq,a	fast_ap_2
+	mov	25*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap25:
@@ -822,10 +822,10 @@ no_fast_ap25:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	24*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,24*8
+	beq,a	fast_ap_2
+	mov	24*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap24:
@@ -838,10 +838,10 @@ no_fast_ap24:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	23*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,23*8
+	beq,a	fast_ap_2
+	mov	23*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap23:
@@ -854,10 +854,10 @@ no_fast_ap23:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	22*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,22*8
+	beq,a	fast_ap_2
+	mov	22*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap22:
@@ -870,10 +870,10 @@ no_fast_ap22:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	21*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,21*8
+	beq,a	fast_ap_2
+	mov	21*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap21:
@@ -886,10 +886,10 @@ no_fast_ap21:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	20*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,20*8
+	beq,a	fast_ap_2
+	mov	20*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap20:
@@ -902,10 +902,10 @@ no_fast_ap20:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	19*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,19*8
+	beq,a	fast_ap_2
+	mov	19*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap19:
@@ -918,10 +918,10 @@ no_fast_ap19:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	18*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,18*8
+	beq,a	fast_ap_2
+	mov	18*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap18:
@@ -934,10 +934,10 @@ no_fast_ap18:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	17*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,17*8
+	beq,a	fast_ap_2
+	mov	17*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap17:
@@ -950,10 +950,10 @@ no_fast_ap17:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	16*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,16*8
+	beq,a	fast_ap_2
+	mov	16*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap16:
@@ -966,15 +966,10 @@ no_fast_ap16:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	16*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
-
-	set	15*8,d1
- 	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,15*8
+	beq,a	fast_ap_2
+	mov	15*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap15:
@@ -987,10 +982,10 @@ no_fast_ap15:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	14*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,14*8
+	beq,a	fast_ap_2
+	mov	14*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap14:
@@ -1003,10 +998,10 @@ no_fast_ap14:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	13*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,13*8
+	beq,a	fast_ap_2
+	mov	13*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap13:
@@ -1019,10 +1014,10 @@ no_fast_ap13:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	12*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,12*8
+	beq,a	fast_ap_2
+	mov	12*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap12:
@@ -1035,10 +1030,10 @@ no_fast_ap12:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	11*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,11*8
+	beq,a	fast_ap_2
+	mov	11*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap11:
@@ -1052,10 +1047,10 @@ no_fast_ap11:
 	dec	4,a4
 	ld	[a3+2],a2
 
-	set	10*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,10*8
+	beq,a	fast_ap_2
+	mov	10*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap10:
@@ -1068,10 +1063,10 @@ no_fast_ap10:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	9*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,9*8
+	beq,a	fast_ap_2
+	mov	9*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap9:
@@ -1084,10 +1079,10 @@ no_fast_ap9:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	8*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,8*8
+	beq,a	fast_ap_2
+	mov	8*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap8:
@@ -1100,10 +1095,10 @@ no_fast_ap8:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	7*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,7*8
+	beq,a	fast_ap_2
+	mov	7*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap7:
@@ -1116,10 +1111,10 @@ no_fast_ap7:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	6*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,6*8
+	beq,a	fast_ap_2
+	mov	6*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap6:
@@ -1132,10 +1127,10 @@ no_fast_ap6:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	5*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,5*8
+	beq,a	fast_ap_2
+	mov	5*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap5:
@@ -1148,10 +1143,10 @@ no_fast_ap5:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	4*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,4*8
+	beq,a	fast_ap_2
+	mov	4*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap4:
@@ -1164,10 +1159,10 @@ no_fast_ap4:
 	ld	[a4-4],a0
 	dec	4,a4
 
-	set	3*8,d1
  	lduh	[a3],%o1
-	cmp	%o1,d1
-	beq	fast_ap_2
+	cmp	%o1,3*8
+	beq,a	fast_ap_2
+	mov	3*8,d1
 
 	ld	[a3+2],a2
 no_fast_ap3:
