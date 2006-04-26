@@ -1558,20 +1558,22 @@ add_empty_node_12_:
 	blt	add_empty_node_12_gc
 add_empty_node_12_gc_:
 	mr	d0,a4
+	lwz	a3,-4(a4)
+	stw	a3,0(a4)
 add_empty_node_12_lp:
-	lwz	a3,-4(d0)
-	stw	a3,0(d0)
 	lwz	a3,-8(d0)
 	stw	a3,-4(d0)
 	lwz	a3,-12(d0)
 	stw	a3,-8(d0)
 	lwz	a3,-16(d0)
 	stw	a3,-12(d0)
+	lwz	a3,-20(d0)
+	stw	a3,-16(d0)
 	subi	d0,d0,16
 	subic.	d1,d1,1
 	bne	add_empty_node_12_lp
 	stwu	a5,4(a6)
-	stw	a6,0(d0)
+	stw	a6,-4(d0)
 	addi	a6,a6,8
 	addi	a4,a4,4
 	blr	
@@ -1623,20 +1625,22 @@ add_empty_node_13_gc_:
 	mr	d0,a4
 	lwz	a3,-4(a4)
 	stw	a3,0(a4)
+	lwz	a3,-8(a4)
+	stw	a3,-4(a4)
 add_empty_node_13_lp:
-	lwz	a3,-8(d0)
-	stw	a3,-4(d0)
 	lwz	a3,-12(d0)
 	stw	a3,-8(d0)
 	lwz	a3,-16(d0)
 	stw	a3,-12(d0)
 	lwz	a3,-20(d0)
 	stw	a3,-16(d0)
+	lwz	a3,-24(d0)
+	stw	a3,-20(d0)
 	subi	d0,d0,16
 	subic.	d1,d1,1
 	bne	add_empty_node_13_lp
 	stwu	a5,4(a6)
-	stw	a6,-4(d0)
+	stw	a6,-8(d0)
 	addi	a6,a6,8
 	addi	a4,a4,4
 	blr	
@@ -1690,20 +1694,22 @@ add_empty_node_14_gc_:
 	stw	a3,0(a4)
 	lwz	a3,-8(a4)
 	stw	a3,-4(a4)
+	lwz	a3,-12(a4)
+	stw	a3,-8(a4)
 add_empty_node_14_lp:
-	lwz	a3,-12(d0)
-	stw	a3,-8(d0)
 	lwz	a3,-16(d0)
 	stw	a3,-12(d0)
 	lwz	a3,-20(d0)
 	stw	a3,-16(d0)
 	lwz	a3,-24(d0)
 	stw	a3,-20(d0)
+	lwz	a3,-28(d0)
+	stw	a3,-24(d0)
 	subi	d0,d0,16
 	subic.	d1,d1,1
 	bne	add_empty_node_14_lp
 	stwu	a5,4(a6)
-	stw	a6,-8(d0)
+	stw	a6,-12(d0)
 	addi	a6,a6,8
 	addi	a4,a4,4
 	blr	
@@ -1719,60 +1725,54 @@ add_empty_node_14_gc:
 ; __TEXT.add_empty_node_31:
 
 add_empty_node_31:
-	li	d1,6
+	li	d1,7
 	b	add_empty_node_15_
 
 	.text
 ; __TEXT.add_empty_node_27:
 
 add_empty_node_27:
-	li	d1,51
+	li	d1,6
 	b	add_empty_node_15_
 
 	.text
 ; __TEXT.add_empty_node_23:
 
 add_empty_node_23:
-	li	d1,4
+	li	d1,5
 	b	add_empty_node_15_
 
 	.text
 ; __TEXT.add_empty_node_19:
 
 add_empty_node_19:
-	li	d1,3
+	li	d1,4
 	b	add_empty_node_15_
 
 	.text
 ; __TEXT.add_empty_node_15:
 
 add_empty_node_15:
-	li	d1,2
+	li	d1,3
 add_empty_node_15_:
 	subic.	d7,d7,3
 	blt	add_empty_node_15_gc
 add_empty_node_15_gc_:
 	mr	d0,a4
-	lwz	a3,-4(a4)
-	stw	a3,0(a4)
-	lwz	a3,-8(a4)
-	stw	a3,-4(a4)
-	lwz	a3,-12(a4)
-	stw	a3,-8(a4)
 add_empty_node_15_lp:
+	lwz	a3,-4(d0)
+	stw	a3,0(d0)
+	lwz	a3,-8(d0)
+	stw	a3,-4(d0)
+	lwz	a3,-12(d0)
+	stw	a3,-8(d0)
 	lwz	a3,-16(d0)
 	stw	a3,-12(d0)
-	lwz	a3,-20(d0)
-	stw	a3,-16(d0)
-	lwz	a3,-24(d0)
-	stw	a3,-20(d0)
-	lwz	a3,-28(d0)
-	stw	a3,-24(d0)
 	subi	d0,d0,16
 	subic.	d1,d1,1
 	bne	add_empty_node_15_lp
 	stwu	a5,4(a6)
-	stw	a6,-12(d0)
+	stw	a6,0(d0)
 	addi	a6,a6,8
 	addi	a4,a4,4
 	blr	
