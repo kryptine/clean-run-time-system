@@ -1475,21 +1475,23 @@ add_empty_node_12_:
 	nop
 add_empty_node_12_gc_:
 	mov	a4,d0
+	ld	[a4-4],a3
+	st	a3,[a4]
 add_empty_node_12_lp:
-	ld	[d0-4],a3
-	st	a3,[d0]
 	ld	[d0-8],a3
 	st	a3,[d0-4]
 	ld	[d0-12],a3
 	st	a3,[d0-8]
 	ld	[d0-16],a3
 	st	a3,[d0-12]
+	ld	[d0-20],a3
+	st	a3,[d0-16]
 	deccc	1,d1
 	bne	add_empty_node_12_lp
 	dec	16,d0
-
+	
 	st	a5,[a6]
-	st	a6,[d0]
+	st	a6,[d0-4]
 	inc	12,a6
 	inc	4,a4
 	ld	[sp],%o7
@@ -1527,21 +1529,23 @@ add_empty_node_13_gc_:
 	mov	a4,d0
 	ld	[a4-4],a3
 	st	a3,[a4]
+	ld	[a4-8],a3
+	st	a3,[a4-4]
 add_empty_node_13_lp:
-	ld	[d0-8],a3
-	st	a3,[d0-4]
 	ld	[d0-12],a3
 	st	a3,[d0-8]
 	ld	[d0-16],a3
 	st	a3,[d0-12]
 	ld	[d0-20],a3
 	st	a3,[d0-16]
+	ld	[d0-24],a3
+	st	a3,[d0-20]
 	deccc	1,d1
 	bne	add_empty_node_13_lp
 	dec	16,d0
-	
+
 	st	a5,[a6]
-	st	a6,[d0-4]
+	st	a6,[d0-8]
 	inc	12,a6
 	inc	4,a4
 	ld	[sp],%o7
@@ -1581,21 +1585,23 @@ add_empty_node_14_gc_:
 	st	a3,[a4]
 	ld	[a4-8],a3
 	st	a3,[a4-4]
+	ld	[a4-12],a3
+	st	a3,[a4-8]
 add_empty_node_14_lp:
-	ld	[d0-12],a3
-	st	a3,[d0-8]
 	ld	[d0-16],a3
 	st	a3,[d0-12]
 	ld	[d0-20],a3
 	st	a3,[d0-16]
 	ld	[d0-24],a3
 	st	a3,[d0-20]
+	ld	[d0-28],a3
+	st	a3,[d0-24]
 	deccc	1,d1
 	bne	add_empty_node_14_lp
 	dec	16,d0
 
 	st	a5,[a6]
-	st	a6,[d0-8]
+	st	a6,[d0-12]
 	inc	12,a6
 	inc	4,a4
 	ld	[sp],%o7
@@ -1609,49 +1615,43 @@ add_empty_node_14_gc:
 
 add_empty_node_31:
 	ba	add_empty_node_15_
-	mov	6,d1
+	mov	7,d1
 
 add_empty_node_27:
 	ba	add_empty_node_15_
-	mov	5,d1
+	mov	6,d1
 
 add_empty_node_23:
 	ba	add_empty_node_15_
-	mov	4,d1
+	mov	5,d1
 
 add_empty_node_19:
 	ba	add_empty_node_15_
-	mov	3,d1
+	mov	4,d1
 
 add_empty_node_15:
-	mov	2,d1
+	mov	3,d1
 add_empty_node_15_:
 	deccc	3,d7
 	bltu	add_empty_node_15_gc
 	nop
 add_empty_node_15_gc_:
 	mov	a4,d0
-	ld	[a4-4],a3
-	st	a3,[a4]
-	ld	[a4-8],a3
-	st	a3,[a4-4]
-	ld	[a4-12],a3
-	st	a3,[a4-8]
 add_empty_node_15_lp:
+	ld	[d0-4],a3
+	st	a3,[d0]
+	ld	[d0-8],a3
+	st	a3,[d0-4]
+	ld	[d0-12],a3
+	st	a3,[d0-8]
 	ld	[d0-16],a3
 	st	a3,[d0-12]
-	ld	[d0-20],a3
-	st	a3,[d0-16]
-	ld	[d0-24],a3
-	st	a3,[d0-20]
-	ld	[d0-28],a3
-	st	a3,[d0-24]
 	deccc	1,d1
 	bne	add_empty_node_15_lp
 	dec	16,d0
 
 	st	a5,[a6]
-	st	a6,[d0-12]
+	st	a6,[d0]
 	inc	12,a6
 	inc	4,a4
 	ld	[sp],%o7
@@ -1662,7 +1662,6 @@ add_empty_node_15_gc:
 	call	collect_2
 	st	%o7,[sp]
 	ba,a	add_empty_node_15_gc_
-
 
 yet_args_needed_0:
 	deccc	2,d7
@@ -1678,7 +1677,7 @@ yet_args_needed_0_gc_r:
 
 	ld	[sp],%o7
 	retl
-	inc	4,sp	
+	inc	4,sp
 
 yet_args_needed_0_gc:
 	dec	4,sp
