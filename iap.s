@@ -745,19 +745,21 @@ add_empty_node_11_:
 	jae	add_empty_node_11_gc
 add_empty_node_11_gc_:
 	movl	a3,d0
+	movl	-4(a3),a2
+	movl	a2,(a3)
 add_empty_node_11_lp:
-	movl	-4(d0),a2
-	movl	a2,(d0)
 	movl	-8(d0),a2
 	movl	a2,-4(d0)
 	movl	-12(d0),a2
 	movl	a2,-8(d0)
 	movl	-16(d0),a2
 	movl	a2,-12(d0)
+	movl	-20(d0),a2
+	movl	a2,-16(d0)
 	subl	$16,d0
 	subl	$1,d1
 	jne	add_empty_node_11_lp
-	movl	a4,(d0)
+	movl	a4,-4(d0)
 	movl	$__cycle__in__spine,(a4)
 	addl	$12,a4
 	addl	$4,a3
@@ -790,19 +792,21 @@ add_empty_node_12_gc_:
 	movl	a3,d0
 	movl	-4(a3),a2
 	movl	a2,(a3)
+	movl	-8(a3),a2
+	movl	a2,-4(a3)
 add_empty_node_12_lp:
-	movl	-8(d0),a2
-	movl	a2,-4(d0)
 	movl	-12(d0),a2
 	movl	a2,-8(d0)
 	movl	-16(d0),a2
 	movl	a2,-12(d0)
 	movl	-20(d0),a2
 	movl	a2,-16(d0)
+	movl	-24(d0),a2
+	movl	a2,-20(d0)
 	subl	$16,d0
 	subl	$1,d1
 	jne	add_empty_node_12_lp
-	movl	a4,-4(d0)
+	movl	a4,-8(d0)
 	movl	$__cycle__in__spine,(a4)
 	addl	$12,a4
 	addl	$4,a3
@@ -834,53 +838,9 @@ add_empty_node_13_gc_:
 	movl	a2,(a3)
 	movl	-8(a3),a2
 	movl	a2,-4(a3)
-add_empty_node_13_lp:
-	movl	-12(d0),a2
-	movl	a2,-8(d0)
-	movl	-16(d0),a2
-	movl	a2,-12(d0)
-	movl	-20(d0),a2
-	movl	a2,-16(d0)
-	movl	-24(d0),a2
-	movl	a2,-20(d0)
-	subl	$16,d0
-	subl	$1,d1
-	jne	add_empty_node_13_lp
-	movl	a4,-8(d0)
-	movl	$__cycle__in__spine,(a4)
-	addl	$12,a4
-	addl	$4,a3
-	ret
-add_empty_node_13_gc:
-	call	collect_2
-	jmp	add_empty_node_13_gc_
-
-add_empty_node_30:
-	movl	$6,d1
-	jmp	add_empty_node_14_
-add_empty_node_26:
-	movl	$5,d1
-	jmp	add_empty_node_14_
-add_empty_node_22:
-	movl	$4,d1
-	jmp	add_empty_node_14_
-add_empty_node_18:
-	movl	$3,d1
-	jmp	add_empty_node_14_
-add_empty_node_14:
-	movl	$2,d1
-add_empty_node_14_:
-	cmpl	end_heap,a4
-	jae	add_empty_node_14_gc
-add_empty_node_14_gc_:
-	movl	a3,d0
-	movl	-4(a3),a2
-	movl	a2,(a3)
-	movl	-8(a3),a2
-	movl	a2,-4(a3)
 	movl	-12(a3),a2
 	movl	a2,-8(a3)
-add_empty_node_14_lp:
+add_empty_node_13_lp:
 	movl	-16(d0),a2
 	movl	a2,-12(d0)
 	movl	-20(d0),a2
@@ -891,8 +851,49 @@ add_empty_node_14_lp:
 	movl	a2,-24(d0)
 	subl	$16,d0
 	subl	$1,d1
-	jne	add_empty_node_14_lp
+	jne	add_empty_node_13_lp
 	movl	a4,-12(d0)
+	movl	$__cycle__in__spine,(a4)
+	addl	$12,a4
+	addl	$4,a3
+	ret
+add_empty_node_13_gc:
+	call	collect_2
+	jmp	add_empty_node_13_gc_
+
+add_empty_node_30:
+	movl	$7,d1
+	jmp	add_empty_node_14_
+add_empty_node_26:
+	movl	$6,d1
+	jmp	add_empty_node_14_
+add_empty_node_22:
+	movl	$5,d1
+	jmp	add_empty_node_14_
+add_empty_node_18:
+	movl	$4,d1
+	jmp	add_empty_node_14_
+add_empty_node_14:
+	movl	$3,d1
+	jmp	add_empty_node_14_
+add_empty_node_14_:
+	cmpl	end_heap,a4
+	jae	add_empty_node_14_gc
+add_empty_node_14_gc_:
+	movl	a3,d0
+add_empty_node_14_lp:
+	movl	-4(d0),a2
+	movl	a2,(d0)
+	movl	-8(d0),a2
+	movl	a2,-4(d0)
+	movl	-12(d0),a2
+	movl	a2,-8(d0)
+	movl	-16(d0),a2
+	movl	a2,-12(d0)
+	subl	$16,d0
+	subl	$1,d1
+	jne	add_empty_node_14_lp
+	movl	a4,(d0)
 	movl	$__cycle__in__spine,(a4)
 	addl	$12,a4
 	addl	$4,a3
@@ -900,7 +901,6 @@ add_empty_node_14_lp:
 add_empty_node_14_gc:
 	call	collect_2
 	jmp	add_empty_node_14_gc_
-
 
 yet_args_needed_0:
 	cmpl	end_heap,a4
