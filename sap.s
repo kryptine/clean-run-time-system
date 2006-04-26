@@ -1236,7 +1236,6 @@ add_empty_node_4:
 	nop
 add_empty_node_4_gc_:
 	ld	[a4-4],a3
-	dec	4,a4
 	st	a3,[a4]
 	st	a5,[a6]
 	st	a6,[a4-4]
@@ -1257,7 +1256,6 @@ add_empty_node_5:
 	nop
 add_empty_node_5_gc_:
 	ld	[a4-4],a3
-	dec	4,a4
 	st	a3,[a4]
 	ld	[a4-8],a3
 	st	a3,[a4-4]
@@ -1280,7 +1278,6 @@ add_empty_node_6:
 	nop
 add_empty_node_6_gc_:
 	ld	[a4-4],a3
-	dec	4,a4
 	st	a3,[a4]
 	ld	[a4-8],a3
 	st	a3,[a4-4]
@@ -1305,7 +1302,6 @@ add_empty_node_7:
 	nop
 add_empty_node_7_gc_:
 	ld	[a4-4],a3
-	dec	4,a4
 	st	a3,[a4]
 	ld	[a4-8],a3
 	st	a3,[a4-4]
@@ -1332,7 +1328,6 @@ add_empty_node_8:
 	nop
 add_empty_node_8_gc_:
 	ld	[a4-4],a3
-	dec	4,a4
 	st	a3,[a4]
 	ld	[a4-8],a3
 	st	a3,[a4-4]
@@ -1362,7 +1357,6 @@ add_empty_node_9:
 	nop
 add_empty_node_9_gc_:
 	ld	[a4-4],a3
-	dec	4,a4
 	st	a3,[a4]
 	ld	[a4-8],a3
 	st	a3,[a4-4]
@@ -1393,7 +1387,6 @@ add_empty_node_10:
 	nop
 add_empty_node_10_gc_:
 	ld	[a4-4],a3
-	dec	4,a4
 	st	a3,[a4]
 	ld	[a4-8],a3
 	st	a3,[a4-4]
@@ -1426,7 +1419,6 @@ add_empty_node_11:
 	nop
 add_empty_node_11_gc_:
 	ld	[a4-4],a3
-	dec	4,a4
 	st	a3,[a4]
 	ld	[a4-8],a3
 	st	a3,[a4-4]
