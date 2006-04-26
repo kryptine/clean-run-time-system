@@ -1907,7 +1907,7 @@ build_node_5:
 	inc	12,a6
 	st	a6,[a6-4]
 	st	a0,[a6+4]
-	sub	a6,16,a0
+	sub	a6,12,a0
 	ld	[a4-4],a2
 	st	a2,[a6+8]
 	ld	[a4-8],a2
