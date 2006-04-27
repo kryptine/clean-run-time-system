@@ -1187,13 +1187,15 @@ copy_record_node2_3_ab:
 	bne	record_arguments_already_copied_2
 	bset	%o0,%o1
 
+	sll	d2,2,a1
+
 	stb	%o1,[a1+d1]
 
-	inc	d2
-	sll	d2,2,d2
-	sub	%o4,d2,a1
+	sub	%o4,a1,a1
+	sub	a1,3,%o0
+	sub	a1,4,a1
 
-	st	a1,[a6+8]
+	st	%o0,[a6+8]
 	ba	cp_record_arg_lp3_c
 	inc	12,a6
 
@@ -1215,24 +1217,25 @@ copy_record_node2_3_b:
 	bne	record_arguments_already_copied_3
 	bset	%o0,%o1
 
+	sll	d2,2,a1
+
 	stb	%o1,[a1+d1]
 
-	inc	d2
-	sll	d2,2,d2
-	sub	%o4,d2,a1
+	sub	%o4,a1,a1
+	sub	a1,3,%o0
+	sub	a1,4,a1
 
 	st	a1,[%o4+8]
+	add	a1,1,%o0
 
 cp_record_arg_lp3_c:
 
 	ld	[a0],%o1
-	add	a1,1,%o0
 	st	%o0,[a0]
 
 	inc	4,a0
 	st	%o1,[a1]
 	mov	a1,%o4
-	dec	8,d2
 
 	ld	[a0],%o1
 
@@ -1240,8 +1243,8 @@ cp_record_arg_lp3:
 	inc	4,a0
 	st	%o1,[a1+4]
 	inc	4,a1
-	deccc	4,d2
-	bcc,a	cp_record_arg_lp3
+	deccc	1,d2
+	bne,a	cp_record_arg_lp3
 	ld	[a0],%o1
 
 	deccc	d5
