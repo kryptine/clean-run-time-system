@@ -1187,11 +1187,11 @@ copy_record_node2_3_ab:
 	bne	record_arguments_already_copied_2
 	bset	%o0,%o1
 
-	sll	d2,2,a1
+	sll	d2,2,%o0
 
 	stb	%o1,[a1+d1]
 
-	sub	%o4,a1,a1
+	sub	%o4,%o0,a1
 	sub	a1,3,%o0
 	sub	a1,4,a1
 
@@ -1217,11 +1217,11 @@ copy_record_node2_3_b:
 	bne	record_arguments_already_copied_3
 	bset	%o0,%o1
 
-	sll	d2,2,a1
+	sll	d2,2,%o0
 
 	stb	%o1,[a1+d1]
 
-	sub	%o4,a1,a1
+	sub	%o4,%o0,a1
 	sub	a1,3,%o0
 	sub	a1,4,a1
 
