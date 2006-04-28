@@ -1223,11 +1223,10 @@ copy_strict_record_selector_4:
 copy_strict_record_selector_5:
 	lwzx	d0,a0,d0
 	stw	d0,8-NODE_POINTER_OFFSET(a1)
-
+copy_strict_record_selector_6:
 	lwz	d0,-4(d2)
 	stw	d0,0-NODE_POINTER_OFFSET(a1)
 	b	in_hnf_2
-copy_strict_record_selector_6:
  .else
 	mr	d0,a1
 	lwz	g1,4(d2)
