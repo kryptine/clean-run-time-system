@@ -686,11 +686,10 @@ copy_strict_record_selector_4:
 	ld	[d1+d0],d0
 copy_strict_record_selector_5:
 	st	d0,[a1+8]
-
+copy_strict_record_selector_6:
 	ld	[d2-4],d0
 	ba	in_hnf_2
 	st	d0,[a1]
-copy_strict_record_selector_6:
 #else
 	ld	[d2+4],%g1
 
