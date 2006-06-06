@@ -4,7 +4,7 @@
 	At:			University of Nijmegen
 */
 
-#ifdef __WIN64
+#ifdef _WIN64
 # define A64
 #endif
 
