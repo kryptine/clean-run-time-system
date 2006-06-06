@@ -4,27 +4,27 @@
 	At:			University of Nijmegen
 */
 
+#ifdef __WIN64
+# define A64
+#endif
+
 #include "wcon.h"
 
-#ifdef WINDOWS
-# include <windows.h>
-# define HFILE HANDLE
-# define ULONG unsigned long
-# define OS(w,o) w
+#include <windows.h>
+#define HFILE HANDLE
+#define ULONG unsigned long
+#define OS(w,o) w
 
-# include "wfileIO3.h"
+#include "wfileIO3.h"
 
-# ifndef FILE_END
-#  define FILE_END 2
-# endif
-# ifndef FILE_BEGIN
-#  define FILE_BEGIN 0
-# endif
+#ifndef FILE_END
+# define FILE_END 2
+#endif
+#ifndef FILE_BEGIN
+# define FILE_BEGIN 0
+#endif
+#ifndef A64
  extern DWORD __attribute__ ((stdcall)) GetFileSize (HANDLE,LPDWORD);
-#else
-# define INCL_DOSFILEMGR
-# include "os2.h"
-# define OS(w,o) o
 #endif
 
 extern void IO_error (char*);
@@ -48,7 +48,11 @@ extern HANDLE std_input_handle,std_output_handle,std_error_handle;
 #define F_SEEK_END 2
 
 struct clean_string {
+#ifdef A64
+	__int64 length;
+#else
 	long	length;
+#endif
 	char	characters[0];
 };
 
@@ -59,7 +63,7 @@ struct file file_table[MAX_N_FILES];
 
 static int number_of_files=FIRST_REAL_FILE;
 
-#define is_special_file(f) ((long)(f)<(long)(&file_table[FIRST_REAL_FILE]))
+#define is_special_file(f) ((size_t)(f)<(size_t)(&file_table[FIRST_REAL_FILE]))
 
 static char *clean_to_c_string (struct clean_string *cs)
 {
@@ -91,7 +95,7 @@ static char *clean_to_c_string (struct clean_string *cs)
 #define F_WRITE_DATA 4
 #define F_APPEND_DATA 5
 
-#define ERROR_FILE ((struct file*)-(long)&file_table[2])
+#define ERROR_FILE ((struct file*)-(size_t)&file_table[2])
 
 static OS(DWORD,ULONG) file_permission[]={
 #ifdef WINDOWS
@@ -134,7 +138,7 @@ struct file *open_file (struct clean_string *file_name,unsigned int file_mode)
 	char *file_name_s;
 	int fn;
 	struct file *f;
-	long file_length;
+	FilePositionT file_length;
 	unsigned char *buffer;
 	HFILE file_handle;
 	ULONG action;
@@ -202,52 +206,43 @@ struct file *open_file (struct clean_string *file_name,unsigned int file_mode)
 			break;
 		case F_APPEND_TEXT:
 		case F_APPEND_DATA:
-#ifdef WINDOWS
- 			file_length=SetFilePointer (file_handle,0,NULL,FILE_END);
+		{
+			unsigned int file_length_low,file_length_high;
+			
+			file_length_high=0;
+ 			file_length_low=SetFilePointer (file_handle,0,&file_length_high,FILE_END);
 
-			if (file_length==-1){
+			if (file_length_low==-1 && GetLastError()!=NO_ERROR){
 				free_memory (file_name_s);
 				free_memory (buffer);
 				OS(CloseHandle,DosClose) (file_handle);
 				IO_error ("fopen: can't seek to eof");
 			}
+#ifdef A64
+ 			file_length=file_length_low+(file_length_high<<32);
 #else
- 			error=DosSetFilePtr (file_handle,0,FILE_END,&file_length);
-
-			if (error!=0){
-				free_memory (file_name_s);
-				free_memory (buffer);
-				OS(CloseHandle,DosClose) (file_handle);
-				IO_error ("fopen: can't seek to eof");
-			}
+ 			file_length=file_length_low;
 #endif
 			f->file_offset=file_length;
-
 			break;
+		}
 		default:
 		{
-#ifdef WINDOWS
-			file_length=GetFileSize (file_handle,NULL);
+			unsigned int file_length_low,file_length_high;
+			
+			file_length_high=0;
+			file_length_low=GetFileSize (file_handle,&file_length_high);
 
-			if (file_length==-1){
+			if (file_length_low==-1 && GetLastError()!=NO_ERROR){
 				free_memory (file_name_s);
 				free_memory (buffer);
 				OS(CloseHandle,DosClose) (file_handle);
 				IO_error ("fopen: can't get eof");
 			}
+#ifdef A64
+ 			file_length=file_length_low+(file_length_high<<32);
 #else
-			FILESTATUS file_status;
-
-			error=DosQueryFileInfo (file_handle,FIL_STANDARD,&file_status,sizeof (file_status));
-
-			if (error!=0){
-				free_memory (file_name_s);
-				free_memory (buffer);
-				OS(CloseHandle,DosClose) (file_handle);
-				IO_error ("fopen: can't get eof");
-			}
-
-			file_length=file_status.cbFile;
+ 			file_length=file_length_low;
 #endif
 		}
 	}
@@ -478,8 +473,8 @@ CLEAN_BOOL re_open_file (struct file *f,unsigned int file_mode)
 			file_table[1].file_mode=m;
 		}
 		return CLEAN_TRUE;
-	} else {	
-		long file_length;
+	} else {
+		FilePositionT file_length;
 		int result;
 		unsigned char *buffer;
 		HFILE file_handle;
@@ -530,51 +525,43 @@ CLEAN_BOOL re_open_file (struct file *f,unsigned int file_mode)
 				break;
 			case F_APPEND_TEXT:
 			case F_APPEND_DATA:
-#ifdef WINDOWS
-	 			file_length=SetFilePointer (file_handle,0,NULL,FILE_END);
+			{
+				unsigned int file_length_low,file_length_high;
 			
-				if (file_length==-1){
+				file_length_high=0;
+	 			file_length_low=SetFilePointer (file_handle,0,&file_length_high,FILE_END);
+			
+				if (file_length_low==-1 && GetLastError()!=NO_ERROR){
 					free_memory (f->file_name);
 					free_memory (f->file_read_buffer_p);
 					OS(CloseHandle,DosClose) (file_handle);
 					IO_error ("freopen: can't seek to eof");
 				}
+#ifdef A64
+ 				file_length=file_length_low+(file_length_high<<32);
 #else
-	 			error=DosSetFilePtr (file_handle,0,FILE_END,&file_length);
-			
-				if (error!=0){
-					free_memory (f->file_name);
-					free_memory (f->file_read_buffer_p);
-					OS(CloseHandle,DosClose) (file_handle);
-					IO_error ("freopen: can't seek to eof");
-				}
+	 			file_length=file_length_low;
 #endif
 				f->file_offset=file_length;
 				break;
+			}
 			default:
 			{
-#ifdef WINDOWS
-				file_length=GetFileSize (file_handle,NULL);
+				unsigned int file_length_low,file_length_high;
+			
+				file_length_high=0;
+				file_length_low=GetFileSize (file_handle,&file_length_high);
 
-				if (file_length==-1){
+				if (file_length_low==-1 && GetLastError()!=NO_ERROR){
 					free_memory (f->file_name);
 					free_memory (f->file_read_buffer_p);
 					OS(CloseHandle,DosClose) (file_handle);
 					IO_error ("freopen: can't get eof");
 				}
+#ifdef A64
+ 				file_length=file_length_low+(file_length_high<<32);
 #else
-				FILESTATUS file_status;
-
-				error=DosQueryFileInfo (file_handle,FIL_STANDARD,&file_status,sizeof (file_status));
-				
-				if (error!=0){
-					free_memory (f->file_name);
-					free_memory (f->file_read_buffer_p);
-					OS(CloseHandle,DosClose) (file_handle);
-					IO_error ("freopen: can't get eof");
-				}
-
-				file_length=file_status.cbFile;
+	 			file_length=file_length_low;
 #endif
 			}
 		}
@@ -724,7 +711,7 @@ int file_read_char (struct file *f)
 
 #define is_digit(n) ((unsigned)((n)-'0')<(unsigned)10)
 
-CLEAN_BOOL file_read_int (struct file *f,int *i_p)
+CLEAN_BOOL file_read_int (struct file *f,CLEAN_INT *i_p)
 {
 	if (is_special_file (f)){
 		if (f==&file_table[1]){
@@ -811,7 +798,7 @@ CLEAN_BOOL file_read_int (struct file *f,int *i_p)
 	return CLEAN_TRUE;
 }
 
-extern int convert_string_to_real (char *s,double *r_p);
+extern char *convert_string_to_real (char *s,double *r_p);
 
 CLEAN_BOOL file_read_real (struct file *f,double *r_p)
 {
@@ -935,9 +922,9 @@ CLEAN_BOOL file_read_real (struct file *f,double *r_p)
 unsigned long file_read_string (struct file *f,unsigned long max_length,struct clean_string *s)
 {
 #else
-unsigned long file_read_characters (struct file *f,unsigned long *length_p,char *s)
+UNSIGNED_CLEAN_INT file_read_characters (struct file *f,UNSIGNED_CLEAN_INT *length_p,char *s)
 {
-	unsigned long max_length;
+	UNSIGNED_CLEAN_INT max_length;
 	
 	max_length=*length_p;
 #endif
@@ -945,7 +932,7 @@ unsigned long file_read_characters (struct file *f,unsigned long *length_p,char 
 		if (f==&file_table[1]){
 			if (!std_input_from_file){
 				char *string;
-				unsigned long length;
+				UNSIGNED_CLEAN_INT length;
 				int c;
 				
 				length=0;
@@ -1115,7 +1102,12 @@ unsigned long file_read_characters (struct file *f,unsigned long *length_p,char 
 	}
 }
 
-unsigned long file_read_line (struct file *f,unsigned long max_length,char *string)
+#ifdef A64
+ __int64
+#else
+ unsigned long
+#endif
+	file_read_line (struct file *f,UNSIGNED_CLEAN_INT max_length,char *string)
 {
 	if (is_special_file (f)){
 		if (f==&file_table[1]){
@@ -1375,11 +1367,16 @@ void file_write_char (int c,struct file *f)
 	}
 }
 
+#ifdef A64
+extern char *convert_int_to_string (char *string,__int64 i);
+#else
 extern char *convert_int_to_string (char *string,int i);
+#endif
+
 extern char *convert_real_to_string (double d,char *s_p);
 
-void file_write_int (int i,struct file *f)
-{	
+void file_write_int (CLEAN_INT i,struct file *f)
+{
 	if (is_special_file (f)){
 		if (f==&file_table[1]){
 			if (!std_output_to_file){
@@ -1463,7 +1460,7 @@ void file_write_real (double r,struct file *f)
 #if OLD_WRITE_STRING
 void file_write_string (struct clean_string *s,struct file *f)
 #else
-void file_write_characters (unsigned char *p,int length,struct file *f)
+void file_write_characters (unsigned char *p,UNSIGNED_CLEAN_INT length,struct file *f)
 #endif
 {	
 	if (is_special_file (f)){
@@ -1611,7 +1608,7 @@ CLEAN_BOOL file_error (struct file *f)
 			return 0;
 }
 
-unsigned long file_position (struct file *f)
+FilePositionT file_position (struct file *f)
 {
 	if (is_special_file (f)){
 		if (f==file_table || f==&file_table[1])
@@ -1620,7 +1617,7 @@ unsigned long file_position (struct file *f)
 			IO_error ("fposition: can't open file");
 		return 0;
 	} else {
-		unsigned long position;
+		FilePositionT position;
 		
 		if (f->file_mode & ((1<<F_READ_TEXT) | (1<<F_READ_DATA)))
 			position=f->file_offset - (f->file_end_read_buffer_p - f->file_read_p);
@@ -1631,7 +1628,7 @@ unsigned long file_position (struct file *f)
 	}
 }
 
-CLEAN_BOOL file_seek (struct file *f,unsigned long position,unsigned long seek_mode)
+CLEAN_BOOL file_seek (struct file *f,FilePositionT position,unsigned long seek_mode)
 {
 	if (is_special_file (f)){
 		if (seek_mode>(unsigned)2)
@@ -1643,7 +1640,7 @@ CLEAN_BOOL file_seek (struct file *f,unsigned long position,unsigned long seek_m
 			IO_error ("fseek: can't open file");
 		return 0;
 	} else {
-		long current_position;
+		FilePositionT current_position;
 		unsigned long buffer_size;
 	
 		if (f->file_mode & ((1<<F_READ_TEXT) | (1<<F_READ_DATA))){
@@ -1663,15 +1660,16 @@ CLEAN_BOOL file_seek (struct file *f,unsigned long position,unsigned long seek_m
 			}
 			
 			buffer_size=f->file_end_read_buffer_p - f->file_read_buffer_p;
-			if ((unsigned long)(position - (f->file_offset-buffer_size)) < buffer_size){
+			if ((FilePositionT)(position - (f->file_offset-buffer_size)) < buffer_size){
 				f->file_read_p = f->file_read_buffer_p + (position - (f->file_offset-buffer_size));
 				
 				return CLEAN_TRUE;
 			} else {
 				unsigned char *buffer;
-				OS(DWORD file_position,APIRET error);
-				
-				if (position<0 || position>f->file_length){
+				FilePositionT file_position;
+				unsigned int file_position_low,file_position_high;
+							
+				if (position>f->file_length){
 					f->file_error=-1;
 					return 0;
 				}
@@ -1679,28 +1677,29 @@ CLEAN_BOOL file_seek (struct file *f,unsigned long position,unsigned long seek_m
 				buffer=f->file_read_buffer_p;
 				f->file_end_read_buffer_p=buffer;
 				f->file_read_p=buffer;
-#ifdef WINDOWS
-	 			file_position=SetFilePointer (f->file_read_refnum,position,NULL,FILE_BEGIN);
-
-				if (file_position==-1){
-					f->file_error=-1;
-					return 0;
-				}
-				
-				f->file_offset=file_position;
+#ifdef A64
+				file_position_high=position>>32;
 #else
-	 			error=DosSetFilePtr (f->file_read_refnum,position,FILE_BEGIN,&f->file_offset);
+				file_position_high=0;
+#endif
+	 			file_position_low=SetFilePointer (f->file_read_refnum,position,&file_position_high,FILE_BEGIN);
 
-				if (error!=0){
+				if (file_position_low==-1 && GetLastError()!=NO_ERROR){
 					f->file_error=-1;
 					return 0;
 				}
-#endif		
+#ifdef A64
+				file_position=file_position_low+(file_position_high<<32);
+#else
+				file_position=file_position_low;
+#endif				
+				f->file_offset=file_position;
 				return CLEAN_TRUE;
 			}
 		} else {
-			OS(DWORD file_position,APIRET error);
+			FilePositionT file_position;
 			int result;
+			unsigned int file_position_low,file_position_high;
 
 			result=CLEAN_TRUE;
 
@@ -1729,27 +1728,30 @@ CLEAN_BOOL file_seek (struct file *f,unsigned long position,unsigned long seek_m
 				f->file_error=-1;
 				result=0;
 			}
-			
-			if (position<0 || position>f->file_length){
+
+			if (position>f->file_length){
 				f->file_error=-1;
 				return 0;
 			}
-#ifdef WINDOWS
-			file_position=SetFilePointer (f->file_write_refnum,position,NULL,FILE_BEGIN);
 
-			if (file_position==-1){
-				f->file_error=-1;
-				result=0;
-			} else
-				f->file_offset=file_position;
+#ifdef A64
+			file_position_high=position>>32;
 #else
-			error=DosSetFilePtr (f->file_write_refnum,position,FILE_BEGIN,&f->file_offset);
+			file_position_high=0;
+#endif
+			file_position_low=SetFilePointer (f->file_write_refnum,position,&file_position_high,FILE_BEGIN);
 
-			if (error!=0){
+			if (file_position_low==-1 && GetLastError()!=NO_ERROR){
 				f->file_error=-1;
 				result=0;
+			} else {
+#ifdef A64
+				file_position=file_position_low+(file_position_high<<32);
+#else
+				file_position=file_position_low;
+#endif
+				f->file_offset=file_position;
 			}
-#endif			
 			return result;
 		}
 	}
@@ -1773,7 +1775,7 @@ struct file *open_s_file (struct clean_string *file_name,unsigned int file_mode)
 	int fn;
 	char *file_name_s;
 	struct file *f;
-	long file_length;
+	FilePositionT file_length;
 	HFILE file_handle;
 	unsigned char *buffer;
 	ULONG action;
@@ -1844,26 +1846,23 @@ struct file *open_s_file (struct clean_string *file_name,unsigned int file_mode)
 
 	f->file_offset=0;
 
-
-#ifdef WINDOWS
-	file_length=GetFileSize (file_handle,NULL);
-
-	if (file_length==-1){
-#else
 	{
-		FILESTATUS file_status;
+	unsigned int file_length_low,file_length_high;
+			
+	file_length_high=0;
+	file_length_low=GetFileSize (file_handle,&file_length_high);
 
-		error=DosQueryFileInfo (file_handle,FIL_STANDARD,&file_status,sizeof (file_status));
-
-		file_length=file_status.cbFile;
-	}
-
-	if (error!=0){
-#endif
+	if (file_length_low==-1 && GetLastError()!=NO_ERROR){
 		free_memory (file_name_s);
 		free_memory (buffer);
 		OS(CloseHandle,DosClose) (file_handle);
 		IO_error ("sfopen: can't get eof");
+	}
+#ifdef A64
+ 	file_length=file_length_low+(file_length_high<<32);
+#else
+ 	file_length=file_length_low;
+#endif
 	}
 
 	f->file_read_refnum=file_handle;
@@ -1888,7 +1887,7 @@ void file_share (struct file *f)
 	f->file_unique=0;
 }
 
-static int simple_seek (struct file *f,long position)
+static int simple_seek (struct file *f,FilePositionT position)
 {
 	int result;
 	long buffer_size;
@@ -1896,46 +1895,48 @@ static int simple_seek (struct file *f,long position)
 	result=1;
 	
 	buffer_size=f->file_end_read_buffer_p - f->file_read_buffer_p;
-	if ((unsigned long)(position - (f->file_offset-buffer_size)) < buffer_size){
+	if ((FilePositionT)(position - (f->file_offset-buffer_size)) < buffer_size){
 		f->file_read_p = f->file_read_buffer_p + (position - (f->file_offset-buffer_size));
 		f->file_position=position;
 	} else {
 		unsigned char *buffer;
-		OS(DWORD file_position,APIRET error);
-		
-		if (position<0 || position>f->file_length){
+		FilePositionT file_position;
+
+		if (position>f->file_length){
 			f->file_error=-1;
 			result=0;
 		} else {
+			unsigned int file_position_low,file_position_high;
+
 			buffer=f->file_read_buffer_p;
 			f->file_end_read_buffer_p=buffer;
 			f->file_read_p=buffer;
 
-#ifdef WINDOWS
-			file_position=SetFilePointer (f->file_read_refnum,position,NULL,FILE_BEGIN);
-
-			if (file_position==-1){
-				f->file_error=-1;
-				result=0;
-			} else
-				f->file_offset=file_position;
+#ifdef A64
+			file_position_high=position>>32;
 #else
-			error=DosSetFilePtr (f->file_read_refnum,position,FILE_BEGIN,&f->file_offset);
-			
-			if (error!=0){
+			file_position_high=0;
+#endif
+			file_position_low=SetFilePointer (f->file_read_refnum,position,&file_position_high,FILE_BEGIN);
+
+			if (file_position_low==-1 && GetLastError()!=NO_ERROR){
 				f->file_error=-1;
 				result=0;
-			}
-
-			f->file_position=position;
+			} else {
+#ifdef A64
+				file_position=file_position_low+(file_position_high<<32);
+#else
+				file_position=file_position_low;
 #endif
+				f->file_offset=file_position;
+			}
 		}
 	}
 	
 	return result;
 }
 
-int file_read_s_char (struct file *f,unsigned long *position_p)
+int file_read_s_char (struct file *f,FilePositionT *position_p)
 {	
 	if (is_special_file (f)){
 		if (f==file_table)
@@ -1947,7 +1948,7 @@ int file_read_s_char (struct file *f,unsigned long *position_p)
 		return 0;
 	} else {
 		int c;
-		unsigned long position;
+		FilePositionT position;
 
 		position=*position_p;
 
@@ -1995,7 +1996,7 @@ int file_read_s_char (struct file *f,unsigned long *position_p)
 	}
 }
 
-CLEAN_BOOL file_read_s_int (struct file *f,int *i_p,unsigned long *position_p)
+CLEAN_BOOL file_read_s_int (struct file *f,int *i_p,FilePositionT *position_p)
 {
 	if (is_special_file (f)){
 		if (f==file_table)
@@ -2007,7 +2008,7 @@ CLEAN_BOOL file_read_s_int (struct file *f,int *i_p,unsigned long *position_p)
 		return 0;
 	} else {
 		int result;
-		unsigned long position;
+		FilePositionT position;
 
 		position=*position_p;
 		
@@ -2118,7 +2119,7 @@ CLEAN_BOOL file_read_s_int (struct file *f,int *i_p,unsigned long *position_p)
 	}
 }
 
-CLEAN_BOOL file_read_s_real (struct file *f,double *r_p,unsigned long *position_p)
+CLEAN_BOOL file_read_s_real (struct file *f,double *r_p,FilePositionT *position_p)
 {
 	if (is_special_file (f)){
 		if (f==file_table)
@@ -2130,7 +2131,7 @@ CLEAN_BOOL file_read_s_real (struct file *f,double *r_p,unsigned long *position_
 		return 0;
 	} else {
 		int result;
-		unsigned long position;
+		FilePositionT position;
 		
 		position=*position_p;
 		if (f->file_position!=position){
@@ -2270,8 +2271,8 @@ CLEAN_BOOL file_read_s_real (struct file *f,double *r_p,unsigned long *position_
 	}
 }
 
-unsigned long file_read_s_string
-	(struct file *f,unsigned long max_length,struct clean_string *s,unsigned long *position_p)
+FilePositionT file_read_s_string
+	(struct file *f,UNSIGNED_CLEAN_INT max_length,struct clean_string *s,FilePositionT *position_p)
 {	
 	unsigned long length;
 
@@ -2284,7 +2285,7 @@ unsigned long file_read_s_string
 			IO_error ("sfreads: can't open this file");
 		return 0;
 	} else {
-		unsigned long position;
+		FilePositionT position;
 		char *string;
 		int c;
 
@@ -2343,7 +2344,7 @@ unsigned long file_read_s_string
 	}
 }
 
-unsigned long file_read_s_line (struct file *f,unsigned long max_length,char *string,unsigned long *position_p)
+UNSIGNED_CLEAN_INT file_read_s_line (struct file *f,UNSIGNED_CLEAN_INT max_length,char *string,FilePositionT *position_p)
 {	
 	unsigned long length;
 
@@ -2356,7 +2357,7 @@ unsigned long file_read_s_line (struct file *f,unsigned long max_length,char *st
 			IO_error ("sfreadline: can't open this file");
 		return 0;
 	} else {
-		unsigned long position;
+		FilePositionT position;
 		int c;
 		
 		position=*position_p;
@@ -2412,7 +2413,7 @@ unsigned long file_read_s_line (struct file *f,unsigned long max_length,char *st
 	}
 }
 
-CLEAN_BOOL file_s_end (struct file *f,unsigned long position)
+CLEAN_BOOL file_s_end (struct file *f,FilePositionT position)
 {
 	if (is_special_file (f)){
 		if (f==file_table || f==&file_table[1])
@@ -2448,7 +2449,7 @@ CLEAN_BOOL file_s_end (struct file *f,unsigned long position)
 	}
 }
 
-unsigned long file_s_position (struct file *f,unsigned long position)
+FilePositionT file_s_position (struct file *f,FilePositionT position)
 {
 	if (is_special_file (f)){
 		if (f==file_table || f==&file_table[1])
@@ -2485,7 +2486,7 @@ unsigned long file_s_position (struct file *f,unsigned long position)
 #define	F_SEEK_CUR 1
 #define F_SEEK_END 2
 
-CLEAN_BOOL file_s_seek (struct file *f,unsigned long position,unsigned long seek_mode,unsigned long *position_p)
+CLEAN_BOOL file_s_seek (struct file *f,FilePositionT position,unsigned long seek_mode,FilePositionT *position_p)
 {
 	if (is_special_file (f)){
 		if (seek_mode>(unsigned)2)
@@ -2499,7 +2500,8 @@ CLEAN_BOOL file_s_seek (struct file *f,unsigned long position,unsigned long seek
 			IO_error ("sfseek: can't open file");
 		return 0;
 	} else {
-		long current_position,buffer_size;
+		FilePositionT current_position;
+		long buffer_size;
 		int result;
 			
 		result=CLEAN_TRUE;
@@ -2532,38 +2534,42 @@ CLEAN_BOOL file_s_seek (struct file *f,unsigned long position,unsigned long seek
 		}
 		
 		buffer_size=f->file_end_read_buffer_p - f->file_read_buffer_p;
-		if ((unsigned long)(position - (f->file_offset-buffer_size)) < buffer_size){
+		if ((FilePositionT)(position - (f->file_offset-buffer_size)) < buffer_size){
 			f->file_read_p = f->file_read_buffer_p + (position - (f->file_offset-buffer_size));
 			f->file_position=position;
 		} else {
 			unsigned char *buffer;
-			OS(DWORD file_position,APIRET error);
-			
-			if (position<0 || position>f->file_length){
+			FilePositionT file_position;
+
+			if (position>f->file_length){
 				f->file_error=-1;
 				result=0;
 				f->file_position=current_position;
 			} else {
+				unsigned int file_position_low,file_position_high;
+
 				buffer=f->file_read_buffer_p;
 				f->file_end_read_buffer_p=buffer;
 				f->file_read_p=buffer;
 
-#ifdef WINDOWS
-				file_position=SetFilePointer (f->file_read_refnum,position,NULL,FILE_BEGIN);
-				
-				if (file_position==-1){
-					f->file_error=-1;
-					result=0;
-				} else
-					f->file_offset=file_position;
+#ifdef A64
+				file_position_high=position>>32;
 #else
-				error=DosSetFilePtr (f->file_read_refnum,position,FILE_BEGIN,&f->file_offset);
+				file_position_high=0;
+#endif
+				file_position_low=SetFilePointer (f->file_read_refnum,position,&file_position_high,FILE_BEGIN);
 				
-				if (error!=0){
+				if (file_position_low==-1 && GetLastError()!=NO_ERROR){
 					f->file_error=-1;
 					result=0;
+				} else {
+#ifdef A64
+					file_position=file_position_low+(file_position_high<<32);
+#else
+					file_position=file_position_low;
+#endif
+					f->file_offset=file_position;
 				}
-#endif				
 				f->file_position=position;
 			}
 		}
