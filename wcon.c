@@ -4,23 +4,32 @@
 	At:		University of Nijmegen
 */
 
+#ifdef _WIN64
+# define AI64
+#endif
+
 #include <float.h>
+
+#ifdef AI64
+# define clean_int __int64
+#else
+# define clean_int int
+#endif
 
 #define GC_FLAGS
 #define STACK_OVERFLOW_EXCEPTION_HANDLER
 
-#ifdef WINDOWS
-# include <windows.h>
-# define ULONG unsigned long
-# define DosWrite(f,p,l,lp) WriteFile ((HANDLE)f,p,l,lp,NULL)
-# define DosRead(f,p,l,lp) ReadFile ((HANDLE)f,p,l,lp,NULL)
-# define OS(w,o) w
-# define StdInput std_input_handle
-# define StdOutput std_output_handle
-# define StdError std_error_handle
-# ifdef TIME_PROFILE
-#  define TCHAR char
-#  if 0
+#include <windows.h>
+#define ULONG unsigned long
+#define DosWrite(f,p,l,lp) WriteFile ((HANDLE)f,p,l,lp,NULL)
+#define DosRead(f,p,l,lp) ReadFile ((HANDLE)f,p,l,lp,NULL)
+#define OS(w,o) w
+#define StdInput std_input_handle
+#define StdOutput std_output_handle
+#define StdError std_error_handle
+#ifdef TIME_PROFILE
+# define TCHAR char
+# if 0
    typedef struct _WIN32_FIND_DATA {
 		DWORD dwFileAttributes;
 		FILETIME ftCreationTime;
@@ -33,17 +42,9 @@
 		TCHAR    cFileName[ MAX_PATH ];
 		TCHAR    cAlternateFileName[ 14 ];
    } WIN32_FIND_DATA;
-#  endif
 # endif
-# include "wfileIO3.h"
-#else
-# define INCL_DOSFILEMGR
-# include <os2.h>
-# define OS(w,o) o
-# define StdInput 0
-# define StdOutput 1
-# define StdError 2
 #endif
+#include "wfileIO3.h"
 
 #define SHOW_EXECUTION_TIME_MASK 8
 #define NO_RESULT_MASK 16
@@ -56,9 +57,11 @@ int std_output_to_file=0;
 extern void init_std_io_from_or_to_file (void);
 #endif
 
+#ifndef AI64
 extern int c_entier (double);
 extern double c_log10 (double);
 extern double c_pow (double,double);
+#endif
 
 extern long ab_stack_size,heap_size,flags;
 
@@ -313,6 +316,14 @@ int w_get_int (int *i_p)
 	return -1;
 }
 
+#ifdef AI64
+static double power10_table [16] =
+{
+	1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0,
+	1.0e8, 1.0e9, 1.0e10, 1.0e11, 1.0e12, 1.0e13, 1.0e14, 1.0e15 
+};
+#endif
+
 char *convert_string_to_real (char *string,double *r_p)
 {
 	int neg,has_digits,has_dot;
@@ -393,7 +404,57 @@ char *convert_string_to_real (char *string,double *r_p)
     }
 
 	if (scale!=0 && d!=0.0)
+#ifdef AI64
+	{
+		if (scale>0){
+			unsigned long n;
+			double p10;
+			
+			n=scale;
+			p10=power10_table[n & 15];
+			n>>=4;
+			if (n!=0){
+				double s10;
+				
+				s10=1.0E16;
+				if (n & 1)
+					p10*=s10;
+				n>>=1;
+				while (n!=0){
+					s10*=s10;
+					if (n & 1)
+						p10*=s10;
+					n>>=1;
+				};
+			}
+			d*=p10;
+		} else {
+			unsigned long n;
+			double p10;
+
+			n=-scale;
+			p10=power10_table[n & 15];
+			n>>=4;
+			if (n!=0){
+				double s10;
+				
+				s10=1.0E16;
+				if (n & 1)
+					p10*=s10;
+				n>>=1;
+				while (n!=0){
+					s10*=s10;
+					if (n & 1)
+						p10*=s10;
+					n>>=1;
+				};
+			}
+			d/=p10;
+		}
+	}
+#else
 		d *= c_pow (10.0,(double)scale);
+#endif
 
 	if (neg)
 		d=-d;
@@ -584,11 +645,11 @@ void ew_print_string (char *s)
 	print_text (s,p-s,StdError);
 }
 
-static void print_integer (int n,OS(HANDLE,int) file_number)
+static void print_integer (clean_int n,OS(HANDLE,int) file_number)
 {
-	char s[16];
+	char s[32];
 	int length;
-	unsigned int m;
+	unsigned clean_int m;
 	ULONG n_chars;
 
 	if (n<0)
@@ -596,10 +657,10 @@ static void print_integer (int n,OS(HANDLE,int) file_number)
 	else
 		m=n;
 
-	length=16;
+	length=32;
 
 	while (m>=10){
-		unsigned int r;
+		unsigned clean_int r;
 
 		r=m/10;
 		s[--length]=48+m-r*10;
@@ -610,10 +671,10 @@ static void print_integer (int n,OS(HANDLE,int) file_number)
 	if (n<0)
 		s[--length]='-';
 
-	DosWrite (file_number,&s[length],16-length,&n_chars);
+	DosWrite (file_number,&s[length],32-length,&n_chars);
 }
 
-void w_print_int (int n)
+void w_print_int (clean_int n)
 {
 #ifdef WINDOWS
 	if (std_output_to_file){
@@ -628,7 +689,7 @@ void w_print_int (int n)
 	print_integer (n,StdOutput);
 }
 
-void ew_print_int (int n)
+void ew_print_int (clean_int n)
 {
 #ifdef WINDOWS
 	if (!console_window_visible)
@@ -638,38 +699,41 @@ void ew_print_int (int n)
 	print_integer (n,StdError);
 }
 
+#ifndef AI64
 int xam_and_fstsw (double d)
 {
 	int i;
-
-#if 0	
+# if 0	
 	asm ("fxam ; fstsw %%ax" : : "f" (d) : "%ax");
 	asm ("movzwl %%ax,%0" : "=g" (i) : );
-#else
+# else
 	asm ("fxam ; fstsw %%ax; movzwl %%ax,%0" : "=g" (i) : "t" (d) : "%ax");
-#endif
+# endif
 	return i;
 }
 
-#if 0
+# if 0
 int fbstp (double d,char *buffer)
 {
-# if 0
+#  if 0
 	asm ("movl %0,%%eax ; fbstp (%%eax) ; fld1" : : "g" (buffer) , "f" (d) : "%eax");
-# else
+#  else
 	asm ("fbstp (%0)" : : "r" (buffer) , "t" (d) : "st");
-# endif
+#  endif
 }
+# endif
 #endif
 
 #define N_DIGITS 15
 
 #if 1
+
+# ifndef AI64
 static unsigned int dtoi_divmod_1e9 (double d,unsigned int *rem_p)
 {
 	double a[1];
 	unsigned int q,r;
-# if 1
+#  if 1
 	asm (
 		"fistpq (%3); "
 		"movl	$1000000000,%%ebx; "
@@ -679,7 +743,7 @@ static unsigned int dtoi_divmod_1e9 (double d,unsigned int *rem_p)
 		: "=&a" (q), "=&d" (r) : "t" (d), "r" (a)
 		:  "%ebx","st"
 		);
-# else
+#  else
 	asm (
 		"fistpq (%3); "
 		"movl	$1000000000,%%ebx; "
@@ -690,7 +754,7 @@ static unsigned int dtoi_divmod_1e9 (double d,unsigned int *rem_p)
 		: "&=g" (q), "&=d" (r) : "t" (d), "r" (a)
 		:  "%eax","%ebx","%ecx","%edx","st"
 		);
-# endif
+#  endif
 
 	*rem_p=r;
 	return q;
@@ -727,18 +791,40 @@ static unsigned int to4_28 (int i)
 	
 	return r;
 }
+# endif
+
+# ifdef AI64
+extern __int64 r_to_i_real (double d);
+# endif
 
 static void d_to_a (double d,char *s)
 {
 	unsigned int i1,i2,n,r;
 
+# ifdef AI64
+	{
+		unsigned __int64 d_i,d_i_1000000000;
+		d_i=r_to_i_real (d);
+		d_i_1000000000=d_i/1000000000;
+		n=(unsigned int)d_i_1000000000;
+		r=(unsigned int)(d_i-d_i_1000000000*1000000000);
+	}
+# else
 	n=dtoi_divmod_1e9 (d,&r);
+# endif
 
+# ifdef AI64
+	i2=1+(unsigned int)(((unsigned __int64)r * (unsigned __int64)0xabcc7712) >> 30);
+# else
 	i2=to4_28 (r);
-
+# endif
 	s[6]=(i2>>28)+'0';
 
+# ifdef AI64
+	i1=1+(unsigned int)(((unsigned __int64)n * (unsigned __int64)0x0a7c5ac48) >> 30);
+# else
 	i1=to14_18 (n);
+# endif
 
 	i2=(i2 & 0xfffffff)*5;
 	s[7]=(i2>>27)+'0';
@@ -789,6 +875,11 @@ char *convert_real_to_string (double d,char *s_p)
 {
 	double scale_factor;
 	int exponent,n;
+#ifdef AI64
+	unsigned __int64 d_i;
+
+	*(double*)&d_i=d;
+#else
 	unsigned int fpu_status;
 
 	fpu_status = xam_and_fstsw (d);
@@ -820,6 +911,7 @@ char *convert_real_to_string (double d,char *s_p)
 			s_p[4]='\0';
 			return s_p+4;
 	}
+#endif
 
 	if (d<0){
 		d=-d;
@@ -835,6 +927,60 @@ char *convert_real_to_string (double d,char *s_p)
 	if (d<1e4){
 		if (d<1e0){
 			if (d<1e-4){
+#ifdef AI64
+				unsigned int exp_d;
+				int p;
+				
+				exp_d=(d_i>>52) & 0x7ff;
+
+				if (exp_d==0){
+					/* denormal */
+					unsigned __int64 d_54_i;
+
+					*(double*)&d_54_i=d*18014398509481984.0 /* 2^54 */;
+					exp_d=(0x3ff+54)-((d_54_i>>52) & 0x7ff);
+				} else
+					exp_d=0x3ff-exp_d;
+
+				exponent=((unsigned __int64)exp_d * 2711437152599295) /* floor (log10(2.0) * 2**53) */ >> 53;
+
+				p=N_DIGITS-1+exponent;
+				exponent=-exponent;
+
+				if (p>=307){
+					d=d*1e30;
+					p-=30;
+				}
+
+				if (p>0){
+					unsigned int n;
+					double p10;
+
+					n=p;
+					p10=power10_table[n & 15];
+					n>>=4;
+					if (n!=0){
+						double s10;
+						
+						s10=1.0E16;
+						if (n & 1)
+							p10*=s10;
+						n>>=1;
+						while (n!=0){
+							s10*=s10;
+							if (n & 1)
+								p10*=s10;
+							n>>=1;
+						};
+					}
+					scale_factor=p10;
+				} else if (p<0){
+					d /= power10_table[-p];
+					scale_factor=1.0;
+				} else {
+					scale_factor=1.0;
+				}
+#else
 				exponent=c_entier (c_log10 (d));
 				if (N_DIGITS-exponent>=308){
 					d=d*1e20;
@@ -842,6 +988,7 @@ char *convert_real_to_string (double d,char *s_p)
 				} else {
 					scale_factor=c_pow (10.0,N_DIGITS-1-exponent);
 				}
+#endif
 			} else {
 				if (d<1e-2){
 					if (d<1e-3){
@@ -918,14 +1065,94 @@ char *convert_real_to_string (double d,char *s_p)
 				}
 			}						
 		} else {
+#ifdef AI64
+			unsigned int exp_d;
+			int p;
+			
+			exp_d=(d_i>>52) & 0x7ff;
+
+			if (exp_d==0x7ff){
+				if ((d_i & 0xfffffffffffff)==0){
+					s_p[0]='#';
+					s_p[1]='I';
+					s_p[2]='N';
+					s_p[3]='F';
+				} else {
+					s_p[0]='#';
+					s_p[1]='N';
+					s_p[2]='A';
+					s_p[3]='N';
+				}
+				s_p[4]='\0';
+				return s_p+4;				
+			}
+
+			exp_d-=0x3ff;
+
+			exponent=((unsigned __int64)exp_d * 2711437152599295) /* floor (log10(2.0) * 2**53) */ >> 53;
+			
+			p=N_DIGITS-1-exponent;
+			if (p<0){
+				unsigned int n;
+				double p10;
+
+				n=-p;
+				p10=power10_table[n & 15];
+				n>>=4;
+				if (n!=0){
+					double s10;
+					
+					s10=1.0E16;
+					if (n & 1)
+						p10*=s10;
+					n>>=1;
+					while (n!=0){
+						s10*=s10;
+						if (n & 1)
+							p10*=s10;
+						n>>=1;
+					};
+				}
+				{
+				double d2;
+				
+				d2=d/p10;
+
+				if (d2 >= (1.0e15-0.5)){
+					++exponent;
+					d /= p10 * 10.0;
+				} else {
+					d=d2;
+				}
+				scale_factor=1.0;
+				}
+			} else if (p>0){
+				scale_factor=power10_table[p];
+				if (d*scale_factor >= 1.0e15){
+					scale_factor = power10_table[p-1];
+					++exponent;
+				}
+			} else {
+				scale_factor=1.0;
+				if (d >= 1.0e15){
+					scale_factor = 0.1;
+					++exponent;
+				}
+			}
+#else
 			exponent=c_entier (c_log10 (d));
 			scale_factor=c_pow (10.0,N_DIGITS-1-exponent);
+#endif
 		}
 	}
 
 	d *= scale_factor;
 
+#ifdef AI64
+	if (d<(1e14-0.5)){
+#else
 	if (d<1e14){
+#endif
 		d *= 10.0;
 		--exponent;
 	}
@@ -1095,9 +1322,9 @@ void *allocate_memory (int size)
 }
 
 #if defined (WINDOWS) && defined (STACK_OVERFLOW_EXCEPTION_HANDLER)
-void *allocate_memory_with_guard_page_at_end (int size)
+void *allocate_memory_with_guard_page_at_end (SIZE_T size)
 {
-	int alloc_size;
+	SIZE_T alloc_size;
 	DWORD old_protect;
 	char *p,*end_p;
 	
@@ -1107,7 +1334,7 @@ void *allocate_memory_with_guard_page_at_end (int size)
 	if (p==NULL)
 		return p;
 
-	end_p=(char*)(((int)p+size+4095) & -4096);
+	end_p=(char*)(((SIZE_T)p+size+4095) & -4096);
 	if (!VirtualProtect (end_p,4096,PAGE_READWRITE | PAGE_GUARD,&old_protect))
 		VirtualProtect (end_p,4096,PAGE_NOACCESS,&old_protect);
 
@@ -1201,7 +1428,43 @@ int return_code;
 #endif
 
 #ifdef STACK_OVERFLOW_EXCEPTION_HANDLER
+# ifdef AI64
+extern void stack_overflow (void);
+extern __int64 a_stack_guard_page;
+
+EXCEPTION_DISPOSITION clean_exception_handler 
+	(PEXCEPTION_RECORD exception_record_p,ULONG64 establisher_frame,
+	 PCONTEXT context_record_p // ,PDISPATCHER_CONTEXT dispatcher_context_p
+	 )
+{
+	if (exception_record_p->ExceptionCode==EXCEPTION_STACK_OVERFLOW){
+		context_record_p->Rip=(int)&stack_overflow;
+		return ExceptionContinueExecution;
+	}
+
+	if (exception_record_p->ExceptionCode==EXCEPTION_ACCESS_VIOLATION ||
+		exception_record_p->ExceptionCode==EXCEPTION_GUARD_PAGE)
+	{
+		if (((__int64)exception_record_p->ExceptionInformation[1] & -4096)==a_stack_guard_page){
+			context_record_p->Rip=(SIZE_T)&stack_overflow;
+			return ExceptionContinueExecution;
+		}
+	}
+
+	{
+	EXCEPTION_POINTERS exception_pointers;
+	
+	exception_pointers.ExceptionRecord=exception_record_p;
+	exception_pointers.ContextRecord=context_record_p;
+
+	UnhandledExceptionFilter (&exception_pointers);
+	}
+
+	return ExceptionContinueSearch;
+}
+# else
 extern __stdcall LONG clean_exception_handler (struct _EXCEPTION_POINTERS *exception_p);
+# endif
 #endif
 
 #ifdef DLL
@@ -1427,6 +1690,10 @@ int clean_main (void)
 				return -1;
 			heap_size_multiple=i<<8;
 		}
+# ifdef AI64
+		else if (EQ_STRING3 (s,'g','c','p'))
+			flags |= 4096;
+# endif
 #endif
 #ifdef WINDOWS
 		else if (EQ_STRING3 (s,'c','o','n'))
@@ -1491,13 +1758,15 @@ void create_profile_file_name (unsigned char *profile_file_name_string)
 	int length_time_profile_file_name,time_profile_file_name_suffix_length,i;
 
 	time_profile_file_name_p=global_argv[0];
-	profile_file_name=&profile_file_name_string[8];
+	profile_file_name=&profile_file_name_string[2*sizeof (clean_int)];
 	
 	for (p=time_profile_file_name_p; *p!='\0'; ++p)
 		;
 	length_time_profile_file_name=p-time_profile_file_name_p;
-	
-	if (time_profile_file_name_p[0]=='\"' && length_time_profile_file_name>1 && time_profile_file_name_p[length_time_profile_file_name-1]=='\"'){
+
+	if (time_profile_file_name_p[0]=='\"' && length_time_profile_file_name>1 &&
+		time_profile_file_name_p[length_time_profile_file_name-1]=='\"')
+	{
 		++time_profile_file_name_p;
 		length_time_profile_file_name-=2;
 	}
@@ -1549,8 +1818,8 @@ void create_profile_file_name (unsigned char *profile_file_name_string)
 	p=profile_file_name+length_time_profile_file_name;
 	for (i=0; i<=time_profile_file_name_suffix_length; ++i)
 		p[i]=time_profile_file_name_suffix_p[i];
-	
-	*(unsigned int*)(&profile_file_name_string[4])=length_time_profile_file_name+time_profile_file_name_suffix_length;
+
+	*(clean_int*)(&profile_file_name_string[sizeof (clean_int)])=length_time_profile_file_name+time_profile_file_name_suffix_length;
 }
 #endif
 
