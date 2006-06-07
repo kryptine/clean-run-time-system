@@ -13,11 +13,19 @@
 # include <unistd.h>
 #endif
 
+#ifdef __x86_64__
+# define A64
+#endif
+
 #define GC_FLAGS
 #ifndef SOLARIS
 # define MARKING_GC
 #endif
-#define STACK_OVERFLOW_EXCEPTION_HANDLER
+#ifndef A64
+# define STACK_OVERFLOW_EXCEPTION_HANDLER
+#else
+# undef STACK_OVERFLOW_EXCEPTION_HANDLER
+#endif
 #define USE_CR2
 
 #ifdef STACK_OVERFLOW_EXCEPTION_HANDLER
@@ -144,7 +152,7 @@ void *allocate_memory_with_guard_page_at_end (int size)
 	if (p==NULL)
 		return p;
 
-	end_p=(char*)(((int)p+size+4095) & -4096);
+	end_p=(char*)(((size_t)p+size+4095) & -4096);
 	mprotect (end_p,4096,PROT_NONE);
 
 	return p;
@@ -154,11 +162,16 @@ void *allocate_memory_with_guard_page_at_end (int size)
 static void clean_exception_handler (int s,struct sigcontext sigcontext)
 {
 	if (
-		(((int)sigcontext.cr2 ^ (int)below_stack_page) & -4096)==0 ||
-		(((int)sigcontext.cr2 ^ (int)a_stack_guard_page) & -4096)==0)
+		(((size_t)sigcontext.cr2 ^ (size_t)below_stack_page) & -4096)==0 ||
+		(((size_t)sigcontext.cr2 ^ (size_t)a_stack_guard_page) & -4096)==0)
 	{
+#  ifdef A64
+		sigcontext.rip=(size_t)&stack_overflow;
+		sigcontext.rsp=(size_t)halt_sp;
+#  else
 		sigcontext.eip=(int)&stack_overflow;
 		sigcontext.esp=(int)halt_sp;
+#  endif
 	} else {
 		sigaction (SIGSEGV,&old_sa,NULL);
 		/*
@@ -257,7 +270,7 @@ static void install_clean_exception_handler (void)
 			}
 
 			if (i==8){
-				if ((unsigned)&a - (unsigned)b < (unsigned)(e-b)){
+				if ((size_t)&a - (size_t)b < (size_t)(e-b)){
 					struct rlimit rlimit;
 					
 					if (getrlimit (RLIMIT_STACK,&rlimit)==0){
@@ -714,7 +727,7 @@ void create_profile_file_name (unsigned char *profile_file_name_string)
 	char *profile_file_name;
 	int r;
 
-	profile_file_name=&profile_file_name_string[8];
+	profile_file_name=&profile_file_name_string[2*sizeof(size_t)];
 
 	r=readlink ("/proc/self/exe",profile_file_name,MY_PATH_MAX-1);
 	if (r>=0){
@@ -731,10 +744,10 @@ void create_profile_file_name (unsigned char *profile_file_name_string)
 			length_file_name=MY_PATH_MAX-size_time_profile_file_name_suffix;
 
 		strcat (&profile_file_name[length_file_name],time_profile_file_name_suffix);
-		*(unsigned int*)&profile_file_name_string[4] = length_file_name+size_time_profile_file_name_suffix-1;
+		*(size_t*)&profile_file_name_string[sizeof(size_t)] = length_file_name+size_time_profile_file_name_suffix-1;
 	} else {
 		strcpy (profile_file_name,&time_profile_file_name_suffix[1]);
-		*(unsigned int*)&profile_file_name_string[4] = sizeof (time_profile_file_name_suffix)-1;
+		*(size_t*)&profile_file_name_string[sizeof(size_t)] = sizeof (time_profile_file_name_suffix)-1;
 	}
 }
 #endif
