@@ -89,7 +89,9 @@ total_gc_bytes	dq	0
 total_compact_gc_bytes	dq	0
 
 	public	saved_heap_p
-saved_heap_p	dq	0
+saved_heap_p label ptr
+	dq	0
+	dq	0
 	
 	public	saved_a_stack_p
 saved_a_stack_p	dq	0
@@ -602,7 +604,8 @@ DLL_PROCESS_ATTACH:
 	call	init_profiler
  endif
 
-	mov	saved_heap_p,rdi
+	mov	qword ptr saved_heap_p,rdi
+	mov	qword ptr saved_heap_p+8,r15
 	mov	saved_a_stack_p,rsi
 
 	mov	rax,1
@@ -620,7 +623,8 @@ DLL_PROCESS_DETACH:
 	push	rsi 
 	push	rdi 
 	
-	mov	rdi,saved_heap_p
+	mov	rdi,qword ptr saved_heap_p
+	mov	r15,qword ptr saved_heap_p+8
 	mov	rsi,saved_a_stack_p
 
 	call	exit_clean
@@ -2446,7 +2450,11 @@ end_garbage_collect_:
  endif
 	call	ew_print_string
 
+ ifdef LINUX
 	mov	rdi,[rbp]
+ else
+	mov	rcx,[rbp]
+ endif
 	call	ew_print_int
 
  ifdef LINUX
