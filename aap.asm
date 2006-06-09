@@ -537,7 +537,7 @@ fast_ap_2_2_:
 
 	mov	qw [a4],a0
 	mov	qw 8[a4],a1
-	add	a4,16
+	lea	a4,16[a4]
 	mov	a1,qw 16[a2]
 
 	jmp	fast_ap_
@@ -581,7 +581,7 @@ fast_ap:
 
 	mov	qw [a4],a0
 	mov	qw 8[a4],a1
-	add	a4,16
+	lea	a4,16[a4]
 	mov	a1,qw 16[a2]
 
 fast_ap_:

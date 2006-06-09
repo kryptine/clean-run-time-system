@@ -534,7 +534,7 @@ fast_ap_2_2_:
 
 	mov	qword ptr [rsi],rcx
 	mov	qword ptr 8[rsi],rdx
-	add	rsi,16
+	lea	rsi,16[rsi]
 	mov	rdx,qword ptr 16[r8]
 
 	jmp	fast_ap_
@@ -578,7 +578,7 @@ fast_ap:
 
 	mov	qword ptr [rsi],rcx
 	mov	qword ptr 8[rsi],rdx
-	add	rsi,16
+	lea	rsi,16[rsi]
 	mov	rdx,qword ptr 16[r8]
 
 fast_ap_:
