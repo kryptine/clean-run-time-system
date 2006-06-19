@@ -529,7 +529,7 @@ seekF:
 	call	file_seek
 	mov	rsp,rbp
 
-	mov	r11,rax
+	mov	r10,rax
 	mov	rax,-1
 	ret
 

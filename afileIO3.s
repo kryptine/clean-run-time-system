@@ -553,7 +553,7 @@ seekF:
 	mov	rsi,r13
 	mov	rdi,r14
 
-	mov	r11,rax
+	mov	r10,rax
 	mov	rax,-1
 	ret
 
