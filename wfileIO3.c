@@ -63,7 +63,7 @@ struct file file_table[MAX_N_FILES];
 
 static int number_of_files=FIRST_REAL_FILE;
 
-#define is_special_file(f) ((size_t)(f)<(size_t)(&file_table[FIRST_REAL_FILE]))
+#define is_special_file(f) ((CLEAN_INT)(f)<(CLEAN_INT)(&file_table[FIRST_REAL_FILE]))
 
 static char *clean_to_c_string (struct clean_string *cs)
 {
