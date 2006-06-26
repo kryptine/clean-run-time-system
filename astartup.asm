@@ -268,8 +268,11 @@ garbage_collector_name:
 	public	sign_real_mask
 sign_real_mask	label ptr
 	dq	8000000000000000h,8000000000000000h
+	public	abs_real_mask
+abs_real_mask	label ptr
+	dq	7fffffffffffffffh,7fffffffffffffffh
 
-	align(1 shl  3 ) 
+	align (1 shl 3) 
 NAN_real	label ptr
 	dd	0ffffffffh,7fffffffh
 one_real	label ptr
@@ -277,7 +280,7 @@ one_real	label ptr
 zero_real	label ptr
 	dd	00000000h,00000000h
 
-	align(1 shl  2 ) 
+	align (1 shl 2) 
 bit_set_table	label ptr
 	dd	00000001h,00000002h,00000004h,00000008h
 	dd	00000010h,00000020h,00000040h,00000080h
