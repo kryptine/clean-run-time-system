@@ -772,7 +772,7 @@ CLEAN_BOOL file_read_int (struct file *f,CLEAN_INT *i_p)
 			result=0;
 			f->file_error=-1;
 		} else {
-			unsigned int i;
+			size_t i;
 			
 			i=c-'0';
 			
