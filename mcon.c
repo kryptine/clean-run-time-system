@@ -1844,17 +1844,20 @@ void load_code_segments (VOID)
 	extern int processor_table,end_processor_table;
 #endif
 
-SysEnvRec system_environment;
 int wait_next_event_available;
 
 #include <types.h>
 
-#ifndef powerc
+#ifndef MACOSX
+SysEnvRec system_environment;
+
+# ifndef powerc
 #pragma parameter __D0 MySysEnvirons (__D0, __A0)
 extern pascal OSErr MySysEnvirons(short versionRequested, SysEnvRec *theWorld)
  ONEWORDINLINE(0xA090);
-#else
+# else
 #define MySysEnvirons SysEnvirons
+# endif
 #endif
 
 #define MINIMUM_HEAP_SIZE_MULTIPLE ((2*256)+128)
