@@ -149,7 +149,7 @@ closeF:	mov	rcx,rbx
 	ret
 
 reopenF:
-	mov	rdx,rbx
+	mov	rdx,rax
 	mov	rcx,r10
 	mov	rbx,r10
 
@@ -159,7 +159,7 @@ reopenF:
 	call	re_open_file
 	mov	rsp,rbp
 
-	mov	r10,rax	
+	mov	r10d,eax
 	mov	rax,-1
 	ret
 
@@ -172,7 +172,7 @@ readFC:
 	call	file_read_char
 	mov	rsp,rbp
 
-	cmp	rax,-1
+	cmp	eax,-1
 	je	readFC_eof
 
 	mov	r10,rax

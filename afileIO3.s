@@ -151,7 +151,7 @@ reopenF:
 	mov	rbp,rsp
 	and	rsp,-16
 	mov	r13,rsi
-	mov	rsi,rbx
+	mov	rsi,rax
 	mov	rbx,r10
 	mov	r14,rdi
 	mov	rdi,r10
@@ -160,7 +160,7 @@ reopenF:
 	mov	rsi,r13
 	mov	rdi,r14
 
-	mov	r10,rax	
+	mov	r10d,eax	
 	mov	rax,-1
 	ret
 
@@ -175,7 +175,7 @@ readFC:
 	mov	rsi,r13
 	mov	rdi,r14
 
-	cmp	rax,-1
+	cmp	eax,-1
 	je	readFC_eof
 
 	mov	r10,rax
