@@ -630,7 +630,7 @@ rmarkp_large_tuple_or_record:
 	and	d3,31*8
 	shr	rbx,8
 	mov	d3d,dword ptr (bit_clear_table2)[d3]
-	and	dword ptr [rdi+rbx*4],d3d 
+	and	dword ptr [rdi+rbx*4],d3d
 
 	movzx	eax,word ptr 4[rax]
 	mov	rbx,qword ptr pointer_compare_address
@@ -644,14 +644,14 @@ rmarkp_large_tuple_or_record:
 	je	rmarkp_tuple_selector_node_2
 
 	mov	rcx,qword ptr (-24)[d2+rax]
-	mov	qword ptr [rsi],rcx 
-	mov	qword ptr [rdx],rcx 
+	mov	qword ptr [rsi],rcx
+	mov	qword ptr [rdx],rcx
 	jmp	rmarkp_node_d1
 
 rmarkp_tuple_selector_node_2:
 	mov	rcx,qword ptr [d2]
-	mov	qword ptr [rsi],rcx 
-	mov	qword ptr [rdx],rcx 
+	mov	qword ptr [rsi],rcx
+	mov	qword ptr [rdx],rcx
 	jmp	rmarkp_node_d1
  else
 rmarkp_small_tuple_or_record:
@@ -687,12 +687,12 @@ rmarkp_small_tuple_or_record:
 rmarkp_record_selector_node_1:
 	je	rmarkp_strict_record_selector_node_1
 
-	mov	rbp,rbx 
+	mov	rbp,rbx
 	shr	rbx,5
 	and	rbp,31
 	mov	ebp,dword ptr (bit_set_table)[rbp*4]
 	mov	ebx,dword ptr [rdi+rbx*4]
-	and	rbx,rbp 
+	and	rbx,rbp
 	jne	rmarkp_hnf_1
 
 	mov	rbx,qword ptr [rdx]
@@ -723,7 +723,7 @@ rmarkp_small_tuple_or_record:
 
 	mov	eax,(-8)[rax]
 
-	mov	d3,rbx 
+	mov	d3,rbx
 	and	d3,31*8
 	shr	rbx,8
 	mov	d3d,dword ptr (bit_clear_table2)[d3]
@@ -741,7 +741,7 @@ rmarkp_small_tuple_or_record:
 rmarkp_tuple_or_record_selector_node_2:
 	mov	rbp,rcx
 	mov	rcx,qword ptr [rdx+rax]
-	mov	qword ptr [rsi],rcx 
+	mov	qword ptr [rsi],rcx
 	mov	qword ptr [rbp],rcx
 	mov	rdx,rbp
 	jmp	rmarkp_node_d1
@@ -767,7 +767,7 @@ rmarkp_strict_record_selector_node_1:
 
 	mov	d2,qword ptr 16[rdx]
 
-	mov	d2,qword ptr neg_heap_p3
+	mov	rbx,qword ptr neg_heap_p3
 	add	rbx,d2
 	mov	rbp,rbx 
 
@@ -852,7 +852,7 @@ rmarkp_strict_record_selector_node_9:
 	mov	rax,qword ptr (-8)[rbx]
 	mov	qword ptr [rcx],rax
  else
- 	mov	ebx,4[rbx]
+	mov	ebx,4[rbx]
 	call	near ptr rbx
  endif
 	jmp	rmarkp_next_node
