@@ -437,6 +437,8 @@ pmark_strict_record_selector_node_1:
 	jbe	pmark_select_from_small_record
 
 	mov	rbp,qword ptr 16[rdx]
+	mov	r9,rbp
+
 	add	rbp,r10
 	mov	rbx,rbp 
 	and	rbp,31*8
