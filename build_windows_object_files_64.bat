@@ -1,5 +1,6 @@
 call "c:\Program Files\Microsoft SDK\SetEnv.bat" /AMD64 /RETAIL
-ml64 /nologo /c /Fo _startup1.o /c astartup.asm
+ml64 /nologo /c /Fo _startup0.o _startup0.asm
+ml64 /nologo /c /Fo _startup1.o astartup.asm
 ml64 /nologo /c /DPROFILE /Fo _startup1Profile.o astartup.asm
 ml64 /nologo /c /DPROFILE /DTRACE /Fo _startup1Trace.o astartup.asm
 cl /nologo /c /O /DWINDOWS /DTIME_PROFILE /DWRITE_HEAP /Fo_startup2.o wcon.c
