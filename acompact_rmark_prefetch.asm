@@ -82,6 +82,9 @@ rmarkp_hnf_2:
 	mov	qword ptr 8[rsp],rbx 
 	mov	qword ptr [rsp],rax 
 
+	cmp	rsp,qword ptr end_stack
+	jb	rmark_using_reversal
+
 rmarkp_node:
 	mov	rax,qword ptr neg_heap_p3
 	add	rax,rcx 
@@ -324,6 +327,9 @@ rmarkp_no_reverse:
 rmarkp_hnf_3:
 	mov	rdx,qword ptr 8[rcx]
 rmarkp_hnf_3_:
+	cmp	rsp,qword ptr end_stack
+	jb	rmark_using_reversal_
+
 	mov	rax,qword ptr neg_heap_p3
 	add	rax,rdx 
 
@@ -501,6 +507,9 @@ rmarkp_not_yet_linked_ab:
 	jmp	rmarkp_hnf_1
 
 rmarkp_record_3_aab:
+	cmp	rsp,qword ptr end_stack
+	jb	rmark_using_reversal_
+
 	mov	rax,qword ptr neg_heap_p3
 	add	rax,rdx 
 
@@ -923,7 +932,11 @@ rmarkp_push_lazy_args:
 
 	mov	rsi,rcx 
 	mov	rcx,qword ptr [rcx]
-	jmp	rmarkp_node
+
+	cmp	rsp,qword ptr end_stack
+	jae	rmarkp_node
+
+	jmp	rmark_using_reversal
 
 rmarkp_closure_with_unboxed_arguments:
 ; (a_size+b_size)+(b_size<<8)
@@ -1025,6 +1038,9 @@ rmarkp_no_normal_hnf_0:
 	test	rax,rax 
 	je	rmarkp_b_array
 
+	cmp	rsp,qword ptr end_stack
+	jb	rmark_array_using_reversal
+
 	sub	rax,256
 	cmp	rdx,rax 
 	mov	rbx,rdx
@@ -1070,6 +1086,9 @@ rmarkp_a_record_array:
 	jmp	rmarkp_lr_array
 
 rmarkp_lazy_array:
+	cmp	rsp,qword ptr end_stack
+	jb	rmark_array_using_reversal
+
 	mov	rax,qword ptr 8[rcx]
 	add	rcx,16
 

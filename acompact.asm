@@ -5,6 +5,9 @@
 	shl	rax,6
 	mov	qword ptr heap_size_64_65,rax 
 
+	lea	rax,(-16000)[rsp]
+	mov	qword ptr end_stack,rax
+
 	mov	rax,qword ptr caf_list
 
 	test	qword ptr flags,4096
@@ -74,6 +77,8 @@ end_rmarkp_cafs:
 	include	acompact_rmark.asm
 
 	include	acompact_rmark_prefetch.asm
+
+	include acompact_rmarkr.asm
 
 ; compact the heap
 
