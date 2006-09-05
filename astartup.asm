@@ -25,7 +25,7 @@ _DATA	ends
  ifndef LINUX
 	extrn	convert_real_to_string:near
  endif
-;	extrn	write_heap:near
+	extrn	write_heap:near
 	extrn	return_code:near
 	extrn	execution_aborted:near
 	extrn	e____system__kFinalizerGCTemp:near
@@ -2446,7 +2446,7 @@ end_garbage_collect_:
  ifdef LINUX
 	mov	r13,rsi
 	mov	r14,rdi	
-		
+
 	mov	rdi,rcx
  else
 	sub	rsp,32
@@ -2491,13 +2491,13 @@ no_heap_use_message:
 	push	rbp 
 	push	rsi 
 	push	rdi 
-	
+
 	sub	rsp,128
 
 	mov	rax,qword ptr d3_flag_write_heap
 	test	rax,rax 
-	jne	copy_to_compact_with_alloc_in_extra_heap	
-	
+	jne	copy_to_compact_with_alloc_in_extra_heap
+
 	movsx	rax,byte ptr garbage_collect_flag
 	
 	mov	rcx,qword ptr heap2_begin_and_end
@@ -2544,10 +2544,18 @@ gc1:
 	mov	qword ptr 112[rax],offset __STRING__+2
 	mov	qword ptr 120[rax],offset __ARRAY__+2
 
-	push	rax 
-;	call	write_heap
-	
-	add	rsp,136
+	mov	rbp,rsp
+	and	rsp,-16
+ ifdef LINUX
+	mov	rdi,rax
+ else
+	mov	rcx,rax
+	sub	rsp,32
+ endif
+	call	write_heap
+	mov	rsp,rbp
+
+	add	rsp,128
 	
 	pop	rdi 
 	pop	rsi 
