@@ -8,7 +8,7 @@
 	a1 equ rdx
 	a2 equ r8
 	a3 equ r9
-	a4 equ rsi
+	a5 equ rsi
 	a6 equ rdi
 
 	d0l equ eax
@@ -129,11 +129,11 @@ ap_32:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap32
 
 ap_31:
@@ -142,11 +142,11 @@ ap_31:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap31
 
 ap_30:
@@ -155,11 +155,11 @@ ap_30:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap30
 
 ap_29:
@@ -168,11 +168,11 @@ ap_29:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap29
 
 ap_28:
@@ -181,11 +181,11 @@ ap_28:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap28
 
 ap_27:
@@ -194,11 +194,11 @@ ap_27:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap27
 
 ap_26:
@@ -207,11 +207,11 @@ ap_26:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap26
 
 ap_25:
@@ -220,11 +220,11 @@ ap_25:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap25
 
 ap_24:
@@ -233,11 +233,11 @@ ap_24:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap24
 
 ap_23:
@@ -246,11 +246,11 @@ ap_23:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap23
 
 ap_22:
@@ -259,11 +259,11 @@ ap_22:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap22
 
 ap_21:
@@ -272,11 +272,11 @@ ap_21:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap21
 
 ap_20:
@@ -285,11 +285,11 @@ ap_20:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap20
 
 ap_19:
@@ -298,11 +298,11 @@ ap_19:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap19
 
 ap_18:
@@ -311,11 +311,11 @@ ap_18:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap18
 
 ap_17:
@@ -324,11 +324,11 @@ ap_17:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap17
 
 ap_16:
@@ -337,11 +337,11 @@ ap_16:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap16
 
 ap_15:
@@ -350,11 +350,11 @@ ap_15:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap15
 
 ap_14:
@@ -363,11 +363,11 @@ ap_14:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap14
 
 ap_13:
@@ -376,11 +376,11 @@ ap_13:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap13
 
 ap_12:
@@ -389,11 +389,11 @@ ap_12:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap12
 
 ap_11:
@@ -402,11 +402,11 @@ ap_11:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap11
 
 ap_10:
@@ -415,11 +415,11 @@ ap_10:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap10
 
 ap_9:
@@ -428,11 +428,11 @@ ap_9:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap9
 
 ap_8:
@@ -441,11 +441,11 @@ ap_8:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap8
 
 ap_7:
@@ -454,11 +454,11 @@ ap_7:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap7
 
 ap_6:
@@ -467,11 +467,11 @@ ap_6:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap6
 
 ap_5:
@@ -480,11 +480,11 @@ ap_5:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap5
 
 ap_4:
@@ -493,11 +493,11 @@ ap_4:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap4
 
 ap_3:
@@ -506,11 +506,11 @@ ap_3:
 	cmp	word ptr [a3],bx
 	je	fast_ap
 
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap3
 
 ap_2:
@@ -535,33 +535,33 @@ fast_ap_2_2_:
 	cmp	d0,3
 	jb	repl_args_2
 
-	mov	qw [a4],a0
-	mov	qw 8[a4],a1
-	lea	a4,16[a4]
+	mov	qw [a5],a0
+	mov	qw 8[a5],a1
+	lea	a5,16[a5]
 	mov	a1,qw 16[a2]
 
 	jmp	fast_ap_
 
 no_fast_ap2_:
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
 	mov	a1,a2
 	mov	a2l,dword ptr 2[a3]
-	add	a4,8
+	add	a5,8
 	jmp	no_fast_ap2
 
 fast_ap_2_2:
 	mov	a2,a1
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 	jmp	fast_ap_2_2_
 
 fast_ap_2:
 	mov	a2,a1
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 fast_ap:
 	movzx	d0,word ptr -2[a3]
@@ -579,9 +579,9 @@ fast_ap:
 	cmp	d0,3
 	jb	repl_args_2
 
-	mov	qw [a4],a0
-	mov	qw 8[a4],a1
-	lea	a4,16[a4]
+	mov	qw [a5],a0
+	mov	qw 8[a5],a1
+	lea	a5,16[a5]
 	mov	a1,qw 16[a2]
 
 fast_ap_:
@@ -597,29 +597,29 @@ fast_ap_:
 
 repl_args_7_:
 	mov	rbp,qw -16[a1+d0*8]
-	mov	qw [a4],rbp
+	mov	qw [a5],rbp
 	sub	d0,1
-	add	a4,8
+	add	a5,8
 	cmp	d0,6
 	jne	repl_args_7_
 
 repl_args_6:
 	mov	d0,qw 32[a1]
-	mov	qw [a4],d0
+	mov	qw [a5],d0
 	mov	d0,qw 24[a1]
-	mov	qw 8[a4],d0
+	mov	qw 8[a5],d0
 	mov	d0,qw 16[a1]
-	mov	qw 16[a4],d0
+	mov	qw 16[a5],d0
 	mov	a0,qw 8[a1]
 	mov	a1,qw [a1]
-	add	a4,24
+	add	a5,24
 	jmp	a3
 
 repl_args_0:
 	mov	a2,a1
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 repl_args_0_2:
 	jmp	a3
 
@@ -628,9 +628,9 @@ repl_args_1:
 	jmp	a3
 
 repl_args_2:
-	mov	qw [a4],a0
+	mov	qw [a5],a0
 	mov	a0,a1
-	add	a4,8
+	add	a5,8
 	mov	a1,qw 16[a2]
 	mov	a2,qw 8[a2]
 	jmp	a3
@@ -642,20 +642,20 @@ repl_args_3:
 
 repl_args_4:
 	mov	d0,qw 16[a1]
-	mov	qw [a4],d0
+	mov	qw [a5],d0
 	mov	a0,qw 8[a1]
 	mov	a1,qw [a1]
-	add	a4,8
+	add	a5,8
 	jmp	a3
 
 repl_args_5:
 	mov	d0,qw 24[a1]
-	mov	qw [a4],d0
+	mov	qw [a5],d0
 	mov	d0,qw 16[a1]
-	mov	qw 8[a4],d0
+	mov	qw 8[a5],d0
 	mov	a0,qw 8[a1]
 	mov	a1,qw [a1]
-	add	a4,16
+	add	a5,16
 	jmp	a3
 
 
@@ -663,8 +663,8 @@ no_fast_ap32:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,31*8
  	cmp	word ptr [a3],d1w
@@ -675,8 +675,8 @@ no_fast_ap31:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,30*8
  	cmp	word ptr [a3],d1w
@@ -687,8 +687,8 @@ no_fast_ap30:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,29*8
  	cmp	word ptr [a3],d1w
@@ -699,8 +699,8 @@ no_fast_ap29:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,28*8
  	cmp	word ptr [a3],d1w
@@ -711,8 +711,8 @@ no_fast_ap28:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,27*8
  	cmp	word ptr [a3],d1w
@@ -723,8 +723,8 @@ no_fast_ap27:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,26*8
  	cmp	word ptr [a3],d1w
@@ -735,8 +735,8 @@ no_fast_ap26:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,25*8
  	cmp	word ptr [a3],d1w
@@ -747,8 +747,8 @@ no_fast_ap25:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,24*8
  	cmp	word ptr [a3],d1w
@@ -759,8 +759,8 @@ no_fast_ap24:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,23*8
  	cmp	word ptr [a3],d1w
@@ -771,8 +771,8 @@ no_fast_ap23:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,22*8
  	cmp	word ptr [a3],d1w
@@ -783,8 +783,8 @@ no_fast_ap22:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,21*8
  	cmp	word ptr [a3],d1w
@@ -795,8 +795,8 @@ no_fast_ap21:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,20*8
  	cmp	word ptr [a3],d1w
@@ -807,8 +807,8 @@ no_fast_ap20:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,19*8
  	cmp	word ptr [a3],d1w
@@ -819,8 +819,8 @@ no_fast_ap19:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,18*8
  	cmp	word ptr [a3],d1w
@@ -831,8 +831,8 @@ no_fast_ap18:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,17*8
  	cmp	word ptr [a3],d1w
@@ -843,8 +843,8 @@ no_fast_ap17:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,16*8
  	cmp	word ptr [a3],d1w
@@ -855,8 +855,8 @@ no_fast_ap16:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,15*8
  	cmp	word ptr [a3],d1w
@@ -867,8 +867,8 @@ no_fast_ap15:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,14*8
  	cmp	word ptr [a3],d1w
@@ -879,8 +879,8 @@ no_fast_ap14:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,13*8
  	cmp	word ptr [a3],d1w
@@ -891,8 +891,8 @@ no_fast_ap13:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,12*8
  	cmp	word ptr [a3],d1w
@@ -903,8 +903,8 @@ no_fast_ap12:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,11*8
  	cmp	word ptr [a3],d1w
@@ -915,8 +915,8 @@ no_fast_ap11:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,10*8
  	cmp	word ptr [a3],d1w
@@ -927,8 +927,8 @@ no_fast_ap10:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,9*8
  	cmp	word ptr [a3],d1w
@@ -939,8 +939,8 @@ no_fast_ap9:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,8*8
  	cmp	word ptr [a3],d1w
@@ -951,8 +951,8 @@ no_fast_ap8:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,7*8
  	cmp	word ptr [a3],d1w
@@ -963,8 +963,8 @@ no_fast_ap7:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,6*8
  	cmp	word ptr [a3],d1w
@@ -975,8 +975,8 @@ no_fast_ap6:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,5*8
  	cmp	word ptr [a3],d1w
@@ -987,8 +987,8 @@ no_fast_ap5:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,4*8
  	cmp	word ptr [a3],d1w
@@ -999,8 +999,8 @@ no_fast_ap4:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,3*8
  	cmp	word ptr [a3],d1w
@@ -1011,8 +1011,8 @@ no_fast_ap3:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 
 	mov	d1,2*8
  	cmp	word ptr [a3],d1w
@@ -1023,8 +1023,8 @@ no_fast_ap2:
 	call	a2
 	mov	a3,qw [a0]
 	mov	a1,a0
-	mov	a0,qw -8[a4]
-	sub	a4,8
+	mov	a0,qw -8[a5]
+	sub	a5,8
 	mov	a2l,dword ptr 2[a3]
 	jmp	a2
 
@@ -1047,9 +1047,9 @@ add_empty_node_3:
 	sub	d7,3
 	jb	add_empty_node_3_gc
 add_empty_node_3_gc_:
-	mov	qw [a4],a6
+	mov	qw [a5],a6
 	mov	qw [a6],offset __cycle__in__spine
-	add	a4,8
+	add	a5,8
 	add	a6,24
 	ret
 add_empty_node_3_gc:
@@ -1060,11 +1060,11 @@ add_empty_node_4:
 	sub	d7,3
 	jb	add_empty_node_4_gc
 add_empty_node_4_gc_:
-	mov	a3,qw -8[a4]
-	mov	qw [a4],a3
-	mov	qw -8[a4],a6
+	mov	a3,qw -8[a5]
+	mov	qw [a5],a3
+	mov	qw -8[a5],a6
 	mov	qw [a6],offset __cycle__in__spine
-	add	a4,8
+	add	a5,8
 	add	a6,24
 	ret
 add_empty_node_4_gc:
@@ -1075,13 +1075,13 @@ add_empty_node_5:
 	sub	d7,3
 	jb	add_empty_node_5_gc
 add_empty_node_5_gc_:
-	mov	a3,qw -8[a4]
-	mov	qw [a4],a3
-	mov	a3,qw -16[a4]
-	mov	qw -8[a4],a3
-	mov	qw -16[a4],a6
+	mov	a3,qw -8[a5]
+	mov	qw [a5],a3
+	mov	a3,qw -16[a5]
+	mov	qw -8[a5],a3
+	mov	qw -16[a5],a6
 	mov	qw [a6],offset __cycle__in__spine
-	add	a4,8
+	add	a5,8
 	add	a6,24
 	ret
 add_empty_node_5_gc:
@@ -1092,15 +1092,15 @@ add_empty_node_6:
 	sub	d7,3
 	jb	add_empty_node_6_gc
 add_empty_node_6_gc_:
-	mov	a3,qw -8[a4]
-	mov	qw [a4],a3
-	mov	a3,qw -16[a4]
-	mov	qw -8[a4],a3
-	mov	a3,qw -24[a4]
-	mov	qw -16[a4],a3
-	mov	qw -24[a4],a6
+	mov	a3,qw -8[a5]
+	mov	qw [a5],a3
+	mov	a3,qw -16[a5]
+	mov	qw -8[a5],a3
+	mov	a3,qw -24[a5]
+	mov	qw -16[a5],a3
+	mov	qw -24[a5],a6
 	mov	qw [a6],offset __cycle__in__spine
-	add	a4,8
+	add	a5,8
 	add	a6,24
 	ret
 add_empty_node_6_gc:
@@ -1111,17 +1111,17 @@ add_empty_node_7:
 	sub	d7,3
 	jb	add_empty_node_7_gc
 add_empty_node_7_gc_:
-	mov	a3,qw -8[a4]
-	mov	qw [a4],a3
-	mov	a3,qw -16[a4]
-	mov	qw -8[a4],a3
-	mov	a3,qw -24[a4]
-	mov	qw -16[a4],a3
-	mov	a3,qw -32[a4]
-	mov	qw -24[a4],a3
-	mov	qw -32[a4],a6
+	mov	a3,qw -8[a5]
+	mov	qw [a5],a3
+	mov	a3,qw -16[a5]
+	mov	qw -8[a5],a3
+	mov	a3,qw -24[a5]
+	mov	qw -16[a5],a3
+	mov	a3,qw -32[a5]
+	mov	qw -24[a5],a3
+	mov	qw -32[a5],a6
 	mov	qw [a6],offset __cycle__in__spine
-	add	a4,8
+	add	a5,8
 	add	a6,24
 	ret
 add_empty_node_7_gc:
@@ -1132,19 +1132,19 @@ add_empty_node_8:
 	sub	d7,3
 	jb	add_empty_node_8_gc
 add_empty_node_8_gc_:
-	mov	a3,qw -8[a4]
-	mov	qw [a4],a3
-	mov	a3,qw -16[a4]
-	mov	qw -8[a4],a3
-	mov	a3,qw -24[a4]
-	mov	qw -16[a4],a3
-	mov	a3,qw -32[a4]
-	mov	qw -24[a4],a3
-	mov	a3,qw -40[a4]
-	mov	qw -32[a4],a3
-	mov	qw -40[a4],a6
+	mov	a3,qw -8[a5]
+	mov	qw [a5],a3
+	mov	a3,qw -16[a5]
+	mov	qw -8[a5],a3
+	mov	a3,qw -24[a5]
+	mov	qw -16[a5],a3
+	mov	a3,qw -32[a5]
+	mov	qw -24[a5],a3
+	mov	a3,qw -40[a5]
+	mov	qw -32[a5],a3
+	mov	qw -40[a5],a6
 	mov	qw [a6],offset __cycle__in__spine
-	add	a4,8
+	add	a5,8
 	add	a6,24
 	ret
 add_empty_node_8_gc:
@@ -1155,21 +1155,21 @@ add_empty_node_9:
 	sub	d7,3
 	jb	add_empty_node_9_gc
 add_empty_node_9_gc_:
-	mov	a3,qw -8[a4]
-	mov	qw [a4],a3
-	mov	a3,qw -16[a4]
-	mov	qw -8[a4],a3
-	mov	a3,qw -24[a4]
-	mov	qw -16[a4],a3
-	mov	a3,qw -32[a4]
-	mov	qw -24[a4],a3
-	mov	a3,qw -40[a4]
-	mov	qw -32[a4],a3
-	mov	a3,qw -48[a4]
-	mov	qw -40[a4],a3
-	mov	qw -48[a4],a6
+	mov	a3,qw -8[a5]
+	mov	qw [a5],a3
+	mov	a3,qw -16[a5]
+	mov	qw -8[a5],a3
+	mov	a3,qw -24[a5]
+	mov	qw -16[a5],a3
+	mov	a3,qw -32[a5]
+	mov	qw -24[a5],a3
+	mov	a3,qw -40[a5]
+	mov	qw -32[a5],a3
+	mov	a3,qw -48[a5]
+	mov	qw -40[a5],a3
+	mov	qw -48[a5],a6
 	mov	qw [a6],offset __cycle__in__spine
-	add	a4,8
+	add	a5,8
 	add	a6,24
 	ret
 add_empty_node_9_gc:
@@ -1180,23 +1180,23 @@ add_empty_node_10:
 	sub	d7,3
 	jb	add_empty_node_10_gc
 add_empty_node_10_gc_:
-	mov	a3,qw -8[a4]
-	mov	qw [a4],a3
-	mov	a3,qw -16[a4]
-	mov	qw -8[a4],a3
-	mov	a3,qw -24[a4]
-	mov	qw -16[a4],a3
-	mov	a3,qw -32[a4]
-	mov	qw -24[a4],a3
-	mov	a3,qw -40[a4]
-	mov	qw -32[a4],a3
-	mov	a3,qw -48[a4]
-	mov	qw -40[a4],a3
-	mov	a3,qw -56[a4]
-	mov	qw -48[a4],a3
-	mov	qw -56[a4],a6
+	mov	a3,qw -8[a5]
+	mov	qw [a5],a3
+	mov	a3,qw -16[a5]
+	mov	qw -8[a5],a3
+	mov	a3,qw -24[a5]
+	mov	qw -16[a5],a3
+	mov	a3,qw -32[a5]
+	mov	qw -24[a5],a3
+	mov	a3,qw -40[a5]
+	mov	qw -32[a5],a3
+	mov	a3,qw -48[a5]
+	mov	qw -40[a5],a3
+	mov	a3,qw -56[a5]
+	mov	qw -48[a5],a3
+	mov	qw -56[a5],a6
 	mov	qw [a6],offset __cycle__in__spine
-	add	a4,8
+	add	a5,8
 	add	a6,24
 	ret
 add_empty_node_10_gc:
@@ -1207,25 +1207,25 @@ add_empty_node_11:
 	sub	d7,3
 	jb	add_empty_node_11_gc
 add_empty_node_11_gc_:
-	mov	a3,qw -8[a4]
-	mov	qw [a4],a3
-	mov	a3,qw -16[a4]
-	mov	qw -8[a4],a3
-	mov	a3,qw -24[a4]
-	mov	qw -16[a4],a3
-	mov	a3,qw -32[a4]
-	mov	qw -24[a4],a3
-	mov	a3,qw -40[a4]
-	mov	qw -32[a4],a3
-	mov	a3,qw -48[a4]
-	mov	qw -40[a4],a3
-	mov	a3,qw -56[a4]
-	mov	qw -48[a4],a3
-	mov	a3,qw -64[a4]
-	mov	qw -56[a4],a3
-	mov	qw -64[a4],a6
+	mov	a3,qw -8[a5]
+	mov	qw [a5],a3
+	mov	a3,qw -16[a5]
+	mov	qw -8[a5],a3
+	mov	a3,qw -24[a5]
+	mov	qw -16[a5],a3
+	mov	a3,qw -32[a5]
+	mov	qw -24[a5],a3
+	mov	a3,qw -40[a5]
+	mov	qw -32[a5],a3
+	mov	a3,qw -48[a5]
+	mov	qw -40[a5],a3
+	mov	a3,qw -56[a5]
+	mov	qw -48[a5],a3
+	mov	a3,qw -64[a5]
+	mov	qw -56[a5],a3
+	mov	qw -64[a5],a6
 	mov	qw [a6],offset __cycle__in__spine
-	add	a4,8
+	add	a5,8
 	add	a6,24
 	ret
 add_empty_node_11_gc:
@@ -1253,7 +1253,7 @@ add_empty_node_12_:
 	sub	d7,3
 	jb	add_empty_node_12_gc
 add_empty_node_12_gc_:
-	mov	d0,a4
+	mov	d0,a5
 add_empty_node_12_lp:
 	mov	a3,qw -8[d0]
 	mov	qw [d0],a3
@@ -1268,7 +1268,7 @@ add_empty_node_12_lp:
 	jne	add_empty_node_12_lp
 	mov	qw [d0],a6
 	mov	qw [a6],offset __cycle__in__spine
-	add	a4,8
+	add	a5,8
 	add	a6,24
 	ret
 add_empty_node_12_gc:
@@ -1293,9 +1293,9 @@ add_empty_node_13_:
 	sub	d7,3
 	jb	add_empty_node_13_gc
 add_empty_node_13_gc_:
-	mov	d0,a4
-	mov	a3,qw -8[a4]
-	mov	qw [a4],a3
+	mov	d0,a5
+	mov	a3,qw -8[a5]
+	mov	qw [a5],a3
 add_empty_node_13_lp:
 	mov	a3,qw -16[d0]
 	mov	qw -8[d0],a3
@@ -1310,7 +1310,7 @@ add_empty_node_13_lp:
 	jne	add_empty_node_13_lp
 	mov	qw -8[d0],a6
 	mov	qw [a6],offset __cycle__in__spine
-	add	a4,8
+	add	a5,8
 	add	a6,24
 	ret
 add_empty_node_13_gc:
@@ -1335,11 +1335,11 @@ add_empty_node_14_:
 	sub	d7,3
 	jb	add_empty_node_14_gc
 add_empty_node_14_gc_:
-	mov	d0,a4
-	mov	a3,qw -8[a4]
-	mov	qw [a4],a3
-	mov	a4,qw -16[a4]
-	mov	qw -8[a4],a3
+	mov	d0,a5
+	mov	a3,qw -8[a5]
+	mov	qw [a5],a3
+	mov	a5,qw -16[a5]
+	mov	qw -8[a5],a3
 add_empty_node_14_lp:
 	mov	a3,qw -24[d0]
 	mov	qw -16[d0],a3
@@ -1354,7 +1354,7 @@ add_empty_node_14_lp:
 	jne	add_empty_node_14_lp
 	mov	qw -16[d0],a6
 	mov	qw [a6],offset __cycle__in__spine
-	add	a4,8
+	add	a5,8
 	add	a6,24
 	ret
 add_empty_node_14_gc:
@@ -1380,12 +1380,12 @@ add_empty_node_15_:
 	jb	add_empty_node_15_gc
 add_empty_node_15_gc_:
 	mov	d0,a3
-	mov	a3,qw -8[a4]
-	mov	qw [a4],a3
-	mov	a3,qw -16[a4]
-	mov	qw -8[a4],a3
-	mov	a3,qw -24[a4]
-	mov	qw -16[a4],a3
+	mov	a3,qw -8[a5]
+	mov	qw [a5],a3
+	mov	a3,qw -16[a5]
+	mov	qw -8[a5],a3
+	mov	a3,qw -24[a5]
+	mov	qw -16[a5],a3
 add_empty_node_15_lp:
 	mov	a3,qw -32[d0]
 	mov	qw -24[d0],a3
@@ -1400,7 +1400,7 @@ add_empty_node_15_lp:
 	jne	add_empty_node_15_lp
 	mov	qw -24[d0],a6
 	mov	qw [a6],offset __cycle__in__spine
-	add	a4,8
+	add	a5,8
 	add	a6,24
 	ret
 add_empty_node_15_gc:
@@ -1583,9 +1583,9 @@ build_node_4_gc_r:
 	mov	qw 24[a6],a1
 	mov	qw 32[a6],a0
 	mov	a0,a6
-	mov	rbp,qw -8[a4]
+	mov	rbp,qw -8[a5]
 	mov	qw 40[a6],rbp
-	sub	a4,8
+	sub	a5,8
 	add	a6,48
 	ret
 
@@ -1647,11 +1647,11 @@ build_node_5_gc_r:
 	mov	qw 24[a6],a1
 	mov	qw 32[a6],a0
 	mov	a0,a6
-	mov	rbp,qw -8[a4]
+	mov	rbp,qw -8[a5]
 	mov	qw 40[a6],rbp
-	mov	rbp,qw -16[a4]
+	mov	rbp,qw -16[a5]
 	mov	qw 48[a6],rbp
-	sub	a4,16
+	sub	a5,16
 	add	a6,56
 	ret
 
@@ -2389,17 +2389,17 @@ build_node_gc_r:
 	mov	qw 24[a6],a1
 	mov	qw 32[a6],a0
 	mov	a0,a6
-	mov	a2,qw -8[a4]
+	mov	a2,qw -8[a5]
 	mov	qw 40[a6],a2
-	mov	a2,qw -16[a4]
-	sub	a4,16
+	mov	a2,qw -16[a5]
+	sub	a5,16
 	mov	qw 48[a6],a2
 	add	a6,56
 
 	sub	d0,5+2
 build_node_cp_a:
-	mov	a2,qw -8[a4]
-	sub	a4,8
+	mov	a2,qw -8[a5]
+	sub	a5,8
 	mov	qw [a6],a2
 	add	a6,8
 	sub	d0,1
