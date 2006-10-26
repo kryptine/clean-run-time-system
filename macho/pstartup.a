@@ -2947,7 +2947,10 @@ end_garbage_collect_:
  .endif
 no_heap_use_message:
  .if FINALIZERS
+ 	stwu	d0,-4(sp)
 	bl	call_finalizers
+	lwz	d0,0(sp)
+	addi	sp,sp,4
  .endif
 
  .if WRITE_HEAP
