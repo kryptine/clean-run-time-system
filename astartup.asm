@@ -25,7 +25,9 @@ _DATA	ends
  ifndef LINUX
 	extrn	convert_real_to_string:near
  endif
+ ifndef LINUX
 	extrn	write_heap:near
+ endif
 	extrn	return_code:near
 	extrn	execution_aborted:near
 	extrn	e____system__kFinalizerGCTemp:near
@@ -2552,7 +2554,9 @@ gc1:
 	mov	rcx,rax
 	sub	rsp,32
  endif
+ ifndef LINUX
 	call	write_heap
+ endif
 	mov	rsp,rbp
 
 	add	rsp,128
