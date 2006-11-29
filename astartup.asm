@@ -1235,7 +1235,7 @@ printD:	test	al,2
 
 DtoAC_record:
  ifdef NEW_DESCRIPTORS
-	movsxd	rbp,dword ptr (-6)[rbp]
+	movsxd	rbp,dword ptr (-6)[rax]
  else
 	movsx	rbp,dword ptr (-4)[rbp]
  endif
