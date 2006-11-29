@@ -1268,7 +1268,7 @@ DtoAC_:
  endif
 
 DtoAC_string_a2:
-	mov	rax,dword ptr [rbp]
+	mov	eax,dword ptr [rbp]
 	lea	rcx,4[rbp]
 	jmp	build_string
 
