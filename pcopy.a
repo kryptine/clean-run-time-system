@@ -1216,7 +1216,7 @@ copy_strict_record_selector_2_b:
 	lwz	g1,0(g1)
 	sub	g0,d1,a3
 
-	tstmbit	g1,g0,d1,o0,o1,o2,3
+	tstmbit_ g1,g0,o0,o1,o2,3
 	bne	copy_arity_1_node2_
 
 copy_strict_record_selector_2_:
