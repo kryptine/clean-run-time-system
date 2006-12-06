@@ -74,6 +74,21 @@ LINUX	=	0
 ;	rlwnm.	&bit,&byte,&bit_n_in_byte,24,24	
 ;	.endmacro
 
+	.macro	tstmbit_
+	rlwinm	$2,$1,32-$5-3,3+$5,31
+	lbzx	$4,$0,$2
+	rlwinm	$1,$1,32-$5,29,31
+	rlwnm.	$3,$4,$1,24,24	
+	.endmacro
+
+; same as tstmbit, but modifies bit_n register
+;	&vector 0,&bit_n 1,&byte_offset 2,&bit 3,&byte 4,&shift 5
+;	rlwinm	&byte_offset,&bit_n,32-&shift-3,3+&shift,31
+;	lbzx	&byte,&vector,&byte_offset
+;	rlwinm	&bit_n,&bit_n,32-&shift,29,31
+;	rlwnm.	&bit,&byte,&bit_n,24,24	
+;	endm
+
 	.macro	clrmbit
 	rlwinm	$2,$1,32-$6-3,3+$6,31
 	lbzx	$4,$0,$2

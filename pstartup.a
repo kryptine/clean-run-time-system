@@ -24,6 +24,15 @@
 	endm
 
 	macro
+; same as tstmbit, but modifies bit_n register
+	tstmbit_ &vector,&bit_n,&byte_offset,&bit,&byte,&shift
+	rlwinm	&byte_offset,&bit_n,32-&shift-3,3+&shift,31
+	lbzx	&byte,&vector,&byte_offset
+	rlwinm	&bit_n,&bit_n,32-&shift,29,31
+	rlwnm.	&bit,&byte,&bit_n,24,24	
+	endm
+
+	macro
 	clrmbit	&vector,&bit_n,&byte_offset,&bit,&byte,&scratch,&shift
 	rlwinm	&byte_offset,&bit_n,32-&shift-3,3+&shift,31
 	lbzx	&byte,&vector,&byte_offset
