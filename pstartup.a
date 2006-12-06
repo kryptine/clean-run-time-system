@@ -23,8 +23,8 @@
 	rlwnm.	&bit,&byte,&bit_n_in_byte,24,24	
 	endm
 
-	macro
 ; same as tstmbit, but modifies bit_n register
+	macro
 	tstmbit_ &vector,&bit_n,&byte_offset,&bit,&byte,&shift
 	rlwinm	&byte_offset,&bit_n,32-&shift-3,3+&shift,31
 	lbzx	&byte,&vector,&byte_offset
