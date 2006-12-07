@@ -850,6 +850,7 @@ record_arguments_already_copied_3_b:
 	movl	(a0),a1
 	popl	d0
 
+	subl	$1,a1
 	movl	a1,8(a3)
 
 	subl	$1,d1
