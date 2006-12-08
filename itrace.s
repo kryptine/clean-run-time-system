@@ -30,7 +30,11 @@
 	.global	write_profile_information
 	.global	write_profile_stack
 
+#ifdef LINUX
+	.global	@malloc
+#else
 	.global	@allocate_memory
+#endif
 	.global	__STRING__
 	.global	writeFC
 	.global	writeFI
@@ -216,7 +220,11 @@ allocate_function_profile_record:
 	push	a1
 
 	pushl	$512*FunctionProfile
+#ifdef LINUX
+	call	@malloc
+#else
 	call	@allocate_memory
+#endif
 	add	$4,sp
 
 	test	d0,d0
@@ -328,7 +336,11 @@ stack_not_initialised:
 
 init_profiler:
 	pushl	@ab_stack_size
+#ifdef LINUX
+	call	@malloc
+#else
 	call	@allocate_memory
+#endif
 	add	$4,sp
 	
 	test	d0,d0
