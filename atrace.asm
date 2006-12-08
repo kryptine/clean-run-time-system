@@ -282,6 +282,10 @@ no_memory:
 	jmp	print_error
 
 write_profile_stack:
+ ifdef LINUX
+	mov	r13,rsi
+	mov	r14,rdi
+ endif
 	mov	rax,qword ptr profile_stack_pointer
 
 	test	rax,rax
@@ -292,7 +296,11 @@ write_profile_stack:
 	mov	rbp,rsp
 	sub	rsp,40
 	and	rsp,-16
+ ifdef LINUX
+	lea	rdi,stack_trace_string
+ else
 	lea	rcx,stack_trace_string
+ endif
 	call	ew_print_string
 	mov	rsp,rbp
 
@@ -313,10 +321,15 @@ write_functions_on_stack:
 	push	rbp
 
 	mov	edx,dword ptr (-4)[rcx]
+ ifdef LINUX
+	lea	rdi,8[rcx]
+	mov	r12,rdx
+ else
 	add	rcx,8
 
 	mov	r12d,dword ptr [rdx]
 	lea	r13,4[rdx]
+ endif
 
 	mov	rbp,rsp
 	sub	rsp,40
@@ -324,17 +337,34 @@ write_functions_on_stack:
 
 	call	ew_print_string
 
+ ifdef LINUX
+	lea	rdi,module_string
+ else
 	lea	rcx,module_string
+ endif
 	call	ew_print_string
 
+ ifdef LINUX
+	mov	esi,dword ptr [r12]
+	lea	rdi,4[r12]
+ else
 	mov	rdx,r12
 	mov	rcx,r13
+ endif
 	call	ew_print_text
 
+ ifdef LINUX
+	mov	rdi,']'
+ else
 	mov	rcx,']'
+ endif
 	call	ew_print_char
 
+ ifdef LINUX
+	mov	rdi,10
+ else
 	mov	rcx,10
+ endif
 	call	ew_print_char
 
 	mov	rsp,rbp
@@ -344,9 +374,13 @@ write_functions_on_stack:
 
 	sub	rbp,1
 	jne	write_functions_on_stack
-	
+
 end_profile_stack:
 stack_not_initialised:
+ ifdef LINUX
+	mov	rsi,r13
+	mov	rdi,r14
+ endif
 	ret
 
 init_profiler:
