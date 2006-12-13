@@ -1690,6 +1690,7 @@ RtoAC:
 	mov	r14,rdi
 	lea	rsi,printf_real_string
 	lea	rdi,sprintf_buffer
+	mov	rax,1
 	call	sprintf
 	mov	rsi,r13
 	mov	rdi,r14
