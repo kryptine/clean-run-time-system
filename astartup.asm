@@ -25,7 +25,9 @@ _DATA	ends
  ifndef LINUX
 	extrn	convert_real_to_string:near
  endif
+ ifndef LINUX
 	extrn	write_heap:near
+ endif
 	extrn	return_code:near
 	extrn	execution_aborted:near
 	extrn	e____system__kFinalizerGCTemp:near
@@ -1233,7 +1235,7 @@ printD:	test	al,2
 
 DtoAC_record:
  ifdef NEW_DESCRIPTORS
-	movsxd	rbp,dword ptr (-6)[rbp]
+	movsxd	rbp,dword ptr (-6)[rax]
  else
 	movsx	rbp,dword ptr (-4)[rbp]
  endif
@@ -1266,7 +1268,7 @@ DtoAC_:
  endif
 
 DtoAC_string_a2:
-	mov	rax,qword ptr [rbp]
+	mov	eax,dword ptr [rbp]
 	lea	rcx,4[rbp]
 	jmp	build_string
 
@@ -2552,7 +2554,9 @@ gc1:
 	mov	rcx,rax
 	sub	rsp,32
  endif
+ ifndef LINUX
 	call	write_heap
+ endif
 	mov	rsp,rbp
 
 	add	rsp,128

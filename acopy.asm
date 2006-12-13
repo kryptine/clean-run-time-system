@@ -788,7 +788,8 @@ record_arguments_already_copied_3_b:
 	mov	rdx,qword ptr [rcx]
 	pop	rax
 	
-	mov	qword ptr 16 [rsi],rdx
+	sub	rdx,1
+	mov	qword ptr 16[rsi],rdx
 	
 	sub	rbx,1
 	jae	copy_lp2

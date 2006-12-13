@@ -31,12 +31,12 @@ struct heap_info {
 	int *data_begin;
 	int *small_integers;
 	int *characters;
-	int int_descriptor;
-	int char_descriptor;
-	int real_descriptor;
-	int bool_descriptor;
-	int string_descriptor;
-	int array_descriptor;
+	size_t int_descriptor;
+	size_t char_descriptor;
+	size_t real_descriptor;
+	size_t bool_descriptor;
+	size_t string_descriptor;
+	size_t array_descriptor;
 };
 
 static int heap_written_count=0;
@@ -166,15 +166,15 @@ void write_heap (struct heap_info *h)
 
 	/* write stack */
 	if (fileOk)
-		fileOk = WriteFile (heap_file_h, h->stack_begin, (int)(h->stack_end) - (int)(h->stack_begin), &NumberOfBytesWritten, NULL);
+		fileOk = WriteFile (heap_file_h, h->stack_begin, (size_t)(h->stack_end) - (size_t)(h->stack_begin), &NumberOfBytesWritten, NULL);
 
 	/* write heap1 */
 	if (fileOk)
-		fileOk = WriteFile (heap_file_h, h->heap1_begin, (int)(h->heap1_end) - (int)(h->heap1_begin), &NumberOfBytesWritten, NULL);
+		fileOk = WriteFile (heap_file_h, h->heap1_begin, (size_t)(h->heap1_end) - (size_t)(h->heap1_begin), &NumberOfBytesWritten, NULL);
 	
 	/* write heap2 */
 	if (fileOk)
-		fileOk = WriteFile (heap_file_h, h->heap2_begin, (int)(h->heap2_end) - (int)(h->heap2_begin), &NumberOfBytesWritten, NULL);
+		fileOk = WriteFile (heap_file_h, h->heap2_begin, (size_t)(h->heap2_end) - (size_t)(h->heap2_begin), &NumberOfBytesWritten, NULL);
 
 	if (!fileOk){
 		heap_written_count = MAX_N_HEAPS;
