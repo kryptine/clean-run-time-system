@@ -1148,13 +1148,12 @@ char *convert_real_to_string (double d,char *s_p)
 
 	d *= scale_factor;
 
-#ifdef AI64
 	if (d<(1e14-0.5)){
-#else
-	if (d<1e14){
-#endif
 		d *= 10.0;
 		--exponent;
+	} else if (d>=(1e15-0.5)){
+		d /= 10.0;
+		++exponent;
 	}
 
 #if 1
@@ -1216,19 +1215,20 @@ char *convert_real_to_string (double d,char *s_p)
 		*s_p++ = '0'+exponent_d10;
 		*s_p++ = '0'+exponent-10*exponent_d10;
 	} else {
-		if (exponent>=-1){
+		if (exponent>=0){
 			for (n=-1; n>=exponent-(N_DIGITS-1); --n)
 				s_p[n+1]=s_p[n];
 			s_p[exponent-(N_DIGITS-1)]='.';
 			++s_p;
 		} else {
 			for (n=-1; n>=-N_DIGITS; --n)
-				s_p[n-exponent]=s_p[n];		
-			s_p[-N_DIGITS] = '.';
-			
+				s_p[1+n-exponent]=s_p[n];		
+			s_p[1-N_DIGITS] = '.';
+			s_p[-N_DIGITS] = '0';
+
 			for (n=exponent; n<-1; ++n)
-				s_p[-(N_DIGITS-1)+(n-exponent)] = '0';
-			s_p+= -exponent;			
+				s_p[1-(N_DIGITS-1)+(n-exponent)] = '0';
+			s_p+= 1-exponent;			
 		}
 
 		while (s_p[-1]=='0')
@@ -1296,7 +1296,7 @@ void wait_for_key_press (VOID)
 int free_memory (void *p)
 {
 #ifdef WINDOWS
-	if (GlobalFree (p)==NULL)
+	if (LocalFree (p)==NULL)
 		return 0;
 	else
 		return GetLastError();
