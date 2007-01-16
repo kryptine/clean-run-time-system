@@ -322,6 +322,11 @@ static double power10_table [16] =
 	1.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0, 1000000.0, 10000000.0,
 	1.0e8, 1.0e9, 1.0e10, 1.0e11, 1.0e12, 1.0e13, 1.0e14, 1.0e15 
 };
+
+static double power10_table2 [5] =
+{
+	1.0e16,1.0e32,1.0e64,1.0e128,1.0e256
+};
 #endif
 
 char *convert_string_to_real (char *string,double *r_p)
@@ -960,16 +965,16 @@ char *convert_real_to_string (double d,char *s_p)
 					p10=power10_table[n & 15];
 					n>>=4;
 					if (n!=0){
-						double s10;
-						
-						s10=1.0E16;
+						double *table_p;
+
+						table_p=power10_table2;
 						if (n & 1)
-							p10*=s10;
+							p10 *= *table_p;
 						n>>=1;
 						while (n!=0){
-							s10*=s10;
+							++table_p;
 							if (n & 1)
-								p10*=s10;
+								p10 *= *table_p;
 							n>>=1;
 						};
 					}
@@ -1100,16 +1105,16 @@ char *convert_real_to_string (double d,char *s_p)
 				p10=power10_table[n & 15];
 				n>>=4;
 				if (n!=0){
-					double s10;
-					
-					s10=1.0E16;
+					double *table_p;
+
+					table_p=power10_table2;
 					if (n & 1)
-						p10*=s10;
+						p10 *= *table_p;
 					n>>=1;
 					while (n!=0){
-						s10*=s10;
+						++table_p;
 						if (n & 1)
-							p10*=s10;
+							p10 *= *table_p;
 						n>>=1;
 					};
 				}
