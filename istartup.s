@@ -410,6 +410,8 @@ start_address:
 	.globl	cmpAC
 
 	.globl	string_to_string_node
+	.globl	int_array_to_node
+	.globl	real_array_to_node
 
 	.globl	_create_arrayB
 	.globl	_create_arrayC
@@ -3691,6 +3693,77 @@ string_to_string_node_gc:
 	call	collect_0l
 	pop	a0
 	jmp	string_to_string_node_r
+
+	section	(int_array_to_node)
+int_array_to_node:
+	movl	-8(a0),d0
+
+	lea	-32+12(a4,d0,4),a2
+	cmpl	end_heap,a2
+	jae	int_array_to_node_gc
+
+int_array_to_node_r:
+	movl	$__ARRAY__+2,(a4)
+	movl	a0,a1
+	movl	d0,4(a4)
+	movl	a4,a0
+	movl	$INT+2,8(a4)
+	addl	$12,a4
+	jmp	int_array_to_node_4
+	
+int_array_to_node_2:
+	movl	(a1),d1
+	addl	$4,a1
+	movl	d1,(a4)
+	addl	$4,a4
+int_array_to_node_4:
+	subl	$1,d0
+	jge	int_array_to_node_2
+
+	ret
+
+int_array_to_node_gc:
+	push	a0
+	call	collect_0l
+	pop	a0
+	jmp	int_array_to_node_r
+
+	section	(real_array_to_node)
+real_array_to_node:
+	movl	-8(a0),d0
+
+	lea	-32+12+4(a4,d0,8),a2
+	cmpl	end_heap,a2
+	jae	real_array_to_node_gc
+
+real_array_to_node_r:
+	orl	$4,a4
+	movl	a0,a1
+	movl	$__ARRAY__+2,(a4)
+	movl	d0,4(a4)
+	movl	a4,a0
+	movl	$REAL+2,8(a4)
+	addl	$12,a4
+	jmp	real_array_to_node_4
+	
+real_array_to_node_2:
+	movl	(a1),d1
+	movl	d1,(a4)
+	movl	4(a1),a2
+	addl	$8,a1
+	movl	a2,4(a4)
+	addl	$8,a4
+real_array_to_node_4:
+	subl	$1,d0
+	jge	real_array_to_node_2
+
+	ret
+
+real_array_to_node_gc:
+	push	a0
+	call	collect_0l
+	pop	a0
+	jmp	real_array_to_node_r
 
 	align	(2)
 	.long	3
