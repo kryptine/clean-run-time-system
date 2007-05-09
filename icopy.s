@@ -1382,8 +1382,8 @@ copy_int_array_2:
 	jmp	cp_s_arg_lp2
 
 copy_bool_array_2:
-	lea	3(d1),d0
-	shr	$2,d0
+	add	$3,d1
+	shr	$2,d1
 	jmp	copy_int_array_2
 
 end_copy1:
