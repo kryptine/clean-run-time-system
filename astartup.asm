@@ -4215,11 +4215,12 @@ st_filli_array:
 	ret
 
 create_arrayR32:
-	cvtsd2ss qword ptr (-8)[rsp],xmm0
+	cvtsd2ss	xmm0,xmm0
+	movss	dword ptr (-8)[rsp],xmm0
 	mov	r10,rax
 	add	rax,6+1
 	shr	rax,1
-	mov	ebx,qword ptr (-8)[rsp]
+	mov	ebx,dword ptr (-8)[rsp]
 	sub	r15,rax
 	jge	no_collect_3579
 	call	collect_0
