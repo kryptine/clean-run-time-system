@@ -1061,10 +1061,15 @@ _mark_array_using_reversal:
 
 _mark_strict_basic_array:
 	mov	rax,qword ptr 8[rcx]
+	cmp	rbp,offset dINT+2
+	jle	_mark_strict_int_or_real_array
 	cmp	rbp,offset BOOL+2
 	je	_mark_strict_bool_array
-_mark_strict_real_array:
-_mark_strict_int_array:
+_mark_strict_int32_or_real32_array:
+	add	rax,6+1
+	shr	rax,1
+	jmp	_mark_basic_array_
+_mark_strict_int_or_real_array:
 	add	rax,3
 	jmp	_mark_basic_array_
 _mark_strict_bool_array:
@@ -1881,10 +1886,15 @@ __mark_b_record_array:
 
 __mark_strict_basic_array:
 	mov	rax,qword ptr 8[rcx]
+	cmp	rbp,offset dINT+2
+	jle	__mark__strict__int__or__real__array
 	cmp	rbp,offset BOOL+2
 	je	__mark__strict__bool__array
-__mark__strict__real__array:
-__mark__strict__int__array:
+__mark__strict__int32__or__real32__array:
+	add	rax,6+1
+	shr	rax,1
+	jmp	__mark_basic_array
+__mark__strict__int__or__real__array:
 	add	rax,3
 	jmp	__mark_basic_array
 __mark__strict__bool__array:

@@ -877,9 +877,16 @@ move_b_array:
 	jmp	cp_s_arg_lp3
 
 move_strict_basic_array:
-	mov	rax,rdx 
+	mov	rax,rdx
+	cmp	rbx,offset dINT+2
+	jle	cp_s_arg_lp3
 	cmp	rbx,offset BOOL+2
-	jne	cp_s_arg_lp3
+	je	move_bool_array
+
+move_int32_or_real32_array:
+	add	rax,1
+	shr	rax,1
+	jmp	cp_s_arg_lp3
 
 move_bool_array:
 	add	rax,7

@@ -880,10 +880,14 @@ pmark_array_using_reversal:
 
 pmark_strict_basic_array:
 	mov	rax,qword ptr 8[rcx]
+	cmp	rbp,offset dINT+2
+	jle	pmark_strict_int_or_real_array
 	cmp	rbp,offset BOOL+2
 	je	pmark_strict_bool_array
-pmark_strict_real_array:
-pmark_strict_int_array:
+	add	rax,6+1
+	shr	rax,1
+	jmp	pmark_basic_array_
+pmark_strict_int_or_real_array:
 	add	rax,3
 	jmp	pmark_basic_array_
 pmark_strict_bool_array:
@@ -999,8 +1003,8 @@ pmarkr_no_shared_argument_part:
 	shl	rbp,3
 	or	qword ptr [rdx],1
 
-	add	rax,rbp 
-	add	rdx,rbp 
+	add	rax,rbp
+	add	rdx,rbp
 
 	cmp	rax,32*8
 	jbe	pmarkr_fits_in_word_2
@@ -1704,10 +1708,14 @@ pmarkr_b_record_array:
 
 pmarkr_strict_basic_array:
 	mov	rax,qword ptr 8[rcx]
+	cmp	rbp,offset dINT+2
+	jle	pmarkr_strict_int_or_real_array
 	cmp	rbp,offset BOOL+2
 	je	pmarkr_strict_bool_array
-pmarkr_strict_real_array:
-pmarkr_strict_int_array:
+	add	rax,6+1
+	shr	rax,1
+	jmp	pmarkr_basic_array
+pmarkr_strict_int_or_real_array:
 	add	rax,3
 	jmp	pmarkr_basic_array
 pmarkr_strict_bool_array:

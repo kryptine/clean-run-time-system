@@ -388,13 +388,17 @@ _DATA	ends
 	public	_create_arrayB
 	public	_create_arrayC
 	public	_create_arrayI
+	public	_create_arrayI32
 	public	_create_arrayR
+	public	_create_arrayR32
 	public	_create_r_array
 	public	create_array
 	public	create_arrayB
 	public	create_arrayC
 	public	create_arrayI
+	public	create_arrayI32
 	public	create_arrayR
+	public	create_arrayR32
 	public	create_R_array
 
 	public	BtoAC
@@ -482,11 +486,13 @@ _DATA	ends
 
 	public	__driver
 
-; from system.abc:	
+; from system.abc:
 	extrn	dINT:near
+	extrn	INT32:near
 	extrn	CHAR:near
 	extrn	BOOL:near
 	extrn	REAL:near
+	extrn	REAL32:near
 	extrn	FILE:near
 	extrn	__STRING__:near
 	extrn	__ARRAY__:near
@@ -3944,12 +3950,26 @@ _create_arrayI:
 	call	collect_0
 no_collect_4572:
 	mov	rcx,rdi
-	lea	rbp,__ARRAY__+2
-	mov	qword ptr [rdi],rbp
+	mov	qword ptr [rdi],offset __ARRAY__+2
 	mov	qword ptr 8[rdi],rax
 	lea	rbp,dINT+2
 	mov	qword ptr 16[rdi],rbp
 	lea	rdi,24[rdi+rax*8]
+	ret
+
+_create_arrayI32:
+	mov	rbx,rax
+	add	rax,6+1
+	shr	rax,1
+	sub	r15,rax
+	jge	no_collect_3572
+	call	collect_0
+no_collect_3572:
+	mov	rcx,rdi
+	mov	qword ptr [rdi],offset __ARRAY__+2
+	mov	qword ptr 8[rdi],rbx
+	mov	qword ptr 16[rdi],offset INT32+2
+	lea	rdi,[rdi+rax*8]
 	ret
 
 _create_arrayR:
@@ -3960,9 +3980,24 @@ _create_arrayR:
 no_collect_4580:
 	mov	rcx,rdi
 	mov	qword ptr [rdi],offset __ARRAY__+2
-	mov	qword ptr 8[rdi],rax 
+	mov	qword ptr 8[rdi],rax
 	mov	qword ptr 16[rdi],offset REAL+2
 	lea	rdi,24[rdi+rax*8]
+	ret
+
+_create_arrayR32:
+	mov	rbx,rax
+	add	rax,6+1
+	shr	rax,1
+	sub	r15,rax
+	jge	no_collect_3580
+	call	collect_0
+no_collect_3580:
+	mov	rcx,rdi
+	mov	qword ptr [rdi],offset __ARRAY__+2
+	mov	qword ptr 8[rdi],rax
+	mov	qword ptr 16[rdi],offset REAL32+2
+	lea	rdi,[rdi+rax*8]
 	ret
 
 ; rax : number of elements, rbx: element descriptor
@@ -4125,6 +4160,27 @@ no_collect_4578:
 	add	rdi,16
 	jmp	create_arrayBCI
 
+create_arrayI32:
+	mov	r10,rbx
+	add	rbx,6+1
+	shr	rbx,1
+	sub	r15,rbx
+	jge	no_collect_3577
+	call	collect_0
+no_collect_3577:
+	mov	rcx,rdi 
+	mov	qword ptr [rdi],offset __ARRAY__+2
+	mov	qword ptr 8[rdi],r10
+	mov	qword ptr 16[rdi],offset INT32+2
+	add	rdi,24
+
+	sub	rbx,3
+
+	mov	ebp,eax
+	shl	rax,32
+	or	rax,rbp
+	jmp	create_arrayBCI
+
 create_arrayI:
 	lea	rbp,3[rbx]
 	sub	r15,rbp
@@ -4157,6 +4213,29 @@ st_filli_array:
 	jnc	filli_array
 
 	ret
+
+create_arrayR32:
+	cvtsd2ss qword ptr (-8)[rsp],xmm0
+	mov	r10,rax
+	add	rax,6+1
+	shr	rax,1
+	mov	ebx,qword ptr (-8)[rsp]
+	sub	r15,rax
+	jge	no_collect_3579
+	call	collect_0
+no_collect_3579:
+	mov	rcx,rdi 
+	mov	qword ptr [rdi],offset __ARRAY__+2
+	mov	qword ptr 8[rdi],r10
+	mov	qword ptr 16[rdi],offset REAL32+2
+	add	rdi,24
+
+	sub	rax,3
+
+	mov	edx,ebx
+	shl	rbx,32
+	or	rbx,rdx
+	jmp	st_fillr_array
 
 create_arrayR:
 	movsd	qword ptr (-8)[rsp],xmm0

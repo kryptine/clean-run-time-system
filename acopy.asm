@@ -1243,10 +1243,18 @@ copy_array_a3:
 
 copy_strict_basic_array_2:
 	mov	rbx,qword ptr 8[rcx]
+
+	cmp	rax,offset dINT+2
+	jle	copy_int_or_real_array_2
+
 	cmp	rax,offset BOOL+2
 	je	copy_bool_array_2
 
-copy_int_array_2:
+copy_int32_or_real32_array_2:
+	add	rbx,1
+	shr	rbx,1
+
+copy_int_or_real_array_2:
 	shl	rbx,3
 	lea	rdx,(-24)[rsi]
 
@@ -1270,9 +1278,9 @@ copy_int_array_2:
 	jmp	cp_s_arg_lp2
 
 copy_bool_array_2:
-	lea	rax,7[rbx]
-	shr	rax,3
-	jmp	copy_int_array_2
+	add	rbx,7
+	shr	rbx,3
+	jmp	copy_int_or_real_array_2
 
 end_copy1:
 	mov	heap_end_after_gc,rsi 
