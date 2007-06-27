@@ -384,6 +384,8 @@ _DATA	ends
 	public	cmpAC
 
 	public	string_to_string_node
+	public	int_array_to_node
+	public	real_array_to_node
 
 	public	_create_arrayB
 	public	_create_arrayC
@@ -586,21 +588,33 @@ return_code_set_1:
 	ret
 
 
-	public	_DllMain
-_DllMain:
-	cmp	qword ptr 8[rsp ],1
+	public	DllMain
+DllMain:
+	cmp	edx,1
 	je	DLL_PROCESS_ATTACH
 	jb	DLL_PROCESS_DETACH
-	ret	12
+	ret
 
 DLL_PROCESS_ATTACH:
 	push	rbx 
-	push	rcx 
-	push	rdx 
 	push	rbp 
 	push	rsi 
-	push	rdi 
-
+	push	rdi
+ ifndef LINUX
+	db	49h
+	push	rsp
+	db	49h
+	push	rbp
+	db	49h
+	push	rsi
+	db	49h
+	push	rdi
+ else
+	push	r12
+	push	r13
+	push	r14
+	push	r15
+ endif
 	mov	qword ptr dll_initisialised,1
 
 	call	init_clean
@@ -628,11 +642,24 @@ init_dll_error:
 	
 DLL_PROCESS_DETACH:
 	push	rbx 
-	push	rcx 
-	push	rdx 
 	push	rbp 
 	push	rsi 
-	push	rdi 
+	push	rdi
+ ifndef LINUX
+	db	49h
+	push	rsp
+	db	49h
+	push	rbp
+	db	49h
+	push	rsi
+	db	49h
+	push	rdi
+ else
+	push	r12
+	push	r13
+	push	r14
+	push	r15
+ endif
 	
 	mov	rdi,qword ptr saved_heap_p
 	mov	r15,qword ptr saved_heap_p+8
@@ -641,13 +668,26 @@ DLL_PROCESS_DETACH:
 	call	exit_clean
 
 exit_dll_init:
+ ifndef LINUX
+	db	49h
+	pop	rdi
+	db	49h
+	pop	rsi
+	db	49h
+	pop	rbp
+	db	49h
+	pop	rsp
+ else
+	pop	r15
+	pop	r14
+	pop	r13
+	pop	r12
+ endif
 	pop	rdi 
 	pop	rsi 
 	pop	rbp 
-	pop	rdx 
-	pop	rcx 
 	pop	rbx 
-	ret	12
+	ret
 
 init_clean:
 	lea	rax,128[rsp]
@@ -3817,6 +3857,62 @@ string_to_string_node_gc:
 	call	collect_0
 	pop	rcx
 	jmp	string_to_string_node_r
+
+
+int_array_to_node:
+	mov	rax,qword ptr -16[rcx]
+	lea	rbx,3[rax]
+	sub	r15,rbx
+	jl	int_array_to_node_gc
+
+int_array_to_node_r:
+	mov	qword ptr [rdi],offset __ARRAY__+2
+	mov	rdx,rcx
+	mov	qword ptr 8[rdi],rax
+	mov	rcx,rdi
+	mov	qword ptr 16[rdi],offset dINT+2
+	add	rdi,24
+	jmp	int_or_real_array_to_node_4
+
+int_or_real_array_to_node_2:
+	mov	rbx,qword ptr [rdx]
+	add	rdx,8
+	mov	qword ptr [rdi],rbx
+	add	rdi,8
+int_or_real_array_to_node_4:
+	sub	rax,1
+	jge	int_or_real_array_to_node_2
+
+	ret
+
+int_array_to_node_gc:
+	push	rcx
+	call	collect_0
+	pop	rcx
+	jmp	int_array_to_node_r
+
+
+real_array_to_node:
+	mov	rax,qword ptr -16[rcx]
+	lea	rbx,3[rax]
+	sub	r15,rbx
+	jl	real_array_to_node_gc
+
+real_array_to_node_r:
+	mov	qword ptr [rdi],offset __ARRAY__+2
+	mov	rdx,rcx
+	mov	qword ptr 8[rdi],rax
+	mov	rcx,rdi
+	mov	qword ptr 16[rdi],offset REAL+2
+	add	rdi,24
+	jmp	int_or_real_array_to_node_4
+
+real_array_to_node_gc:
+	push	rcx
+	call	collect_0
+	pop	rcx
+	jmp	real_array_to_node_r
+
 
 	align	(1 shl 2)
 	dd	3
