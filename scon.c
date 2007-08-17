@@ -159,7 +159,7 @@ void *allocate_memory_with_guard_page_at_end (int size)
 }
 
 # ifdef USE_CR2
-static void clean_exception_handler (int s,struct sigcontext sigcontext)
+static void clean_exception_handler (int s,volatile struct sigcontext sigcontext)
 {
 	if (
 		(((size_t)sigcontext.cr2 ^ (size_t)below_stack_page) & -4096)==0 ||
@@ -185,7 +185,7 @@ static void clean_exception_handler (int s,struct sigcontext sigcontext)
 # else
 static void clean_exception_handler_info (int s,struct siginfo *siginfo_p,void *p);
 
-static void clean_exception_handler_context (int s,struct sigcontext sigcontext)
+static void clean_exception_handler_context (int s,volatile struct sigcontext sigcontext)
 {
 	struct sigaction sa;
 
