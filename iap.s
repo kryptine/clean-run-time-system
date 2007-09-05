@@ -1796,3 +1796,584 @@ build_node_cp_a:
 build_node_gc:
 	call	collect_2l
 	jmp	build_node_gc_r
+
+	.globl	apupd_1
+	.globl	apupd_2
+	.globl	apupd_3
+	.globl	apupd_4
+	.globl	apupd_5
+	.globl	apupd_6
+	.globl	apupd_7
+	.globl	apupd_8
+	.globl	apupd_9
+	.globl	apupd_10
+	.globl	apupd_11
+	.globl	apupd_12
+	.globl	apupd_13
+	.globl	apupd_14
+	.globl	apupd_15
+	.globl	apupd_16
+	.globl	apupd_17
+	.globl	apupd_18
+	.globl	apupd_19
+	.globl	apupd_20
+	.globl	apupd_21
+	.globl	apupd_22
+	.globl	apupd_23
+	.globl	apupd_24
+	.globl	apupd_25
+	.globl	apupd_26
+	.globl	apupd_27
+	.globl	apupd_28
+	.globl	apupd_29
+	.globl	apupd_30
+	.globl	apupd_31
+	.globl	apupd_32
+	.globl	__indirection
+
+apupd_1:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_1,a2
+	jne	ap_upd
+
+	movl	-4(a3),a2
+	movl	-8(a3),d0
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+ap_1:
+	movl	(a1),a2
+	jmp	*2(a2)
+
+apupd_2:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_2,a2
+	jne	ap_upd
+
+	movl	-8(a3),a2
+	movl	-12(a3),d0
+	movl	-4(a3),d1
+	movl	d1,-8(a3)
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_2
+
+apupd_3:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_3,a2
+	jne	ap_upd
+
+	movl	-12(a3),a2
+	movl	-16(a3),d0
+	movl	-8(a3),d1
+	movl	d1,-12(a3)
+	movl	-4(a3),d1
+	movl	d1,-8(a3)
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_3
+
+apupd_4:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_4,a2
+	jne	ap_upd
+
+	movl	-16(a3),a2
+	movl	-20(a3),d0
+	movl	-12(a3),d1
+	movl	d1,-16(a3)
+	movl	-8(a3),d1
+	movl	d1,-12(a3)
+	movl	-4(a3),d1
+	movl	d1,-8(a3)
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_4
+
+apupd_5:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_5,a2
+	jne	ap_upd
+
+	movl	-20(a3),a2
+	movl	-24(a3),d0
+	movl	-16(a3),d1
+	movl	d1,-20(a3)
+	movl	-12(a3),d1
+	movl	d1,-16(a3)
+	movl	-8(a3),d1
+	movl	d1,-12(a3)
+	movl	-4(a3),d1
+	movl	d1,-8(a3)
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_5
+
+apupd_6:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_6,a2
+	jne	ap_upd
+
+	movl	-24(a3),a2
+	movl	-28(a3),d0
+	movl	-20(a3),d1
+	movl	d1,-24(a3)
+	movl	-16(a3),d1
+	movl	d1,-20(a3)
+	movl	-12(a3),d1
+	movl	d1,-16(a3)
+	movl	-8(a3),d1
+	movl	d1,-12(a3)
+	movl	-4(a3),d1
+	movl	d1,-8(a3)
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_6
+
+apupd_7:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_7,a2
+	jne	ap_upd
+
+	movl	-28(a3),a2
+	movl	-32(a3),d0
+	call	move_8
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_7
+
+apupd_8:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_8,a2
+	jne	ap_upd
+
+	movl	-32(a3),a2
+	movl	-36(a3),d0
+	call	move_9
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_8
+
+apupd_9:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_9,a2
+	jne	ap_upd
+
+	movl	-36(a3),a2
+	movl	-40(a3),d0
+	call	move_10
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_9
+
+apupd_10:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_10,a2
+	jne	ap_upd
+
+	movl	-40(a3),a2
+	movl	-44(a3),d0
+	call	move_11
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_10
+
+apupd_11:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_11,a2
+	jne	ap_upd
+
+	movl	-44(a3),a2
+	movl	-48(a3),d0
+	call	move_12
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_11
+
+apupd_12:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_12,a2
+	jne	ap_upd
+
+	movl	-48(a3),a2
+	movl	-52(a3),d0
+	call	move_13
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_12
+
+apupd_13:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_13,a2
+	jne	ap_upd
+
+	movl	-52(a3),a2
+	movl	-56(a3),d0
+	call	move_14
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_13
+
+apupd_14:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_14,a2
+	jne	ap_upd
+
+	movl	-56(a3),a2
+	movl	-60(a3),d0
+	call	move_15
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_14
+
+apupd_15:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_15,a2
+	jne	ap_upd
+
+	movl	-60(a3),a2
+	movl	-64(a3),d0
+	call	move_16
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_15
+
+apupd_16:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_16,a2
+	jne	ap_upd
+
+	movl	-64(a3),a2
+	movl	-68(a3),d0
+	call	move_17
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_16
+
+apupd_17:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_17,a2
+	jne	ap_upd
+
+	movl	-68(a3),a2
+	movl	-72(a3),d0
+	call	move_18
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_17
+
+apupd_18:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_18,a2
+	jne	ap_upd
+
+	movl	-72(a3),a2
+	movl	-76(a3),d0
+	call	move_19
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_18
+
+apupd_19:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_19,a2
+	jne	ap_upd
+
+	movl	-76(a3),a2
+	movl	-80(a3),d0
+	call	move_20
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_19
+
+apupd_20:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_20,a2
+	jne	ap_upd
+
+	movl	-80(a3),a2
+	movl	-84(a3),d0
+	call	move_21
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_20
+
+apupd_21:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_21,a2
+	jne	ap_upd
+
+	movl	-84(a3),a2
+	movl	-88(a3),d0
+	call	move_22
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_21
+
+apupd_22:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_22,a2
+	jne	ap_upd
+
+	movl	-88(a3),a2
+	movl	-92(a3),d0
+	call	move_23
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_22
+
+apupd_23:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_23,a2
+	jne	ap_upd
+
+	movl	-92(a3),a2
+	movl	-96(a3),d0
+	call	move_24
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_23
+
+apupd_24:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_24,a2
+	jne	ap_upd
+
+	movl	-96(a3),a2
+	movl	-100(a3),d0
+	call	move_25
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_24
+
+apupd_25:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_25,a2
+	jne	ap_upd
+
+	movl	-100(a3),a2
+	movl	-104(a3),d0
+	call	move_26
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_25
+
+apupd_26:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_26,a2
+	jne	ap_upd
+
+	movl	-104(a3),a2
+	movl	-108(a3),d0
+	call	move_27
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_26
+
+apupd_27:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_27,a2
+	jne	ap_upd
+
+	movl	-108(a3),a2
+	movl	-112(a3),d0
+	call	move_28
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_27
+
+apupd_28:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_28,a2
+	jne	ap_upd
+
+	movl	-112(a3),a2
+	movl	-116(a3),d0
+	call	move_29
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_28
+
+apupd_29:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_29,a2
+	jne	ap_upd
+
+	movl	-116(a3),a2
+	movl	-120(a3),d0
+	call	move_30
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_29
+
+apupd_30:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_30,a2
+	jne	ap_upd
+
+	movl	-120(a3),a2
+	movl	-124(a3),d0
+	call	move_31
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_30
+
+apupd_31:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_31,a2
+	jne	ap_upd
+
+	movl	-124(a3),a2
+	movl	-128(a3),d0
+	call	move_32
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_31
+
+apupd_32:
+	cmpl	$apupd_upd,(sp)
+	lea	ap_32,a2
+	jne	ap_upd
+
+	movl	-128(a3),a2
+	movl	-132(a3),d0
+	call	move_33
+	subl	$4,a3
+	movl	$__indirection,(a2)
+	movl	d0,4(a2)
+	jmp	ap_32
+
+ap_upd:
+	call	*a2
+apupd_upd:
+	movl	-4(a3),a1
+	subl	$4,a3
+	movl	(a0),d0
+	movl	d0,(a1)
+	movl	4(a0),d0
+	movl	d0,4(a1)
+	movl	8(a0),d0
+	movl	a1,a0
+	movl	d0,8(a1)	
+	ret
+
+move_33:
+	movl	-124(a3),d1
+	movl	d1,-128(a3)
+move_32:
+	movl	-120(a3),d1
+	movl	d1,-124(a3)
+move_31:
+	movl	-116(a3),d1
+	movl	d1,-120(a3)
+move_30:
+	movl	-112(a3),d1
+	movl	d1,-116(a3)
+move_29:
+	movl	-108(a3),d1
+	movl	d1,-112(a3)
+move_28:
+	movl	-104(a3),d1
+	movl	d1,-108(a3)
+move_27:
+	movl	-100(a3),d1
+	movl	d1,-104(a3)
+move_26:
+	movl	-96(a3),d1
+	movl	d1,-100(a3)
+move_25:
+	movl	-92(a3),d1
+	movl	d1,-96(a3)
+move_24:
+	movl	-88(a3),d1
+	movl	d1,-92(a3)
+move_23:
+	movl	-84(a3),d1
+	movl	d1,-88(a3)
+move_22:
+	movl	-80(a3),d1
+	movl	d1,-84(a3)
+move_21:
+	movl	-76(a3),d1
+	movl	d1,-80(a3)
+move_20:
+	movl	-72(a3),d1
+	movl	d1,-76(a3)
+move_19:
+	movl	-68(a3),d1
+	movl	d1,-72(a3)
+move_18:
+	movl	-64(a3),d1
+	movl	d1,-68(a3)
+move_17:
+	movl	-60(a3),d1
+	movl	d1,-64(a3)
+move_16:
+	movl	-56(a3),d1
+	movl	d1,-60(a3)
+move_15:
+	movl	-52(a3),d1
+	movl	d1,-56(a3)
+move_14:
+	movl	-48(a3),d1
+	movl	d1,-52(a3)
+move_13:
+	movl	-44(a3),d1
+	movl	d1,-48(a3)
+move_12:
+	movl	-40(a3),d1
+	movl	d1,-44(a3)
+move_11:
+	movl	-36(a3),d1
+	movl	d1,-40(a3)
+move_10:
+	movl	-32(a3),d1
+	movl	d1,-36(a3)
+move_9:
+	movl	-28(a3),d1
+	movl	d1,-32(a3)
+move_8:
+	movl	-24(a3),d1
+	movl	d1,-28(a3)
+move_7:
+	movl	-20(a3),d1
+	movl	d1,-24(a3)
+	movl	-16(a3),d1
+	movl	d1,-20(a3)
+	movl	-12(a3),d1
+	movl	d1,-16(a3)
+	movl	-8(a3),d1
+	movl	d1,-12(a3)
+	movl	-4(a3),d1
+	movl	d1,-8(a3)
+	ret
