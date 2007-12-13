@@ -616,7 +616,8 @@ init_error:
 	pop	d1
 	ret
 
-#ifdef _WINDOWS_
+#if defined (_WINDOWS_) || defined (LINUX)
+# ifdef _WINDOWS_
 	.globl	@DllMain?12
 @DllMain?12:
 	cmpl	$1,8(sp)
@@ -625,6 +626,10 @@ init_error:
 	ret	$12
 
 DLL_PROCESS_ATTACH:
+# else
+	.globl	clean_init
+clean_init:
+# endif
 	push	d1
 	push	a0
 	push	a1
@@ -642,9 +647,9 @@ DLL_PROCESS_ATTACH:
 
 	mov	sp,halt_sp
 
-#ifdef PROFILE
+# ifdef PROFILE
 	call	init_profiler
-#endif
+# endif
 
 	mov	%edi,saved_heap_p
 	mov	%esi,saved_a_stack_p
@@ -655,8 +660,12 @@ DLL_PROCESS_ATTACH:
 init_dll_error:
 	xor	%eax,%eax
 	jmp	exit_dll_init
-	
+# ifdef _WINDOWS_
 DLL_PROCESS_DETACH:
+# else
+	.globl	clean_fini
+clean_fini:
+# endif
 	push	d1
 	push	a0
 	push	a1
@@ -676,7 +685,11 @@ exit_dll_init:
 	pop	a1
 	pop	a0
 	pop	d1
+# ifdef _WINDOWS_
 	ret	$12
+# else
+	ret
+# endif
 #endif
 
 init_clean:
