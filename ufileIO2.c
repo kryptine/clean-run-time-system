@@ -15,6 +15,10 @@
 #	include <string.h>
 #endif
 
+#ifdef __x86_64__
+# define A64
+#endif
+
 #include "scon.h"
 
 extern void IO_error (char*);
@@ -807,8 +811,12 @@ void file_write_char (int c,long fn)
 	}
 }
 
+#ifdef A64
+void file_write_int (long i,long fn)
+#else
 void file_write_int (int i,long fn)
-{	
+#endif
+{
 	if (fn<FIRST_REAL_FILE){
 		switch (fn){
 			case 0:

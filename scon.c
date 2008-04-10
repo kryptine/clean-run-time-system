@@ -638,6 +638,17 @@ void ew_print_string (char *s)
 	fputs (s,stderr);
 }
 
+#ifdef A64
+void w_print_int (long n)
+{
+	printf ("%ld",n);
+}
+
+void ew_print_int (long n)
+{
+	fprintf (stderr,"%ld",n);
+}
+#else
 void w_print_int (int n)
 {
 	printf ("%d",n);
@@ -647,6 +658,7 @@ void ew_print_int (int n)
 {
 	fprintf (stderr,"%d",n);
 }
+#endif
 
 void w_print_real (double r)
 {
