@@ -489,8 +489,16 @@ start_address:
 	.globl	log10_real
 	.globl	exp_real
 	.globl	pow_real
-	.globl	entier_real
 	.globl	r_to_i_real
+	.globl	truncate_real
+	.globl	entier_real
+	.globl	ceiling_real
+	.globl	round__real64
+	.globl	truncate__real64
+	.globl	entier__real64
+	.globl	ceiling__real64
+	.globl	int64a__to__real
+
 #ifdef NOCLIB
 	.globl	@c_pow
 	.globl	@c_log10
@@ -5341,7 +5349,72 @@ pow_zero:
 	add	$16,sp
 	ret
 
+r_to_i_real:
+	subl	$4,sp
+	fistl	(sp)
+	pop	d0
+	ret
+
+truncate_real:
+	subl	$8,sp
+	fstcw	(sp)
+	movw	(sp),%ax
+	orw	$0x0c00,%ax
+	movw	%ax,2(sp)
+	fldcw	2(sp)
+	fistl	4(sp)
+	fldcw	(sp)
+	movl	4(sp),d0
+	addl	$8,sp
+	ret
+
 entier_real:
+	subl	$8,sp
+	fstcw	(sp)
+	movw	(sp),%ax
+	andw	$0xf3ff,%ax
+	orw	$0x0400,%ax
+	movw	%ax,2(sp)
+	fldcw	2(sp)
+	fistl	4(sp)
+	fldcw	(sp)
+	movl	4(sp),d0
+	addl	$8,sp
+	ret
+
+ceiling_real:
+	subl	$8,sp
+	fstcw	(sp)
+	movw	(sp),%ax
+	andw	$0xf3ff,%ax
+	orw	$0x0800,%ax
+	movw	%ax,2(sp)
+	fldcw	2(sp)
+	fistl	4(sp)
+	fldcw	(sp)
+	movl	4(sp),d0
+	addl	$8,sp
+	ret
+
+round__real64:
+	fistpll	12(%ecx)
+	fldz
+	ret
+
+truncate__real64:
+	subl	$4,sp
+	fstcw	(sp)
+	movw	(sp),%ax
+	orw	$0x0c00,%ax
+	movw	%ax,2(sp)
+	fldcw	2(sp)
+	fistpll	12(%ecx)
+	fldcw	(sp)
+	addl	$4,sp
+	fldz
+	ret
+
+entier__real64:
 	subl	$4,sp
 	fstcw	(sp)
 	movw	(sp),%ax
@@ -5349,13 +5422,29 @@ entier_real:
 	orw	$0x0400,%ax
 	movw	%ax,2(sp)
 	fldcw	2(sp)
-	frndint
+	fistpll	12(%ecx)
 	fldcw	(sp)
 	addl	$4,sp
+	fldz
+	ret
 
-r_to_i_real:
-	fistl	int_to_real_scratch
-	movl	int_to_real_scratch,d0
+ceiling__real64:
+	subl	$4,sp
+	fstcw	(sp)
+	movw	(sp),%ax
+	andw	$0xf3ff,%ax
+	orw	$0x0800,%ax
+	movw	%ax,2(sp)
+	fldcw	2(sp)
+	fistpll	12(%ecx)
+	fldcw	(sp)
+	addl	$4,sp
+	fldz
+	ret
+
+int64a__to__real:
+	fildll	12(%ecx)
+	fstp	%st(1)
 	ret
 
 @c_pow:
