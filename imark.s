@@ -185,7 +185,7 @@ end_restore_arrays:
 
 	movl	(a0),a2
 determine_free_finalizers_after_mark:
-	cmpl	$__Nil-8,a2
+	cmpl	$__Nil-4,a2
 	je	end_finalizers_after_mark
 
 	movl	neg_heap_p3,d0
@@ -1453,7 +1453,7 @@ __mark_record_selector_node_1:
 	movl	(a2),d1
 	testb	$2,d1b
 	je	__mark_no_selector_2
-	
+
 	cmpw	$258,-2(d1)
 #ifdef NEW_DESCRIPTORS
 	jbe	__small_record
@@ -1517,7 +1517,7 @@ __mark_strict_record_selector_node_1:
 	movl	bit_set_table(a2),a2
 	testl	(a4,d1,4),a2
 	jne	__mark_no_selector_2
-	
+
 __select_from_small_record:
 #ifdef NEW_DESCRIPTORS
 	movl	-8(d0),d0

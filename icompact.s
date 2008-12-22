@@ -78,7 +78,7 @@ compact_heap:
 
 	movl	(a0),a2
 determine_free_finalizers_after_compact1:
-	cmpl	$__Nil-8,a2
+	cmpl	$__Nil-4,a2
 	je	end_finalizers_after_compact1
 
 	movl	neg_heap_p3,d0
@@ -132,7 +132,7 @@ end_finalizers_after_compact1:
 	movl	a2,(a1)	
 
 	movl	finalizer_list,a0
-	cmpl	$__Nil-8,a0
+	cmpl	$__Nil-4,a0
 	je	finalizer_list_empty
 	testl	$3,a0
 	jne	finalizer_list_already_reversed
@@ -144,10 +144,10 @@ finalizer_list_empty:
 
 # ifdef COMPACT_MARK_WITH_STACK
 	movl	$free_finalizer_list,a3
-	cmpl	$__Nil-8,(a3)
+	cmpl	$__Nil-4,(a3)
 # else
 	movl	$free_finalizer_list,a2
-	cmpl	$__Nil-8,(a2)
+	cmpl	$__Nil-4,(a2)
 # endif
 	je	free_finalizer_list_empty
 
@@ -1296,7 +1296,7 @@ end_copy:
 	movl	finalizer_list,a0
 
 restore_finalizer_descriptors:
-	cmpl	$__Nil-8,a0
+	cmpl	$__Nil-4,a0
 	je	end_restore_finalizer_descriptors
 
 	movl	$e____system__kFinalizer+2,(a0)

@@ -819,8 +819,8 @@ make_static_characters_lp:
 	movl	a0,caf_listp
 
 #ifdef FINALIZERS
-	movl	$__Nil-8,finalizer_list
-	movl	$__Nil-8,free_finalizer_list
+	movl	$__Nil-4,finalizer_list
+	movl	$__Nil-4,free_finalizer_list
 #endif
 
 	mov	a4,heap_p1
@@ -2492,7 +2492,7 @@ call_finalizers:
 	movl	free_finalizer_list,d0
 
 call_finalizers_lp:
-	cmpl	$__Nil-8,d0
+	cmpl	$__Nil-4,d0
 	je	end_call_finalizers
 	pushl	4(d0)
 	movl	8(d0),d1
@@ -2503,7 +2503,7 @@ call_finalizers_lp:
 	jmp	call_finalizers_lp
 end_call_finalizers:
 
-	movl	$__Nil-8,free_finalizer_list
+	movl	$__Nil-4,free_finalizer_list
 	ret
 #endif
 

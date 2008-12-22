@@ -1406,7 +1406,7 @@ determine_free_finalizers_after_copy:
 	jmp	determine_free_finalizers_after_copy
 
 finalizer_not_used_after_copy:
-	cmpl	$__Nil-8,a2
+	cmpl	$__Nil-4,a2
 	je	end_finalizers_after_copy
 
 	movl	a2,(a1)
