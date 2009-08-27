@@ -5240,8 +5240,7 @@ atan_real:
 	ret
 
 ln_real:
-	fldl2e
-	fdivrl	one_real
+	fldln2
 	fxch	%st(1)
 	fyl2x
 	ret
@@ -5249,8 +5248,7 @@ ln_real:
 @c_log10:
 	fldl	4(sp)
 log10_real:
-	fldl2t
-	fdivrl	one_real
+	fldlg2
 	fxch	%st(1)
 	fyl2x
 	ret
