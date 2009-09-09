@@ -519,7 +519,7 @@ int file_read_char (long fn)
 	}
 }
 
-int file_read_int (long fn,int *i_p)
+int file_read_int (long fn,long *i_p)
 {
 	if (fn<FIRST_REAL_FILE){
 		switch (fn){
