@@ -4838,14 +4838,14 @@ ln_real_small:
 	jbe		ln_real_dn_g1
 
 	subsd	xmm3,qword ptr real_1_0
-	psubq	xmm0,qword ptr qw_1077
+	psubq	xmm0,xmmword ptr qw_1077
 	jmp		ln_real_l1_
 
 ln_real_dn_g1:
 	ucomisd	xmm2,qword ptr real_7_d_6
 
 	subsd	xmm2,qword ptr real_1_0
-	psubq	xmm0,qword ptr qw_1078
+	psubq	xmm0,xmmword ptr qw_1078
 
 	ja		ln_real_g_7_d_6
 	jmp		ln_real_g1_
@@ -5051,7 +5051,7 @@ ln_real_g1:
 
 	subsd	xmm2,qword ptr real_1_0
 
-	psubq	xmm0,qword ptr qw_1023
+	psubq	xmm0,xmmword ptr qw_1023
 
 	ja		ln_real_g_7_d_6
 
@@ -5331,7 +5331,7 @@ ln_real_s_s:
 ln_real_l1:
 	subsd	xmm3,qword ptr real_1_0
 
-	psubq	xmm0,qword ptr qw_1022
+	psubq	xmm0,xmmword ptr qw_1022
 ln_real_l1_:
 	movsd	xmm1,xmm3				# x
 	mulsd	xmm3,xmm3				# x2
@@ -5503,14 +5503,14 @@ log10_real_small:
 	jbe		log10_real_dn_g1
 
 	subsd	xmm3,qword ptr real_1_0
-	psubq	xmm0,qword ptr qw_1077
+	psubq	xmm0,xmmword ptr qw_1077
 	jmp		log10_real_l1_
 
 log10_real_dn_g1:
 	ucomisd	xmm2,qword ptr real_7_d_6
 
 	subsd	xmm2,qword ptr real_1_0
-	psubq	xmm0,qword ptr qw_1078
+	psubq	xmm0,xmmword ptr qw_1078
 
 	ja		log10_real_g_7_d_6
 	jmp		log10_real_g1_
@@ -5787,7 +5787,7 @@ log10_real_g1:
 
 	subsd	xmm2,qword ptr real_1_0
 
-	psubq	xmm0,qword ptr qw_1023
+	psubq	xmm0,xmmword ptr qw_1023
 
 	ja		log10_real_g_7_d_6
 
@@ -6066,7 +6066,7 @@ log10_real_s:
 log10_real_l1:
 	subsd	xmm3,qword ptr real_1_0
 
-	psubq	xmm0,qword ptr qw_1022
+	psubq	xmm0,xmmword ptr qw_1022
 log10_real_l1_:
 	movsd	xmm1,xmm3				# x
 	mulsd	xmm3,xmm3				# x2
@@ -6425,7 +6425,7 @@ log2_real__:
 log2_real_g1:
 	subsd	xmm3,xmm5
 
-	psubq	xmm1,qword ptr qw_1023
+	psubq	xmm1,xmmword ptr qw_1023
 
 	movsd	xmm6,xmm3				# x
 	mulsd	xmm3,xmm3				# x2
@@ -6509,7 +6509,7 @@ log2_real_gl:
 log2_real_l1:
 	subsd	xmm4,xmm5
 
-	psubq	xmm1,qword ptr qw_1022
+	psubq	xmm1,xmmword ptr qw_1022
 
 	movsd	xmm6,xmm4				# x
 	mulsd	xmm4,xmm4				# x2
@@ -6767,7 +6767,7 @@ pow_real_g_7_d_6:
 	subsd	xmm3,xmm4
 
 	cmovb	rcx,rdx
-	psubq	xmm1,qword ptr qw_1023
+	psubq	xmm1,xmmword ptr qw_1023
 
 	movsd	xmm6,xmm3				# x
 	mulsd	xmm3,xmm3				# x2
