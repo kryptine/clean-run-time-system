@@ -43,7 +43,12 @@
 
 long min_write_heap_size;
 
-#define MY_PATH_MAX 1025
+#ifndef SOLARIS
+# include <limits.h>
+# define MY_PATH_MAX PATH_MAX
+#else
+# define MY_PATH_MAX 1025
+#endif
 
 char appl_path[MY_PATH_MAX];
 char home_path[MY_PATH_MAX];
