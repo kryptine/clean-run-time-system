@@ -21,14 +21,14 @@ $(ODIR)ufileIO2.o: $(SDIR)ufileIO2.c
 	gcc -c -O $(DEFINES) -ffunction-sections -fdata-sections -o $(ODIR)ufileIO2.o $(SDIR)ufileIO2.c
 
 $(ODIR)istartup.o: $(SDIR)istartup.s
-	cp $(ODIR)istartup.s $(ODIR)istartup.cpp
-	$(CC) $(DEFINES) -E $(ODIR)istartup.cpp > $(ODIR)istartup.t
+	cp $(ODIR)istartup.s $(ODIR)istartup.c
+	$(CC) $(DEFINES) -E $(ODIR)istartup.c > $(ODIR)istartup.t
 	sed s/@// < $(SDIR)/istartup.t > $(ODIR)istartup.a
 	as $(DEFINES_A) $(ODIR)istartup.a -o $(ODIR)istartup.o
 
 $(ODIR)ifileIO3.o: $(SDIR)ifileIO3.s
-	cp $(ODIR)ifileIO3.s $(ODIR)ifileIO3.cpp
-	$(CC) $(DEFINES) -E $(ODIR)ifileIO3.cpp > $(ODIR)ifileIO3.t
+	cp $(ODIR)ifileIO3.s $(ODIR)ifileIO3.c
+	$(CC) $(DEFINES) -E $(ODIR)ifileIO3.c > $(ODIR)ifileIO3.t
 	sed s/@// < $(SDIR)/ifileIO3.t > $(ODIR)ifileIO3.a
 	as $(DEFINES_A) $(ODIR)ifileIO3.a -o $(ODIR)ifileIO3.o
 
