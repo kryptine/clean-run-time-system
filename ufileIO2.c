@@ -9,9 +9,9 @@
 #endif
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #ifdef MPW3
-#	include <stdlib.h>
 #	include <string.h>
 #endif
 
