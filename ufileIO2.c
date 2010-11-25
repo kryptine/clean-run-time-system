@@ -64,6 +64,12 @@ struct clean_string {
 #endif
 };
 
+#ifdef I486
+# define CLEAN_TRUE 1
+#else
+# define CLEAN_TRUE (-1)
+#endif
+
 static struct file file_table [MAX_N_FILES];
 
 #ifdef LINUX
@@ -393,7 +399,7 @@ int close_file (long fn)
 			if (ferror (stdin) || ferror (stdout))
 				return 0;
 		}
-		return -1;
+		return CLEAN_TRUE;
 	} else {
 		struct file *f;
 		int result;
@@ -403,7 +409,7 @@ int close_file (long fn)
 		if (f->file==NULL)
 			IO_error ("FClose: File not open");
 
-		result=-1;
+		result=CLEAN_TRUE;
 		if (fclose (f->file)!=0)
 			result=0;
 		
