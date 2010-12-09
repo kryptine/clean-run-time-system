@@ -1053,7 +1053,7 @@ add_empty_node_3_gc_:
 	add	a6,24
 	ret
 add_empty_node_3_gc:
-	call	collect_2
+	call	collect_3
 	jmp	add_empty_node_3_gc_
 
 add_empty_node_4:
@@ -1068,7 +1068,7 @@ add_empty_node_4_gc_:
 	add	a6,24
 	ret
 add_empty_node_4_gc:
-	call	collect_2
+	call	collect_3
 	jmp	add_empty_node_4_gc_
 
 add_empty_node_5:
@@ -1085,7 +1085,7 @@ add_empty_node_5_gc_:
 	add	a6,24
 	ret
 add_empty_node_5_gc:
-	call	collect_2
+	call	collect_3
 	jmp	add_empty_node_5_gc_
 
 add_empty_node_6:
@@ -1104,7 +1104,7 @@ add_empty_node_6_gc_:
 	add	a6,24
 	ret
 add_empty_node_6_gc:
-	call	collect_2
+	call	collect_3
 	jmp	add_empty_node_6_gc_
 
 add_empty_node_7:
@@ -1125,7 +1125,7 @@ add_empty_node_7_gc_:
 	add	a6,24
 	ret
 add_empty_node_7_gc:
-	call	collect_2
+	call	collect_3
 	jmp	add_empty_node_7_gc_
 
 add_empty_node_8:
@@ -1148,7 +1148,7 @@ add_empty_node_8_gc_:
 	add	a6,24
 	ret
 add_empty_node_8_gc:
-	call	collect_2
+	call	collect_3
 	jmp	add_empty_node_8_gc_
 
 add_empty_node_9:
@@ -1173,7 +1173,7 @@ add_empty_node_9_gc_:
 	add	a6,24
 	ret
 add_empty_node_9_gc:
-	call	collect_2
+	call	collect_3
 	jmp	add_empty_node_9_gc_
 
 add_empty_node_10:
@@ -1200,7 +1200,7 @@ add_empty_node_10_gc_:
 	add	a6,24
 	ret
 add_empty_node_10_gc:
-	call	collect_2
+	call	collect_3
 	jmp	add_empty_node_10_gc_
 
 add_empty_node_11:
@@ -1229,7 +1229,7 @@ add_empty_node_11_gc_:
 	add	a6,24
 	ret
 add_empty_node_11_gc:
-	call	collect_2
+	call	collect_3
 	jmp	add_empty_node_11_gc_
 
 add_empty_node_32:
@@ -1272,7 +1272,7 @@ add_empty_node_12_lp:
 	add	a6,24
 	ret
 add_empty_node_12_gc:
-	call	collect_2
+	call	collect_3
 	jmp	add_empty_node_12_gc_
 
 add_empty_node_29:
@@ -1314,7 +1314,7 @@ add_empty_node_13_lp:
 	add	a6,24
 	ret
 add_empty_node_13_gc:
-	call	collect_2
+	call	collect_3
 	jmp	add_empty_node_13_gc_
 
 add_empty_node_30:
@@ -1358,7 +1358,7 @@ add_empty_node_14_lp:
 	add	a6,24
 	ret
 add_empty_node_14_gc:
-	call	collect_2
+	call	collect_3
 	jmp	add_empty_node_14_gc_
 
 add_empty_node_31:
@@ -1404,7 +1404,7 @@ add_empty_node_15_lp:
 	add	a6,24
 	ret
 add_empty_node_15_gc:
-	call	collect_2
+	call	collect_3
 	jmp	add_empty_node_15_gc_
 
 
