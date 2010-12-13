@@ -1,10 +1,8 @@
 
-_TEXT	segment para 'CODE'
-_TEXT	ends
 _DATA	segment para 'DATA'
 _DATA	ends
 
-	_TEXT segment
+_T000	segment para 'CODE'
 
 	public	sin_real
 
@@ -24,7 +22,7 @@ sin_real:
 	jbe		sin_real_0
 
 	ucomisd	xmm0,qword ptr real_2_p_53
-	jae		sin_cos_or_tan_real_too_large	; x>=-2^53
+	jae		sin_or_cos_real_too_large	; x>=-2^53
 
 	call	rem_36825084_pi
 
@@ -116,7 +114,7 @@ sin_real_n:
 	jae		sin_real_n_0
 
 	ucomisd	xmm0,qword ptr real_m_2_p_53
-	jbe		sin_cos_or_tan_real_too_small_or_nan	; x<=-2^53 | NAN
+	jbe		sin_or_cos_real_too_small_or_nan	; x<=-2^53 | NAN
 
 	call	rem_n_36825084_pi
 
@@ -758,7 +756,7 @@ cos_real:
 	jbe		cos_real_0
 
 	ucomisd	xmm0,qword ptr real_2_p_53
-	jae		sin_cos_or_tan_real_too_large	; x>=-2^53
+	jae		sin_or_cos_real_too_large	; x>=-2^53
 
 	call	rem_36825084_pi
 
@@ -848,7 +846,7 @@ cos_real_n:
 	jae		cos_real_n_0
 
 	ucomisd	xmm0,qword ptr real_m_2_p_53
-	jbe		sin_cos_or_tan_real_too_small_or_nan	; x<=-2^53 | NAN
+	jbe		sin_or_cos_real_too_small_or_nan	; x<=-2^53 | NAN
 
 	call	rem_n_36825084_pi
 
@@ -1216,6 +1214,15 @@ cos_real_m_s:
 	addsd	xmm0,xmm8
 	ret
 
+sin_or_cos_real_too_large:
+sin_or_cos_real_too_small_or_nan:
+	subsd	xmm0,xmm0
+	ret
+
+_T000	ends
+
+_T001	segment para 'CODE'
+
 	public	tan_real
 
 tan_real:
@@ -1236,7 +1243,7 @@ tan_real:
 	jbe		tan_real_0
 
 	ucomisd	xmm0,qword ptr real_2_p_53
-	jae		sin_cos_or_tan_real_too_large	; x>=-2^53
+	jae		tan_real_too_large	; x>=-2^53
 
 	call	rem_36825084_pi
 
@@ -1344,7 +1351,7 @@ tan_real_n:
 	jae		tan_real_n_0
 
 	ucomisd	xmm0,qword ptr real_m_2_p_53
-	jbe		sin_cos_or_tan_real_too_small_or_nan	; x<=-2^53 | NAN
+	jbe		tan_real_too_small_or_nan	; x<=-2^53 | NAN
 
 	call	rem_n_36825084_pi
 	jmp		tan_real_pn_l
@@ -2735,11 +2742,14 @@ tan_real_0_5_n:
 	movlpd	xmm14,qword ptr real_0_5
 	jmp		tan_real_0_5_a_s_0_5_3_pn
 
-
-sin_cos_or_tan_real_too_large:
-sin_cos_or_tan_real_too_small_or_nan:
+tan_real_too_large:
+tan_real_too_small_or_nan:
 	subsd	xmm0,xmm0
 	ret
+
+_T001	ends
+
+_T002	segment para 'CODE'
 
 rem_36825084_pi:
 	movsd	xmm1,xmm0	
@@ -2877,6 +2887,9 @@ rem_n_36825084_pi_g3:
 	psllq	xmm6,xmm4
 	ret
 
+_T002	ends
+
+_T003	segment para 'CODE'
 
 	public	asin_real
 
@@ -3263,6 +3276,9 @@ asin_real_e:
 	divsd	xmm0,xmm0
 	ret
 
+_T003	ends
+
+_T004	segment para 'CODE'
 
 	public	acos_real
 
@@ -3562,6 +3578,10 @@ acos_real_e:
 	subsd	xmm0,xmm0
 	divsd	xmm0,xmm0
 	ret
+
+_T004	ends
+
+_T005	segment para 'CODE'
 
 	public	atan_real
 
@@ -4348,6 +4368,10 @@ atan_real_large:
 	movlpd	xmm0,qword ptr real_pi_d_2
 	ret
 
+_T005	ends
+
+_T006	segment para 'CODE'
+
 	public	exp_real
 
 exp_real:
@@ -4794,6 +4818,10 @@ exp_real_3_n_large:
 	jp		exp_real_3_inf_or_nan	; nan
 	movlpd	xmm0,qword ptr real_0_0
 	ret
+
+_T006	ends
+
+_T007	segment para 'CODE'
 
 	public	ln_real
 
@@ -5455,6 +5483,10 @@ ln_real_less_0_or_nan:
 
 ln_real_inf_or_nan:
 	ret
+
+_T007	ends
+
+_T008	segment para 'CODE'
 
 	public	log10_real
 
@@ -6174,6 +6206,9 @@ log10_real_less_0_or_nan:
 log10_real_inf_or_nan:
 	ret
 
+_T008	ends
+
+_T009	segment para 'CODE'
 
 	public	pow_real
 
@@ -7086,7 +7121,7 @@ exp2_underflow:
 	movlpd	xmm0,qword ptr qword ptr real_0_0
 	ret
 
-_TEXT	ends
+_T009	ends
 
 	_DATA segment
 
