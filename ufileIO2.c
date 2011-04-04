@@ -983,10 +983,14 @@ int file_end (long fn)
 		
 		/* not portable to all compilers: */
 #ifdef LINUX
+# ifdef MACH_O64
+		if (file_p->_r>0)
+# else
 /*
 		if (file_p->_gptr < file_p->_egptr)
 */
 		if (file_p->_IO_read_ptr < file_p->_IO_read_end)
+# endif
 #else
 # ifdef OS2
 		if (file_p->rcount>0)
@@ -1582,10 +1586,14 @@ int file_s_end (long fn,unsigned long position)
 		
 			/* not portable to all compilers: */
 #ifdef LINUX
+# ifdef MACH_O64
+			if (file_p->_r>0)
+# else
 /*
 			if (file_p->_gptr < file_p->_egptr)
 */
 			if (file_p->_IO_read_ptr < file_p->_IO_read_end)
+# endif
 #else
 # ifdef OS2
 			if (file_p->rcount>0)
