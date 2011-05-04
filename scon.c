@@ -41,6 +41,10 @@
 # include <sys/mman.h>
 #endif
 
+#ifdef MACH_O64
+# include <mach-o/dyld.h>
+#endif
+
 long min_write_heap_size;
 
 #ifndef SOLARIS
@@ -69,6 +73,7 @@ void set_home_and_appl_path (char *command)
 	} else
 		appl_path[0]='\0';
 # else
+#  ifndef MACH_O64
 	r=readlink ("/proc/self/exe",appl_path,MY_PATH_MAX-1);
 	if (r>=0){
 		appl_path[r]='\0';
@@ -78,6 +83,20 @@ void set_home_and_appl_path (char *command)
 			*p='\0';
 	} else
 		appl_path[0]='\0';
+#  else
+	{
+		uint32_t buf_size;
+		char exec_path[MY_PATH_MAX];
+
+		buf_size=MY_PATH_MAX;
+		r=_NSGetExecutablePath (exec_path,&buf_size);
+		if (r==0){
+			realpath (exec_path,appl_path);
+			*strrchr (appl_path,'/')='\0';
+		} else
+			appl_path[0]='\0';
+	}
+#  endif
 # endif
 #else
 	p=strchr (command,'/');
