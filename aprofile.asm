@@ -351,7 +351,7 @@ profile_n_:
 	add	rax,rdx
 
 	inc	qword ptr n_profiler_calls[rbp]
-	add	rax,qword ptr time[rbp]
+	add	qword ptr time[rbp],rax
 
 	mov	rax,qword ptr global_n_words_free
 	mov	qword ptr global_n_words_free,r15
