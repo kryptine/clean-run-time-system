@@ -601,7 +601,7 @@ copy_record_node2_3:
 	test	byte ptr [rax],1		
 	jne	record_arguments_already_copied_2
  else
-	mov	rcx,rax 
+	mov	rcx,rax
 	sub	rax,qword ptr heap_p1
 
 	shr	rax,4
@@ -676,7 +676,7 @@ copy_record_node2_3_ab_or_b:
 	mov	qword ptr [rdi],rcx 
 	mov	rdx,qword ptr 8[rdx]
 
-	mov	rcx,rax 
+	mov	rcx,rax
 	sub	rax,qword ptr heap_p1
 
 	shr	rax,4
@@ -724,7 +724,7 @@ copy_record_node2_3_b:
 	mov	qword ptr (-24)[rsi],rcx 
 	mov	rdx,qword ptr 8[rdx]
 
-	mov	rcx,rax 
+	mov	rcx,rax
 	sub	rax,qword ptr heap_p1
 
 	shr	rax,4
@@ -787,10 +787,10 @@ cp_record_arg_lp3:
 record_arguments_already_copied_3_b:
 	mov	rdx,qword ptr [rcx]
 	pop	rax
-	
+
 	sub	rdx,1
 	mov	qword ptr 16[rsi],rdx
-	
+
 	sub	rbx,1
 	jae	copy_lp2
 	ret
@@ -1283,7 +1283,7 @@ copy_bool_array_2:
 	jmp	copy_int_or_real_array_2
 
 end_copy1:
-	mov	heap_end_after_gc,rsi 
+	mov	heap_end_after_gc,rsi
 
 	mov	rcx,offset finalizer_list
 	mov	rdx,offset free_finalizer_list
@@ -1308,7 +1308,7 @@ finalizer_not_used_after_copy:
 	mov	qword ptr [rdx],rbp 
 	lea	rdx,8[rbp]
 	mov	rbp,qword ptr 8[rbp]
-	jmp	determine_free_finalizers_after_copy	
+	jmp	determine_free_finalizers_after_copy
 
 end_finalizers_after_copy:
 	mov	qword ptr [rcx],rbp 
