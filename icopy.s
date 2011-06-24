@@ -64,9 +64,6 @@ in_hnf_1:
 	movzwl	-2(d0),d1
 
 	test	d1,d1
-#ifdef NO_COPY_TO_END
-	je	skip_hnf_0
-#endif
 	je	copy_array_21
 
 	cmp	$2,d1
@@ -91,16 +88,6 @@ in_hnf_1:
 
 	sub	$2,d1
 	jmp	copy_lp2_lp1
-
-#ifdef NO_COPY_TO_END
-skip_hnf_0:
-	add	$4,a2
-	cmp	$INT+2,d0
-	jae	copy_lp1
-skip_real_file_or_string:
-	add	$4,a2
-	jmp	copy_lp1
-#endif
 
 node_without_arguments_part:
 	dec	d0
@@ -212,20 +199,11 @@ not_in_hnf_1:
 	jg	copy_lp2_lp1
 
 copy_node_arity1:
-#ifdef NO_COPY_TO_END
-	jb	skip_node_arity0
-#endif
 	xorl	d1,d1
 	call	copy_lp2
 
 	add	$4,a2
 	jmp	copy_lp1
-
-#ifdef NO_COPY_TO_END
-skip_node_arity0:
-	add	$8,a2
-	jmp	copy_lp1
-#endif
 
 copy_unboxed_closure_arguments:
 	je	copy_unboxed_closure_arguments1
@@ -462,18 +440,9 @@ no_small_int_or_char_2:
 	mov	4(a1),d0
 #endif
 
-#ifdef NO_COPY_TO_END
-	mov	a0,(a4)
-	mov	d0,4(a4)
-	mov	a4,(a2)
-	inc	a4
-	mov	a4,(a1)
-	add	$7,a4
-	add	$4,a2
-#else
-# ifdef COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
+#ifdef COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
 copy_record_node2_1_b:
-# endif
+#endif
 	mov	a0,-8(a3)
 	add	$4,a2
 
@@ -484,7 +453,6 @@ copy_record_node2_1_b:
 	dec	a3
 	
 	mov	a3,-4(a2)
-#endif
 
 	sub	$1,d1
 	jae	copy_lp2
@@ -514,19 +482,6 @@ copy_real_file_or_string_2:
 	jbe	copy_string_or_array_2
 
 copy_real_or_file_2:
-#ifdef NO_COPY_TO_END
-	mov	a0,(a4)
-	mov	a4,(a2)
-	inc	a4
-	mov	a4,(a1)
-	mov	4(a1),d0
-	mov	8(a1),a0
-	add	$4,a2
-	mov	d0,4-1(a4)
-	mov	a0,8-1(a4)
-	add	$11,a4
-	sub	$1,d1
-#else
 	mov	a0,-12(a3)
 	sub	$12-1,a3
 
@@ -543,7 +498,7 @@ copy_real_or_file_2:
 	sub	$1,d1
 
 	mov	a0,8(a3)
-#endif
+
 	jae	copy_lp2
 	ret
 
@@ -1223,17 +1178,12 @@ copy_strict_record_selector_6:
 
 copy_arity_0_node2_:
 	jl	copy_selector_2
-#ifdef NO_COPY_TO_END
-	mov	a0,(a4)
-	mov	a4,(a2)
-	lea	1(a4),d0
-	add	$12,a4
-#else
+
 	mov	a0,-12(a3)
 	sub	$12,a3
 	mov	a3,(a2)
 	lea	1(a3),d0
-#endif
+
 	add	$4,a2
 	mov	d0,(a1)
 
@@ -1241,11 +1191,7 @@ copy_arity_0_node2_:
 	jae	copy_lp2
 	ret
 
-
 copy_string_or_array_2:
-#ifdef NO_COPY_TO_END
-	jmp	halt
-#endif
 #ifdef DLL
 	je	copy_string_2
 	cmpl	$__ARRAY__+2,a0
