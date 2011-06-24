@@ -116,7 +116,7 @@ a_stack_guard_page	dq	0
 	public	profile_stack_pointer
 profile_stack_pointer	dq	0
 
-dll_initisialised	dq	0
+dll_initialised	dq	0
 	public	end_b_stack
 end_b_stack	dq	0
 basic_only	dq	0
@@ -615,7 +615,7 @@ DLL_PROCESS_ATTACH:
 	push	r14
 	push	r15
  endif
-	mov	qword ptr dll_initisialised,1
+	mov	qword ptr dll_initialised,1
 
 	call	init_clean
 	test	rax,rax
@@ -694,7 +694,7 @@ init_clean:
 	sub	rsp,32+8
 
 	sub	rax,qword ptr ab_stack_size
-	mov	end_b_stack,rax 
+	mov	end_b_stack,rax
 
 	mov	rax,qword ptr flags
 	and	rax,1
@@ -723,7 +723,7 @@ init_clean:
 	mov	rax,qword ptr heap_size
 	add	rax,7
 	and	rax,-8
-	mov	qword ptr heap_size,rax 
+	mov	qword ptr heap_size,rax
 	add	rax,7
 
 	mov	rbp,rsp
@@ -768,14 +768,14 @@ init_clean:
 	add	rax,qword ptr ab_stack_size
 	add	rax,7+4095
 	and	rax,-4096
-	mov	qword ptr a_stack_guard_page,rax 
+	mov	qword ptr a_stack_guard_page,rax
 	sub	rax,qword ptr ab_stack_size
 
 	add	rax,7
 	and	rax,-8
 
-	mov	rsi,rax 
-	mov	stack_p,rax 
+	mov	rsi,rax
+	mov	stack_p,rax
 
 	add	rax,qword ptr ab_stack_size
 	sub	rax,64
@@ -817,7 +817,7 @@ make_static_characters_lp:
 	mov	rbp,qword ptr heap_size_257
 	shl	rbp,4
 	lea	rax,[rdi+rbp*8]
-	mov	heap_copied_vector,rax 
+	mov	heap_copied_vector,rax
 	add	rax,heap_copied_vector_size
 	mov	heap_p2,rax
 
@@ -855,7 +855,7 @@ no_mark9:
 too_large_or_too_small:
 
 	lea	rax,[rdi+rbp*8]
-	mov	heap_end_after_gc,rax 
+	mov	heap_end_after_gc,rax
 
 	test	byte ptr flags,64
 	je	no_mark2
@@ -1175,7 +1175,7 @@ print_time:
 
 	xor	rdx,rdx 
 	mov	rbx,1000
-	div	rbx 
+	div	rbx
 	mov	rcx,rax 
 	mov	rax,rdx 
 	xor	rdx,rdx 
@@ -1752,7 +1752,7 @@ ItoAC:
 	mov	rcx,offset sprintf_buffer
 	call	int_to_string
 	
-	mov	rax,rcx 
+	mov	rax,rcx
 	sub	rax,offset sprintf_buffer
 
 	jmp	sprintf_buffer_to_string
@@ -1852,7 +1852,7 @@ build_string:
 
 D_to_S_no_gc:
 	sub	rbx,2
-	mov	rbp,rdi 
+	mov	rbp,rdi
 	lea	r9,__STRING__+2
 	mov	qword ptr [rdi],r9
 	mov	8[rdi],rax 
@@ -2072,7 +2072,7 @@ collect_0:
  endif
 
 collect_0_:
-	mov	rbp,rdi 
+	mov	rbp,rdi
 
 	push	rax
 	push	rbx
@@ -2094,7 +2094,7 @@ collect_0_:
 	push	rsi
 	mov	rsi,rbx
 
-	xor	rbx,rbx 
+	xor	rbx,rbx
 	mov	rcx,qword ptr bit_vector_p
 
 scan_bits:
@@ -2134,15 +2134,15 @@ end_zero_bits:
 	mov	rax,rcx 
 	sub	rax,rdx 
 	shl	rax,3
-	add	qword ptr n_free_words_after_mark,rax 
+	add	qword ptr n_free_words_after_mark,rax
 	mov	dword ptr (-4)[rcx],ebx
 
 	cmp	rax,rsi
 	jb	scan_bits
 
 found_free_memory:
-	mov	qword ptr bit_counter,rbp 
-	mov	qword ptr bit_vector_p,rcx 
+	mov	qword ptr bit_counter,rbp
+	mov	qword ptr bit_vector_p,rcx
 
 	lea	rbp,(-4)[rdx]
 	sub	rbp,qword ptr heap_vector
@@ -2151,7 +2151,7 @@ found_free_memory:
 	add	rdi,rbp 
 
 	lea	rbp,[rdi+rax*8]
-	mov	qword ptr heap_end_after_gc,rbp 
+	mov	qword ptr heap_end_after_gc,rbp
 
 	mov	r15,rax
 	sub	r15,rsi
@@ -2172,7 +2172,7 @@ end_bits2:
 	jae	found_free_memory
 
 end_scan:
-	pop	rsi 
+	pop	rsi
 	mov	qword ptr bit_counter,rbp 
 
 no_scan:
@@ -2194,7 +2194,7 @@ no_mark3:
 	mov	r15,rbp
 
 	lea	rbp,[rdi+rbp*8]
-	mov	qword ptr heap_end_after_gc,rbp 
+	mov	qword ptr heap_end_after_gc,rbp
 
 	sub	r15,rbx
 
@@ -2265,7 +2265,7 @@ collect:
 	mov	rdi,r13
 	sub	rdi,stack_p
  else
-	mov	rcx,rsi 
+	mov	rcx,rsi
 	sub	rcx,stack_p
  endif
 	call	ew_print_int
@@ -2387,23 +2387,23 @@ switch_to_mark_scan:
 	jc	vector_at_begin
 	
 vector_at_end:
-	mov	qword ptr heap_p3,rbx 
-	add	rbx,rax 
-	mov	qword ptr heap_vector,rbx 
+	mov	qword ptr heap_p3,rbx
+	add	rbx,rax
+	mov	qword ptr heap_vector,rbx
 	
 	mov	rax,qword ptr heap_p1
-	mov	qword ptr extra_heap,rax 
-	sub	rbx,rax 
+	mov	qword ptr extra_heap,rax
+	sub	rbx,rax
 	shr	rbx,3
-	mov	qword ptr extra_heap_size,rbx 
+	mov	qword ptr extra_heap_size,rbx
 	jmp	switch_to_mark_scan_2
 
 vector_at_begin:
-	mov	qword ptr heap_vector,rbx 
+	mov	qword ptr heap_vector,rbx
 	add	rbx,qword ptr heap_size
-	sub	rbx,rax 
-	mov	qword ptr heap_p3,rbx 
-	
+	sub	rbx,rax
+	mov	qword ptr heap_p3,rbx
+
 	mov	qword ptr extra_heap,rbx 
 	mov	rcx,qword ptr heap_p2
 	sub	rcx,rbx 
@@ -2433,7 +2433,7 @@ switch_to_mark_scan_2:
 	mov	rdi,qword ptr extra_heap
 	shl	rbx,3
 	add	rbx,rdi
-	mov	qword ptr heap_end_after_gc,rbx 
+	mov	qword ptr heap_end_after_gc,rbx
 
 	mov	qword ptr heap_end_write_heap,rdi 
 
@@ -2469,8 +2469,8 @@ not_too_small1:
 	shl	rbx,3
 	mov	rbp,qword ptr heap_end_after_gc
 	mov	qword ptr heap_end_after_copy_gc,rbp 
-	sub	rbp,rbx 
-	mov	qword ptr heap_end_after_gc,rbp 
+	sub	rbp,rbx
+	mov	qword ptr heap_end_after_gc,rbp
 
 no_small_heap1:
 	mov	rax,rcx
@@ -2566,7 +2566,7 @@ no_heap_use_message:
 
 gc0:
 gc1:
-	mov	rbx,qword ptr [rbx ]
+	mov	rbx,qword ptr [rbx]
 	
 	mov	rax,rsp 
 	
@@ -2796,7 +2796,7 @@ compacting_collector:
 
 	mov	rax,qword ptr heap_p3
 	neg	rax
-	mov	qword ptr neg_heap_p3,rax 
+	mov	qword ptr neg_heap_p3,rax
 
 	mov	qword ptr stack_top,rsi
 
@@ -2811,12 +2811,12 @@ compacting_collector:
 	mov	qword ptr zero_bits_before_mark,0
 
 no_mark4:
-	mov	rbp,rdi 
+	mov	rbp,rdi
 	mov	rax,qword ptr heap_size_65
 	add	rax,3
 	shr	rax,2
 
-	xor	rbx,rbx 
+	xor	rbx,rbx
 
 	test	al,1
 	je	zero_bits_1
@@ -2900,7 +2900,7 @@ no_mark5:
 	shl	rbx,6
 	add	rbx,qword ptr heap_p3
 
-	mov	qword ptr heap_end_after_gc,rbx 
+	mov	qword ptr heap_end_after_gc,rbx
 
 	sub	rbx,rdi
 	shr	rbx,3
@@ -2920,7 +2920,7 @@ no_mark5:
 	je	no_mark_6
 
 	mov	rax,qword ptr neg_heap_p3
-	add	rax,rdi 
+	add	rax,rdi
 	mov	rbx,qword ptr n_allocated_words
 	lea	rax,[rax+rbx*8]
 
@@ -2942,7 +2942,7 @@ not_too_small2:
 	sub	rcx,rax 
 	jb	no_small_heap2
 	
-	sub	qword ptr heap_end_after_gc,rcx 
+	sub	qword ptr heap_end_after_gc,rcx
 	shr	rcx,3
 	sub	r15,rcx
 
@@ -2950,7 +2950,7 @@ not_too_small2:
 
 no_small_heap2:
 	shr	rbx,3
-	mov	qword ptr bit_vector_size,rbx 
+	mov	qword ptr bit_vector_size,rbx
 
 no_mark_6:
 	jmp	no_copy_garbage_collection
@@ -2963,7 +2963,7 @@ no_copy_garbage_collection:
 
 	add	qword ptr total_compact_gc_bytes,rax 
 
-	mov	rax,rdi 
+	mov	rax,rdi
 	sub	rax,qword ptr heap_p3
 	mov	rbx,qword ptr n_allocated_words
 	lea	rax,[rax+rbx*8]
@@ -3064,7 +3064,7 @@ halt:
 
 	mov	qword ptr execution_aborted,1
 
-	cmp	qword ptr dll_initisialised,0
+	cmp	qword ptr dll_initialised,0
  ifdef LINUX
 	je	exit_
  else
@@ -3639,7 +3639,7 @@ r_gc_4:
 
 ; copy part of string
 	mov	rcx,rbp 
-	mov	rbp,rdi 
+	mov	rbp,rdi
 	add	rdi,16
 
 	xchg	rsi,rdx 
@@ -4587,7 +4587,7 @@ no_collect_4585:
 	add	rdi,24
 
 	pop	rdx
-	mov	r12,rsp 
+	mov	r12,rsp
 	
 	test	r11,r11 
 	je	r_array_5
@@ -4637,7 +4637,7 @@ st_fillr5_array:
 	jnc	fillr5_array_1
 
 	mov	rsp,r12
-	jmp	rdx 
+	jmp	rdx
 
  ifndef NEW_DESCRIPTORS
 yet_args_needed:
