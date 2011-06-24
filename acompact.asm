@@ -54,7 +54,7 @@ rmarkp_cafs_lp:
 	mov	rax,qword ptr [rax]
 	lea	rcx,[rsi+rax*8]
 
-	mov	qword ptr end_vector,rcx 
+	mov	qword ptr end_vector,rcx
 
 	call	rmarkp_stack_nodes
 	
@@ -66,7 +66,7 @@ end_rmarkp_cafs:
 	mov	rsi,qword ptr stack_p
 
 	mov	rcx,qword ptr stack_top
-	mov	qword ptr end_vector,rcx 
+	mov	qword ptr end_vector,rcx
 
 	call	rmarkp_stack_nodes
 
@@ -149,7 +149,7 @@ end_finalizers_after_compact1:
 	je	finalizer_list_empty
 	test	rcx,3
 	jne	finalizer_list_already_reversed
-	mov	rax ,qword ptr [rcx]
+	mov	rax,qword ptr [rcx]
 	mov	qword ptr [rcx],offset finalizer_list+1
 	mov	qword ptr finalizer_list,rax 
 finalizer_list_already_reversed:
@@ -182,11 +182,11 @@ free_finalizer_list_empty:
 	add	rax,3
 	shr	rax,2
 	mov	r12,rax
-	
+
 	mov	r8,qword ptr heap_vector
 
 	lea	rbx,4[r8]
-	neg	rbx 
+	neg	rbx
 	mov	qword ptr neg_heap_vector_plus_4,rbx 
 
 	mov	rdi,qword ptr heap_p3
@@ -278,11 +278,11 @@ end_list_2:
 	sub	rbx,256+3
 
 copy_record_arguments_all_b:
-	push	rbx 
+	push	rbx
 	mov	rbx,qword ptr heap_vector
 
 update_up_list_1r:
-	mov	rdx,rax 
+	mov	rdx,rax
 	add	rax,qword ptr neg_heap_p3
 
 	push	rcx 
@@ -756,7 +756,7 @@ move_record_1:
 	jmp	move_int_bool_or_char
 
 move_real_or_file:
-	mov	rax ,qword ptr [rcx]
+	mov	rax,qword ptr [rcx]
 	add	rcx,8
 	mov	qword ptr [rdi],rax 
 	add	rdi,8
