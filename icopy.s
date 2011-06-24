@@ -1200,16 +1200,13 @@ copy_string_or_array_2:
 	jmp	copy_array_2
 copy_string_2:
 	movl	a1,a0
-	mov	a1,d0
 #else
 	movl	a1,a0
 	jne	copy_array_2
-	mov	a0,d0
 #endif
-
-	sub	heap_p1,d0
-	cmp	semi_space_size,d0
-	jae	copy_string_constant
+	sub	heap_p1,a1
+	cmp	semi_space_size,a1
+	jae	copy_string_or_array_constant
 
 	mov	4(a0),a1
 	add	$4,a2
@@ -1250,15 +1247,11 @@ cp_s_arg_lp2:
 	jae	copy_lp2
 	ret
 
-copy_string_constant:
-	movl	a1,(a2)
-	add	$4,a2
-
-	sub	$1,d1
-	jae	copy_lp2
-	ret
-
 copy_array_2:
+	sub	heap_p1,a1
+	cmp	semi_space_size,a1
+	jae	copy_string_or_array_constant
+
 	push	d1
 
 	movl	8(a0),d0
@@ -1331,6 +1324,14 @@ copy_bool_array_2:
 	add	$3,d1
 	shr	$2,d1
 	jmp	copy_int_array_2
+
+copy_string_or_array_constant:
+	movl	a0,(a2)
+	add	$4,a2
+
+	sub	$1,d1
+	jae	copy_lp2
+	ret
 
 end_copy1:
 	mov	a3,heap_end_after_gc
