@@ -562,7 +562,11 @@ int file_read_int (long fn,long *i_p)
 				return 0;
 			((char*)i_p)[3]=i;	
 		} else if (f->mode & (1<<F_READ_TEXT)){
+#ifdef A64
+			if (fscanf (f->file,"%ld",i_p)!=1)
+#else
 			if (fscanf (f->file,"%d",i_p)!=1)
+#endif
 				return 0;
 		} else
 			IO_error ("FReadI: read from an output file");
@@ -861,7 +865,11 @@ void file_write_int (int i,long fn)
 			putc (((char*)&v)[3],fd);
 #endif
 		} else
+#ifdef A64
+			fprintf (f->file,"%ld",i);
+#else
 			fprintf (f->file,"%d",i);
+#endif
 	}
 }
 
