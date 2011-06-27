@@ -1101,11 +1101,10 @@ copy_arity_0_node2_:
 copy_string_or_array_2:
 	mov	rcx,rdx 
 	jne	copy_array_2
-	mov	rax,rcx 
 
-	sub	rax,heap_p1[rip]
-	cmp	rax,semi_space_size[rip]
-	jae	copy_string_constant
+	sub	rdx,heap_p1[rip]
+	cmp	rdx,semi_space_size[rip]
+	jae	copy_string_or_array_constant
 
 	mov	rdx,8[rcx]
 	add	rbp,8
@@ -1146,15 +1145,11 @@ cp_s_arg_lp2:
 	att_jae	copy_lp2
 	ret
 
-copy_string_constant:
-	mov	qword ptr [rbp],rdx 
-	add	rbp,8
-
-	sub	rbx,1
-	att_jae	copy_lp2
-	ret
-
 copy_array_2:
+	sub	rdx,heap_p1[rip]
+	cmp	rdx,semi_space_size[rip]
+	jae	copy_string_or_array_constant
+
 	push	rbx 
 
 	mov	rax,qword ptr 16[rcx]
@@ -1233,6 +1228,14 @@ copy_bool_array_2:
 	add	rbx,7
 	shr	rbx,3
 	att_jmp	copy_int_or_real_array_2
+
+copy_string_or_array_constant:
+	mov	qword ptr [rbp],rcx 
+	add	rbp,8
+
+	sub	rbx,1
+	att_jae	copy_lp2
+	ret
 
 end_copy1:
 	mov	heap_end_after_gc[rip],rsi 
