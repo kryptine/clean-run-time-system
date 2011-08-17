@@ -15,7 +15,7 @@ pmark:
 	mov	rax,qword ptr heap_size_65
 	xor	rbx,rbx 
 
-	mov	qword ptr n_marked_words,rbx 
+	mov	qword ptr n_marked_words,rbx
 	shl	rax,6
 
 	mov	qword ptr heap_size_64_65,rax 
@@ -25,7 +25,7 @@ pmark:
 
 	mov	rax,qword ptr caf_list
 
-	mov	qword ptr end_stack,rsi 
+	mov	qword ptr end_stack,rsi
 
 	mov	r15,0
 	mov	r8,0
@@ -375,7 +375,7 @@ pmark_tuple_selector_node_1:
 	mov	rcx,rdx
 	mov	eax,4[rax]
 	call	near ptr rax
-	pop	rdx 
+	pop	rdx
 	
 	lea	r9,__indirection
 	mov	qword ptr (-8)[rdx],r9
@@ -517,7 +517,7 @@ end_pmark_nodes_:
 pmark_lazy_node:
 	movsxd	rbp,dword ptr (-4)[rax]
 	test	rbp,rbp 
-	je	pmark_real_or_file
+	je	pmark_node2_bb
 
 	cmp	rbp,1
 	jle	pmark_lazy_node_1
@@ -554,7 +554,7 @@ pmark_closure_with_unboxed_arguments:
 	mov	rax,rbp 
 	and	rbp,255
 	sub	rbp,1
-	je	pmark_real_or_file
+	je	pmark_node2_bb
 
 	shr	rax,8
 	add	rbp,2
@@ -580,9 +580,9 @@ pmark_closure_with_one_boxed_argument:
 	jmp	pmark_node
 
 pmark_hnf_0:
-	lea	r9,dINT+2
+	lea	r9,__STRING__+2
 	cmp	rax,r9
-	jb	pmark_real_file_or_string
+	jbe	pmark_string_or_array
 
 	or	dword ptr [rdi+rbx*4],esi 
 
@@ -603,12 +603,7 @@ pmark_normal_hnf_0:
 	inc	r14
 	jmp	pmark_next_node
 
-pmark_real_file_or_string:
-	lea	r9,__STRING__+2
-	cmp	rax,r9
-	jbe	pmark_string_or_array
-
-pmark_real_or_file:
+pmark_node2_bb:
 	or	dword ptr [rdi+rbx*4],esi 
 	add	r14,3
 
@@ -935,7 +930,7 @@ pmark_last_string_bits:
 	jmp	pmark_next_node
 
 end_pmarkr_using_reversal:
-	pop	rdx 
+	pop	rdx
 	test	rdx,rdx 
 	je	pmark_next_node
 	mov	qword ptr [rdx],rcx 
@@ -1145,7 +1140,7 @@ pmarkr_record_selector_node_1:
 	shr	rbx,8
 	mov	eax,dword ptr (bit_set_table2)[rax]
 	test	eax,dword ptr [rdi+rbx*4]
-	pop	rax 
+	pop	rax
 	jne	pmarkr_no_selector_2
 
 	mov	rbx,qword ptr [rbp]
@@ -1336,7 +1331,7 @@ pmarkr_argument_part_parent:
 pmarkr_lazy_node:
 	movsxd	rbp,dword ptr (-4)[rax]
 	test	rbp,rbp 
-	je	pmarkr_real_or_file
+	je	pmarkr_node2_bb
 
 	add	rcx,8
 	cmp	rbp,1
@@ -1399,7 +1394,7 @@ pmarkr_fits_in_word_7_:
 
 pmarkr_closure_1_with_unboxed_argument:
 	sub	rcx,8
-	jmp	pmarkr_real_or_file
+	jmp	pmarkr_node2_bb
 
 pmarkr_hnf_0:
 	cmp	rax,offset dINT+2
@@ -1407,10 +1402,9 @@ pmarkr_hnf_0:
 
 	mov	rbp,qword ptr 8[rcx]
 	cmp	rbp,33
-
 	jb	pmarkr_small_int
 
-pmarkr_bool_or_small_string:
+pmarkr_real_int_bool_or_small_string:
 	mov	edx,dword ptr (bit_set_table2)[rdx]
 	add	r14,2
 	or	dword ptr [rdi+rbx*4],edx 
@@ -1425,7 +1419,8 @@ pmarkr_small_int:
 	jmp	pmarkr_next_node
 
 pmarkr_no_int_3:
-	jb	pmarkr_real_file_or_string
+	cmp	rax,offset __STRING__+2
+	jbe	pmarkr_string_or_array
 
  	cmp	rax,offset CHAR+2
  	jne	pmarkr_no_char_3
@@ -1436,7 +1431,7 @@ pmarkr_no_int_3:
 	jmp	pmarkr_next_node
 
 pmarkr_no_char_3:
-	jb	pmarkr_bool_or_small_string
+	jb	pmarkr_real_int_bool_or_small_string
 
  ifdef NEW_DESCRIPTORS
 	lea	rcx,((-8)-2)[rax]
@@ -1445,12 +1440,7 @@ pmarkr_no_char_3:
  endif
 	jmp	pmarkr_next_node
 
-pmarkr_real_file_or_string:
-	lea	r9,__STRING__+2
-	cmp	rax,r9
-	jbe	pmarkr_string_or_array
-
-pmarkr_real_or_file:
+pmarkr_node2_bb:
 	mov	edx,dword ptr (bit_set_table2)[rdx]
 	add	r14,3
 
@@ -1560,7 +1550,7 @@ pmarkr_record_1:
 	cmp	word ptr (-2+2)[rax],0
 	jne	pmarkr_hnf_1
 	sub	rcx,8
-	jmp	pmarkr_bool_or_small_string
+	jmp	pmarkr_real_int_bool_or_small_string
 
 pmarkr_string_or_array:
 	je	pmarkr_string_
@@ -1688,7 +1678,7 @@ pmarkr_array_length_0_1:
 	mov	rdx,qword ptr lazy_array_list
 	mov	qword ptr 24[rcx],rbp 
 	mov	qword ptr 16[rcx],rdx 
-	mov	qword ptr [rcx],rax 
+	mov	qword ptr [rcx],rax
 	mov	qword ptr lazy_array_list,rcx 
 	mov	qword ptr 8[rcx],rbx
 	add	rcx,8

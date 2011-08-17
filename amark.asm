@@ -2,11 +2,11 @@
 	mov	rax,qword ptr heap_size_65
 	xor	rbx,rbx 
 	
-	mov	qword ptr n_marked_words,rbx 
+	mov	qword ptr n_marked_words,rbx
 	shl	rax,6
 
-	mov	qword ptr lazy_array_list,rbx 
-	mov	qword ptr heap_size_64_65,rax 
+	mov	qword ptr lazy_array_list,rbx
+	mov	qword ptr heap_size_64_65,rax
 	
 	lea	rsi,(-4000)[rsp]
 
@@ -199,7 +199,7 @@ not_largest_heap:
 not_larger_than_heap:
 	mov	rax,rbx 
 	shr	rax,3
-	mov	qword ptr bit_vector_size,rax 
+	mov	qword ptr bit_vector_size,rax
 no_larger_heap:
 
 	mov	rbp,rax
@@ -267,7 +267,7 @@ _no_heap_use_message2:
 	mov	rsi,qword ptr n_allocated_words
 	xor	rbx,rbx 
 
-	mov	rcx,rdi 
+	mov	rcx,rdi
 	mov	qword ptr n_free_words_after_mark,rbx 
 
 _scan_bits:
@@ -314,8 +314,8 @@ _end_zero_bits:
 	jb	_scan_bits
 
 _found_free_memory:
-	mov	qword ptr bit_counter,rbp 
-	mov	qword ptr bit_vector_p,rcx 
+	mov	qword ptr bit_counter,rbp
+	mov	qword ptr bit_vector_p,rcx
 
 	lea	rbx,(-4)[rdx]
 	sub	rbx,rdi 
@@ -344,7 +344,7 @@ _end_bits2:
 	jae	_found_free_memory
 
 _end_scan:
-	mov	qword ptr bit_counter,rbp 
+	mov	qword ptr bit_counter,rbp
 	jmp	compact_gc
 
 ; %rbp : pointer to stack element
@@ -698,7 +698,7 @@ _end_mark_nodes:
 _mark_lazy_node:
 	movsxd	rbp,dword ptr (-4)[rax]
 	test	rbp,rbp 
-	je	_mark_real_or_file
+	je	_mark_node2_bb
 
 	cmp	rbp,1
 	jle	_mark_lazy_node_1
@@ -735,7 +735,7 @@ _mark_closure_with_unboxed_arguments:
 	mov	rax,rbp 
 	and	rbp,255
 	sub	rbp,1
-	je	_mark_real_or_file
+	je	_mark_node2_bb
 
 	shr	rax,8
 	add	rbp,2
@@ -761,9 +761,9 @@ _mark_closure_with_one_boxed_argument:
 	jmp	_mark_node
 
 _mark_hnf_0:
-	lea	r9,dINT+2
+	lea	r9,__STRING__+2
 	cmp	rax,r9
-	jb	_mark_real_file_or_string
+	jbe	_mark_string_or_array
 
 	or	dword ptr [rdi+rbx*4],esi 
 
@@ -771,7 +771,7 @@ _mark_hnf_0:
 	cmp	rax,r9
 	ja	_mark_normal_hnf_0
 
-_mark_bool:
+_mark_real_int_bool_or_char:
 	add	r14,2
 
 	cmp	rsi,40000000h
@@ -784,12 +784,7 @@ _mark_normal_hnf_0:
 	inc	r14
 	jmp	_mark_next_node
 
-_mark_real_file_or_string:
-	lea	r9,__STRING__+2
-	cmp	rax,r9
-	jbe	_mark_string_or_array
-
-_mark_real_or_file:
+_mark_node2_bb:
 	or	dword ptr [rdi+rbx*4],esi 
 	add	r14,3
 
@@ -877,7 +872,7 @@ _mark_record_1:
 	cmp	word ptr (-2+2)[rax],0
 	jne	_mark_hnf_1
 
-	jmp	_mark_bool
+	jmp	_mark_real_int_bool_or_char
 
 _mark_string_or_array:
 	je	_mark_string_
@@ -1515,7 +1510,7 @@ __argument_part_parent:
 __mark_lazy_node:
 	movsxd	rbp,dword ptr(-4)[rax]
 	test	rbp,rbp 
-	je	__mark_real_or_file
+	je	__mark_node2_bb
 
 	add	rcx,8
 	cmp	rbp,1
@@ -1578,7 +1573,7 @@ fits__in_word_7_:
 
 __mark_closure_1_with_unboxed_argument:
 	sub	rcx,8
-	jmp	__mark_real_or_file
+	jmp	__mark_node2_bb
 
 __mark_hnf_0:
 	cmp	rax,offset dINT+2
@@ -1588,7 +1583,7 @@ __mark_hnf_0:
 	cmp	rbp,33
 	jb	____small_int
 
-__mark_bool_or_small_string:
+__mark_real_bool_or_small_string:
 	mov	edx,dword ptr (bit_set_table2)[rdx]
 	add	r14,2
 	or	dword ptr [rdi+rbx*4],edx 
@@ -1603,7 +1598,8 @@ ____small_int:
 	jmp	__mark_next_node
 
 __no_int_3:
-	jb	__mark_real_file_or_string
+	cmp	rax,offset __STRING__+2
+	jbe	__mark_string_or_array
 
  	cmp	rax,offset CHAR+2
  	jne	__no_char_3
@@ -1614,7 +1610,7 @@ __no_int_3:
 	jmp	__mark_next_node
 
 __no_char_3:
-	jb	__mark_bool_or_small_string
+	jb	__mark_real_bool_or_small_string
 
  ifdef NEW_DESCRIPTORS
 	lea	rcx,((-8)-2)[rax]
@@ -1623,12 +1619,7 @@ __no_char_3:
  endif
 	jmp	__mark_next_node
 
-__mark_real_file_or_string:
-	lea	r9,__STRING__+2
-	cmp	rax,r9
-	jbe	__mark_string_or_array
-
-__mark_real_or_file:
+__mark_node2_bb:
 	mov	edx,dword ptr (bit_set_table2)[rdx]
 	add	r14,3
 
@@ -1738,7 +1729,7 @@ __mark_record_1:
 	cmp	word ptr (-2+2)[rax],0
 	jne	__mark_hnf_1
 	sub	rcx,8
-	jmp	__mark_bool_or_small_string
+	jmp	__mark_real_bool_or_small_string
 
 __mark_string_or_array:
 	je	__mark_string_
@@ -1866,9 +1857,9 @@ __mark_array_length_0_1:
 	mov	rdx,qword ptr lazy_array_list
 	mov	qword ptr 24[rcx],rbp 
 	mov	qword ptr 16[rcx],rdx 
-	mov	qword ptr [rcx],rax 
-	mov	qword ptr lazy_array_list,rcx 
-	mov	qword ptr 8[rcx],rbx 
+	mov	qword ptr [rcx],rax
+	mov	qword ptr lazy_array_list,rcx
+	mov	qword ptr 8[rcx],rbx
 	add	rcx,8
 
 	mov	rbp,qword ptr [rcx]
