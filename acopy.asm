@@ -390,8 +390,8 @@ arguments_already_copied_2:
 	ret
 
 copy_arity_0_node2:
-	cmp	rcx,offset dINT+2
-	jb	copy_real_file_or_string_2
+	cmp	rcx,offset __STRING__+2
+	jbe	copy_string_or_array_2
 
 	cmp	rcx,offset CHAR+2
 	ja	copy_normal_hnf_0_2
@@ -462,32 +462,6 @@ copy_normal_hnf_0_2:
 	jae	copy_lp2
 	ret
 
-copy_real_file_or_string_2:
-	lea	r9,__STRING__+2
-	cmp	rcx,r9
-	jbe	copy_string_or_array_2
-
-copy_real_or_file_2:
-	mov	(-24)[rsi],rcx 
-	sub	rsi,24-1
-
-	mov	[rdx],rsi 
-	dec	rsi 
-
-	mov	rax,8[rdx]
-	mov	rcx,16[rdx]
-
-	mov	[rbp],rsi 
-	add	rbp,8
-
-	mov	8[rsi],rax 
-	sub	rbx,1
-
-	mov	16[rsi],rcx 
-
-	jae	copy_lp2
-	ret
-
 already_copied_2:
 	dec	rcx 
 	sub	rbx,1
@@ -506,7 +480,7 @@ copy_record_2:
  	jb	copy_record_node2_1
  
  	cmp	word ptr (-2+2)[rcx],0
-	je	copy_real_or_file_2
+	je	copy_record_node2_bb
 
 	mov	qword ptr [rbp],rdi
 	mov	qword ptr [rdi],rcx
@@ -544,6 +518,27 @@ copy_record_node2_1:
 
 	add	rdi,16
 	sub	rbx,1
+	jae	copy_lp2
+	ret
+
+copy_record_node2_bb:
+	mov	(-24)[rsi],rcx 
+	sub	rsi,24-1
+
+	mov	[rdx],rsi 
+	dec	rsi 
+
+	mov	rax,8[rdx]
+	mov	rcx,16[rdx]
+
+	mov	[rbp],rsi 
+	add	rbp,8
+
+	mov	8[rsi],rax 
+	sub	rbx,1
+
+	mov	16[rsi],rcx 
+
 	jae	copy_lp2
 	ret
  else
