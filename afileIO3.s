@@ -721,7 +721,7 @@ readSFS_gc:	push	rbp
 
 readLineSF:
 	cmp	r15,32+2
-	ja	readLineSF_gc
+	jb	readLineSF_gc
 
 readLineSF_r_gc:
 	push	rax
