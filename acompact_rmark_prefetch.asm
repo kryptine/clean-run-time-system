@@ -21,10 +21,11 @@ rmarkp_stack_nodes1:
 
 rmarkp_next_stack_node:
 	add	rsi,8
+rmarkp_stack_nodes:
 	cmp	rsi,qword ptr end_vector
 	je	end_rmarkp_nodes
 
-rmarkp_stack_nodes:
+rmarkp_more_stack_nodes:
 	mov	rcx,qword ptr [rsi]
 
 	mov	rax,qword ptr neg_heap_p3
@@ -49,7 +50,7 @@ rmarkp_stack_nodes:
 
 	add	rsi,8
 	cmp	rsi,qword ptr end_vector
-	jne	rmarkp_stack_nodes
+	jne	rmarkp_more_stack_nodes
 	ret
 
 rmarkp_stack_node:
@@ -1149,7 +1150,7 @@ rmarkp_array_nodes:
 	mov	rcx,qword ptr [rsi]
 
 	mov	rax,qword ptr neg_heap_p3
-	add	rax,rcx 
+	add	rax,rcx
 
 	cmp	rax,qword ptr heap_size_64_65
 	jnc	rmarkp_next_array_node
