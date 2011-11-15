@@ -7,10 +7,11 @@ rmark_stack_nodes1:
 
 rmark_next_stack_node:
 	addl	$4,a3
+rmark_stack_nodes:
 	cmpl	end_vector,a3
 	je	end_rmark_nodes
 
-rmark_stack_nodes:
+rmark_more_stack_nodes:
 	movl	(a3),a0
 
 	movl	neg_heap_p3,d0
@@ -42,7 +43,7 @@ rmark_stack_nodes:
 
 	addl	$4,a3
 	cmpl	end_vector,a3
-	jne	rmark_stack_nodes
+	jne	rmark_more_stack_nodes
 	ret
 
 rmark_stack_node:
