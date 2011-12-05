@@ -1148,7 +1148,7 @@ cp_s_arg_lp2:
 copy_array_2:
 	sub	rdx,heap_p1[rip]
 	cmp	rdx,semi_space_size[rip]
-	jae	copy_string_or_array_constant
+	att_jae	copy_string_or_array_constant
 
 	push	rbx 
 
