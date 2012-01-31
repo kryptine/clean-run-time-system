@@ -733,7 +733,7 @@ bit_in_next_word:
 move_record_2:
 	cmp	word ptr (-2+2)[rax],1
 	att_ja	move_hnf_2
-	jb	move_real_or_file
+	jb	move_record_2bb
 
 move_record_2_ab:
 	mov	rdx,qword ptr [rcx]
@@ -765,12 +765,12 @@ move_record_1:
 	att_jne	move_hnf_1
 	jmp	move_int_bool_or_char
 
-move_real_or_file:
+move_record_2bb:
 	mov	rax ,qword ptr [rcx]
 	add	rcx,8
 	mov	qword ptr [rdi],rax 
 	add	rdi,8
-move_int_bool_or_char:
+move_real_int_bool_or_char:
 	mov	rax,qword ptr [rcx]
 	add	rcx,8
 	mov	qword ptr [rdi],rax 
@@ -782,21 +782,18 @@ copy_normal_hnf_0:
 	att_jmp	find_non_zero_long
 
 move_hnf_0:
-	lea	r9,dINT+2[rip]
+	lea	r9,__STRING__+2[rip]
 	cmp	rax,r9
-	jb	move_real_file_string_or_array
+	att_jbe	move_string_or_array
 	lea	r9,CHAR+2[rip]
 	cmp	rax,r9
-	att_jbe	move_int_bool_or_char
+	att_jbe	move_real_int_bool_or_char
 
 	test	rsi,rsi
 	att_jne	bsf_and_copy_nodes
 	att_jmp	find_non_zero_long
 
-move_real_file_string_or_array:
-	lea	r9,__STRING__+2[rip]
-	cmp	rax,r9
-	att_ja	move_real_or_file
+move_string_or_array:
 	jne	move_array
 
 	mov	rax,qword ptr [rcx]
