@@ -763,7 +763,7 @@ move_record_1:
 	movzx	rbx,word ptr (-2+2)[rax]
 	test	rbx,rbx 
 	att_jne	move_hnf_1
-	jmp	move_int_bool_or_char
+	jmp	move_real_int_bool_or_char
 
 move_record_2bb:
 	mov	rax ,qword ptr [rcx]
