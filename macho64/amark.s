@@ -687,7 +687,7 @@ _end_mark_nodes:
 _mark_lazy_node:
 	movsxd	rbp,dword ptr (-4)[rax]
 	test	rbp,rbp 
-	je	_mark_real_or_file
+	je	_mark_node2_bb
 
 	cmp	rbp,1
 	att_jle	_mark_lazy_node_1
@@ -724,7 +724,7 @@ _mark_closure_with_unboxed_arguments:
 	mov	rax,rbp 
 	and	rbp,255
 	sub	rbp,1
-	att_je	_mark_real_or_file
+	att_je	_mark_node2_bb
 
 	shr	rax,8
 	add	rbp,2
@@ -750,9 +750,9 @@ _mark_closure_with_one_boxed_argument:
 	att_jmp	_mark_node
 
 _mark_hnf_0:
-	lea	r9,dINT+2[rip]
+	lea	r9,__STRING__+2
 	cmp	rax,r9
-	jb	_mark_real_file_or_string
+	jbe	_mark_string_or_array
 
 	or	dword ptr [rdi+rbx*4],esi 
 
@@ -760,7 +760,7 @@ _mark_hnf_0:
 	cmp	rax,r9
 	ja	_mark_normal_hnf_0
 
-_mark_bool:
+_mark_real_int_bool_or_char:
 	add	r14,2
 
 	cmp	rsi,0x40000000
@@ -773,12 +773,7 @@ _mark_normal_hnf_0:
 	inc	r14
 	att_jmp	_mark_next_node
 
-_mark_real_file_or_string:
-	lea	r9,__STRING__+2[rip]
-	cmp	rax,r9
-	jbe	_mark_string_or_array
-
-_mark_real_or_file:
+_mark_node2_bb:
 	or	dword ptr [rdi+rbx*4],esi 
 	add	r14,3
 
@@ -867,7 +862,7 @@ _mark_record_1:
 	cmp	word ptr (-2+2)[rax],0
 	att_jne	_mark_hnf_1
 
-	att_jmp	_mark_bool
+	att_jmp	_mark_real_int_bool_or_char
 
 _mark_string_or_array:
 	je	_mark_string_
@@ -1499,7 +1494,7 @@ __argument_part_parent:
 __mark_lazy_node:
 	movsxd	rbp,dword ptr(-4)[rax]
 	test	rbp,rbp 
-	je	__mark_real_or_file
+	je	__mark_node2_bb
 
 	add	rcx,8
 	cmp	rbp,1
@@ -1564,7 +1559,7 @@ fits__in_word_7_:
 
 __mark_closure_1_with_unboxed_argument:
 	sub	rcx,8
-	att_jmp	__mark_real_or_file
+	att_jmp	__mark_node2_bb
 
 __mark_hnf_0:
 	lea	r9,dINT+2[rip]
@@ -1575,7 +1570,7 @@ __mark_hnf_0:
 	cmp	rbp,33
 	jb	____small_int
 
-__mark_bool_or_small_string:
+__mark_real_bool_or_small_string:
 	lea	r9,bit_set_table2[rip]
 	mov	edx,dword ptr [r9+rdx]
 	add	r14,2
@@ -1592,7 +1587,9 @@ ____small_int:
 	att_jmp	__mark_next_node
 
 __no_int_3:
-	jb	__mark_real_file_or_string
+	lea	r9,__STRING__+2[rip]
+	cmp	rax,r9
+	jbe	__mark_string_or_array
 
  	lea	r9,CHAR+2[rip]
  	cmp	rax,r9
@@ -1605,17 +1602,12 @@ __no_int_3:
 	att_jmp	__mark_next_node
 
 __no_char_3:
-	att_jb	__mark_bool_or_small_string
+	att_jb	__mark_real_bool_or_small_string
 
 	lea	rcx,((-8)-2)[rax]
 	att_jmp	__mark_next_node
 
-__mark_real_file_or_string:
-	lea	r9,__STRING__+2[rip]
-	cmp	rax,r9
-	jbe	__mark_string_or_array
-
-__mark_real_or_file:
+__mark_node2_bb:
 	lea	r9,bit_set_table2[rip]
 	mov	edx,dword ptr [r9+rdx]
 	add	r14,3
@@ -1729,7 +1721,7 @@ __mark_record_1:
 	cmp	word ptr (-2+2)[rax],0
 	att_jne	__mark_hnf_1
 	sub	rcx,8
-	att_jmp	__mark_bool_or_small_string
+	att_jmp	__mark_real_bool_or_small_string
 
 __mark_string_or_array:
 	je	__mark_string_
