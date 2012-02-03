@@ -345,8 +345,8 @@ pmark_large_tuple_or_record:
 	mov	rbx,rbp
 	and	rbp,31*8
 	shr	rbx,8
-	lea	r9,bit_set_table2[rip]
-	mov	ebp,dword ptr [r9+rbp]
+	lea	rsi,bit_set_table2[rip]
+	mov	ebp,dword ptr [rsi+rbp]
 	test	ebp,dword ptr [rdi+rbx*4]
 	att_jne	pmark_node3
 
@@ -402,8 +402,8 @@ pmark_record_selector_node_1:
 	mov	rbx,rbp
 	and	rbp,31*8
 	shr	rbx,8
-	lea	r9,bit_set_table2[rip]
-	mov	ebp,dword ptr [r9+rbp]
+	lea	rsi,bit_set_table2[rip]
+	mov	ebp,dword ptr [rsi+rbp]
 	test	ebp,dword ptr [rdi+rbx*4]
 	att_jne	pmark_node3
 
@@ -441,8 +441,8 @@ pmark_strict_record_selector_node_1:
 	mov	rbx,rbp 
 	and	rbp,31*8
 	shr	rbx,8
-	lea	r9,bit_set_table2[rip]
-	mov	ebp,dword ptr [r9+rbp]
+	lea	rsi,bit_set_table2[rip]
+	mov	ebp,dword ptr [rsi+rbp]
 	test	ebp,dword ptr [rdi+rbx*4]
 	att_jne	pmark_node3
 	
