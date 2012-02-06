@@ -2484,10 +2484,10 @@ end_garbage_collect:
 	mov	qword ptr d3_flag_write_heap,0
 
 end_garbage_collect_:
+	push	rax
+
 	test	qword ptr flags,2
 	je	no_heap_use_message
-
-	push	rax
 
 	mov	rbp,rsp
 	and	rsp,-16
@@ -2524,10 +2524,10 @@ end_garbage_collect_:
  endif
 	mov	rsp,rbp
 
-	pop	rax
-
 no_heap_use_message:
 	call	call_finalizers
+
+	pop	rax
 	 
 	test	byte ptr flags,32
 	je	no_write_heap
