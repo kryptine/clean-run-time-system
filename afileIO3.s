@@ -788,16 +788,18 @@ st_copy_string2:
 	sub	rcx,1
 	jnc	copy_st_lp2
 
-	mov	r9,rsp
-	mov	r8,rdi
-	lea	rdx,[r15*8]
-	mov	rcx,rbx
-
+	mov	rcx,rsp
+	mov	rdx,rdi
 	mov	rbp,rsp
-	or	rsp,8
-	sub	rsp,40
+	and	rsp,-16
+	mov	r13,rsi
+	lea	rsi,[r15*8]
+	mov	r14,rdi
+	mov	rdi,rbx
 	call	file_read_s_line
 	mov	rsp,rbp
+	mov	rsi,r13
+	mov	rdi,r14
 
 	test	rax,rax
 	js	readLineSF_again
