@@ -560,7 +560,11 @@ int file_read_int (long fn,long *i_p)
 			((char*)i_p)[2]=i;
 			if ((i=getc (fd))==EOF)
 				return 0;
-			((char*)i_p)[3]=i;	
+			((char*)i_p)[3]=i;
+#ifdef A64
+			*i_p=(long)*(int*)i_p;
+#endif
+
 		} else if (f->mode & (1<<F_READ_TEXT)){
 #ifdef A64
 			if (fscanf (f->file,"%ld",i_p)!=1)
@@ -1257,7 +1261,7 @@ int file_read_s_char (long fn,unsigned long *position_p)
 	}
 }
 
-int file_read_s_int (long fn,int *i_p,unsigned long *position_p)
+int file_read_s_int (long fn,long *i_p,unsigned long *position_p)
 {
 	if (fn<FIRST_REAL_FILE){
 		switch (fn){
@@ -1327,12 +1331,19 @@ int file_read_s_int (long fn,int *i_p,unsigned long *position_p)
 						} else {
 							((char*)i_p)[3]=i;
 							position+=4;
+#ifdef A64
+							*i_p=(long)*(int*)i_p;
+#endif
 						}
 					}
 				}
 			}
 		} else if (f->mode & (1<<F_READ_TEXT)){
+#ifdef A64
+			if (fscanf (f->file,"%ld",i_p)!=1)
+#else
 			if (fscanf (f->file,"%d",i_p)!=1)
+#endif
 				result=0;
 			else
 				result=-1;
