@@ -321,7 +321,7 @@ exit_thread:
 	mov	rdi,heap_mbp_offset[r9]
 	call	free
 
-	mov	rdi,r9
+	mov	rdi,rbx
 	call	free
  else
 	mov	rcx,stack_mbp_offset[r9]
