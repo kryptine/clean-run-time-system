@@ -5353,7 +5353,7 @@ st_fillr3_array:
 	ret
 
 create_R_array_4:
-	lea	rbp,3[rax+4]
+	lea	rbp,3[rax*4]
 	sub	r15,rbp
 	jge	no_collect_4584
 	call	collect_0
