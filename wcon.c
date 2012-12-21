@@ -6,6 +6,7 @@
 
 #ifdef _WIN64
 # define AI64
+# define A64
 #endif
 
 #include <float.h>
@@ -44,6 +45,7 @@
    } WIN32_FIND_DATA;
 # endif
 #endif
+#define HFILE HANDLE
 #include "wfileIO3.h"
 
 #define SHOW_EXECUTION_TIME_MASK 8
@@ -270,10 +272,10 @@ int w_get_char (void)
 
 #define is_digit(n) ((unsigned)((n)-'0')<(unsigned)10)
 
-int w_get_int (int *i_p)
+int w_get_int (clean_int *i_p)
 {
 	int c,negative;
-	unsigned int i;
+	clean_int i;
 
 #ifdef WINDOWS	
 	if (std_input_from_file)
@@ -554,15 +556,15 @@ int w_get_real (double *r_p)
 	return result;
 }
 
-unsigned long w_get_text (char *string,unsigned long max_length)
+unsigned long w_get_text (char *string,unsigned clean_int max_length)
 {
-	ULONG length;
+	unsigned clean_int length;
 
 	length=0;
 
 #ifdef WINDOWS
 	if (std_input_from_file){
-		unsigned long length;
+		unsigned clean_int length;
 		
 		length=max_length;
 		return file_read_characters (&file_table[1],&length,string);
@@ -1282,9 +1284,9 @@ void ew_print_real (double r)
 void wait_for_key_press (VOID)
 {
 	DWORD console_mode;
-		
+
 	SetConsoleTitleA ("press any key to exit");
-		
+
 	GetConsoleMode (std_input_handle,&console_mode);
 	SetConsoleMode (std_input_handle,console_mode & ~(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT));		
 	{
