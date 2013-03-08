@@ -750,7 +750,7 @@ _mark_closure_with_one_boxed_argument:
 	att_jmp	_mark_node
 
 _mark_hnf_0:
-	lea	r9,__STRING__+2
+	lea	r9,__STRING__+2[rip]
 	cmp	rax,r9
 	jbe	_mark_string_or_array
 
