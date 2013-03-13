@@ -389,7 +389,7 @@ long open_stderr (void)
 	return 0;
 }
 
-int close_file (long fn)
+long close_file (long fn)
 {
 	if (fn<FIRST_REAL_FILE){
 		if (fn==1){
@@ -421,6 +421,9 @@ int close_file (long fn)
 #endif
 		
 		f->file=NULL;
+
+		if (fn==number_of_files-1)
+			--number_of_files;
 
 		return result;
 	}
