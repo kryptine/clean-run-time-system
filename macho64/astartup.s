@@ -3108,10 +3108,11 @@ _IO_error:
 	mov	rbp,rsp
 	and	rsp,-16
 
-	mov	rbx,rcx
  .if LINUX
+	mov	rbx,rdi
 	lea	rdi,IO_error_string[rip]
  .else
+	mov	rbx,rcx
 	sub	rsp,32
 	lea	rcx,IO_error_string
  .endif
