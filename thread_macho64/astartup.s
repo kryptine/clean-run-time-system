@@ -1445,11 +1445,8 @@ printD:	test	al,2
 	ret
 
 DtoAC_record:
- .if NEW_DESCRIPTORS
-	movsxd	rbp,dword ptr (-6)[rax]
- .else
-	movsx	rbp,dword ptr (-4)[rbp]
- .endif
+	movsxd	rbx,dword ptr (-6)[rax]
+	lea	rbp,(-6)[rax+rbx]
 	jmp	DtoAC_string_a2
 
 DtoAC:	test	al,2
