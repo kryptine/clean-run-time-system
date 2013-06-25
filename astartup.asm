@@ -2084,7 +2084,7 @@ collect_0_:
 	sub	rbx,r15
 	mov	qword ptr n_allocated_words+0,rbx
 
-	test	byte ptr flags,64
+	test	byte ptr flags+0,64
 	je	no_mark3
 
 	mov	rbp,qword ptr bit_counter+0
@@ -2226,7 +2226,7 @@ collect:
 
 	call	add_execute_time
 
-	test	qword ptr flags,4
+	test	qword ptr flags+0,4
 	je	no_print_stack_sizes
 
 	mov	rbp,rsp
@@ -2263,7 +2263,7 @@ collect:
 
  ifdef LINUX
 	mov	rdi,r13
-	sub	rdi,stack_p
+	sub	rdi,stack_p+0
  else
 	mov	rcx,rsi
 	sub	rcx,stack_p
@@ -2278,7 +2278,7 @@ collect:
 	call	ew_print_string
 
  ifdef LINUX
-	mov	rdi,halt_sp
+	mov	rdi,halt_sp+0
 	sub	rdi,rsp 
  else
 	mov	rcx,halt_sp
@@ -2300,46 +2300,46 @@ collect:
 	mov	rsp,rbp
 
 no_print_stack_sizes:
-	mov	rax,stack_p
-	add	rax,qword ptr ab_stack_size
+	mov	rax,stack_p+0
+	add	rax,qword ptr ab_stack_size+0
 	cmp	rsi,rax 
 	ja	stack_overflow
 
-	test	byte ptr flags,64
+	test	byte ptr flags+0,64
 	jne	compacting_collector
 
-	cmp	byte ptr garbage_collect_flag,0
+	cmp	byte ptr garbage_collect_flag+0,0
 	jne	compacting_collector
 
-	mov	rbp,heap_copied_vector
+	mov	rbp,heap_copied_vector+0
 
-	cmp	qword ptr heap_end_after_copy_gc,0
+	cmp	qword ptr heap_end_after_copy_gc+0,0
 	je	zero_all
 
 	mov	rax,rdi
-	sub	rax,qword ptr heap_p1
+	sub	rax,qword ptr heap_p1+0
 	add	rax,127*8
 	shr	rax,9
 	call	zero_bit_vector
 
-	mov	rdx,qword ptr heap_end_after_copy_gc
-	sub	rdx,qword ptr heap_p1
+	mov	rdx,qword ptr heap_end_after_copy_gc+0
+	sub	rdx,qword ptr heap_p1+0
 	shr	rdx,7
 	and	rdx,-4
 
-	mov	rbp,qword ptr heap_copied_vector
-	mov	rax,qword ptr heap_copied_vector_size
+	mov	rbp,qword ptr heap_copied_vector+0
+	mov	rax,qword ptr heap_copied_vector_size+0
 	add	rbp,rdx 
 	sub	rax,rdx 
 	shr	rax,2
 
-	mov	qword ptr heap_end_after_copy_gc,0
+	mov	qword ptr heap_end_after_copy_gc+0,0
 
 	call	zero_bit_vector
 	jmp	end_zero_bit_vector
 
 zero_all:
-	mov	rax,heap_copied_vector_size
+	mov	rax,heap_copied_vector_size+0
 	shr	rax,2
 	call	zero_bit_vector
 
@@ -2347,15 +2347,15 @@ end_zero_bit_vector:
 
 	include	acopy.asm
 
-	mov	qword ptr heap2_begin_and_end,rsi 
+	mov	qword ptr heap2_begin_and_end+0,rsi 
 
 	mov	r15,rsi
 	sub	r15,rdi
 
-	mov	rax,heap_size_257
+	mov	rax,heap_size_257+0
 	shl	rax,7
 	sub	rax,r15
-	add	qword ptr total_gc_bytes,rax
+	add	qword ptr total_gc_bytes+0,rax
 
 	shr	r15,3
 
@@ -2363,97 +2363,97 @@ end_zero_bit_vector:
 
 	call	add_garbage_collect_time
 
-	sub	r15,qword ptr n_allocated_words
+	sub	r15,qword ptr n_allocated_words+0
 	jc	switch_to_mark_scan
 
 	lea	rax,[r15+r15*4]
 	shl	rax,6
-	mov	rbx,qword ptr heap_size
-	mov	rcx,rbx 
+	mov	rbx,qword ptr heap_size+0
+	mov	rcx,rbx
 	shl	rbx,2
-	add	rbx,rcx 
-	add	rbx,rbx 
+	add	rbx,rcx
+	add	rbx,rbx
 	add	rbx,rcx
 	cmp	rax,rbx
 	jnc	no_mark_scan
 
 switch_to_mark_scan:
-	mov	rax,qword ptr heap_size_65
+	mov	rax,qword ptr heap_size_65+0
 	shl	rax,6
-	mov	rbx,qword ptr heap_p
+	mov	rbx,qword ptr heap_p+0
 
-	mov	rcx,qword ptr heap_p1
-	cmp	rcx,qword ptr heap_p2
+	mov	rcx,qword ptr heap_p1+0
+	cmp	rcx,qword ptr heap_p2+0
 	jc	vector_at_begin
 	
 vector_at_end:
-	mov	qword ptr heap_p3,rbx
+	mov	qword ptr heap_p3+0,rbx
 	add	rbx,rax
-	mov	qword ptr heap_vector,rbx
+	mov	qword ptr heap_vector+0,rbx
 	
-	mov	rax,qword ptr heap_p1
-	mov	qword ptr extra_heap,rax
+	mov	rax,qword ptr heap_p1+0
+	mov	qword ptr extra_heap+0,rax
 	sub	rbx,rax
 	shr	rbx,3
-	mov	qword ptr extra_heap_size,rbx
+	mov	qword ptr extra_heap_size+0,rbx
 	jmp	switch_to_mark_scan_2
 
 vector_at_begin:
-	mov	qword ptr heap_vector,rbx
-	add	rbx,qword ptr heap_size
+	mov	qword ptr heap_vector+0,rbx
+	add	rbx,qword ptr heap_size+0
 	sub	rbx,rax
-	mov	qword ptr heap_p3,rbx
+	mov	qword ptr heap_p3+0,rbx
 
-	mov	qword ptr extra_heap,rbx 
-	mov	rcx,qword ptr heap_p2
+	mov	qword ptr extra_heap+0,rbx 
+	mov	rcx,qword ptr heap_p2+0
 	sub	rcx,rbx 
 	shr	rcx,3
-	mov	qword ptr extra_heap_size,rcx 
+	mov	qword ptr extra_heap_size+0,rcx 
 
 switch_to_mark_scan_2:
-	mov	rax,heap_size_257
+	mov	rax,heap_size_257+0
 	shl	rax,7-3
 	sub	rax,r15
 	shl	rax,3
 
-	mov	byte ptr garbage_collect_flag,1
+	mov	byte ptr garbage_collect_flag+0,1
 
 	lea	rcx,heap_use_after_gc_string_1+0
 
 	test	r15,r15
 	jns	end_garbage_collect
 	
-	mov	byte ptr garbage_collect_flag,-1
+	mov	byte ptr garbage_collect_flag+0,-1
 	
-	mov	rbx,qword ptr extra_heap_size
+	mov	rbx,qword ptr extra_heap_size+0
 	mov	r15,rbx
-	sub	r15,qword ptr n_allocated_words
+	sub	r15,qword ptr n_allocated_words+0
 	js	out_of_memory_4_3
 
-	mov	rdi,qword ptr extra_heap
+	mov	rdi,qword ptr extra_heap+0
 	shl	rbx,3
 	add	rbx,rdi
-	mov	qword ptr heap_end_after_gc,rbx
+	mov	qword ptr heap_end_after_gc+0,rbx
 
-	mov	qword ptr heap_end_write_heap,rdi 
+	mov	qword ptr heap_end_write_heap+0,rdi 
 
-	mov	qword ptr d3_flag_write_heap,1
+	mov	qword ptr d3_flag_write_heap+0,1
 	jmp	end_garbage_collect_
 
 no_mark_scan:
 ; exchange the semi_spaces
-	mov	rax,heap_p1
-	mov	rbx,heap_p2
-	mov	heap_p2,rax 
-	mov	heap_p1,rbx 
+	mov	rax,heap_p1+0
+	mov	rbx,heap_p2+0
+	mov	heap_p2+0,rax 
+	mov	heap_p1+0,rbx 
 
-	mov	rax,heap_size_257
+	mov	rax,heap_size_257+0
 	shl	rax,7-3
 	mov	rbx,rax
 	sub	rax,r15
 
 	mov	rcx,rax
-	imul	qword ptr heap_size_multiple
+	imul	qword ptr heap_size_multiple+0
 	shrd	rax,rdx,9
 	shr	rdx,9
 	jne	no_small_heap1
@@ -2467,10 +2467,10 @@ not_too_small1:
 
 	sub	r15,rbx
 	shl	rbx,3
-	mov	rbp,qword ptr heap_end_after_gc
-	mov	qword ptr heap_end_after_copy_gc,rbp 
+	mov	rbp,qword ptr heap_end_after_gc+0
+	mov	qword ptr heap_end_after_copy_gc+0,rbp 
 	sub	rbp,rbx
-	mov	qword ptr heap_end_after_gc,rbp
+	mov	qword ptr heap_end_after_gc+0,rbp
 
 no_small_heap1:
 	mov	rax,rcx
@@ -2480,13 +2480,13 @@ no_small_heap1:
 
 end_garbage_collect:
 
-	mov	qword ptr heap_end_write_heap,rdi 
-	mov	qword ptr d3_flag_write_heap,0
+	mov	qword ptr heap_end_write_heap+0,rdi 
+	mov	qword ptr d3_flag_write_heap+0,0
 
 end_garbage_collect_:
 	push	rax
 
-	test	qword ptr flags,2
+	test	qword ptr flags+0,2
 	je	no_heap_use_message
 
 	mov	rbp,rsp
@@ -2528,11 +2528,11 @@ no_heap_use_message:
 	call	call_finalizers
 
 	pop	rax
-	 
-	test	byte ptr flags,32
+
+	test	byte ptr flags+0,32
 	je	no_write_heap
 
-	cmp	rax,qword ptr min_write_heap_size
+	cmp	rax,qword ptr min_write_heap_size+0
 	jb	no_write_heap
 
 	push	rcx 
@@ -2543,14 +2543,14 @@ no_heap_use_message:
 
 	sub	rsp,128
 
-	mov	rax,qword ptr d3_flag_write_heap
+	mov	rax,qword ptr d3_flag_write_heap+0
 	test	rax,rax 
 	jne	copy_to_compact_with_alloc_in_extra_heap
 
-	movsx	rax,byte ptr garbage_collect_flag
+	movsx	rax,byte ptr garbage_collect_flag+0
 	
-	mov	rcx,qword ptr heap2_begin_and_end
-	mov	rdx,qword ptr (heap2_begin_and_end+8)
+	mov	rcx,qword ptr heap2_begin_and_end+0
+	mov	rdx,qword ptr (heap2_begin_and_end+8)+0
 
 	mov	rbx,offset heap_p1
 	
