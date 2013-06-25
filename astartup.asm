@@ -1226,7 +1226,7 @@ print_time:
 	ret
 
 print_sc:
-	mov	rbp,basic_only
+	mov	rbp,basic_only+0
 	test	rbp,rbp 
 	jne	end_print
 
@@ -1323,7 +1323,7 @@ print_symbol:
 	jmp	print_symbol_2
 
 print_symbol_sc:
-	mov	rbx,basic_only
+	mov	rbx,basic_only+0
 print_symbol_2:
 	mov	rax,[rcx]
 
@@ -1581,7 +1581,7 @@ print_string_a2:
 	ret
 
 print__chars__sc:
-	mov	rbp,basic_only
+	mov	rbp,basic_only+0
 	test	rbp,rbp 
 	jne	no_print_chars
 
@@ -1938,14 +1938,14 @@ init_timer:
  endif
 	mov	rsp,rbp
 
-	mov	last_time,rax 
-	xor	rax ,rax 
-	mov	execute_time,rax 
-	mov	garbage_collect_time,rax 
-	mov	IO_time,rax 
+	mov	last_time+0,rax
+	xor	rax,rax 
+	mov	execute_time+0,rax 
+	mov	garbage_collect_time+0,rax 
+	mov	IO_time+0,rax
 
-	mov	mark_compact_garbage_collect_time,rax 
-	mov	compact_garbage_collect_time,rax 
+	mov	mark_compact_garbage_collect_time+0,rax
+	mov	compact_garbage_collect_time+0,rax 
 
 	ret
 
@@ -2077,17 +2077,17 @@ collect_0_:
 	push	rax
 	push	rbx
 
-	mov	rbx,qword ptr heap_end_after_gc
+	mov	rbx,qword ptr heap_end_after_gc+0
 	sub	rbx,rdi
 
 	shr	rbx,3
 	sub	rbx,r15
-	mov	qword ptr n_allocated_words,rbx
+	mov	qword ptr n_allocated_words+0,rbx
 
 	test	byte ptr flags,64
 	je	no_mark3
 
-	mov	rbp,qword ptr bit_counter
+	mov	rbp,qword ptr bit_counter+0
 	test	rbp,rbp 
 	je	no_scan
 
@@ -2134,24 +2134,24 @@ end_zero_bits:
 	mov	rax,rcx 
 	sub	rax,rdx 
 	shl	rax,3
-	add	qword ptr n_free_words_after_mark,rax
+	add	qword ptr n_free_words_after_mark+0,rax
 	mov	dword ptr (-4)[rcx],ebx
 
 	cmp	rax,rsi
 	jb	scan_bits
 
 found_free_memory:
-	mov	qword ptr bit_counter,rbp
-	mov	qword ptr bit_vector_p,rcx
+	mov	qword ptr bit_counter+0,rbp
+	mov	qword ptr bit_vector_p+0,rcx
 
 	lea	rbp,(-4)[rdx]
-	sub	rbp,qword ptr heap_vector
+	sub	rbp,qword ptr heap_vector+0
 	shl	rbp,6
-	mov	rdi,qword ptr heap_p3
+	mov	rdi,qword ptr heap_p3+0
 	add	rdi,rbp 
 
 	lea	rbp,[rdi+rax*8]
-	mov	qword ptr heap_end_after_gc,rbp
+	mov	qword ptr heap_end_after_gc+0,rbp
 
 	mov	r15,rax
 	sub	r15,rsi
@@ -2167,34 +2167,34 @@ end_bits:
 	add	rax,4
 end_bits2:
 	shl	rax,3
-	add	qword ptr n_free_words_after_mark,rax 
+	add	qword ptr n_free_words_after_mark+0,rax
 	cmp	rax,rsi 
 	jae	found_free_memory
 
 end_scan:
 	pop	rsi
-	mov	qword ptr bit_counter,rbp 
+	mov	qword ptr bit_counter+0,rbp 
 
 no_scan:
 
 no_mark3:
-	movsx	rax,byte ptr garbage_collect_flag
+	movsx	rax,byte ptr garbage_collect_flag+0
 	test	rax,rax 
 	jle	collect
 
 	sub	rax,2
-	mov	byte ptr garbage_collect_flag,al 
+	mov	byte ptr garbage_collect_flag+0,al
 
-	mov	rbp,qword ptr extra_heap_size
+	mov	rbp,qword ptr extra_heap_size+0
 	cmp	rbx,rbp 
 	ja	collect
 
-	mov	rdi,qword ptr extra_heap
+	mov	rdi,qword ptr extra_heap+0
 
 	mov	r15,rbp
 
 	lea	rbp,[rdi+rbp*8]
-	mov	qword ptr heap_end_after_gc,rbp
+	mov	qword ptr heap_end_after_gc+0,rbp
 
 	sub	r15,rbx
 
