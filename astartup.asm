@@ -806,42 +806,42 @@ make_static_characters_lp:
 	jne	make_static_characters_lp
 
 	lea	rcx,(caf_list+8)+0
-	mov	qword ptr caf_listp,rcx 
+	mov	qword ptr caf_listp+0,rcx 
 
 	lea	rcx,__Nil-8+0
-	mov	qword ptr finalizer_list,rcx
-	mov	qword ptr free_finalizer_list,rcx
+	mov	qword ptr finalizer_list+0,rcx
+	mov	qword ptr free_finalizer_list+0,rcx
 
-	mov	heap_p1,rdi
+	mov	heap_p1+0,rdi
 
-	mov	rbp,qword ptr heap_size_257
+	mov	rbp,qword ptr heap_size_257+0
 	shl	rbp,4
 	lea	rax,[rdi+rbp*8]
-	mov	heap_copied_vector,rax
-	add	rax,heap_copied_vector_size
-	mov	heap_p2,rax
+	mov	heap_copied_vector+0,rax
+	add	rax,heap_copied_vector_size+0
+	mov	heap_p2+0,rax
 
-	mov	byte ptr garbage_collect_flag,0
+	mov	byte ptr garbage_collect_flag+0,0
 
-	test	byte ptr flags,64
+	test	byte ptr flags+0,64
 	je	no_mark1
 
-	mov	rax,qword ptr heap_size_65
-	mov	qword ptr heap_vector,rdi 
+	mov	rax,qword ptr heap_size_65+0
+	mov	qword ptr heap_vector+0,rdi
 	add	rdi,rax
 
 	add	rdi,7
 	and	rdi,-8
 
-	mov	qword ptr heap_p3,rdi
+	mov	qword ptr heap_p3+0,rdi
 	lea	rbp,[rax*8]
-	mov	byte ptr garbage_collect_flag,-1
+	mov	byte ptr garbage_collect_flag+0,-1
 
 no_mark1:
-	mov	rax,qword ptr initial_heap_size
+	mov	rax,qword ptr initial_heap_size+0
 
 	mov	rbx,4000
-	test	byte ptr flags,64
+	test	byte ptr flags+0,64
 	jne	no_mark9
 	add	rbx,rbx 
 no_mark9:
@@ -855,7 +855,7 @@ no_mark9:
 too_large_or_too_small:
 
 	lea	rax,[rdi+rbp*8]
-	mov	heap_end_after_gc,rax
+	mov	heap_end_after_gc+0,rax
 
 	test	byte ptr flags,64
 	je	no_mark2
