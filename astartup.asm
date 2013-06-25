@@ -857,9 +857,9 @@ too_large_or_too_small:
 	lea	rax,[rdi+rbp*8]
 	mov	heap_end_after_gc+0,rax
 
-	test	byte ptr flags,64
+	test	byte ptr flags+0,64
 	je	no_mark2
-	mov	qword ptr bit_vector_size,rbp
+	mov	qword ptr bit_vector_size+0,rbp
 no_mark2:
 
 	mov	r15,rbp
@@ -879,7 +879,7 @@ no_memory_2:
 	call	ew_print_string
 	mov	rsp,rbp
 
-	mov	qword ptr execution_aborted,1
+	mov	qword ptr execution_aborted+0,1
 
 	add	rsp,32
 	mov	rax,1
@@ -896,10 +896,10 @@ no_memory_3:
  endif
 	call	ew_print_string
 
-	mov	qword ptr execution_aborted,1
+	mov	qword ptr execution_aborted+0,1
  
  ifdef LINUX
-	mov	rdi,heap_mbp
+	mov	rdi,heap_mbp+0
 	call	free
  else
 	mov	rcx,heap_mbp
@@ -915,7 +915,7 @@ no_memory_3:
 exit_clean:
 	call	add_execute_time
 
-	mov	rax,qword ptr flags
+	mov	rax,qword ptr flags+0
 	test	al,8
 	je	no_print_execution_time
 
@@ -932,7 +932,7 @@ exit_clean:
  endif
 	call	ew_print_string
 	
-	mov	rax,execute_time
+	mov	rax,execute_time+0
 	call	print_time
 	
  ifdef LINUX
@@ -942,11 +942,11 @@ exit_clean:
  endif
 	call	ew_print_string
 
-	mov	rax,garbage_collect_time
+	mov	rax,garbage_collect_time+0
  ifdef MEASURE_GC
  else
-	add	rax,mark_compact_garbage_collect_time
-	add	rax,compact_garbage_collect_time
+	add	rax,mark_compact_garbage_collect_time+0
+	add	rax,compact_garbage_collect_time+0
  endif
 	call	print_time
 
@@ -959,7 +959,7 @@ exit_clean:
   endif
 	call	ew_print_string
 
-	mov	rax,mark_compact_garbage_collect_time
+	mov	rax,mark_compact_garbage_collect_time+0
 	call	print_time
 
   ifdef LINUX
@@ -969,7 +969,7 @@ exit_clean:
   endif
 	call	ew_print_string
 
-	mov	rax,compact_garbage_collect_time
+	mov	rax,compact_garbage_collect_time+0
 	call	print_time
  
  endif
@@ -981,12 +981,12 @@ exit_clean:
  endif
 	call	ew_print_string
 
-	mov	rax,execute_time
-	add	rax,garbage_collect_time
-	add	rax,IO_time
+	mov	rax,execute_time+0
+	add	rax,garbage_collect_time+0
+	add	rax,IO_time+0
 
-	add	rax,mark_compact_garbage_collect_time
-	add	rax,compact_garbage_collect_time
+	add	rax,mark_compact_garbage_collect_time+0
+	add	rax,compact_garbage_collect_time+0
 
 	call	print_time
 
@@ -1000,7 +1000,7 @@ exit_clean:
  ifdef MEASURE_GC
 
   ifdef LINUX
-	mov	rdi,total_gc_bytes
+	mov	rdi,total_gc_bytes+0
   else
 	mov	rcx,total_gc_bytes
   endif
@@ -1014,7 +1014,7 @@ exit_clean:
 	call	ew_print_char
 
   ifdef LINUX
-	mov rdi,total_compact_gc_bytes
+	mov rdi,total_compact_gc_bytes+0
   else
 	mov rcx,total_compact_gc_bytes
   endif
@@ -1029,7 +1029,7 @@ exit_clean:
 
 	mov	rax,1000
 	cvtsi2sd	xmm1,rax
-	cvtsi2sd	xmm0,qword ptr garbage_collect_time
+	cvtsi2sd	xmm0,qword ptr garbage_collect_time+0
 	divsd	xmm0,xmm1
 	call	ew_print_real
 
@@ -1042,7 +1042,7 @@ exit_clean:
 
 	mov	rax,1000
 	cvtsi2sd	xmm1,rax
-	cvtsi2sd	xmm0,qword ptr mark_compact_garbage_collect_time
+	cvtsi2sd	xmm0,qword ptr mark_compact_garbage_collect_time+0
 	divsd	xmm0,xmm1
 	call	ew_print_real
 
@@ -1055,7 +1055,7 @@ exit_clean:
 
 	mov	rax,1000
 	cvtsi2sd	xmm1,rax
-	cvtsi2sd	xmm0,qword ptr compact_garbage_collect_time
+	cvtsi2sd	xmm0,qword ptr compact_garbage_collect_time+0
 	divsd	xmm0,xmm1
 	call	ew_print_real
 
@@ -1068,9 +1068,9 @@ exit_clean:
 
 	mov	rax,1000
 	cvtsi2sd	xmm1,rax
-	cvtsi2sd	xmm2,qword ptr garbage_collect_time
+	cvtsi2sd	xmm2,qword ptr garbage_collect_time+0
 	divsd	xmm2,xmm1
-	mov	rax,qword ptr total_gc_bytes
+	mov	rax,qword ptr total_gc_bytes+0
 	cvtsi2sd	xmm0,rax
 	divsd	xmm0,xmm2
 	call	ew_print_real
@@ -1084,9 +1084,9 @@ exit_clean:
 
 	mov	rax,1000
 	cvtsi2sd	xmm1,rax
-	cvtsi2sd	xmm2,qword ptr mark_compact_garbage_collect_time
+	cvtsi2sd	xmm2,qword ptr mark_compact_garbage_collect_time+0
 	divsd	xmm2,xmm1
-	mov	rax,qword ptr total_compact_gc_bytes
+	mov	rax,qword ptr total_compact_gc_bytes+0
 	cvtsi2sd	xmm0,rax
 	divsd	xmm0,xmm2
 	call	ew_print_real
@@ -1100,9 +1100,9 @@ exit_clean:
 
 	mov	rax,1000
 	cvtsi2sd	xmm1,rax
-	cvtsi2sd	xmm2,qword ptr compact_garbage_collect_time
+	cvtsi2sd	xmm2,qword ptr compact_garbage_collect_time+0
 	divsd	xmm2,xmm1
-	mov	rax,qword ptr total_compact_gc_bytes
+	mov	rax,qword ptr total_compact_gc_bytes+0
 	cvtsi2sd	xmm0,rax
 	divsd	xmm0,xmm2
 	call	ew_print_real
@@ -1116,11 +1116,11 @@ exit_clean:
 
 	mov	rax,1000
 	cvtsi2sd	xmm1,rax
-	cvtsi2sd	xmm2,qword ptr mark_compact_garbage_collect_time
-	cvtsi2sd	xmm3,qword ptr compact_garbage_collect_time
+	cvtsi2sd	xmm2,qword ptr mark_compact_garbage_collect_time+0
+	cvtsi2sd	xmm3,qword ptr compact_garbage_collect_time+0
 	addsd	xmm2,xmm3
 	divsd	xmm2,xmm1
-	mov	rax,qword ptr total_compact_gc_bytes
+	mov	rax,qword ptr total_compact_gc_bytes+0
 	cvtsi2sd	xmm0,rax
 	divsd	xmm0,xmm2
 	call	ew_print_real
@@ -1140,10 +1140,10 @@ no_print_execution_time:
 	mov	rbp,rsp
 	and	rsp,-16
  ifdef LINUX
-	mov	rdi,stack_mbp
+	mov	rdi,stack_mbp+0
 	call	free
 
-	mov	rdi,heap_mbp
+	mov	rdi,heap_mbp+0
 	call	free
  else
 	mov	rcx,stack_mbp
@@ -1165,7 +1165,7 @@ no_print_execution_time:
 	ret
 
 __driver:
-	mov	rbp,qword ptr flags
+	mov	rbp,qword ptr flags+0
 	test	rbp,16
 	je	__print__graph
 	jmp	__eval__to__nf
