@@ -2639,7 +2639,7 @@ restore_registers_after_gc_and_return:
 	ret
 
 call_finalizers:
-	mov	rax,qword ptr free_finalizer_list
+	mov	rax,qword ptr free_finalizer_list+0
 
 call_finalizers_lp:
 	lea	r9,__Nil-8+0
@@ -2655,17 +2655,17 @@ call_finalizers_lp:
 end_call_finalizers:
 
 	lea	r9,__Nil-8+0
-	mov	qword ptr free_finalizer_list,r9
+	mov	qword ptr free_finalizer_list+0,r9
 	ret
 
 copy_to_compact_with_alloc_in_extra_heap:
-	mov	rcx,qword ptr heap2_begin_and_end
-	mov	rdx,qword ptr (heap2_begin_and_end+8)
+	mov	rcx,qword ptr heap2_begin_and_end+0
+	mov	rdx,qword ptr (heap2_begin_and_end+8)+0
 	mov	rbx,offset heap_p2
 	jmp	gc1
 
 allow_prefetch_for_athlon:
-	test	qword ptr flags,4096
+	test	qword ptr flags+0,4096
 	jne	no_prefetch_flag
 
 	xor	rax,rax
@@ -2698,7 +2698,7 @@ allow_prefetch_for_athlon:
 	ret
 
 disable_prefetch_flag:
-	and	qword ptr flags,-4097
+	and	qword ptr flags+0,-4097
 keep_prefetch_flag:
 no_prefetch_flag:
 	ret
@@ -2709,7 +2709,7 @@ out_of_memory_4_1:
 out_of_memory_4:
 	call	add_garbage_collect_time
 	
-	mov	rbp,offset out_of_memory_string_4
+	mov	rbp,offset out_of_memory_string_4+0
 	jmp	print_error
 
 zero_bit_vector:
@@ -2794,25 +2794,25 @@ st_reorder_lp:
 compacting_collector:
 ; zero all mark bits
 
-	mov	rax,qword ptr heap_p3
+	mov	rax,qword ptr heap_p3+0
 	neg	rax
-	mov	qword ptr neg_heap_p3,rax
+	mov	qword ptr neg_heap_p3+0,rax
 
-	mov	qword ptr stack_top,rsi
+	mov	qword ptr stack_top+0,rsi
 
-	mov	rdi,qword ptr heap_vector
+	mov	rdi,qword ptr heap_vector+0
 
-	test	byte ptr flags,64
+	test	byte ptr flags+0,64
 	je	no_mark4
 
-	cmp	qword ptr zero_bits_before_mark,0
+	cmp	qword ptr zero_bits_before_mark+0,0
 	je	no_zero_bits
 
-	mov	qword ptr zero_bits_before_mark,0
+	mov	qword ptr zero_bits_before_mark+0,0
 
 no_mark4:
 	mov	rbp,rdi
-	mov	rax,qword ptr heap_size_65
+	mov	rax,qword ptr heap_size_65+0
 	add	rax,3
 	shr	rax,2
 
@@ -2843,12 +2843,12 @@ zero_bits_5:
 	sub	rax,1
 	jnc	zero_bits_4
 
-	test	byte ptr flags,64
+	test	byte ptr flags+0,64
 	je	no_mark5
 
 no_zero_bits:
-	mov	rax,qword ptr n_last_heap_free_bytes
-	mov	rbx,qword ptr n_free_words_after_mark
+	mov	rax,qword ptr n_last_heap_free_bytes+0
+	mov	rbx,qword ptr n_free_words_after_mark+0
 	shl	rbx,3
 
 	mov	rbp,rbx 
@@ -2859,13 +2859,13 @@ no_zero_bits:
 	cmp	rax,rbp 
 	jg	compact_gc
 
-	mov	rbx,qword ptr bit_vector_size
+	mov	rbx,qword ptr bit_vector_size+0
 	shl	rbx,3
 
 	sub	rax,rbx 
 	neg	rax
 
-	imul	qword ptr heap_size_multiple
+	imul	qword ptr heap_size_multiple+0
 	shrd	rax,rdx,7
 	shr	rdx,7
 	jne	no_smaller_heap
@@ -2878,7 +2878,7 @@ no_zero_bits:
 	
 	jmp	compact_gc
 no_smaller_heap:
-	test	qword ptr flags,4096
+	test	qword ptr flags+0,4096
 	jne	pmark
 
 	include	amark.asm
@@ -2886,26 +2886,26 @@ no_smaller_heap:
 	include	amark_prefetch.asm
 
 compact_gc:
-	mov	qword ptr zero_bits_before_mark,1
-	mov	qword ptr n_last_heap_free_bytes,0
-	mov	qword ptr n_free_words_after_mark,1000
+	mov	qword ptr zero_bits_before_mark+0,1
+	mov	qword ptr n_last_heap_free_bytes+0,0
+	mov	qword ptr n_free_words_after_mark+0,1000
 
 no_mark5:
 
 	include	acompact.asm
 
-	mov	rsi,qword ptr stack_top
+	mov	rsi,qword ptr stack_top+0
 
-	mov	rbx,qword ptr heap_size_65
+	mov	rbx,qword ptr heap_size_65+0
 	shl	rbx,6
-	add	rbx,qword ptr heap_p3
+	add	rbx,qword ptr heap_p3+0
 
-	mov	qword ptr heap_end_after_gc,rbx
+	mov	qword ptr heap_end_after_gc+0,rbx
 
 	sub	rbx,rdi
 	shr	rbx,3
 
-	sub	rbx,qword ptr n_allocated_words
+	sub	rbx,qword ptr n_allocated_words+0
 	mov	r15,rbx
 	jc	out_of_memory_4_1
 
@@ -2913,21 +2913,21 @@ no_mark5:
 	shl	rax,2
 	add	rax,rbx
 	shl	rax,4
-	cmp	rax,qword ptr heap_size
+	cmp	rax,qword ptr heap_size+0
 	jc	out_of_memory_4_2
 
- 	test	byte ptr flags,64
+ 	test	byte ptr flags+0,64
 	je	no_mark_6
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rdi
-	mov	rbx,qword ptr n_allocated_words
+	mov	rbx,qword ptr n_allocated_words+0
 	lea	rax,[rax+rbx*8]
 
-	mov	rbx,qword ptr heap_size_65
+	mov	rbx,qword ptr heap_size_65+0
 	shl	rbx,6
 	
-	imul	qword ptr heap_size_multiple
+	imul	qword ptr heap_size_multiple+0
 	shrd	rax,rdx,8
 	shr	rdx,8
 	jne	no_small_heap2
@@ -2942,7 +2942,7 @@ not_too_small2:
 	sub	rcx,rax 
 	jb	no_small_heap2
 	
-	sub	qword ptr heap_end_after_gc,rcx
+	sub	qword ptr heap_end_after_gc+0,rcx
 	shr	rcx,3
 	sub	r15,rcx
 
@@ -2950,7 +2950,7 @@ not_too_small2:
 
 no_small_heap2:
 	shr	rbx,3
-	mov	qword ptr bit_vector_size,rbx
+	mov	qword ptr bit_vector_size+0,rbx
 
 no_mark_6:
 	jmp	no_copy_garbage_collection
@@ -2959,13 +2959,13 @@ no_copy_garbage_collection:
 	call	add_compact_garbage_collect_time
 
 	mov	rax,rdi
-	sub	rax,qword ptr heap_p3
+	sub	rax,qword ptr heap_p3+0
 
-	add	qword ptr total_compact_gc_bytes,rax 
+	add	qword ptr total_compact_gc_bytes+0,rax 
 
 	mov	rax,rdi
-	sub	rax,qword ptr heap_p3
-	mov	rbx,qword ptr n_allocated_words
+	sub	rax,qword ptr heap_p3+0
+	mov	rbx,qword ptr n_allocated_words+0
 	lea	rax,[rax+rbx*8]
 
 	lea	rcx,heap_use_after_compact_gc_string_1+0
@@ -2994,10 +2994,10 @@ no_stack_overflow_exception:
 guard_page_or_access_violation_exception:
 	mov	rax,qword ptr 16[rax]
 	and	rax,-4096
-	cmp	qword ptr a_stack_guard_page,rax
+	cmp	qword ptr a_stack_guard_page+0,rax
 	jne 	no_stack_overflow_exception
 	
-	cmp	qword ptr a_stack_guard_page,0
+	cmp	qword ptr a_stack_guard_page+0,0
 	je  	no_stack_overflow_exception
 
 stack_overflow_exception:
@@ -3063,28 +3063,28 @@ halt:
 	call	write_profile_stack
  endif
 
-	mov	qword ptr execution_aborted,1
+	mov	qword ptr execution_aborted+0,1
 
-	cmp	qword ptr dll_initialised,0
+	cmp	qword ptr dll_initialised+0,0
  ifdef LINUX
 	je	exit_
  else
 	je	exit
  endif
  ifdef LINUX
-	cmp	dword ptr return_code,0
+	cmp	dword ptr return_code+0,0
  else
 	cmp	qword ptr return_code,0
  endif
 	jne	return_code_set
  ifdef LINUX
-	mov	dword ptr return_code,-1
+	mov	dword ptr return_code+0,-1
  else
 	mov	qword ptr return_code,-1
  endif
 return_code_set:
  ifdef LINUX
-	mov	edi,dword ptr return_code
+	mov	edi,dword ptr return_code+0
 	and	rsp,-16
 	call	exit
  else
@@ -3115,12 +3115,7 @@ eval_fill:
 	align	(1 shl 2) 
 	lea	rax,e__system__eaind+0
 	jmp	rax
- ifdef LINUX
-; pc relative lea instruction is one byte longer
-	db	0,0
- else
 	db	0,0,0
- endif
 	dd	e__system__dind
 	dd	-2
 e__system__nind:
@@ -3143,7 +3138,7 @@ eval_fill2:
 	mov	qword ptr [rcx],r9
 	mov	qword ptr [rsi],rcx 
 
-	test	byte ptr flags,64
+	test	byte ptr flags+0,64
 	je	__cycle__in__spine	
 
 	add	rsi,8
@@ -4943,7 +4938,7 @@ _c_entier:
 	
 entier_real:
 	cvttsd2si rax,xmm0
-	ucomisd	xmm0,qword ptr real_0_0
+	ucomisd	xmm0,qword ptr real_0_0+0
 	jb	entier_real_m
 	ret
 
@@ -4973,7 +4968,7 @@ r_to_i_real:
 
 getheapend:
 	lea	rbx,[rdi+r15*8]
-	mov	rax,heap_end_after_gc
+	mov	rax,heap_end_after_gc+0
 	ret
 
 _TEXT	ends
