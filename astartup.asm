@@ -553,7 +553,7 @@ abc_main:
 
 	call	init_timer
 
-	mov	halt_sp,rsp
+	mov	halt_sp+0,rsp
 
  ifdef PROFILE
 	call	init_profiler
@@ -580,7 +580,7 @@ init_error:
 	pop	rbx
 
  ifdef LINUX
-	mov	eax,dword ptr return_code
+	mov	eax,dword ptr return_code+0
 	jne	return_code_set_1
 	mov	eax,-1
 return_code_set_1:
@@ -615,7 +615,7 @@ DLL_PROCESS_ATTACH:
 	push	r14
 	push	r15
  endif
-	mov	qword ptr dll_initialised,1
+	mov	qword ptr dll_initialised+0,1
 
 	call	init_clean
 	test	rax,rax
@@ -623,15 +623,15 @@ DLL_PROCESS_ATTACH:
 
 	call	init_timer
 
-	mov	halt_sp,rsp 
+	mov	halt_sp+0,rsp 
 
  ifdef PROFILE
 	call	init_profiler
  endif
 
-	mov	qword ptr saved_heap_p,rdi
-	mov	qword ptr saved_heap_p+8,r15
-	mov	saved_a_stack_p,rsi
+	mov	qword ptr saved_heap_p+0,rdi
+	mov	qword ptr saved_heap_p+8+0,r15
+	mov	saved_a_stack_p+0,rsi
 
 	mov	rax,1
 	jmp	exit_dll_init
@@ -660,10 +660,10 @@ DLL_PROCESS_DETACH:
 	push	r14
 	push	r15
  endif
-	
-	mov	rdi,qword ptr saved_heap_p
-	mov	r15,qword ptr saved_heap_p+8
-	mov	rsi,saved_a_stack_p
+
+	mov	rdi,qword ptr saved_heap_p+0
+	mov	r15,qword ptr saved_heap_p+8+0
+	mov	rsi,saved_a_stack_p+0
 
 	call	exit_clean
 
@@ -693,37 +693,37 @@ init_clean:
 	lea	rax,128[rsp]
 	sub	rsp,32+8
 
-	sub	rax,qword ptr ab_stack_size
-	mov	end_b_stack,rax
+	sub	rax,qword ptr ab_stack_size+0
+	mov	end_b_stack+0,rax
 
-	mov	rax,qword ptr flags
+	mov	rax,qword ptr flags+0
 	and	rax,1
-	mov	basic_only,rax 
+	mov	basic_only+0,rax
 
 ;	call	allow_prefetch_for_athlon
 
-	mov	rax,qword ptr heap_size
+	mov	rax,qword ptr heap_size+0
 	sub	rax,7
 	xor	rdx,rdx 
 	mov	rbx,65
 	div	rbx
-	mov	qword ptr heap_size_65,rax 
+	mov	qword ptr heap_size_65+0,rax
 
-	mov	rax,qword ptr heap_size
+	mov	rax,qword ptr heap_size+0
 	sub	rax,7
 	xor	rdx,rdx 
 	mov	rbx,257
 	div	rbx
-	mov	heap_size_257,rax
+	mov	heap_size_257+0,rax
 	add	rax,7
 	and	rax,-8
-	mov	qword ptr heap_copied_vector_size,rax
-	mov	qword ptr heap_end_after_copy_gc,0
+	mov	qword ptr heap_copied_vector_size+0,rax
+	mov	qword ptr heap_end_after_copy_gc+0,0
 
-	mov	rax,qword ptr heap_size
+	mov	rax,qword ptr heap_size+0
 	add	rax,7
 	and	rax,-8
-	mov	qword ptr heap_size,rax
+	mov	qword ptr heap_size+0,rax
 	add	rax,7
 
 	mov	rbp,rsp
@@ -740,16 +740,16 @@ init_clean:
 	test	rax,rax 
 	je	no_memory_2
 
-	mov	heap_mbp,rax
+	mov	heap_mbp+0,rax
 	lea	rdi,7[rax]
 	and	rdi,-8
-	mov	heap_p,rdi 
+	mov	heap_p+0,rdi 
 
 	mov	rbp,rsp
 	and	rsp,-16
  ifdef LINUX
 	mov	r14,rdi
-	mov	rdi,qword ptr ab_stack_size
+	mov	rdi,qword ptr ab_stack_size+0
 	add	rdi,7
 	call	malloc
 	mov	rdi,r14
@@ -763,23 +763,23 @@ init_clean:
 	test	rax,rax 
 	je	no_memory_3
 	
-	mov	stack_mbp,rax 
+	mov	stack_mbp+0,rax 
 
-	add	rax,qword ptr ab_stack_size
+	add	rax,qword ptr ab_stack_size+0
 	add	rax,7+4095
 	and	rax,-4096
-	mov	qword ptr a_stack_guard_page,rax
-	sub	rax,qword ptr ab_stack_size
+	mov	qword ptr a_stack_guard_page+0,rax
+	sub	rax,qword ptr ab_stack_size+0
 
 	add	rax,7
 	and	rax,-8
 
 	mov	rsi,rax
-	mov	stack_p,rax
+	mov	stack_p+0,rax
 
-	add	rax,qword ptr ab_stack_size
+	add	rax,qword ptr ab_stack_size+0
 	sub	rax,64
-	mov	qword ptr end_a_stack,rax 
+	mov	qword ptr end_a_stack+0,rax
 
 	lea	rcx,small_integers+0
 	xor	rax,rax 
