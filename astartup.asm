@@ -781,9 +781,9 @@ init_clean:
 	sub	rax,64
 	mov	qword ptr end_a_stack,rax 
 
-	lea	rcx,small_integers
+	lea	rcx,small_integers+0
 	xor	rax,rax 
-	lea	rbx,(dINT+2)
+	lea	rbx,(dINT+2)+0
 
 make_small_integers_lp:
 	mov	[rcx],rbx 
@@ -793,9 +793,9 @@ make_small_integers_lp:
 	cmp	rax,33
 	jne	make_small_integers_lp
 
-	lea	rcx,static_characters
+	lea	rcx,static_characters+0
 	xor	rax,rax 
-	lea	rbx,(CHAR+2)
+	lea	rbx,(CHAR+2)+0
 
 make_static_characters_lp:
 	mov	[rcx],rbx 
@@ -805,10 +805,10 @@ make_static_characters_lp:
 	cmp	rax,256
 	jne	make_static_characters_lp
 
-	lea	rcx,(caf_list+8)
+	lea	rcx,(caf_list+8)+0
 	mov	qword ptr caf_listp,rcx 
 
-	lea	rcx,__Nil-8
+	lea	rcx,__Nil-8+0
 	mov	qword ptr finalizer_list,rcx
 	mov	qword ptr free_finalizer_list,rcx
 
@@ -872,7 +872,7 @@ no_memory_2:
 	mov	rbp,rsp
 	and	rsp,-16
  ifdef LINUX
-	lea	rdi,out_of_memory_string_1
+	lea	rdi,out_of_memory_string_1+0
  else
 	lea	rcx,out_of_memory_string_1
  endif
@@ -890,7 +890,7 @@ no_memory_3:
 	and	rsp,-16
 
  ifdef LINUX
-	lea	rdi,out_of_memory_string_1
+	lea	rdi,out_of_memory_string_1+0
  else
 	lea	ecx,out_of_memory_string_1
  endif
@@ -926,7 +926,7 @@ exit_clean:
  endif
 
  ifdef LINUX
-	lea	rdi,time_string_1
+	lea	rdi,time_string_1+0
  else
 	lea	rcx,time_string_1
  endif
@@ -936,7 +936,7 @@ exit_clean:
 	call	print_time
 	
  ifdef LINUX
-	lea	rdi,time_string_2
+	lea	rdi,time_string_2+0
  else
 	lea	rcx,time_string_2
  endif
@@ -953,7 +953,7 @@ exit_clean:
  ifdef MEASURE_GC
 
   ifdef LINUX
-	lea	rdi,time_string_3
+	lea	rdi,time_string_3+0
   else
 	lea	rcx,time_string_3
   endif
@@ -963,7 +963,7 @@ exit_clean:
 	call	print_time
 
   ifdef LINUX
-	lea	rdi,time_string_3
+	lea	rdi,time_string_3+0
   else
 	lea	rcx,time_string_3
   endif
@@ -975,7 +975,7 @@ exit_clean:
  endif
 
  ifdef LINUX
-	lea	rdi,time_string_4
+	lea	rdi,time_string_4+0
  else
 	lea	rcx,time_string_4
  endif
@@ -1194,7 +1194,7 @@ print_time:
 	call	ew_print_int
 	mov	rsp,rbp
 
-	lea	rcx,sprintf_time_buffer
+	lea	rcx,sprintf_time_buffer+0
 
 	xor	rdx,rdx 
 	mov	rbx,10
@@ -1506,7 +1506,7 @@ print_true:
  ifdef LINUX
 	mov	r13,rsi
 	mov	r14,rdi
-	lea	rdi,true_c_string
+	lea	rdi,true_c_string+0
  else
 	lea	rcx,true_c_string
 	sub	rsp,32
@@ -1525,7 +1525,7 @@ print_false:
  ifdef LINUX
 	mov	r13,rsi
 	mov	r14,rdi
-	lea	rdi,false_c_string
+	lea	rdi,false_c_string+0
  else
 	lea	rcx,false_c_string
 	sub	rsp,32
@@ -1734,8 +1734,8 @@ RtoAC:
  ifdef LINUX
 	mov	r13,rsi
 	mov	r14,rdi
-	lea	rsi,printf_real_string
-	lea	rdi,sprintf_buffer
+	lea	rsi,printf_real_string+0
+	lea	rdi,sprintf_buffer+0
 	mov	rax,1
 	call	sprintf
 	mov	rsi,r13
@@ -1853,7 +1853,7 @@ build_string:
 D_to_S_no_gc:
 	sub	rbx,2
 	mov	rbp,rdi
-	lea	r9,__STRING__+2
+	lea	r9,__STRING__+2+0
 	mov	qword ptr [rdi],r9
 	mov	8[rdi],rax 
 	add	rdi,16
@@ -1967,7 +1967,7 @@ get_time_diff:
  endif
 	mov	rsp,rbp
 
-	lea	rcx,last_time
+	lea	rcx,last_time+0
 	mov	rdx,[rcx]
 	mov	[rcx],rax 
 	sub	rax,rdx
@@ -1975,7 +1975,7 @@ get_time_diff:
 	
 add_execute_time:
 	call	get_time_diff
-	lea	rcx,execute_time
+	lea	rcx,execute_time+0
 
 add_time:
 	add	rax,[rcx]
@@ -2007,7 +2007,7 @@ add_compact_garbage_collect_time:
 
 collect_3:
  ifdef PROFILE
-	lea	rbp,garbage_collector_name
+	lea	rbp,garbage_collector_name+0
 	call	profile_s
  endif
 	mov	[rsi],rcx 
@@ -2027,7 +2027,7 @@ collect_3:
 
 collect_2:
  ifdef PROFILE
-	lea	rbp,garbage_collector_name
+	lea	rbp,garbage_collector_name+0
 	call	profile_s
  endif
 	mov	[rsi],rcx 
@@ -2045,7 +2045,7 @@ collect_2:
 
 collect_1:
  ifdef PROFILE
-	lea	rbp,garbage_collector_name
+	lea	rbp,garbage_collector_name+0
 	call	profile_s
  endif
 	mov	[rsi],rcx 
@@ -2061,7 +2061,7 @@ collect_1:
 
 collect_0:
  ifdef PROFILE
-	lea	rbp,garbage_collector_name
+	lea	rbp,garbage_collector_name+0
 	call	profile_s
  endif
 	call	collect_0_
@@ -2255,7 +2255,7 @@ collect:
  endif
 
  ifdef LINUX
-	lea	rdi,garbage_collect_string_1
+	lea	rdi,garbage_collect_string_1+0
  else
 	lea	rcx,garbage_collect_string_1
  endif
@@ -2271,7 +2271,7 @@ collect:
 	call	ew_print_int
 
  ifdef LINUX
-	lea	rdi,garbage_collect_string_2
+	lea	rdi,garbage_collect_string_2+0
  else
 	lea	rcx,garbage_collect_string_2
  endif
@@ -2287,7 +2287,7 @@ collect:
 	call	ew_print_int
 
  ifdef LINUX
-	lea	rdi,garbage_collect_string_3
+	lea	rdi,garbage_collect_string_3+0
  else
 	lea	rcx,garbage_collect_string_3
  endif
@@ -2418,7 +2418,7 @@ switch_to_mark_scan_2:
 
 	mov	byte ptr garbage_collect_flag,1
 
-	lea	rcx,heap_use_after_gc_string_1
+	lea	rcx,heap_use_after_gc_string_1+0
 
 	test	r15,r15
 	jns	end_garbage_collect
@@ -2476,7 +2476,7 @@ no_small_heap1:
 	mov	rax,rcx
 	shl	rax,3
 
-	lea	rcx,heap_use_after_gc_string_1
+	lea	rcx,heap_use_after_gc_string_1+0
 
 end_garbage_collect:
 
@@ -2510,7 +2510,7 @@ end_garbage_collect_:
 	call	ew_print_int
 
  ifdef LINUX
-	lea	rdi,heap_use_after_gc_string_2
+	lea	rdi,heap_use_after_gc_string_2+0
  else
 	lea	rcx,heap_use_after_gc_string_2
  endif
@@ -2642,7 +2642,7 @@ call_finalizers:
 	mov	rax,qword ptr free_finalizer_list
 
 call_finalizers_lp:
-	lea	r9,__Nil-8
+	lea	r9,__Nil-8+0
 	cmp	rax,r9
 	je	end_call_finalizers
 	push	8[rax]
@@ -2654,7 +2654,7 @@ call_finalizers_lp:
 	jmp	call_finalizers_lp
 end_call_finalizers:
 
-	lea	r9,__Nil-8
+	lea	r9,__Nil-8+0
 	mov	qword ptr free_finalizer_list,r9
 	ret
 
@@ -2968,7 +2968,7 @@ no_copy_garbage_collection:
 	mov	rbx,qword ptr n_allocated_words
 	lea	rax,[rax+rbx*8]
 
-	lea	rcx,heap_use_after_compact_gc_string_1
+	lea	rcx,heap_use_after_compact_gc_string_1+0
 	jmp	end_garbage_collect
 
 	public	clean_exception_handler_
@@ -3019,7 +3019,7 @@ IO_error:
 
  ifdef LINUX
 	mov	rbx,rdi
-	lea	rdi,IO_error_string
+	lea	rdi,IO_error_string+0
  else
 	mov	rbx,rcx
 	sub	rsp,32
@@ -3035,7 +3035,7 @@ IO_error:
 	call	ew_print_string
 
  ifdef LINUX
-	lea	rdi,new_line_string
+	lea	rdi,new_line_string+0
  else
 	lea	rcx,new_line_string
  endif
@@ -3113,7 +3113,7 @@ eval_fill:
 	ret
 
 	align	(1 shl 2) 
-	lea	rax,e__system__eaind
+	lea	rax,e__system__eaind+0
 	jmp	rax
  ifdef LINUX
 ; pc relative lea instruction is one byte longer
@@ -3139,7 +3139,7 @@ __indirection:
 	ret
 
 eval_fill2:
-	lea	r9,__cycle__in__spine
+	lea	r9,__cycle__in__spine+0
 	mov	qword ptr [rcx],r9
 	mov	qword ptr [rsi],rcx 
 
@@ -4049,7 +4049,7 @@ no_collect_4572:
 	mov	rcx,rdi
 	mov	qword ptr [rdi],offset __ARRAY__+2
 	mov	qword ptr 8[rdi],rax
-	lea	rbp,dINT+2
+	lea	rbp,dINT+2+0
 	mov	qword ptr 16[rdi],rbp
 	lea	rdi,24[rdi+rax*8]
 	ret
@@ -4285,10 +4285,10 @@ create_arrayI:
 	call	collect_0
 no_collect_4577:
 	mov	rcx,rdi 
-	lea	rbp,__ARRAY__+2
+	lea	rbp,__ARRAY__+2+0
 	mov	qword ptr [rdi],rbp
 	mov	qword ptr 8[rdi],rbx 
-	lea	rbp,dINT+2
+	lea	rbp,dINT+2+0
 	mov	qword ptr 16[rdi],rbp
 	add	rdi,24
 create_arrayBCI:
