@@ -706,7 +706,7 @@ rmark_push_lazy_args:
 	mov	rsi,rcx 
 	mov	rcx,qword ptr [rcx]
 
-	cmp	rsp,qword ptr end_stack
+	cmp	rsp,qword ptr end_stack+0
 	jae	rmark_node
 
 	jmp	rmark_using_reversal
