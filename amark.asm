@@ -222,7 +222,7 @@ no_extra_word:
 	shl	rax,3
 	add	qword ptr total_gc_bytes+0,rax
 
-	test	qword ptr flags,2
+	test	qword ptr flags+0,2
 	je	_no_heap_use_message2
 
 	mov	r12,rsp
@@ -558,7 +558,7 @@ _mark_tuple_selector_node_2:
 _small_tuple_or_record:
  ifdef NEW_DESCRIPTORS
 	mov	eax,(-8)[rax]
-	lea	rbp,__indirection
+	lea	rbp,__indirection+0
 	mov	qword ptr (-8)[rcx],rbp
 	movzx	eax,word ptr 4[rax]
 	mov	rbp,rcx
@@ -761,13 +761,13 @@ _mark_closure_with_one_boxed_argument:
 	jmp	_mark_node
 
 _mark_hnf_0:
-	lea	r9,__STRING__+2
+	lea	r9,__STRING__+2+0
 	cmp	rax,r9
 	jbe	_mark_string_or_array
 
 	or	dword ptr [rdi+rbx*4],esi 
 
-	lea	r9,CHAR+2
+	lea	r9,CHAR+2+0
 	cmp	rax,r9
 	ja	_mark_normal_hnf_0
 
@@ -1344,7 +1344,7 @@ __mark_record_selector_node_1:
 
 __small_record:
 	mov	eax,(-8)[rax]
-	lea	rdx,__indirection
+	lea	rdx,__indirection+0
 	pop	rbx 
 
 	mov	qword ptr (-8)[rcx],rdx
