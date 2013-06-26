@@ -1023,7 +1023,7 @@ rmarkp_char_3:
 	jmp	rmarkp_next_node
 
 rmarkp_no_normal_hnf_0:
-	lea	r9,__ARRAY__+2
+	lea	r9,__ARRAY__+2+0
 	cmp	rax,r9
 	jne	rmarkp_next_node
 
