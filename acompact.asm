@@ -135,7 +135,7 @@ finalizer_not_used_after_compact1:
 	mov	qword ptr [rdx],rbp 
 	lea	rdx,8[rbp]
 
-	mov	rbp ,qword ptr 8[rbp]
+	mov	rbp,qword ptr 8[rbp]
 	mov	qword ptr [rcx],rbp 
 
 	jmp	determine_free_finalizers_after_compact1
@@ -151,7 +151,7 @@ end_finalizers_after_compact1:
 	jne	finalizer_list_already_reversed
 	mov	rax,qword ptr [rcx]
 	mov	qword ptr [rcx],offset finalizer_list+1
-	mov	qword ptr finalizer_list,rax 
+	mov	qword ptr finalizer_list+0,rax 
 finalizer_list_already_reversed:
 finalizer_list_empty:
 
