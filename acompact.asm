@@ -1150,10 +1150,10 @@ move_closure_with_unboxed_arguments_1:
 
 end_move:
 
-	mov	rcx,qword ptr finalizer_list
+	mov	rcx,qword ptr finalizer_list+0
 
 restore_finalizer_descriptors:
-	lea	r9,__Nil-8
+	lea	r9,__Nil-8+0
 	cmp	rcx,r9
 	je	end_restore_finalizer_descriptors
 
