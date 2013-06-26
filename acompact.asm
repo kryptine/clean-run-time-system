@@ -160,7 +160,7 @@ finalizer_list_empty:
 	cmp	qword ptr [rbp],r9
 	je	free_finalizer_list_empty
 
-	mov	qword ptr end_vector,offset free_finalizer_list+8
+	mov	qword ptr end_vector+0,offset free_finalizer_list+8
 
 	test	qword ptr flags,4096
 	je	no_pmarkr
