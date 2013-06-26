@@ -89,7 +89,7 @@ compact_heap:
 
 	mov	rbp,qword ptr [rcx]
 determine_free_finalizers_after_compact1:
-	lea	r9,__Nil-8
+	lea	r9,__Nil-8+0
 	cmp	rbp,r9
 	je	end_finalizers_after_compact1
 
