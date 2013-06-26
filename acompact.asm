@@ -162,7 +162,7 @@ finalizer_list_empty:
 
 	mov	qword ptr end_vector+0,offset free_finalizer_list+8
 
-	test	qword ptr flags,4096
+	test	qword ptr flags+0,4096
 	je	no_pmarkr
 	call	rmarkp_stack_nodes
 	jmp	free_finalizer_list_empty
