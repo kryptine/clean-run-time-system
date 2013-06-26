@@ -7,28 +7,28 @@ _T000	segment para 'CODE'
 	public	sin_real
 
 sin_real:
-	ucomisd	xmm0,qword ptr real_pi_d_4
+	ucomisd	xmm0,qword ptr real_pi_d_4+0
 	jbe		sin_real_1					; x<=pi/4 | NAN
-	ucomisd	xmm0,qword ptr real_3_pi_d_4
+	ucomisd	xmm0,qword ptr real_3_pi_d_4+0
 	jbe		sin_real_2
-	ucomisd	xmm0,qword ptr real_5_pi_d_4
+	ucomisd	xmm0,qword ptr real_5_pi_d_4+0
 	jbe		sin_real_3
-	ucomisd	xmm0,qword ptr real_7_pi_d_4
+	ucomisd	xmm0,qword ptr real_7_pi_d_4+0
 	jbe		sin_real_4
-	ucomisd	xmm0,qword ptr real_9_pi_d_4
+	ucomisd	xmm0,qword ptr real_9_pi_d_4+0
 	jbe		sin_real_5
 
-	ucomisd	xmm0,qword ptr real_36825084_pi
+	ucomisd	xmm0,qword ptr real_36825084_pi+0
 	jbe		sin_real_0
 
-	ucomisd	xmm0,qword ptr real_2_p_53
+	ucomisd	xmm0,qword ptr real_2_p_53+0
 	jae		sin_or_cos_real_too_large	; x>=-2^53
 
 	call	rem_36825084_pi
 
-	movlpd	xmm2,qword ptr real_pi_d_4_26
-	movlpd	xmm3,qword ptr real_pi_d_4_26_26
-	movlpd	xmm13,qword ptr real_pi_d_4_52_l
+	movlpd	xmm2,qword ptr real_pi_d_4_26+0
+	movlpd	xmm3,qword ptr real_pi_d_4_26_26+0
+	movlpd	xmm13,qword ptr real_pi_d_4_52_l+0
 
 	mulsd	xmm2,xmm1
 	mulsd	xmm3,xmm1
@@ -41,29 +41,29 @@ sin_real:
 	jmp		sin_real_0_
 
 sin_real_0:
-	movlpd	xmm1,qword ptr real_4_d_pi
+	movlpd	xmm1,qword ptr real_4_d_pi+0
 
 	mulsd	xmm1,xmm0				; x*4/pi
 
-	movq	xmm4,qword ptr round_even_c
+	movq	xmm4,qword ptr round_even_c+0
 	
-	addsd	xmm1,qword ptr real_1_0	; x*4/pi+1
+	addsd	xmm1,qword ptr real_1_0+0	; x*4/pi+1
 	
 	movq	xmm2,xmm1
 	psrlq	xmm1,52
 	psubq	xmm4,xmm1
 
-	movq	xmm1,qword ptr mask_all_one
+	movq	xmm1,qword ptr mask_all_one+0
 	psllq	xmm1,xmm4
 	andpd	xmm1,xmm2				; round_even (x*4/pi+1)
 
-	movlpd	xmm2,qword ptr real_pi_d_4_26
-	movlpd	xmm3,qword ptr real_pi_d_4_26_26
-	movlpd	xmm13,qword ptr real_pi_d_4_52_l
+	movlpd	xmm2,qword ptr real_pi_d_4_26+0
+	movlpd	xmm3,qword ptr real_pi_d_4_26_26+0
+	movlpd	xmm13,qword ptr real_pi_d_4_52_l+0
 
-	movq	xmm5,qword ptr mask_all_one_except_last
+	movq	xmm5,qword ptr mask_all_one_except_last+0
 	psllq	xmm5,xmm4
-	movq	xmm6,qword ptr mask_all_one_except_second_last
+	movq	xmm6,qword ptr mask_all_one_except_second_last+0
 	psllq	xmm6,xmm4
 
 	mulsd	xmm2,xmm1
@@ -101,26 +101,26 @@ sin_real_cos:
 	jmp		cos_real_m
 
 sin_real_n:
-	ucomisd	xmm0,qword ptr real_m_3_pi_d_4
+	ucomisd	xmm0,qword ptr real_m_3_pi_d_4+0
 	jae		sin_real_n_2
-	ucomisd	xmm0,qword ptr real_m_5_pi_d_4
+	ucomisd	xmm0,qword ptr real_m_5_pi_d_4+0
 	jae		sin_real_n_3
-	ucomisd	xmm0,qword ptr real_m_7_pi_d_4
+	ucomisd	xmm0,qword ptr real_m_7_pi_d_4+0
 	jae		sin_real_n_4
-	ucomisd	xmm0,qword ptr real_m_9_pi_d_4
+	ucomisd	xmm0,qword ptr real_m_9_pi_d_4+0
 	jae		sin_real_n_5
 
-	ucomisd	xmm0,qword ptr real_m_36825084_pi
+	ucomisd	xmm0,qword ptr real_m_36825084_pi+0
 	jae		sin_real_n_0
 
-	ucomisd	xmm0,qword ptr real_m_2_p_53
+	ucomisd	xmm0,qword ptr real_m_2_p_53+0
 	jbe		sin_or_cos_real_too_small_or_nan	; x<=-2^53 | NAN
 
 	call	rem_n_36825084_pi
 
-	movlpd	xmm2,qword ptr real_pi_d_4_26
-	movlpd	xmm3,qword ptr real_pi_d_4_26_26
-	movlpd	xmm13,qword ptr real_pi_d_4_52_l
+	movlpd	xmm2,qword ptr real_pi_d_4_26+0
+	movlpd	xmm3,qword ptr real_pi_d_4_26_26+0
+	movlpd	xmm13,qword ptr real_pi_d_4_52_l+0
 
 	mulsd	xmm2,xmm1
 	mulsd	xmm3,xmm1
@@ -133,29 +133,29 @@ sin_real_n:
 	jmp		sin_real_n_0_
 
 sin_real_n_0:
-	movlpd	xmm1,qword ptr real_4_d_pi
+	movlpd	xmm1,qword ptr real_4_d_pi+0
 
 	mulsd	xmm1,xmm0				; x*4/pi
 	
-	movq	xmm4,qword ptr m_round_even_c
+	movq	xmm4,qword ptr m_round_even_c+0
 
-	subsd	xmm1,qword ptr real_1_0	; x*4/pi-1
+	subsd	xmm1,qword ptr real_1_0+0	; x*4/pi-1
 	
 	movq	xmm2,xmm1
 	psrlq	xmm1,52
 	psubq	xmm4,xmm1
 
-	movq	xmm1,qword ptr mask_all_one
+	movq	xmm1,qword ptr mask_all_one+0
 	psllq	xmm1,xmm4
 	andpd	xmm1,xmm2				; round_even (x*4/pi-1)
 
-	movlpd	xmm2,qword ptr real_pi_d_4_26
-	movlpd	xmm3,qword ptr real_pi_d_4_26_26
-	movlpd	xmm13,qword ptr real_pi_d_4_52_l
+	movlpd	xmm2,qword ptr real_pi_d_4_26+0
+	movlpd	xmm3,qword ptr real_pi_d_4_26_26+0
+	movlpd	xmm13,qword ptr real_pi_d_4_52_l+0
 
-	movq	xmm5,qword ptr mask_all_one_except_last
+	movq	xmm5,qword ptr mask_all_one_except_last+0
 	psllq	xmm5,xmm4
-	movq	xmm6,qword ptr mask_all_one_except_second_last
+	movq	xmm6,qword ptr mask_all_one_except_second_last+0
 	psllq	xmm6,xmm4
 
 	mulsd	xmm2,xmm1
@@ -180,20 +180,20 @@ sin_real_1:
 	ucomisd	xmm0,qword ptr real_m_pi_d_4
 	jb		sin_real_n				; ; x<-pi/4 | NAN
 
-	ucomisd	xmm0,qword ptr real_0_43540000008249979402
+	ucomisd	xmm0,qword ptr real_0_43540000008249979402+0
 	jae		sin_real_p_0_6
-	ucomisd	xmm0,qword ptr real_m_0_43540000008249979402
+	ucomisd	xmm0,qword ptr real_m_0_43540000008249979402+0
 	jbe		sin_real_m_0_6
 
 	movsd	xmm1,xmm0				; x
 
-	ucomisd	xmm0,qword ptr real_0_0
+	ucomisd	xmm0,qword ptr real_0_0+0
 	je		sin_real_0_0			; sin -0.0 = -0.0
 
 	mulsd	xmm0,xmm0				; x2
 
-	movlpd	xmm5,qword ptr sin_p_0
-	movlpd	xmm6,qword ptr sin_p_1
+	movlpd	xmm5,qword ptr sin_p_0+0
+	movlpd	xmm6,qword ptr sin_p_1+0
 
 	movsd	xmm2,xmm1				; x
 	mulsd	xmm1,xmm0				; x3
@@ -201,12 +201,12 @@ sin_real_1:
 	movsd	xmm3,xmm0				; x2
 	mulsd	xmm0,xmm0				; x4
 
-;	ucomisd	xmm3,qword ptr real_0_25 ; x2>=0.25 (|x|>0.5)
+;	ucomisd	xmm3,qword ptr real_0_25+0 ; x2>=0.25 (|x|>0.5)
 
 	mulsd	xmm3,xmm1				; x5
 
-	movlpd	xmm7,qword ptr sin_p_2
-	movlpd	xmm8,qword ptr sin_p_3
+	movlpd	xmm7,qword ptr sin_p_2+0
+	movlpd	xmm8,qword ptr sin_p_3+0
 	
 	mulsd	xmm5,xmm1				; p3
 	mulsd	xmm1,xmm0				; x7
@@ -220,8 +220,8 @@ sin_real_1:
 	mulsd	xmm8,xmm3				; p9
 	mulsd	xmm3,xmm0				; x13
 
-	mulsd	xmm1,qword ptr sin_p_4	; p11
-	mulsd	xmm3,qword ptr sin_p_5	; p13
+	mulsd	xmm1,qword ptr sin_p_4+0	; p11
+	mulsd	xmm3,qword ptr sin_p_5+0	; p13
 	
 	movsd	xmm0,xmm2				; x
 
@@ -239,7 +239,7 @@ sin_real_0_0:
 	ret
 
 ;sin_real_1_l:
-;	movlpd	xmm2,qword ptr real_47_bits
+;	movlpd	xmm2,qword ptr real_47_bits+0
 ;	andpd	xmm2,xmm5				; p3h
 
 ;	addsd	xmm1,xmm7				; p7+p9+p11+p13
@@ -254,26 +254,26 @@ sin_real_0_0:
 ;	ret
 
 sin_real_m_0_6:
-	movlpd	xmm1,qword ptr real_m_0_600000000082499762577
+	movlpd	xmm1,qword ptr real_m_0_600000000082499762577+0
 
 	ucomisd	xmm0,xmm1
 	subsd	xmm0,xmm1
 
-	lea		rcx,sin_p3_c
-	lea		rdx,sin_p4_c
+	lea		rcx,sin_p3_c+0
+	lea		rdx,sin_p4_c+0
 
 	cmova	rcx,rdx
 	
 	jmp		sin_real_0_6
 
 sin_real_p_0_6:
-	movlpd	xmm1,qword ptr real_0_600000000082499762577
+	movlpd	xmm1,qword ptr real_0_600000000082499762577+0
 
 	ucomisd	xmm0,xmm1
 	subsd	xmm0,xmm1
 
-	lea		rcx,sin_p1_c
-	lea		rdx,sin_p2_c
+	lea		rcx,sin_p1_c+0
+	lea		rdx,sin_p2_c+0
 
 	cmovb	rcx,rdx
 
@@ -312,7 +312,7 @@ sin_real_0_6:
 	addsd	xmm11,xmm12				; p9+p7
 	addsd	xmm0,xmm2				; p8+p6
 
-	movlpd	xmm2,qword ptr real_26_bits
+	movlpd	xmm2,qword ptr real_26_bits+0
 	movsd	xmm3,xmm1				; x
 	movlpd	xmm6,qword ptr (sin_p1_1l-sin_p1_c)[rcx]
 	movlpd	xmm5,qword ptr (sin_p1_1h-sin_p1_c)[rcx]
@@ -352,31 +352,31 @@ sin_real_0_6:
 	ret
 
 sin_real_n_5:
-	addsd	xmm0,qword ptr real_2_pi
-	movlpd	xmm13,qword ptr real_m_2_pi_l
+	addsd	xmm0,qword ptr real_2_pi+0
+	movlpd	xmm13,qword ptr real_m_2_pi_l+0
 	jmp		sin_real_p
 
 sin_real_5:
-	subsd	xmm0,qword ptr real_2_pi
-	movlpd	xmm13,qword ptr real_2_pi_l
+	subsd	xmm0,qword ptr real_2_pi+0
+	movlpd	xmm13,qword ptr real_2_pi_l+0
 	jmp		sin_real_p
 
 cos_real_n_2:
-	addsd	xmm0,qword ptr real_pi_d_2
-	movlpd	xmm13,qword ptr real_m_pi_d_2_l
+	addsd	xmm0,qword ptr real_pi_d_2+0
+	movlpd	xmm13,qword ptr real_m_pi_d_2_l+0
 	jmp		sin_real_p
 
 cos_real_4:
-	subsd	xmm0,qword ptr real_3_pi_d_2
-	movlpd	xmm13,qword ptr real_3_pi_d_2_l
+	subsd	xmm0,qword ptr real_3_pi_d_2+0
+	movlpd	xmm13,qword ptr real_3_pi_d_2_l+0
 
 sin_real_p:
-	ucomisd	xmm0,qword ptr real_0_43540000008249979402
+	ucomisd	xmm0,qword ptr real_0_43540000008249979402+0
 
 	movsd	xmm12,xmm0
 
 	jae		sin_real_p_p_0_6
-	ucomisd	xmm0,qword ptr real_m_0_43540000008249979402
+	ucomisd	xmm0,qword ptr real_m_0_43540000008249979402+0
 	jb		sin_real_p_m_0_6
 
 	subsd	xmm0,xmm13
@@ -386,8 +386,8 @@ sin_real_p:
 
 	subsd	xmm12,xmm1
 
-	movlpd	xmm5,qword ptr sin_p_0
-	movlpd	xmm6,qword ptr sin_p_1
+	movlpd	xmm5,qword ptr sin_p_0+0
+	movlpd	xmm6,qword ptr sin_p_1+0
 
 	movsd	xmm2,xmm1				; x
 	mulsd	xmm1,xmm0				; x3
@@ -398,12 +398,12 @@ sin_real_p:
 	subsd	xmm12,xmm13				; x_l
 	movsd	xmm14,xmm3				; x2
 
-;	ucomisd	xmm3,qword ptr real_0_25 ; x2>=0.25 (|x|>0.5)
+;	ucomisd	xmm3,qword ptr real_0_25+0 ; x2>=0.25 (|x|>0.5)
 
 	mulsd	xmm3,xmm1				; x5
 
-	movlpd	xmm7,qword ptr sin_p_2
-	movlpd	xmm8,qword ptr sin_p_3
+	movlpd	xmm7,qword ptr sin_p_2+0
+	movlpd	xmm8,qword ptr sin_p_3+0
 		
 	mulsd	xmm5,xmm1				; p3
 	mulsd	xmm1,xmm0				; x7
@@ -419,12 +419,12 @@ sin_real_p:
 
 	mulsd	xmm14,xmm12				; x_l*x2
 
-	mulsd	xmm1,qword ptr sin_p_4	; p11
-	mulsd	xmm3,qword ptr sin_p_5	; p13
+	mulsd	xmm1,qword ptr sin_p_4+0	; p11
+	mulsd	xmm3,qword ptr sin_p_5+0	; p13
 	
 	movsd	xmm0,xmm2				; x
 
-	mulsd	xmm14,qword ptr real_0_5 ; 0.5*x_l*x2
+	mulsd	xmm14,qword ptr real_0_5+0 ; 0.5*x_l*x2
 
 	addsd	xmm1,xmm3				; p11+p13
 
@@ -463,7 +463,7 @@ sin_real_p:
 ;	ret
 
 sin_real_p_m_0_6:
-	movlpd	xmm1,qword ptr real_m_0_600000000082499762577
+	movlpd	xmm1,qword ptr real_m_0_600000000082499762577+0
 
 	subsd	xmm0,xmm13
 
@@ -471,14 +471,14 @@ sin_real_p_m_0_6:
 	movsd	xmm15,xmm0				; x1
 	subsd	xmm0,xmm1
 
-	lea		rcx,sin_p3_c
-	lea		rdx,sin_p4_c
+	lea		rcx,sin_p3_c+0
+	lea		rdx,sin_p4_c+0
 
 	cmova	rcx,rdx
 	jmp		sin_real_p_pm_0_6
 
 sin_real_p_p_0_6:
-	movlpd	xmm1,qword ptr real_0_600000000082499762577
+	movlpd	xmm1,qword ptr real_0_600000000082499762577+0
 
 	subsd	xmm0,xmm13
 
@@ -486,8 +486,8 @@ sin_real_p_p_0_6:
 	movsd	xmm15,xmm0				; x1
 	subsd	xmm0,xmm1
 
-	lea		rcx,sin_p1_c
-	lea		rdx,sin_p2_c
+	lea		rcx,sin_p1_c+0
+	lea		rdx,sin_p2_c+0
 
 	cmovb	rcx,rdx
 
@@ -577,35 +577,35 @@ sin_real_pm_0_6:
 	ret
 
 sin_real_3:
-	movlpd	xmm1,qword ptr real_pi
-	movlpd	xmm13,qword ptr real_pi_l
+	movlpd	xmm1,qword ptr real_pi+0
+	movlpd	xmm13,qword ptr real_pi_l+0
 	subsd	xmm1,xmm0
 	jmp		sin_real_m
 
 cos_real_n_4:
-	movlpd	xmm1,qword ptr real_m_3_pi_d_2
-	movlpd	xmm13,qword ptr real_m_3_pi_d_2_l
+	movlpd	xmm1,qword ptr real_m_3_pi_d_2+0
+	movlpd	xmm13,qword ptr real_m_3_pi_d_2_l+0
 	subsd	xmm1,xmm0
 	jmp		sin_real_m
 
 sin_real_n_3:
-	movlpd	xmm1,qword ptr real_m_pi
-	movlpd	xmm13,qword ptr real_m_pi_l
+	movlpd	xmm1,qword ptr real_m_pi+0
+	movlpd	xmm13,qword ptr real_m_pi_l+0
 	subsd	xmm1,xmm0
 	jmp		sin_real_m
 
 cos_real_2:
-	movlpd	xmm1,qword ptr real_pi_d_2
-	movlpd	xmm13,qword ptr real_pi_d_2_l
+	movlpd	xmm1,qword ptr real_pi_d_2+0
+	movlpd	xmm13,qword ptr real_pi_d_2_l+0
 	subsd	xmm1,xmm0
 
 sin_real_m:
-	ucomisd	xmm1,qword ptr real_0_43540000008249979402
+	ucomisd	xmm1,qword ptr real_0_43540000008249979402+0
 
 	movsd	xmm12,xmm1
 
 	jae		sin_real_m_p_0_6
-	ucomisd	xmm1,qword ptr real_m_0_43540000008249979402
+	ucomisd	xmm1,qword ptr real_m_0_43540000008249979402+0
 	jbe		sin_real_m_m_0_6
 
 	addsd	xmm1,xmm13
@@ -615,13 +615,13 @@ sin_real_m:
 
 	subsd	xmm12,xmm0
 
-	movlpd	xmm5,qword ptr sin_p_0
-	movlpd	xmm6,qword ptr sin_p_1
+	movlpd	xmm5,qword ptr sin_p_0+0
+	movlpd	xmm6,qword ptr sin_p_1+0
 
 	movsd	xmm2,xmm0				; x
 	mulsd	xmm0,xmm1				; x3
 
-;	ucomisd	xmm1,qword ptr real_0_25 ; x2>=0.25 (|x|>0.5)
+;	ucomisd	xmm1,qword ptr real_0_25+0 ; x2>=0.25 (|x|>0.5)
 	
 	movsd	xmm3,xmm1				; x2
 	mulsd	xmm1,xmm1				; x4
@@ -631,8 +631,8 @@ sin_real_m:
 	movsd	xmm14,xmm3
 	mulsd	xmm3,xmm0				; x5
 
-	movlpd	xmm7,qword ptr sin_p_2
-	movlpd	xmm8,qword ptr sin_p_3
+	movlpd	xmm7,qword ptr sin_p_2+0
+	movlpd	xmm8,qword ptr sin_p_3+0
 		
 	mulsd	xmm5,xmm0				; p3
 	mulsd	xmm0,xmm1				; x7
@@ -653,7 +653,7 @@ sin_real_m:
 	
 	movsd	xmm1,xmm2				; x
 
-	mulsd	xmm14,qword ptr real_0_5
+	mulsd	xmm14,qword ptr real_0_5+0
 
 	addsd	xmm0,xmm3				; p11+p13
 
@@ -694,9 +694,9 @@ sin_real_m:
 sin_real_m_m_0_6:
 	addsd	xmm1,xmm13
 
-	movlpd	xmm0,qword ptr real_0_600000000082499762577
+	movlpd	xmm0,qword ptr real_0_600000000082499762577+0
 
-	ucomisd	xmm1,qword ptr real_m_0_600000000082499762577
+	ucomisd	xmm1,qword ptr real_m_0_600000000082499762577+0
 	movsd	xmm15,xmm1				; x1
 	addsd	xmm0,xmm1
 
@@ -709,9 +709,9 @@ sin_real_m_m_0_6:
 sin_real_m_p_0_6:
 	addsd	xmm1,xmm13
 
-	movlpd	xmm0,qword ptr real_m_0_600000000082499762577
+	movlpd	xmm0,qword ptr real_m_0_600000000082499762577+0
 
-	ucomisd	xmm1,qword ptr real_0_600000000082499762577
+	ucomisd	xmm1,qword ptr real_0_600000000082499762577+0
 	movsd	xmm15,xmm1				; x1
 	addsd	xmm0,xmm1
 
@@ -760,9 +760,9 @@ cos_real:
 
 	call	rem_36825084_pi
 
-	movlpd	xmm2,qword ptr real_pi_d_4_26
-	movlpd	xmm3,qword ptr real_pi_d_4_26_26
-	movlpd	xmm13,qword ptr real_pi_d_4_52_l
+	movlpd	xmm2,qword ptr real_pi_d_4_26+0
+	movlpd	xmm3,qword ptr real_pi_d_4_26_26+0
+	movlpd	xmm13,qword ptr real_pi_d_4_52_l+0
 
 	mulsd	xmm2,xmm1
 	mulsd	xmm3,xmm1
@@ -775,28 +775,28 @@ cos_real:
 	jmp		cos_real_0_
 
 cos_real_0:
-	movlpd	xmm1,qword ptr real_4_d_pi
+	movlpd	xmm1,qword ptr real_4_d_pi+0
 
 	mulsd	xmm1,xmm0				; x*4/pi
 	
-	addsd	xmm1,qword ptr real_1_0	; x*4/pi+1
+	addsd	xmm1,qword ptr real_1_0+0	; x*4/pi+1
 	
-	movq	xmm4,qword ptr round_even_c
+	movq	xmm4,qword ptr round_even_c+0
 	movq	xmm2,xmm1
 	psrlq	xmm1,52
 	psubq	xmm4,xmm1
 
-	movq	xmm1,qword ptr mask_all_one
+	movq	xmm1,qword ptr mask_all_one+0
 	psllq	xmm1,xmm4
 	andpd	xmm1,xmm2				; round_even (x*4/pi+1)
 
-	movlpd	xmm2,qword ptr real_pi_d_4_26
-	movlpd	xmm3,qword ptr real_pi_d_4_26_26
-	movlpd	xmm13,qword ptr real_pi_d_4_52_l
+	movlpd	xmm2,qword ptr real_pi_d_4_26+0
+	movlpd	xmm3,qword ptr real_pi_d_4_26_26+0
+	movlpd	xmm13,qword ptr real_pi_d_4_52_l+0
 
-	movq	xmm5,qword ptr mask_all_one_except_last
+	movq	xmm5,qword ptr mask_all_one_except_last+0
 	psllq	xmm5,xmm4
-	movq	xmm6,qword ptr mask_all_one_except_second_last
+	movq	xmm6,qword ptr mask_all_one_except_second_last+0
 	psllq	xmm6,xmm4
 
 	mulsd	xmm2,xmm1
@@ -833,26 +833,26 @@ cos_real_p_sin:
 	jmp		sin_real_p
 
 cos_real_n:
-	ucomisd	xmm0,qword ptr real_m_3_pi_d_4
+	ucomisd	xmm0,qword ptr real_m_3_pi_d_4+0
 	jae		cos_real_n_2
-	ucomisd	xmm0,qword ptr real_m_5_pi_d_4
+	ucomisd	xmm0,qword ptr real_m_5_pi_d_4+0
 	jae		cos_real_n_3
-	ucomisd	xmm0,qword ptr real_m_7_pi_d_4
+	ucomisd	xmm0,qword ptr real_m_7_pi_d_4+0
 	jae		cos_real_n_4
-	ucomisd	xmm0,qword ptr real_m_9_pi_d_4
+	ucomisd	xmm0,qword ptr real_m_9_pi_d_4+0
 	jae		cos_real_n_5
 
-	ucomisd	xmm0,qword ptr real_m_36825084_pi
+	ucomisd	xmm0,qword ptr real_m_36825084_pi+0
 	jae		cos_real_n_0
 
-	ucomisd	xmm0,qword ptr real_m_2_p_53
+	ucomisd	xmm0,qword ptr real_m_2_p_53+0
 	jbe		sin_or_cos_real_too_small_or_nan	; x<=-2^53 | NAN
 
 	call	rem_n_36825084_pi
 
-	movlpd	xmm2,qword ptr real_pi_d_4_26
-	movlpd	xmm3,qword ptr real_pi_d_4_26_26
-	movlpd	xmm13,qword ptr real_pi_d_4_52_l
+	movlpd	xmm2,qword ptr real_pi_d_4_26+0
+	movlpd	xmm3,qword ptr real_pi_d_4_26_26+0
+	movlpd	xmm13,qword ptr real_pi_d_4_52_l+0
 
 	mulsd	xmm2,xmm1
 	mulsd	xmm3,xmm1
@@ -865,29 +865,29 @@ cos_real_n:
 	jmp		cos_real_n_0_
 
 cos_real_n_0:
-	movlpd	xmm1,qword ptr real_4_d_pi
+	movlpd	xmm1,qword ptr real_4_d_pi+0
 
 	mulsd	xmm1,xmm0				; x*4/pi
 	
-	movq	xmm4,qword ptr m_round_even_c
+	movq	xmm4,qword ptr m_round_even_c+0
 
-	subsd	xmm1,qword ptr real_1_0	; x*4/pi-1
+	subsd	xmm1,qword ptr real_1_0+0	; x*4/pi-1
 	
 	movq	xmm2,xmm1
 	psrlq	xmm1,52
 	psubq	xmm4,xmm1
 
-	movq	xmm1,qword ptr mask_all_one
+	movq	xmm1,qword ptr mask_all_one+0
 	psllq	xmm1,xmm4
 	andpd	xmm1,xmm2				; round_even (x*4/pi-1)
 
-	movlpd	xmm2,qword ptr real_pi_d_4_26
-	movlpd	xmm3,qword ptr real_pi_d_4_26_26
-	movlpd	xmm13,qword ptr real_pi_d_4_52_l
+	movlpd	xmm2,qword ptr real_pi_d_4_26+0
+	movlpd	xmm3,qword ptr real_pi_d_4_26_26+0
+	movlpd	xmm13,qword ptr real_pi_d_4_52_l+0
 
-	movq	xmm5,qword ptr mask_all_one_except_last
+	movq	xmm5,qword ptr mask_all_one_except_last+0
 	psllq	xmm5,xmm4
-	movq	xmm6,qword ptr mask_all_one_except_second_last
+	movq	xmm6,qword ptr mask_all_one_except_second_last+0
 	psllq	xmm6,xmm4
 
 	mulsd	xmm2,xmm1
@@ -915,14 +915,14 @@ cos_real_n_p_sin:
 	jmp		sin_real_p
 
 cos_real_1:
-	ucomisd	xmm0,qword ptr real_m_pi_d_4
+	ucomisd	xmm0,qword ptr real_m_pi_d_4+0
 	jb		cos_real_n				; x<-pi/4 | NAN
 
 	movsd	xmm1,xmm0				; x
 	mulsd	xmm0,xmm0				; x2
 
-	movlpd	xmm9,qword ptr real_17_bits
-	movlpd	xmm5,qword ptr cos_p_0
+	movlpd	xmm9,qword ptr real_17_bits+0
+	movlpd	xmm5,qword ptr cos_p_0+0
 
 	movsd	xmm8,xmm1				; x
 
@@ -930,7 +930,7 @@ cos_real_1:
 	mulsd	xmm0,xmm0				; x4
 
 	andpd	xmm9,xmm1				; x_17_h
-	movlpd	xmm10,qword ptr real_0_5
+	movlpd	xmm10,qword ptr real_0_5+0
 
 	movsd	xmm3,xmm2				; x2
 	mulsd	xmm2,xmm0				; x6
@@ -938,7 +938,7 @@ cos_real_1:
 	movsd	xmm4,xmm0				; x4
 	mulsd	xmm0,xmm0				; x8
 
-	movlpd	xmm7,qword ptr cos_p_2
+	movlpd	xmm7,qword ptr cos_p_2+0
 
 	mulsd	xmm5,xmm4				; p4
 	mulsd	xmm4,xmm2				; x10
@@ -949,10 +949,10 @@ cos_real_1:
 	mulsd	xmm7,xmm0				; p8
 	mulsd	xmm0,xmm6				; x14
 
-	mulsd	xmm6,qword ptr cos_p_1	; p6	
-	mulsd	xmm4,qword ptr cos_p_3	; p10
-	mulsd	xmm2,qword ptr cos_p_4	; p12
-	mulsd	xmm0,qword ptr cos_p_5	; p14
+	mulsd	xmm6,qword ptr cos_p_1+0	; p6	
+	mulsd	xmm4,qword ptr cos_p_3+0	; p10
+	mulsd	xmm2,qword ptr cos_p_4+0	; p12
+	mulsd	xmm0,qword ptr cos_p_5+0	; p14
 
 	subsd	xmm8,xmm9				; x_17_l
 	mulsd	xmm10,xmm9				; 0.5*x_17_h
@@ -960,11 +960,11 @@ cos_real_1:
 	addsd	xmm0,xmm2				; p12+p14
 	
 	mulsd	xmm10,xmm9				; 0.5*x_17_h*x_17_h
-	movlpd	xmm11,qword ptr real_1_0
+	movlpd	xmm11,qword ptr real_1_0+0
 
 	addsd	xmm0,xmm4				; p10+p12+p14
 
-	mulsd	xmm8,qword ptr real_0_5	; 0.5*x_17_l
+	mulsd	xmm8,qword ptr real_0_5+0	; 0.5*x_17_l
 	addsd	xmm9,xmm1				; x+x_17_h
 
 	addsd	xmm0,xmm7				; p8+p10+p12+p14
@@ -973,7 +973,7 @@ cos_real_1:
 
 	addsd	xmm0,xmm6				; p6+p8+p10+p12+p14
 
-	ucomisd	xmm10,qword ptr real_2_p_m_18 ; 0.5*x_17_h*x_17_h<2**-18
+	ucomisd	xmm10,qword ptr real_2_p_m_18+0 ; 0.5*x_17_h*x_17_h<2**-18
 	jb		cos_real_1_s
 
 	subsd	xmm11,xmm10				; 1.0-0.5*x_17_h*x_17_h
@@ -995,23 +995,23 @@ cos_real_1_s:
 	ret
 
 cos_real_n_5:
-	addsd	xmm0,qword ptr real_2_pi
-	movlpd	xmm13,qword ptr real_m_2_pi_l
+	addsd	xmm0,qword ptr real_2_pi+0
+	movlpd	xmm13,qword ptr real_m_2_pi_l+0
 	jmp		cos_real_p
 
 cos_real_5:
-	subsd	xmm0,qword ptr real_2_pi
-	movlpd	xmm13,qword ptr real_2_pi_l
+	subsd	xmm0,qword ptr real_2_pi+0
+	movlpd	xmm13,qword ptr real_2_pi_l+0
 	jmp		cos_real_p
 
 sin_real_n_4:
-	addsd	xmm0,qword ptr real_3_pi_d_2
-	movlpd	xmm13,qword ptr real_m_3_pi_d_2_l
+	addsd	xmm0,qword ptr real_3_pi_d_2+0
+	movlpd	xmm13,qword ptr real_m_3_pi_d_2_l+0
 	jmp		cos_real_p
 
 sin_real_2:
-	subsd	xmm0,qword ptr real_pi_d_2
-	movlpd	xmm13,qword ptr real_pi_d_2_l
+	subsd	xmm0,qword ptr real_pi_d_2+0
+	movlpd	xmm13,qword ptr real_pi_d_2_l+0
 
 cos_real_p:
 	movsd	xmm12,xmm0
@@ -1022,8 +1022,8 @@ cos_real_p:
 
 	subsd	xmm12,xmm1
 
-	movlpd	xmm9,qword ptr real_17_bits
-	movlpd	xmm5,qword ptr cos_p_0
+	movlpd	xmm9,qword ptr real_17_bits+0
+	movlpd	xmm5,qword ptr cos_p_0+0
 
 	movsd	xmm8,xmm1				; x
 
@@ -1033,7 +1033,7 @@ cos_real_p:
 	subsd	xmm12,xmm13
 
 	andpd	xmm9,xmm1				; x_17_h
-	movlpd	xmm10,qword ptr real_0_5
+	movlpd	xmm10,qword ptr real_0_5+0
 
 	movsd	xmm3,xmm2				; x2
 	mulsd	xmm2,xmm0				; x6
@@ -1041,7 +1041,7 @@ cos_real_p:
 	movsd	xmm4,xmm0				; x4
 	mulsd	xmm0,xmm0				; x8
 
-	movlpd	xmm7,qword ptr cos_p_2
+	movlpd	xmm7,qword ptr cos_p_2+0
 
 	mulsd	xmm12,xmm8
 
@@ -1054,10 +1054,10 @@ cos_real_p:
 	mulsd	xmm7,xmm0				; p8
 	mulsd	xmm0,xmm6				; x14
 
-	mulsd	xmm6,qword ptr cos_p_1	; p6	
-	mulsd	xmm4,qword ptr cos_p_3	; p10
-	mulsd	xmm2,qword ptr cos_p_4	; p12
-	mulsd	xmm0,qword ptr cos_p_5	; p14
+	mulsd	xmm6,qword ptr cos_p_1+0	; p6	
+	mulsd	xmm4,qword ptr cos_p_3+0	; p10
+	mulsd	xmm2,qword ptr cos_p_4+0	; p12
+	mulsd	xmm0,qword ptr cos_p_5+0	; p14
 
 	subsd	xmm8,xmm9				; x_17_l
 	mulsd	xmm10,xmm9				; 0.5*x_17_h
@@ -1065,11 +1065,11 @@ cos_real_p:
 	addsd	xmm0,xmm2				; p12+p14
 	
 	mulsd	xmm10,xmm9				; 0.5*x_17_h*x_17_h
-	movlpd	xmm11,qword ptr real_1_0
+	movlpd	xmm11,qword ptr real_1_0+0
 
 	addsd	xmm0,xmm4				; p10+p12+p14
 
-	mulsd	xmm8,qword ptr real_0_5	; 0.5*x_17_l
+	mulsd	xmm8,qword ptr real_0_5+0	; 0.5*x_17_l
 	addsd	xmm9,xmm1				; x+x_17_h
 
 	addsd	xmm0,xmm7				; p8+p10+p12+p14
@@ -1078,7 +1078,7 @@ cos_real_p:
 
 	addsd	xmm0,xmm6				; p6+p8+p10+p12+p14
 
-	ucomisd	xmm10,qword ptr real_2_p_m_18 ; 0.5*x_17_h*x_17_h<2**-18
+	ucomisd	xmm10,qword ptr real_2_p_m_18+0 ; 0.5*x_17_h*x_17_h<2**-18
 	jb		cos_real__s
 
 	subsd	xmm11,xmm10				; 1.0-0.5*x_17_h*x_17_h
@@ -1104,23 +1104,23 @@ cos_real__s:
 	ret
 
 sin_real_4:
-	subsd	xmm0,qword ptr real_3_pi_d_2
-	movlpd	xmm13,qword ptr real_3_pi_d_2_l
+	subsd	xmm0,qword ptr real_3_pi_d_2+0
+	movlpd	xmm13,qword ptr real_3_pi_d_2_l+0
 	jmp		cos_real_m
 
 cos_real_n_3:
-	addsd	xmm0,qword ptr real_pi
-	movlpd	xmm13,qword ptr real_m_pi_l
+	addsd	xmm0,qword ptr real_pi+0
+	movlpd	xmm13,qword ptr real_m_pi_l+0
 	jmp		cos_real_m
 
 sin_real_n_2:
-	addsd	xmm0,qword ptr real_pi_d_2
-	movlpd	xmm13,qword ptr real_m_pi_d_2_l
+	addsd	xmm0,qword ptr real_pi_d_2+0
+	movlpd	xmm13,qword ptr real_m_pi_d_2_l+0
 	jmp		cos_real_m
 
 cos_real_3:
-	subsd	xmm0,qword ptr real_pi
-	movlpd	xmm13,qword ptr real_pi_l
+	subsd	xmm0,qword ptr real_pi+0
+	movlpd	xmm13,qword ptr real_pi_l+0
 
 cos_real_m:
 	movsd	xmm12,xmm0
@@ -1131,8 +1131,8 @@ cos_real_m:
 
 	subsd	xmm12,xmm1
 
-	movlpd	xmm9,qword ptr real_17_bits
-	movlpd	xmm5,qword ptr cos_p_0
+	movlpd	xmm9,qword ptr real_17_bits+0
+	movlpd	xmm5,qword ptr cos_p_0+0
 
 	movsd	xmm8,xmm1				; x
 
@@ -1142,7 +1142,7 @@ cos_real_m:
 	subsd	xmm12,xmm13
 
 	andpd	xmm9,xmm1				; x_17_h
-	movlpd	xmm10,qword ptr real_0_5
+	movlpd	xmm10,qword ptr real_0_5+0
 
 	movsd	xmm3,xmm2				; x2
 	mulsd	xmm2,xmm0				; x6
@@ -1150,7 +1150,7 @@ cos_real_m:
 	movsd	xmm4,xmm0				; x4
 	mulsd	xmm0,xmm0				; x8
 
-	movlpd	xmm7,qword ptr cos_p_2
+	movlpd	xmm7,qword ptr cos_p_2+0
 
 	mulsd	xmm12,xmm8
 
@@ -1163,10 +1163,10 @@ cos_real_m:
 	mulsd	xmm7,xmm0				; p8
 	mulsd	xmm0,xmm6				; x14
 
-	mulsd	xmm6,qword ptr cos_p_1	; p6	
-	mulsd	xmm4,qword ptr cos_p_3	; p10
-	mulsd	xmm2,qword ptr cos_p_4	; p12
-	mulsd	xmm0,qword ptr cos_p_5	; p14
+	mulsd	xmm6,qword ptr cos_p_1+0	; p6	
+	mulsd	xmm4,qword ptr cos_p_3+0	; p10
+	mulsd	xmm2,qword ptr cos_p_4+0	; p12
+	mulsd	xmm0,qword ptr cos_p_5+0	; p14
 
 	subsd	xmm8,xmm9				; x_17_l
 	mulsd	xmm10,xmm9				; 0.5*x_17_h
@@ -1174,11 +1174,11 @@ cos_real_m:
 	addsd	xmm0,xmm2				; p12+p14
 	
 	mulsd	xmm10,xmm9				; 0.5*x_17_h*x_17_h
-	movlpd	xmm11,qword ptr real_m_1_0
+	movlpd	xmm11,qword ptr real_m_1_0+0
 
 	addsd	xmm0,xmm4				; p10+p12+p14
 
-	mulsd	xmm8,qword ptr real_0_5	; 0.5*x_17_l
+	mulsd	xmm8,qword ptr real_0_5+0	; 0.5*x_17_l
 	addsd	xmm9,xmm1				; x+x_17_h
 
 	addsd	xmm0,xmm7				; p8+p10+p12+p14
@@ -1187,7 +1187,7 @@ cos_real_m:
 
 	addsd	xmm0,xmm6				; p6+p8+p10+p12+p14
 	
-	ucomisd	xmm10,qword ptr real_2_p_m_18 ; 0.5*x_17_h*x_17_h<2**-18
+	ucomisd	xmm10,qword ptr real_2_p_m_18+0 ; 0.5*x_17_h*x_17_h<2**-18
 	jb		cos_real_m_s
 
 	addsd	xmm11,xmm10				; -1.0+0.5*x_17_h*x_17_h
@@ -1226,31 +1226,31 @@ _T001	segment para 'CODE'
 	public	tan_real
 
 tan_real:
-	ucomisd	xmm0,qword ptr real_m_0_338
+	ucomisd	xmm0,qword ptr real_m_0_338+0
 	jb		tan_real_n				; x<-0.338 | NAN
-	ucomisd	xmm0,qword ptr real_0_89
+	ucomisd	xmm0,qword ptr real_0_89+0
 	jbe		tan_real_1
-	ucomisd	xmm0,qword ptr real_pi_m_0_699
+	ucomisd	xmm0,qword ptr real_pi_m_0_699+0
 	jbe		tan_real_2
-	ucomisd	xmm0,qword ptr real_pi_p_0_89
+	ucomisd	xmm0,qword ptr real_pi_p_0_89+0
 	jbe		tan_real_3
-	ucomisd	xmm0,qword ptr real_2pi_m_0_699
+	ucomisd	xmm0,qword ptr real_2pi_m_0_699+0
 	jbe		tan_real_4
-	ucomisd	xmm0,qword ptr real_2pi_p_0_89
+	ucomisd	xmm0,qword ptr real_2pi_p_0_89+0
 	jbe		tan_real_5
 
-	ucomisd	xmm0,qword ptr real_36825084_pi
+	ucomisd	xmm0,qword ptr real_36825084_pi+0
 	jbe		tan_real_0
 
-	ucomisd	xmm0,qword ptr real_2_p_53
+	ucomisd	xmm0,qword ptr real_2_p_53+0
 	jae		tan_real_too_large	; x>=-2^53
 
 	call	rem_36825084_pi
 
 tan_real_pn_l:
-	movlpd	xmm2,qword ptr real_pi_d_4_26
-	movlpd	xmm3,qword ptr real_pi_d_4_26_26
-	movlpd	xmm12,qword ptr real_pi_d_4_52_l
+	movlpd	xmm2,qword ptr real_pi_d_4_26+0
+	movlpd	xmm3,qword ptr real_pi_d_4_26_26+0
+	movlpd	xmm12,qword ptr real_pi_d_4_52_l+0
 
 	mulsd	xmm2,xmm1
 	mulsd	xmm3,xmm1
@@ -1260,26 +1260,26 @@ tan_real_pn_l:
 	jmp		tan_real_
 
 tan_real_0:
-	movlpd	xmm1,qword ptr real_4_d_pi
+	movlpd	xmm1,qword ptr real_4_d_pi+0
 
 	mulsd	xmm1,xmm0				; x*4/pi
 	
-	addsd	xmm1,qword ptr real_1_0	; x*4/pi+1
+	addsd	xmm1,qword ptr real_1_0+0	; x*4/pi+1
 	
-	movq	xmm4,qword ptr round_even_c
+	movq	xmm4,qword ptr round_even_c+0
 tan_real_pn_0:
 	movq	xmm2,xmm1
 	psrlq	xmm1,52
 	psubq	xmm4,xmm1
-	movq	xmm1,qword ptr mask_all_one
+	movq	xmm1,qword ptr mask_all_one+0
 	psllq	xmm1,xmm4
 	andpd	xmm1,xmm2				; round_even (x*4/pi+1)
 
-	movlpd	xmm2,qword ptr real_pi_d_4_26
-	movlpd	xmm3,qword ptr real_pi_d_4_26_26
-	movlpd	xmm12,qword ptr real_pi_d_4_52_l
+	movlpd	xmm2,qword ptr real_pi_d_4_26+0
+	movlpd	xmm3,qword ptr real_pi_d_4_26_26+0
+	movlpd	xmm12,qword ptr real_pi_d_4_52_l+0
 
-	movq	xmm5,qword ptr mask_all_one_except_last
+	movq	xmm5,qword ptr mask_all_one_except_last+0
 	psllq	xmm5,xmm4
 
 	mulsd	xmm2,xmm1
@@ -1294,21 +1294,21 @@ tan_real_:
 	subsd	xmm0,xmm2
 	subsd	xmm0,xmm3
 	
-	ucomisd	xmm0,qword ptr real_0_338
+	ucomisd	xmm0,qword ptr real_0_338+0
 	ja		tan_real_0_1p
-	ucomisd	xmm0,qword ptr real_m_0_338
+	ucomisd	xmm0,qword ptr real_m_0_338+0
 	jae		tan_real_3_
 
-	ucomisd	xmm0,qword ptr real_m_0_542
+	ucomisd	xmm0,qword ptr real_m_0_542+0
 	ja		tan_real_0_5_n
-	ucomisd	xmm0,qword ptr real_m_0_699
+	ucomisd	xmm0,qword ptr real_m_0_699+0
 	ja		tan_real_s_0_5_n
 	jmp		tan_real_1_0_3_n
 
 tan_real_0_1p:
-	ucomisd	xmm0,qword ptr real_0_542
+	ucomisd	xmm0,qword ptr real_0_542+0
 	jb		tan_real_0_5_p
-	ucomisd	xmm0,qword ptr real_0_699
+	ucomisd	xmm0,qword ptr real_0_699+0
 	jb		tan_real_s_0_5_p
 	jmp		tan_real_1_0_3
 
@@ -1317,72 +1317,72 @@ tan_real_0_2:
 	movsd	xmm1,xmm3
 	addsd	xmm1,xmm2
 
-	ucomisd	xmm1,qword ptr real_0_5_pi_m_1_18
+	ucomisd	xmm1,qword ptr real_0_5_pi_m_1_18+0
 	ja		tan_real_0_2p
-	ucomisd	xmm1,qword ptr real_1_18_m_0_5_pi
+	ucomisd	xmm1,qword ptr real_1_18_m_0_5_pi+0
 	jae		tan_real_2_
 
-	ucomisd	xmm1,qword ptr real_1_04_m_0_5_pi
+	ucomisd	xmm1,qword ptr real_1_04_m_0_5_pi+0
 	ja		tan_real_2_0_n
-	ucomisd	xmm1,qword ptr real_0_89_m_0_5_pi
+	ucomisd	xmm1,qword ptr real_0_89_m_0_5_pi+0
 	ja		tan_real_s_2_n
 	jmp		tan_real_1_0_n
 
 tan_real_0_2p:
-	ucomisd	xmm1,qword ptr real_0_5_pi_m_1_04
+	ucomisd	xmm1,qword ptr real_0_5_pi_m_1_04+0
 	jb		tan_real_2_0_p
-	ucomisd	xmm1,qword ptr real_0_5_pi_m_0_89
+	ucomisd	xmm1,qword ptr real_0_5_pi_m_0_89+0
 	jb		tan_real_s_2_p
 	jmp		tan_real_1_0_2_p
 
 tan_real_n:
-	ucomisd	xmm0,qword ptr real_m_0_89
+	ucomisd	xmm0,qword ptr real_m_0_89+0
 	jae		tan_real_n_1
-	ucomisd	xmm0,qword ptr real_n_pi_m_0_699
+	ucomisd	xmm0,qword ptr real_n_pi_m_0_699+0
 	jae		tan_real_n_2
-	ucomisd	xmm0,qword ptr real_n_pi_p_0_89
+	ucomisd	xmm0,qword ptr real_n_pi_p_0_89+0
 	jae		tan_real_n_3
-	ucomisd	xmm0,qword ptr real_n_2pi_m_0_699
+	ucomisd	xmm0,qword ptr real_n_2pi_m_0_699+0
 	jae		tan_real_n_4
-	ucomisd	xmm0,qword ptr real_n_2pi_p_0_89
+	ucomisd	xmm0,qword ptr real_n_2pi_p_0_89+0
 	jae		tan_real_n_5
 
-	ucomisd	xmm0,qword ptr real_m_36825084_pi
+	ucomisd	xmm0,qword ptr real_m_36825084_pi+0
 	jae		tan_real_n_0
 
-	ucomisd	xmm0,qword ptr real_m_2_p_53
+	ucomisd	xmm0,qword ptr real_m_2_p_53+0
 	jbe		tan_real_too_small_or_nan	; x<=-2^53 | NAN
 
 	call	rem_n_36825084_pi
 	jmp		tan_real_pn_l
 
 tan_real_n_0:
-	movlpd	xmm1,qword ptr real_4_d_pi
+	movlpd	xmm1,qword ptr real_4_d_pi+0
 
 	mulsd	xmm1,xmm0				; x*4/pi
 	
-	subsd	xmm1,qword ptr real_1_0	; x*4/pi-1
+	subsd	xmm1,qword ptr real_1_0+0	; x*4/pi-1
 	
-	movq	xmm4,qword ptr m_round_even_c
+	movq	xmm4,qword ptr m_round_even_c+0
 	jmp		tan_real_pn_0
 
 tan_real_1:
-	ucomisd	xmm0,qword ptr real_0_699
+	ucomisd	xmm0,qword ptr real_0_699+0
 	ja		tan_real_1_2
-	ucomisd	xmm0,qword ptr real_0_338
+	ucomisd	xmm0,qword ptr real_0_338+0
 	ja		tan_real_0_5
 
 tan_real_1_0:
 	movsd	xmm1,xmm0				; x
 	mulsd	xmm0,xmm0				; x2
 
-	movlpd	xmm6,qword ptr tan_q_1
-	movlpd	xmm5,qword ptr tan_q_2
+	movlpd	xmm6,qword ptr tan_q_1+0
+	movlpd	xmm5,qword ptr tan_q_2+0
 
 	movsd	xmm2,xmm0				; x2
 	mulsd	xmm0,xmm0				; x4
 
-	movlpd	xmm7,qword ptr tan_p_1
+	movlpd	xmm7,qword ptr tan_p_1+0
 	mulsd	xmm6,xmm2				; q2
 
 	movsd	xmm3,xmm2				; x2
@@ -1392,9 +1392,9 @@ tan_real_1_0:
 	mulsd	xmm0,xmm0				; x8
 
 	mulsd	xmm5,xmm4				; q4
-	mulsd	xmm2,qword ptr tan_q_3	; q6
+	mulsd	xmm2,qword ptr tan_q_3+0	; q6
 	
-	mulsd	xmm4,qword ptr tan_p_2	; p4
+	mulsd	xmm4,qword ptr tan_p_2+0	; p4
 
 	addsd	xmm0,xmm2				; x8+q6
 
@@ -1406,9 +1406,9 @@ tan_real_1_0:
 
 	addsd	xmm0,xmm6				; x8+q6+q4+q2
 
-	addsd	xmm4,qword ptr tan_p_0	; p4+p2+p0
+	addsd	xmm4,qword ptr tan_p_0+0	; p4+p2+p0
 
-	addsd	xmm0,qword ptr tan_q_0	; x8+q6+q4+q2+q0
+	addsd	xmm0,qword ptr tan_q_0+0	; x8+q6+q4+q2+q0
 
 	divsd	xmm4,xmm0				; p/q
 
@@ -1421,53 +1421,53 @@ tan_real_1_0:
 	ret
 
 tan_real_m_0_5:
-	ucomisd	xmm0,qword ptr real_m_0_542
+	ucomisd	xmm0,qword ptr real_m_0_542+0
 	jb		tan_real_n_s_0_5
 
-	movlpd	xmm1,qword ptr atan_0_5_53
-	movlpd	xmm10,qword ptr real_49_bits
+	movlpd	xmm1,qword ptr atan_0_5_53+0
+	movlpd	xmm10,qword ptr real_49_bits+0
 
 	addsd	xmm1,xmm0
 	andpd	xmm10,xmm0				; x_h
 
-	lea		rdx,tan_n_0_5_t
-	addsd	xmm1,qword ptr atan_0_5_53_l ; y=x+atan 0.5
+	lea		rdx,tan_n_0_5_t+0
+	addsd	xmm1,qword ptr atan_0_5_53_l+0 ; y=x+atan 0.5
 	jmp		tan_real_0_5_a_s_0_5_a_s_2
 
 tan_real_n_s_0_5:
-	movlpd	xmm1,qword ptr atan_sqrt_0_5
-	movlpd	xmm10,qword ptr real_51_bits
+	movlpd	xmm1,qword ptr atan_sqrt_0_5+0
+	movlpd	xmm10,qword ptr real_51_bits+0
 
 	addsd	xmm1,xmm0
 	andpd	xmm10,xmm0				; x_h
 	
-	lea		rdx,tan_n_s_0_5_t
-	addsd	xmm1,qword ptr atan_sqrt_0_5_l ; y=x+atan sqrt 0.5
+	lea		rdx,tan_n_s_0_5_t+0
+	addsd	xmm1,qword ptr atan_sqrt_0_5_l+0 ; y=x+atan sqrt 0.5
 	jmp		tan_real_0_5_a_s_0_5_a_s_2
 
 tan_real_0_5:
-	ucomisd	xmm0,qword ptr real_0_542
+	ucomisd	xmm0,qword ptr real_0_542+0
 	ja		tan_real_s_0_5
 
-	movlpd	xmm1,qword ptr m_atan_0_5_53
-	movlpd	xmm10,qword ptr real_49_bits
+	movlpd	xmm1,qword ptr m_atan_0_5_53+0
+	movlpd	xmm10,qword ptr real_49_bits+0
 
 	addsd	xmm1,xmm0
 	andpd	xmm10,xmm0				; x_h
 
-	lea		rdx,tan_0_5_t
-	subsd	xmm1,qword ptr atan_0_5_53_l ; y=x-atan 0.5
+	lea		rdx,tan_0_5_t+0
+	subsd	xmm1,qword ptr atan_0_5_53_l+0 ; y=x-atan 0.5
 	jmp		tan_real_0_5_a_s_0_5_a_s_2
 
 tan_real_s_0_5:
-	movlpd	xmm1,qword ptr m_atan_sqrt_0_5
-	movlpd	xmm10,qword ptr real_51_bits
+	movlpd	xmm1,qword ptr m_atan_sqrt_0_5+0
+	movlpd	xmm10,qword ptr real_51_bits+0
 
 	addsd	xmm1,xmm0
 	andpd	xmm10,xmm0				; x_h
 	
-	lea		rdx,tan_s_0_5_t
-	subsd	xmm1,qword ptr atan_sqrt_0_5_l ; y=x-atan sqrt 0.5
+	lea		rdx,tan_s_0_5_t+0
+	subsd	xmm1,qword ptr atan_sqrt_0_5_l+0 ; y=x-atan sqrt 0.5
 
 tan_real_0_5_a_s_0_5_a_s_2:
 	subsd	xmm0,xmm10				; x_l
@@ -1477,28 +1477,28 @@ tan_real_0_5_a_s_0_5_a_s_2:
 
 	mulsd	xmm10,qword ptr [rdx]	; 1.25|1.5|3*x_h
 
-	movlpd	xmm7,qword ptr tan3_q_1
-	movlpd	xmm6,qword ptr tan3_q_2
+	movlpd	xmm7,qword ptr tan3_q_1+0
+	movlpd	xmm6,qword ptr tan3_q_2+0
 
 	movsd	xmm3,xmm1				; y2
 	mulsd	xmm1,xmm1				; y4
 
-	movlpd	xmm9,qword ptr tan3_q_3
+	movlpd	xmm9,qword ptr tan3_q_3+0
 	mulsd	xmm7,xmm3				; q2
 
 	movsd	xmm4,xmm3				; y2
 	mulsd	xmm3,xmm1				; y6
 
-	movlpd	xmm8,qword ptr tan3_p_0
+	movlpd	xmm8,qword ptr tan3_p_0+0
 
 	movsd	xmm5,xmm1				; y4
 	mulsd	xmm1,xmm1				; y8
 
 	mulsd	xmm9,xmm3				; q6
-	mulsd	xmm3,qword ptr tan3_p_2	; p6
+	mulsd	xmm3,qword ptr tan3_p_2+0	; p6
 
 	mulsd	xmm6,xmm5				; q4
-	mulsd	xmm5,qword ptr tan3_p_1	; p4
+	mulsd	xmm5,qword ptr tan3_p_1+0	; p4
 	
 	addsd	xmm1,xmm9				; y8+q6
 
@@ -1516,7 +1516,7 @@ tan_real_0_5_a_s_0_5_a_s_2:
 	mulsd	xmm6,xmm2				; 0.5|sqrt 0.5|sqrt 2*y
 
 	addsd	xmm3,xmm8				; p6+p4+p2
-	addsd	xmm1,qword ptr tan3_q_0	; y8+q6+q4+q2+q0
+	addsd	xmm1,qword ptr tan3_q_0+0	; y8+q6+q4+q2+q0
 
 	movsd	xmm4,xmm3				; p
 	addsd	xmm4,xmm1				; p+q
@@ -1543,59 +1543,59 @@ tan_real_0_5_a_s_0_5_a_s_2:
 	ret
 
 tan_real_n_1:
-	ucomisd	xmm0,qword ptr real_m_0_699
+	ucomisd	xmm0,qword ptr real_m_0_699+0
 	ja		tan_real_m_0_5
 
 tan_real_n_1_2:
-	movlpd	xmm1,qword ptr real_pi_d_4
+	movlpd	xmm1,qword ptr real_pi_d_4+0
 
 	addsd	xmm1,xmm0
 	addsd	xmm0,xmm0				; 2x
 
-	addsd	xmm1,qword ptr real_pi_d_4_l ; y=pi/4+x
+	addsd	xmm1,qword ptr real_pi_d_4_l+0 ; y=pi/4+x
 
-	addsd	xmm0,qword ptr real_pi_d_2_m_1_0_52 ; 1+2x-pi/2=1-2y
-	movlpd	xmm10,qword ptr real_m_pi_d_2_m_1_0_52_l
-	movlpd	xmm11,qword ptr real_m_2_0
+	addsd	xmm0,qword ptr real_pi_d_2_m_1_0_52+0 ; 1+2x-pi/2=1-2y
+	movlpd	xmm10,qword ptr real_m_pi_d_2_m_1_0_52_l+0
+	movlpd	xmm11,qword ptr real_m_2_0+0
 	jmp		tan_real_1_2_
 
 tan_real_1_2:
-	movlpd	xmm1,qword ptr real_pi_d_4
+	movlpd	xmm1,qword ptr real_pi_d_4+0
 
 	subsd	xmm1,xmm0
 	addsd	xmm0,xmm0				; 2x
 
-	addsd	xmm1,qword ptr real_pi_d_4_l ; y=pi/4-x
-	subsd	xmm0,qword ptr real_pi_d_2_m_1_0_52 ; 1+2x-pi/2=1-2y
-	movlpd	xmm10,qword ptr real_pi_d_2_m_1_0_52_l
-	movlpd	xmm11,qword ptr real_2_0
+	addsd	xmm1,qword ptr real_pi_d_4_l+0 ; y=pi/4-x
+	subsd	xmm0,qword ptr real_pi_d_2_m_1_0_52+0 ; 1+2x-pi/2=1-2y
+	movlpd	xmm10,qword ptr real_pi_d_2_m_1_0_52_l+0
+	movlpd	xmm11,qword ptr real_2_0+0
 
 tan_real_1_2_:
 	movsd	xmm2,xmm1				; y
 	mulsd	xmm1,xmm1				; y2
 
-	movlpd	xmm7,qword ptr tan3_q_1
-	movlpd	xmm6,qword ptr tan3_q_2
+	movlpd	xmm7,qword ptr tan3_q_1+0
+	movlpd	xmm6,qword ptr tan3_q_2+0
 
 	movsd	xmm3,xmm1				; y2
 	mulsd	xmm1,xmm1				; y4
 
-	movlpd	xmm9,qword ptr tan3_q_3
+	movlpd	xmm9,qword ptr tan3_q_3+0
 	mulsd	xmm7,xmm3				; q2
 
 	movsd	xmm4,xmm3				; y2
 	mulsd	xmm3,xmm1				; y6
 
-	movlpd	xmm8,qword ptr tan3_p_0
+	movlpd	xmm8,qword ptr tan3_p_0+0
 
 	movsd	xmm5,xmm1				; y4
 	mulsd	xmm1,xmm1				; y8
 
 	mulsd	xmm9,xmm3				; q6
-	mulsd	xmm3,qword ptr tan3_p_2	; p6
+	mulsd	xmm3,qword ptr tan3_p_2+0	; p6
 
 	mulsd	xmm6,xmm5				; q4
-	mulsd	xmm5,qword ptr tan3_p_1	; p4
+	mulsd	xmm5,qword ptr tan3_p_1+0	; p4
 	
 	addsd	xmm1,xmm9				; y8+q6
 
@@ -1607,7 +1607,7 @@ tan_real_1_2_:
 	addsd	xmm1,xmm7				; y8+q6+q4+q2
 
 	addsd	xmm3,xmm8				; p6+p4+p2
-	addsd	xmm1,qword ptr tan3_q_0	; y8+q6+q4+q2+q0
+	addsd	xmm1,qword ptr tan3_q_0+0	; y8+q6+q4+q2+q0
 
 	movsd	xmm4,xmm3				; p
 	addsd	xmm4,xmm1				; p+q
@@ -1629,64 +1629,64 @@ tan_real_1_2_:
 	ret
 
 tan_real_n_4:
-	ucomisd	xmm0,qword ptr real_n_pi_p_1_18
+	ucomisd	xmm0,qword ptr real_n_pi_p_1_18+0
 
-	movlpd	xmm1,qword ptr real_m_3_pi_d_2
-	movlpd	xmm12,qword ptr real_m_3_pi_d_2_l
+	movlpd	xmm1,qword ptr real_m_3_pi_d_2+0
+	movlpd	xmm12,qword ptr real_m_3_pi_d_2_l+0
 
 	ja		tan_real_n_2_0_4_n
 
-	ucomisd	xmm0,qword ptr real_n_2pi_m_0_89
+	ucomisd	xmm0,qword ptr real_n_2pi_m_0_89+0
 	jb		tan_real_n_1_0_2
-	ucomisd	xmm0,qword ptr real_n_2pi_m_1_18
+	ucomisd	xmm0,qword ptr real_n_2pi_m_1_18+0
 	jb		tan_real_n_2_0_4_p
 	jmp		tan_real_24
 
 tan_real_4:
-	ucomisd	xmm0,qword ptr real_pi_p_1_18
+	ucomisd	xmm0,qword ptr real_pi_p_1_18+0
 
-	movlpd	xmm1,qword ptr real_3_pi_d_2
-	movlpd	xmm12,qword ptr real_3_pi_d_2_l
+	movlpd	xmm1,qword ptr real_3_pi_d_2+0
+	movlpd	xmm12,qword ptr real_3_pi_d_2_l+0
 
 	jb		tan_real_2_0_2_p
 
-	ucomisd	xmm0,qword ptr real_2pi_m_0_89
+	ucomisd	xmm0,qword ptr real_2pi_m_0_89+0
 	ja		tan_real_1_0_2
-	ucomisd	xmm0,qword ptr real_2pi_m_1_18
+	ucomisd	xmm0,qword ptr real_2pi_m_1_18+0
 	ja		tan_real_2_0_4_n
 	jmp		tan_real_24
 
 tan_real_n_2:
-	ucomisd	xmm0,qword ptr real_m_1_18
+	ucomisd	xmm0,qword ptr real_m_1_18+0
 	ja		tan_real_n_s_2
 
-	movlpd	xmm1,qword ptr real_m_pi_d_2
-	movlpd	xmm12,qword ptr real_m_pi_d_2_l
+	movlpd	xmm1,qword ptr real_m_pi_d_2+0
+	movlpd	xmm12,qword ptr real_m_pi_d_2_l+0
 
-	ucomisd	xmm0,qword ptr real_n_pi_m_0_89
+	ucomisd	xmm0,qword ptr real_n_pi_m_0_89+0
 	jb		tan_real_n_1_0_2
-	ucomisd	xmm0,qword ptr real_n_pi_m_1_18
+	ucomisd	xmm0,qword ptr real_n_pi_m_1_18+0
 	jb		tan_real_n_2_0_2_n
 
 	jmp		tan_real_24
 
 tan_real_2:
-	ucomisd	xmm0,qword ptr real_1_18
+	ucomisd	xmm0,qword ptr real_1_18+0
 	jb		tan_real_s_2
 
-	movlpd	xmm1,qword ptr real_pi_d_2
-	movlpd	xmm12,qword ptr real_pi_d_2_l
+	movlpd	xmm1,qword ptr real_pi_d_2+0
+	movlpd	xmm12,qword ptr real_pi_d_2_l+0
 
-	ucomisd	xmm0,qword ptr real_pi_m_0_89
+	ucomisd	xmm0,qword ptr real_pi_m_0_89+0
 	ja		tan_real_1_0_2
-	ucomisd	xmm0,qword ptr real_pi_m_1_18
+	ucomisd	xmm0,qword ptr real_pi_m_1_18+0
 	ja		tan_real_2_0_2_n
 
 tan_real_24:
 	subsd	xmm1,xmm0				; y_1
 
 tan_real_2_:
-	movlpd	xmm2,qword ptr real_18_bits
+	movlpd	xmm2,qword ptr real_18_bits+0
 	movsd	xmm3,xmm12
 
 	andpd	xmm2,xmm1				; y_1_h
@@ -1709,8 +1709,8 @@ tan_real_2_:
 	movsd	xmm1,xmm3				; y
 	subsd	xmm3,xmm6				; y-y_1
 
-	movlpd	xmm5,qword ptr tan2_q_1
-	movlpd	xmm9,qword ptr tan2_p_0
+	movlpd	xmm5,qword ptr tan2_q_1+0
+	movlpd	xmm9,qword ptr tan2_p_0+0
 
 	subsd	xmm12,xmm3				; y_s
 
@@ -1720,34 +1720,34 @@ tan_real_2_:
 	mulsd	xmm5,xmm2				; q2
 	mulsd	xmm9,xmm2				; p2
 
-	movlpd	xmm6,qword ptr tan2_q_2
-	movlpd	xmm11,qword ptr tan2_p_1
+	movlpd	xmm6,qword ptr tan2_q_2+0
+	movlpd	xmm11,qword ptr tan2_p_1+0
 
 	movsd	xmm3,xmm2				; x2
 	mulsd	xmm2,xmm1				; x3
 
 	movsd	xmm8,xmm1				; x
 
-	movlpd	xmm10,qword ptr real_0_5
+	movlpd	xmm10,qword ptr real_0_5+0
 
 	mulsd	xmm6,xmm0				; q4
 	mulsd	xmm11,xmm0				; p4
 
 	addsd	xmm5,xmm6				; q4+q2
 
-	movlpd	xmm7,qword ptr real_1_0
+	movlpd	xmm7,qword ptr real_1_0+0
 
 	mulsd	xmm10,xmm3				; 0.5*x2
 	mulsd	xmm3,xmm0				; x6	
 
-	addsd	xmm5,qword ptr tan2_q_0	; q4+q2+q0
+	addsd	xmm5,qword ptr tan2_q_0+0	; q4+q2+q0
 
 	mulsd	xmm0,xmm0				; x8
-	mulsd	xmm3,qword ptr tan2_p_2	; p6
+	mulsd	xmm3,qword ptr tan2_p_2+0	; p6
 
 	mulsd	xmm5,xmm2				; (q4+q2+q0)*x3
 
-	mulsd	xmm0,qword ptr tan2_p_3	; p8
+	mulsd	xmm0,qword ptr tan2_p_3+0	; p8
 
 	movsd	xmm2,xmm5				; (q4+q2+q0)*x3
 	addsd	xmm5,xmm8				; (q4+q2+q0)*x3+x
@@ -1756,7 +1756,7 @@ tan_real_2_:
 
 	divsd	xmm7,xmm5				; 1/(q4+q2+q0)*x3+x
 
-	movlpd	xmm4,qword ptr real_25_bits
+	movlpd	xmm4,qword ptr real_25_bits+0
 
 	addsd	xmm0,xmm11				; p8+p6+p4
 	
@@ -1764,23 +1764,23 @@ tan_real_2_:
 	
 	addsd	xmm0,xmm9				; p8+p6+p4+p2
 
-	movlpd	xmm9,qword ptr real_18_bits
+	movlpd	xmm9,qword ptr real_18_bits+0
 
-;	ucomisd	xmm8,qword ptr real_0_4
-	ucomisd	xmm10,qword ptr real_2_p_m_31
+;	ucomisd	xmm8,qword ptr real_0_4+0
+	ucomisd	xmm10,qword ptr real_2_p_m_31+0
 
 	subsd	xmm8,xmm5				; x-q_h	
 
 	addsd	xmm8,xmm2				; q_l=q-q_h
-	movlpd	xmm6,qword ptr real_1_0
+	movlpd	xmm6,qword ptr real_1_0+0
 
 	jb		tan_real_2_s			; x<1.25*2**-16
 
 tan_real_2_1:
 	movsd	xmm3,xmm0				; p
 
-	mulsd	xmm14,qword ptr real_0_5 ; (0.5*x2)_l
-	mulsd	xmm13,qword ptr real_0_5 ; (0.5*x2)_h
+	mulsd	xmm14,qword ptr real_0_5+0 ; (0.5*x2)_l
+	mulsd	xmm13,qword ptr real_0_5+0 ; (0.5*x2)_h
 
 	subsd	xmm3,xmm10				; p-0.5*x2
 	addsd	xmm8,xmm12				; q_l+y_s
@@ -1794,7 +1794,7 @@ tan_real_2_1:
 
 	mulsd	xmm13,xmm9				; (0.5*x2)_h*(1/q)_h
 	mulsd	xmm0,xmm9				; (p-(0.5*x2)_l)*(1/q)_h
-	movlpd	xmm1,qword ptr real_21_bits
+	movlpd	xmm1,qword ptr real_21_bits+0
 
 	subsd	xmm6,xmm5				; 1-q_h*(1/q)_h
 
@@ -1804,7 +1804,7 @@ tan_real_2_1:
 
 	subsd	xmm0,xmm1				; ((p-(0.5*x2)_l)*(1/q)_h)_l
 	subsd	xmm1,xmm13				; ((p-(0.5*x2)_l)*(1/q)_h)_h-(0.5*x2)_h*(1/q)_h
-	movlpd	xmm2,qword ptr real_21_bits
+	movlpd	xmm2,qword ptr real_21_bits+0
 
 	mulsd	xmm7,xmm6				; (1/q)_l
 
@@ -1879,92 +1879,92 @@ tan_real_2_s:
 ;	ret
 
 tan_real_n_s_2:
-	ucomisd	xmm0,qword ptr real_m_1_04
+	ucomisd	xmm0,qword ptr real_m_1_04+0
 	jb		tan_real_n_2_0
 
-	movlpd	xmm1,qword ptr atan_sqrt_2
-	movlpd	xmm10,qword ptr real_51_bits
+	movlpd	xmm1,qword ptr atan_sqrt_2+0
+	movlpd	xmm10,qword ptr real_51_bits+0
 
 	lea		rdx,tan_n_s_2_t
 
 	addsd	xmm1,xmm0
 	andpd	xmm10,xmm0				; x_h
 
-	addsd	xmm1,qword ptr atan_sqrt_2_l ; y=x+atan sqrt 2
+	addsd	xmm1,qword ptr atan_sqrt_2_l+0 ; y=x+atan sqrt 2
 	jmp		tan_real_0_5_a_s_0_5_a_s_2
 
 tan_real_s_2:
-	ucomisd	xmm0,qword ptr real_1_04
+	ucomisd	xmm0,qword ptr real_1_04+0
 	ja		tan_real_2_0
 
-	movlpd	xmm1,qword ptr m_atan_sqrt_2
-	movlpd	xmm10,qword ptr real_51_bits
+	movlpd	xmm1,qword ptr m_atan_sqrt_2+0
+	movlpd	xmm10,qword ptr real_51_bits+0
 
 	lea		rdx,tan_s_2_t
 
 	addsd	xmm1,xmm0
 	andpd	xmm10,xmm0				; x_h
 
-	subsd	xmm1,qword ptr atan_sqrt_2_l ; y=x-atan sqrt 2
+	subsd	xmm1,qword ptr atan_sqrt_2_l+0 ; y=x-atan sqrt 2
 	jmp		tan_real_0_5_a_s_0_5_a_s_2
 
 tan_real_n_2_0:
-	movlpd	xmm1,qword ptr atan_2_53
-	movlpd	xmm10,qword ptr real_49_bits
+	movlpd	xmm1,qword ptr atan_2_53+0
+	movlpd	xmm10,qword ptr real_49_bits+0
 
 	addsd	xmm1,xmm0
 	andpd	xmm10,xmm0				; x_h
 
-	addsd	xmm1,qword ptr atan_2_53_l ; y=x+atan 2
+	addsd	xmm1,qword ptr atan_2_53_l+0 ; y=x+atan 2
 	subsd	xmm0,xmm10				; x_l
 
-	movlpd	xmm11,qword ptr real_5_atan_2_m_2_53_l
-	movlpd	xmm12,qword ptr real_5_atan_2_m_2_53
-	movlpd	xmm13,qword ptr real_m_2_0
+	movlpd	xmm11,qword ptr real_5_atan_2_m_2_53_l+0
+	movlpd	xmm12,qword ptr real_5_atan_2_m_2_53+0
+	movlpd	xmm13,qword ptr real_m_2_0+0
 	jmp		tan_real_2_0_
 
 tan_real_2_0:
-	movlpd	xmm1,qword ptr m_atan_2_53
-	movlpd	xmm10,qword ptr real_49_bits
+	movlpd	xmm1,qword ptr m_atan_2_53+0
+	movlpd	xmm10,qword ptr real_49_bits+0
 
 	addsd	xmm1,xmm0
 	andpd	xmm10,xmm0				; x_h
 
-	subsd	xmm1,qword ptr atan_2_53_l ; y=x-atan 2
+	subsd	xmm1,qword ptr atan_2_53_l+0 ; y=x-atan 2
 	subsd	xmm0,xmm10				; x_l
 
-	movlpd	xmm11,qword ptr real_n_2_m_5_atan_2_53_l
-	movlpd	xmm12,qword ptr real_n_2_m_5_atan_2_53
-	movlpd	xmm13,qword ptr real_2_0
+	movlpd	xmm11,qword ptr real_n_2_m_5_atan_2_53_l+0
+	movlpd	xmm12,qword ptr real_n_2_m_5_atan_2_53+0
+	movlpd	xmm13,qword ptr real_2_0+0
 
 tan_real_2_0_:
 	movsd	xmm2,xmm1				; y
 	mulsd	xmm1,xmm1				; y2
 
-	mulsd	xmm10,qword ptr real_5_0 ; 5*x_h
+	mulsd	xmm10,qword ptr real_5_0+0 ; 5*x_h
 
-	movlpd	xmm7,qword ptr tan3_q_1
-	movlpd	xmm6,qword ptr tan3_q_2
+	movlpd	xmm7,qword ptr tan3_q_1+0
+	movlpd	xmm6,qword ptr tan3_q_2+0
 
 	movsd	xmm3,xmm1				; y2
 	mulsd	xmm1,xmm1				; y4
 
-	movlpd	xmm9,qword ptr tan3_q_3
+	movlpd	xmm9,qword ptr tan3_q_3+0
 	mulsd	xmm7,xmm3				; q2
 
 	movsd	xmm4,xmm3				; y2
 	mulsd	xmm3,xmm1				; y6
 
-	movlpd	xmm8,qword ptr tan3_p_0
+	movlpd	xmm8,qword ptr tan3_p_0+0
 
 	movsd	xmm5,xmm1				; y4
 	mulsd	xmm1,xmm1				; y8
 
 	mulsd	xmm9,xmm3				; q6
-	mulsd	xmm3,qword ptr tan3_p_2	; p6
+	mulsd	xmm3,qword ptr tan3_p_2+0	; p6
 
 	mulsd	xmm6,xmm5				; q4
-	mulsd	xmm5,qword ptr tan3_p_1	; p4
+	mulsd	xmm5,qword ptr tan3_p_1+0	; p4
 	
 	addsd	xmm1,xmm9				; y8+q6
 
@@ -1972,7 +1972,7 @@ tan_real_2_0_:
 
 	addsd	xmm1,xmm6				; y8+q6+q4
 
-	mulsd	xmm0,qword ptr real_5_0	; 5*x_l
+	mulsd	xmm0,qword ptr real_5_0+0	; 5*x_l
 
 	addsd	xmm3,xmm5				; p6+p4
 	addsd	xmm1,xmm7				; y8+q6+q4+q2
@@ -1980,14 +1980,14 @@ tan_real_2_0_:
 	mulsd	xmm13,xmm2				; 2*y
 
 	addsd	xmm3,xmm8				; p6+p4+p2
-	addsd	xmm1,qword ptr tan3_q_0	; y8+q6+q4+q2+q0
+	addsd	xmm1,qword ptr tan3_q_0+0	; y8+q6+q4+q2+q0
 
 	movsd	xmm4,xmm3				; p
 	addsd	xmm4,xmm1				; p+q
 	
 	mulsd	xmm4,xmm13				; 2*y*(p+q)
 
-;	mulsd	xmm2,qword ptr real_5_0	; 5*y
+;	mulsd	xmm2,qword ptr real_5_0+0	; 5*y
 
 	addsd	xmm3,xmm4				; p+y*(p+q)
 	subsd	xmm1,xmm4				; q-y*(p+q)
@@ -2000,7 +2000,7 @@ tan_real_2_0_:
 
 	addsd	xmm10,xmm12				; 2+5*x_h-5*atan 2=2-5*y
 
-	mulsd	xmm2,qword ptr real_5_0	; 5*y*..
+	mulsd	xmm2,qword ptr real_5_0+0	; 5*y*..
 
 	addsd	xmm0,xmm2
 
@@ -2009,38 +2009,38 @@ tan_real_2_0_:
 	ret
 
 tan_real_n_2_0_4_p:
-	ucomisd	xmm0,qword ptr real_n_2pi_m_1_04
+	ucomisd	xmm0,qword ptr real_n_2pi_m_1_04+0
 	subsd	xmm1,xmm0
 	jb		tan_real_s_2_p
 	jmp		tan_real_2_0_p
 
 tan_real_n_2_0_4_n:
-	ucomisd	xmm0,qword ptr real_n_pi_p_1_04
+	ucomisd	xmm0,qword ptr real_n_pi_p_1_04+0
 	subsd	xmm1,xmm0
 	ja		tan_real_s_2_n
 	jmp		tan_real_2_0_n
 
 tan_real_n_2_0_2_n:
-	ucomisd	xmm0,qword ptr real_n_pi_m_1_04
+	ucomisd	xmm0,qword ptr real_n_pi_m_1_04+0
 	subsd	xmm1,xmm0
 	jb		tan_real_s_2_p
 	jmp		tan_real_2_0_p
 
 tan_real_2_0_2_p:
-	ucomisd	xmm0,qword ptr real_pi_p_1_04
+	ucomisd	xmm0,qword ptr real_pi_p_1_04+0
 	subsd	xmm1,xmm0
 	jb		tan_real_s_2_p
 
 tan_real_2_0_p:
-	movlpd	xmm0,qword ptr real_h_pi_m_atan_2_52
-	movlpd	xmm2,qword ptr real_h_pi_m_atan_2_52_l
-	movlpd	xmm10,qword ptr real_48_bits
+	movlpd	xmm0,qword ptr real_h_pi_m_atan_2_52+0
+	movlpd	xmm2,qword ptr real_h_pi_m_atan_2_52_l+0
+	movlpd	xmm10,qword ptr real_48_bits+0
 
 	subsd	xmm0,xmm1				; (0.5pi-atan 2)_h-x_h
 	subsd	xmm2,xmm12				; (0.5pi-atan 2)_l-x_l
 	andpd	xmm10,xmm1				; x_h
 
-	movlpd	xmm11,qword ptr real_m_5_0
+	movlpd	xmm11,qword ptr real_m_5_0+0
 	addsd	xmm2,xmm0				; y=0.5pi-atan 2-x
 	subsd	xmm1,xmm10				; x_h_l
 	mulsd	xmm10,xmm11				; -5x_h
@@ -2049,33 +2049,33 @@ tan_real_2_0_p:
 	mulsd	xmm2,xmm2				; y2
 
 	addsd	xmm1,xmm12				; x_h_l+x_l
-	addsd	xmm10,qword ptr real_2_p_2_5_pi_m_5_atan_2_53 ; -5x+(2+2.5pi-5atan 2)=2+5y
+	addsd	xmm10,qword ptr real_2_p_2_5_pi_m_5_atan_2_53+0 ; -5x+(2+2.5pi-5atan 2)=2+5y
 
-	movlpd	xmm12,qword ptr real_2_p_2_5_pi_m_5_atan_2_53_l
-	movlpd	xmm13,qword ptr real_5_0
+	movlpd	xmm12,qword ptr real_2_p_2_5_pi_m_5_atan_2_53_l+0
+	movlpd	xmm13,qword ptr real_5_0+0
 	jmp		tan_real_2_0_pn
 
 tan_real_2_0_4_n:
-	ucomisd	xmm0,qword ptr real_2pi_m_1_04
+	ucomisd	xmm0,qword ptr real_2pi_m_1_04+0
 	subsd	xmm1,xmm0
 	ja		tan_real_s_2_n
 	jmp		tan_real_2_0_n
 
 tan_real_2_0_2_n:
-	ucomisd	xmm0,qword ptr real_pi_m_1_04
+	ucomisd	xmm0,qword ptr real_pi_m_1_04+0
 	subsd	xmm1,xmm0
 	ja		tan_real_s_2_n
 
 tan_real_2_0_n:
-	movlpd	xmm0,qword ptr real_h_pi_m_atan_2_52
-	movlpd	xmm2,qword ptr real_h_pi_m_atan_2_52_l
-	movlpd	xmm10,qword ptr real_48_bits
+	movlpd	xmm0,qword ptr real_h_pi_m_atan_2_52+0
+	movlpd	xmm2,qword ptr real_h_pi_m_atan_2_52_l+0
+	movlpd	xmm10,qword ptr real_48_bits+0
 
 	addsd	xmm0,xmm1				; (0.5pi-atan 2)_h+x_h
 	addsd	xmm2,xmm12				; (0.5pi-atan 2)_l+x_l
 	andpd	xmm10,xmm1				; x_h
 
-	movlpd	xmm11,qword ptr real_m_5_0
+	movlpd	xmm11,qword ptr real_m_5_0+0
 	addsd	xmm2,xmm0				; y=0.5pi-atan 2+x
 	subsd	xmm1,xmm10				; x_h_l
 	mulsd	xmm10,xmm11				; -5x_h
@@ -2084,34 +2084,34 @@ tan_real_2_0_n:
 	mulsd	xmm2,xmm2				; y2
 
 	addsd	xmm1,xmm12				; x_h_l+x_l
-	subsd	xmm10,qword ptr real_2_p_2_5_pi_m_5_atan_2_53 ; -5x-(2+2.5pi-5atan 2)=-2-5y
+	subsd	xmm10,qword ptr real_2_p_2_5_pi_m_5_atan_2_53+0 ; -5x-(2+2.5pi-5atan 2)=-2-5y
 
-	movlpd	xmm12,qword ptr real_5_atan_2_m_2_m_2_5_pi_53_l
-	movlpd	xmm13,qword ptr real_m_5_0
+	movlpd	xmm12,qword ptr real_5_atan_2_m_2_m_2_5_pi_53_l+0
+	movlpd	xmm13,qword ptr real_m_5_0+0
 
 tan_real_2_0_pn:
-	movlpd	xmm7,qword ptr tan3_q_1
-	movlpd	xmm6,qword ptr tan3_q_2
+	movlpd	xmm7,qword ptr tan3_q_1+0
+	movlpd	xmm6,qword ptr tan3_q_2+0
 
 	movsd	xmm3,xmm2				; y2
 	mulsd	xmm2,xmm2				; y4
 
-	movlpd	xmm9,qword ptr tan3_q_3
+	movlpd	xmm9,qword ptr tan3_q_3+0
 	mulsd	xmm7,xmm3				; q2
 
 	movsd	xmm4,xmm3				; y2
 	mulsd	xmm3,xmm2				; y6
 
-	movlpd	xmm8,qword ptr tan3_p_0
+	movlpd	xmm8,qword ptr tan3_p_0+0
 
 	movsd	xmm5,xmm2				; y4
 	mulsd	xmm2,xmm2				; y8
 
 	mulsd	xmm9,xmm3				; q6
-	mulsd	xmm3,qword ptr tan3_p_2	; p6
+	mulsd	xmm3,qword ptr tan3_p_2+0	; p6
 
 	mulsd	xmm6,xmm5				; q4
-	mulsd	xmm5,qword ptr tan3_p_1	; p4
+	mulsd	xmm5,qword ptr tan3_p_1+0	; p4
 	
 	addsd	xmm2,xmm9				; y8+q6
 
@@ -2119,7 +2119,7 @@ tan_real_2_0_pn:
 
 	addsd	xmm2,xmm6				; y8+q6+q4
 
-	movlpd	xmm6,qword ptr real_2_0
+	movlpd	xmm6,qword ptr real_2_0+0
 	mulsd	xmm1,xmm11				; -5x_l
 
 	addsd	xmm3,xmm5				; p6+p4
@@ -2128,7 +2128,7 @@ tan_real_2_0_pn:
 	mulsd	xmm6,xmm0				; 2*y
 
 	addsd	xmm3,xmm8				; p6+p4+p2
-	addsd	xmm2,qword ptr tan3_q_0	; y8+q6+q4+q2+q0
+	addsd	xmm2,qword ptr tan3_q_0+0	; y8+q6+q4+q2+q0
 
 	movsd	xmm4,xmm3				; p
 	addsd	xmm4,xmm2				; p+q
@@ -2153,15 +2153,15 @@ tan_real_2_0_pn:
 	ret
 
 tan_real_s_2_p:
-	movlpd	xmm0,qword ptr real_h_pi_m_atan_s_2_53
-	movlpd	xmm2,qword ptr real_h_pi_m_atan_s_2_53_l
-	movlpd	xmm10,qword ptr real_49_bits
+	movlpd	xmm0,qword ptr real_h_pi_m_atan_s_2_53+0
+	movlpd	xmm2,qword ptr real_h_pi_m_atan_s_2_53_l+0
+	movlpd	xmm10,qword ptr real_49_bits+0
 
 	subsd	xmm0,xmm1				; (0.5pi-atan sqrt 2)_h-x_h
 	subsd	xmm2,xmm12				; (0.5pi-atan sqrt 2)_l-x_l
 	andpd	xmm10,xmm1				; x_h
 
-	movlpd	xmm11,qword ptr real_m_3_0
+	movlpd	xmm11,qword ptr real_m_3_0+0
 	addsd	xmm2,xmm0				; y=0.5pi-atan 2+x
 	subsd	xmm1,xmm10				; x_h_l
 	mulsd	xmm10,xmm11				; -3x_h
@@ -2170,22 +2170,22 @@ tan_real_s_2_p:
 	mulsd	xmm2,xmm2				; y2
 
 	addsd	xmm1,xmm12				; x_h_l+x_l
-	addsd	xmm10,qword ptr real_sqrt_2_p_1_5_pi_m_3_atan_sqrt_2_53 ; -3x+(2+2.5pi-5atan 2)=sqrt 2+3y
+	addsd	xmm10,qword ptr real_sqrt_2_p_1_5_pi_m_3_atan_sqrt_2_53+0 ; -3x+(2+2.5pi-5atan 2)=sqrt 2+3y
 
-	movlpd	xmm12,qword ptr real_sqrt_2_p_1_5_pi_m_3_atan_sqrt_2_53_l
-	movlpd	xmm13,qword ptr real_3_0
+	movlpd	xmm12,qword ptr real_sqrt_2_p_1_5_pi_m_3_atan_sqrt_2_53_l+0
+	movlpd	xmm13,qword ptr real_3_0+0
 	jmp		tan_real_s_2_pn
 
 tan_real_s_2_n:
-	movlpd	xmm0,qword ptr real_h_pi_m_atan_s_2_53
-	movlpd	xmm2,qword ptr real_h_pi_m_atan_s_2_53_l
-	movlpd	xmm10,qword ptr real_49_bits
+	movlpd	xmm0,qword ptr real_h_pi_m_atan_s_2_53+0
+	movlpd	xmm2,qword ptr real_h_pi_m_atan_s_2_53_l+0
+	movlpd	xmm10,qword ptr real_49_bits+0
 
 	addsd	xmm0,xmm1				; (0.5pi-atan sqrt 2)_h+x
 	addsd	xmm2,xmm12				; (0.5pi-atan sqrt 2)_l+x_l
 	andpd	xmm10,xmm1				; x_h
 
-	movlpd	xmm11,qword ptr real_m_3_0
+	movlpd	xmm11,qword ptr real_m_3_0+0
 	addsd	xmm2,xmm0				; y=0.5pi-atan 2+x
 	subsd	xmm1,xmm10				; x_h_l
 	mulsd	xmm10,xmm11				; -3x_h
@@ -2194,34 +2194,34 @@ tan_real_s_2_n:
 	mulsd	xmm2,xmm2				; y2
 
 	addsd	xmm1,xmm12				; x_h_l+x_l
-	subsd	xmm10,qword ptr real_sqrt_2_p_1_5_pi_m_3_atan_sqrt_2_53 ; -3x-(2+2.5pi-5atan 2)=-sqrt 2-3y
+	subsd	xmm10,qword ptr real_sqrt_2_p_1_5_pi_m_3_atan_sqrt_2_53+0 ; -3x-(2+2.5pi-5atan 2)=-sqrt 2-3y
 
-	movlpd	xmm12,qword ptr real_3_atan_sqrt_2_m_sqrt_2_m_1_5_pi_m_53_l
-	movlpd	xmm13,qword ptr real_m_3_0
+	movlpd	xmm12,qword ptr real_3_atan_sqrt_2_m_sqrt_2_m_1_5_pi_m_53_l+0
+	movlpd	xmm13,qword ptr real_m_3_0+0
 
 tan_real_s_2_pn:
-	movlpd	xmm7,qword ptr tan3_q_1
-	movlpd	xmm6,qword ptr tan3_q_2
+	movlpd	xmm7,qword ptr tan3_q_1+0
+	movlpd	xmm6,qword ptr tan3_q_2+0
 
 	movsd	xmm3,xmm2				; y2
 	mulsd	xmm2,xmm2				; y4
 
-	movlpd	xmm9,qword ptr tan3_q_3
+	movlpd	xmm9,qword ptr tan3_q_3+0
 	mulsd	xmm7,xmm3				; q2
 
 	movsd	xmm4,xmm3				; y2
 	mulsd	xmm3,xmm2				; y6
 
-	movlpd	xmm8,qword ptr tan3_p_0
+	movlpd	xmm8,qword ptr tan3_p_0+0
 
 	movsd	xmm5,xmm2				; y4
 	mulsd	xmm2,xmm2				; y8
 
 	mulsd	xmm9,xmm3				; q6
-	mulsd	xmm3,qword ptr tan3_p_2	; p6
+	mulsd	xmm3,qword ptr tan3_p_2+0	; p6
 
 	mulsd	xmm6,xmm5				; q4
-	mulsd	xmm5,qword ptr tan3_p_1	; p4
+	mulsd	xmm5,qword ptr tan3_p_1+0	; p4
 	
 	addsd	xmm2,xmm9				; y8+q6
 
@@ -2229,7 +2229,7 @@ tan_real_s_2_pn:
 
 	addsd	xmm2,xmm6				; y8+q6+q4
 
-	movlpd	xmm6,qword ptr sqrt_2_0
+	movlpd	xmm6,qword ptr sqrt_2_0+0
 	mulsd	xmm1,xmm11				; -3x_l
 
 	addsd	xmm3,xmm5				; p6+p4
@@ -2238,7 +2238,7 @@ tan_real_s_2_pn:
 	mulsd	xmm6,xmm0				; sqrt 2*y
 
 	addsd	xmm3,xmm8				; p6+p4+p2
-	addsd	xmm2,qword ptr tan3_q_0	; y8+q6+q4+q2+q0
+	addsd	xmm2,qword ptr tan3_q_0+0	; y8+q6+q4+q2+q0
 
 	movsd	xmm4,xmm3				; p
 	addsd	xmm4,xmm2				; p+q
@@ -2265,28 +2265,28 @@ tan_real_1_0_2:
 	subsd	xmm1,xmm0
 
 tan_real_1_0_n:
-	movlpd	xmm0,qword ptr real_m_pi_d_4
-	movlpd	xmm2,qword ptr real_m_pi_d_4_l
+	movlpd	xmm0,qword ptr real_m_pi_d_4+0
+	movlpd	xmm2,qword ptr real_m_pi_d_4_l+0
 
 	subsd	xmm0,xmm1				; -(pi/4)_h-x_h
 	subsd	xmm2,xmm12				; -(pi/4)_l-x_l
-	mulsd	xmm1,qword ptr real_m_2_0 ; -2x
+	mulsd	xmm1,qword ptr real_m_2_0+0 ; -2x
 
 	addsd	xmm2,xmm0				; y=-pi/4-x
 	addsd	xmm12,xmm12				; 2x_l
-	subsd	xmm1,qword ptr real_pi_d_2_p_1_0 ; -2x-(pi/2+1)=-1-2y
+	subsd	xmm1,qword ptr real_pi_d_2_p_1_0+0 ; -2x-(pi/2+1)=-1-2y
 
-	movlpd	xmm10,qword ptr real_pi_d_2_p_1_0_l
-	movlpd	xmm11,qword ptr real_2_0
+	movlpd	xmm10,qword ptr real_pi_d_2_p_1_0_l+0
+	movlpd	xmm11,qword ptr real_2_0+0
 	jmp		tan_real_1_0_pn
 
 tan_real_n_1_0_2:
 	subsd	xmm1,xmm0
 
 tan_real_1_0_2_p:
-	movlpd	xmm0,qword ptr real_m_pi_d_4
-	movlpd	xmm2,qword ptr real_m_pi_d_4_l
-	movlpd	xmm11,qword ptr real_m_2_0
+	movlpd	xmm0,qword ptr real_m_pi_d_4+0
+	movlpd	xmm2,qword ptr real_m_pi_d_4_l+0
+	movlpd	xmm11,qword ptr real_m_2_0+0
 
 	addsd	xmm0,xmm1				; -(pi/4)_h+x_h
 	addsd	xmm2,xmm12				; -(pi/4)_l+x_l
@@ -2294,55 +2294,55 @@ tan_real_1_0_2_p:
 
 	addsd	xmm2,xmm0				; y=pi/4-x
 	addsd	xmm12,xmm12				; 2x_l
-	addsd	xmm1,qword ptr real_pi_d_2_p_1_0 ; (pi/2+1)-2x-=1+2y
+	addsd	xmm1,qword ptr real_pi_d_2_p_1_0+0 ; (pi/2+1)-2x-=1+2y
 
-	movlpd	xmm10,qword ptr real_m_pi_d_2_p_1_0_l
+	movlpd	xmm10,qword ptr real_m_pi_d_2_p_1_0_l+0
 	jmp		tan_real_1_0_pn
 
 tan_real_n_5:
-	ucomisd	xmm0,qword ptr real_n_2pi_m_0_338
-	movlpd	xmm12,qword ptr real_m_2_pi_l
-	movlpd	xmm1,qword ptr real_2_pi
+	ucomisd	xmm0,qword ptr real_n_2pi_m_0_338+0
+	movlpd	xmm12,qword ptr real_m_2_pi_l+0
+	movlpd	xmm1,qword ptr real_2_pi+0
 	ja		tan_real_n_s_0_5_5_p
-	ucomisd	xmm0,qword ptr real_n_2pi_p_0_338
+	ucomisd	xmm0,qword ptr real_n_2pi_p_0_338+0
 	ja		tan_real_5_n
-	ucomisd	xmm0,qword ptr real_n_2pi_p_0_699
+	ucomisd	xmm0,qword ptr real_n_2pi_p_0_699+0
 	ja		tan_real_n_s_0_5_5_n
 	addsd	xmm0,xmm1
 	jmp		tan_real_1_0_3_n
 
 tan_real_5:
-	ucomisd	xmm0,qword ptr real_2pi_m_0_338
+	ucomisd	xmm0,qword ptr real_2pi_m_0_338+0
 	movlpd	xmm12,qword ptr real_2_pi_l
 	movlpd	xmm1,qword ptr real_2_pi
 	jb		tan_real_s_0_5_5
-	ucomisd	xmm0,qword ptr real_2pi_p_0_338
+	ucomisd	xmm0,qword ptr real_2pi_p_0_338+0
 	jb		tan_real_5_0
-	ucomisd	xmm0,qword ptr real_2pi_p_0_699
+	ucomisd	xmm0,qword ptr real_2pi_p_0_699+0
 	jb		tan_real_s_0_5_5_p
 	subsd	xmm0,xmm1
 	jmp		tan_real_1_0_3
 
 tan_real_n_3:
-	ucomisd	xmm0,qword ptr real_n_pi_m_0_338
-	movlpd	xmm12,qword ptr real_m_pi_l
-	movlpd	xmm1,qword ptr real_pi
+	ucomisd	xmm0,qword ptr real_n_pi_m_0_338+0
+	movlpd	xmm12,qword ptr real_m_pi_l+0
+	movlpd	xmm1,qword ptr real_pi+0
 	ja		tan_real_n_s_0_5_3_p
-	ucomisd	xmm0,qword ptr real_n_pi_p_0_338
+	ucomisd	xmm0,qword ptr real_n_pi_p_0_338+0
 	ja		tan_real_3_n
-	ucomisd	xmm0,qword ptr real_n_pi_p_0_699
+	ucomisd	xmm0,qword ptr real_n_pi_p_0_699+0
 	ja		tan_real_n_s_0_5_3_n
 	addsd	xmm0,xmm1
 	jmp		tan_real_1_0_3_n
 
 tan_real_3:
-	ucomisd	xmm0,qword ptr real_pi_m_0_338
-	movlpd	xmm1,qword ptr real_pi
-	movlpd	xmm12,qword ptr real_pi_l
+	ucomisd	xmm0,qword ptr real_pi_m_0_338+0
+	movlpd	xmm1,qword ptr real_pi+0
+	movlpd	xmm12,qword ptr real_pi_l+0
 	jb		tan_real_s_0_5_3
-	ucomisd	xmm0,qword ptr real_pi_p_0_338
+	ucomisd	xmm0,qword ptr real_pi_p_0_338+0
 	jb		tan_real_3_0
-	ucomisd	xmm0,qword ptr real_pi_p_0_699
+	ucomisd	xmm0,qword ptr real_pi_p_0_699+0
 	jb		tan_real_s_0_5_3_p
 	subsd	xmm0,xmm1
 	jmp		tan_real_1_0_3
@@ -2357,7 +2357,7 @@ tan_real_3_0:
 	subsd	xmm0,xmm1
 
 tan_real_3_:
-	movlpd	xmm2,qword ptr real_26_bits
+	movlpd	xmm2,qword ptr real_26_bits+0
 
 	andpd	xmm2,xmm0				; y_1_h
 	movsd	xmm1,xmm0				; y_1
@@ -2377,15 +2377,15 @@ tan_real_3_:
 
 	subsd	xmm8,xmm1				; y_1-y
 
-	movlpd	xmm6,qword ptr tan_q_1
-	movlpd	xmm5,qword ptr tan_q_2
+	movlpd	xmm6,qword ptr tan_q_1+0
+	movlpd	xmm5,qword ptr tan_q_2+0
 
 	subsd	xmm8,xmm12				; y_s
 
 	movsd	xmm2,xmm0				; x2
 	mulsd	xmm0,xmm0				; x4
 
-	movlpd	xmm7,qword ptr tan_p_1
+	movlpd	xmm7,qword ptr tan_p_1+0
 	mulsd	xmm6,xmm2				; q2
 
 	movsd	xmm3,xmm2				; x2
@@ -2395,9 +2395,9 @@ tan_real_3_:
 	mulsd	xmm0,xmm0				; x8
 
 	mulsd	xmm5,xmm4				; q4
-	mulsd	xmm2,qword ptr tan_q_3	; q6
+	mulsd	xmm2,qword ptr tan_q_3+0	; q6
 	
-	mulsd	xmm4,qword ptr tan_p_2	; p4
+	mulsd	xmm4,qword ptr tan_p_2+0	; p4
 
 	addsd	xmm0,xmm2				; x8+q6
 
@@ -2409,16 +2409,16 @@ tan_real_3_:
 
 	addsd	xmm0,xmm6				; x8+q6+q4+q2
 
-	addsd	xmm4,qword ptr tan_p_0	; p4+p2+p0
+	addsd	xmm4,qword ptr tan_p_0+0	; p4+p2+p0
 
-	addsd	xmm0,qword ptr tan_q_0	; x8+q6+q4+q2+q0
+	addsd	xmm0,qword ptr tan_q_0+0	; x8+q6+q4+q2+q0
 
 	divsd	xmm4,xmm0				; p/q
 
 	mulsd	xmm3,xmm1				; x3	
 	movsd	xmm0,xmm1				; x
 
-;	movlpd	xmm2,qword ptr real_0_125
+;	movlpd	xmm2,qword ptr real_0_125+0
 
 	mulsd	xmm3,xmm4
 	
@@ -2442,65 +2442,65 @@ tan_real_3_:
 ;	ret
 
 tan_real_1_0_3:
-	movlpd	xmm1,qword ptr real_pi_d_4
-	movlpd	xmm2,qword ptr real_pi_d_4_l
+	movlpd	xmm1,qword ptr real_pi_d_4+0
+	movlpd	xmm2,qword ptr real_pi_d_4_l+0
 
 	subsd	xmm1,xmm0				; (pi/4)_h-x
 	addsd	xmm2,xmm12				; (pi/4)_l+n_x_l
-	mulsd	xmm0,qword ptr real_2_0 ; 2x
+	mulsd	xmm0,qword ptr real_2_0+0 ; 2x
 
 	addsd	xmm2,xmm1				; y=pi/4-x
-	movlpd	xmm1,qword ptr real_1_0_m_pi_d_2_52
+	movlpd	xmm1,qword ptr real_1_0_m_pi_d_2_52+0
 	addsd	xmm12,xmm12				; 2n_x_l
 	addsd	xmm1,xmm0				; 2x+(1-pi/2)=1-2y
 
-	movlpd	xmm11,qword ptr real_m_2_0
-	movlpd	xmm10,qword ptr real_pi_d_2_m_1_0_52_l
+	movlpd	xmm11,qword ptr real_m_2_0+0
+	movlpd	xmm10,qword ptr real_pi_d_2_m_1_0_52_l+0
 
 	jmp		tan_real_1_0_pn
 
 tan_real_1_0_3_n:
-	movlpd	xmm1,qword ptr real_pi_d_4
-	movlpd	xmm2,qword ptr real_pi_d_4_l
+	movlpd	xmm1,qword ptr real_pi_d_4+0
+	movlpd	xmm2,qword ptr real_pi_d_4_l+0
 
 	addsd	xmm1,xmm0
 	subsd	xmm2,xmm12				; (pi/4)_l-n_x_l
-	mulsd	xmm0,qword ptr real_2_0 ; 2x
+	mulsd	xmm0,qword ptr real_2_0+0 ; 2x
 
 	addsd	xmm2,xmm1				; y=pi/4+x
-	movlpd	xmm1,qword ptr real_pi_d_2_m_1_0_52
+	movlpd	xmm1,qword ptr real_pi_d_2_m_1_0_52+0
 	addsd	xmm12,xmm12				; 2n_x_l
 	addsd	xmm1,xmm0				; 2x+(pi/2-1)=-1+2y
 
-	movlpd	xmm11,qword ptr real_2_0
-	movlpd	xmm10,qword ptr real_m_pi_d_2_m_1_0_52_l
+	movlpd	xmm11,qword ptr real_2_0+0
+	movlpd	xmm10,qword ptr real_m_pi_d_2_m_1_0_52_l+0
 
 tan_real_1_0_pn:
 	movsd	xmm0,xmm2				; y
 	mulsd	xmm2,xmm2				; y2
 
-	movlpd	xmm7,qword ptr tan3_q_1
-	movlpd	xmm6,qword ptr tan3_q_2
+	movlpd	xmm7,qword ptr tan3_q_1+0
+	movlpd	xmm6,qword ptr tan3_q_2+0
 
 	movsd	xmm3,xmm2				; y2
 	mulsd	xmm2,xmm2				; y4
 
-	movlpd	xmm9,qword ptr tan3_q_3
+	movlpd	xmm9,qword ptr tan3_q_3+0
 	mulsd	xmm7,xmm3				; q2
 
 	movsd	xmm4,xmm3				; y2
 	mulsd	xmm3,xmm2				; y6
 
-	movlpd	xmm8,qword ptr tan3_p_0
+	movlpd	xmm8,qword ptr tan3_p_0+0
 
 	movsd	xmm5,xmm2				; y4
 	mulsd	xmm2,xmm2				; y8
 
 	mulsd	xmm9,xmm3				; q6
-	mulsd	xmm3,qword ptr tan3_p_2	; p6
+	mulsd	xmm3,qword ptr tan3_p_2+0	; p6
 
 	mulsd	xmm6,xmm5				; q4
-	mulsd	xmm5,qword ptr tan3_p_1	; p4
+	mulsd	xmm5,qword ptr tan3_p_1+0	; p4
 	
 	addsd	xmm2,xmm9				; y8+q6
 
@@ -2512,7 +2512,7 @@ tan_real_1_0_pn:
 	addsd	xmm2,xmm7				; y8+q6+q4+q2
 
 	addsd	xmm3,xmm8				; p6+p4+p2
-	addsd	xmm2,qword ptr tan3_q_0	; y8+q6+q4+q2+q0
+	addsd	xmm2,qword ptr tan3_q_0+0	; y8+q6+q4+q2+q0
 
 	movsd	xmm4,xmm3				; p
 	addsd	xmm4,xmm2				; p+q
@@ -2536,38 +2536,38 @@ tan_real_1_0_pn:
 	ret
 
 tan_real_n_s_0_5_5_p:
-	ucomisd	xmm0,qword ptr real_n_2pi_m_0_542
+	ucomisd	xmm0,qword ptr real_n_2pi_m_0_542+0
 	addsd	xmm0,xmm1
 	jb		tan_real_0_5_p
 	jmp		tan_real_s_0_5_p
 
 tan_real_s_0_5_5_p:
-	ucomisd	xmm0,qword ptr real_2pi_p_0_542
+	ucomisd	xmm0,qword ptr real_2pi_p_0_542+0
 	subsd	xmm0,xmm1
 	jb		tan_real_0_5_p
 	jmp		tan_real_s_0_5_p
 
 tan_real_n_s_0_5_3_p:
-	ucomisd	xmm0,qword ptr real_n_pi_m_0_542
+	ucomisd	xmm0,qword ptr real_n_pi_m_0_542+0
 	addsd	xmm0,xmm1
 	jb		tan_real_0_5_p
 	jmp		tan_real_s_0_5_p
 
 tan_real_s_0_5_3_p:
-	ucomisd	xmm0,qword ptr real_pi_p_0_542
+	ucomisd	xmm0,qword ptr real_pi_p_0_542+0
 	subsd	xmm0,xmm1
 	jb		tan_real_0_5_p
 
 tan_real_s_0_5_p:
-	movlpd	xmm1,qword ptr atan_sqrt_0_5
-	movlpd	xmm2,qword ptr atan_sqrt_0_5_l
-	movlpd	xmm10,qword ptr real_51_bits
+	movlpd	xmm1,qword ptr atan_sqrt_0_5+0
+	movlpd	xmm2,qword ptr atan_sqrt_0_5_l+0
+	movlpd	xmm10,qword ptr real_51_bits+0
 
 	subsd	xmm1,xmm0				; atan sqrt 0.5_h-x
 	addsd	xmm2,xmm12				; atan sqrt 0.5_l+n_x_l
 	andpd	xmm10,xmm0				; x_h
 
-	movlpd	xmm11,qword ptr real_1_5
+	movlpd	xmm11,qword ptr real_1_5+0
 	addsd	xmm2,xmm1				; y=atan sqrt 0.5-x
 	subsd	xmm0,xmm10				; x_h_l
 	mulsd	xmm10,xmm11				; 1.5x_h
@@ -2576,46 +2576,46 @@ tan_real_s_0_5_p:
 	mulsd	xmm2,xmm2				; y2
 
 	subsd	xmm0,xmm12				; x_h_l-n_x_l
-	addsd	xmm10,qword ptr sqrtn_0_5_m_1_5_atann_sqrt_0_5 ; 1.5x+(sqrt 0.5-1.5atan sqrt 0.5)=sqrt 0.5+1.5y
+	addsd	xmm10,qword ptr sqrtn_0_5_m_1_5_atann_sqrt_0_5+0 ; 1.5x+(sqrt 0.5-1.5atan sqrt 0.5)=sqrt 0.5+1.5y
 
-	movlpd	xmm12,qword ptr sqrtn_0_5_m_1_5_atann_sqrt_0_5_l
-	movlpd	xmm13,qword ptr real_m_1_5
-	movlpd	xmm14,qword ptr sqrt_0_5
+	movlpd	xmm12,qword ptr sqrtn_0_5_m_1_5_atann_sqrt_0_5_l+0
+	movlpd	xmm13,qword ptr real_m_1_5+0
+	movlpd	xmm14,qword ptr sqrt_0_5+0
 	jmp		tan_real_0_5_a_s_0_5_3_pn
 
 tan_real_n_s_0_5_5_n:
-	ucomisd	xmm0,qword ptr real_n_2pi_p_0_542
+	ucomisd	xmm0,qword ptr real_n_2pi_p_0_542+0
 	addsd	xmm0,xmm1
 	ja		tan_real_0_5_n
 	jmp		tan_real_s_0_5_n
 
 tan_real_s_0_5_5:
-	ucomisd	xmm0,qword ptr real_2pi_m_0_542
+	ucomisd	xmm0,qword ptr real_2pi_m_0_542+0
 	subsd	xmm0,xmm1
 	ja		tan_real_0_5_n
 	jmp		tan_real_s_0_5_n
 
 tan_real_n_s_0_5_3_n:
-	ucomisd	xmm0,qword ptr real_n_pi_p_0_542
+	ucomisd	xmm0,qword ptr real_n_pi_p_0_542+0
 	addsd	xmm0,xmm1
 	ja		tan_real_0_5_n
 	jmp		tan_real_s_0_5_n
 
 tan_real_s_0_5_3:
-	ucomisd	xmm0,qword ptr real_pi_m_0_542
+	ucomisd	xmm0,qword ptr real_pi_m_0_542+0
 	subsd	xmm0,xmm1
 	ja		tan_real_0_5_n
 
 tan_real_s_0_5_n:
-	movlpd	xmm1,qword ptr atan_sqrt_0_5
-	movlpd	xmm2,qword ptr atan_sqrt_0_5_l
-	movlpd	xmm10,qword ptr real_51_bits
+	movlpd	xmm1,qword ptr atan_sqrt_0_5+0
+	movlpd	xmm2,qword ptr atan_sqrt_0_5_l+0
+	movlpd	xmm10,qword ptr real_51_bits+0
 
 	addsd	xmm1,xmm0				; x_h+atan sqrt 0.5_h
 	subsd	xmm2,xmm12				; -n_x_l+atan sqrt 0.5_l
 	andpd	xmm10,xmm0				; x_h
 
-	movlpd	xmm11,qword ptr real_1_5
+	movlpd	xmm11,qword ptr real_1_5+0
 	addsd	xmm2,xmm1				; y=x+atan sqrt 0.5
 	subsd	xmm0,xmm10				; x_h_l
 	mulsd	xmm10,xmm11				; 1.5x_h
@@ -2624,35 +2624,35 @@ tan_real_s_0_5_n:
 	mulsd	xmm2,xmm2				; y2
 
 	subsd	xmm0,xmm12				; x_h_l-n_x_l
-	subsd	xmm10,qword ptr sqrtn_0_5_m_1_5_atann_sqrt_0_5 ; 1.5x-(sqrt 0.5-1.5atan sqrt 0.5)=-sqrt 0.5+1.5y
+	subsd	xmm10,qword ptr sqrtn_0_5_m_1_5_atann_sqrt_0_5+0 ; 1.5x-(sqrt 0.5-1.5atan sqrt 0.5)=-sqrt 0.5+1.5y
 
-	movlpd	xmm12,qword ptr n_sqrtn_0_5_m_1_5_atann_sqrt_0_5_l
-	movlpd	xmm13,qword ptr real_1_5
-	movlpd	xmm14,qword ptr sqrt_0_5
+	movlpd	xmm12,qword ptr n_sqrtn_0_5_m_1_5_atann_sqrt_0_5_l+0
+	movlpd	xmm13,qword ptr real_1_5+0
+	movlpd	xmm14,qword ptr sqrt_0_5+0
 
 tan_real_0_5_a_s_0_5_3_pn:
-	movlpd	xmm7,qword ptr tan3_q_1
-	movlpd	xmm6,qword ptr tan3_q_2
+	movlpd	xmm7,qword ptr tan3_q_1+0
+	movlpd	xmm6,qword ptr tan3_q_2+0
 
 	movsd	xmm3,xmm2				; y2
 	mulsd	xmm2,xmm2				; y4
 
-	movlpd	xmm9,qword ptr tan3_q_3
+	movlpd	xmm9,qword ptr tan3_q_3+0
 	mulsd	xmm7,xmm3				; q2
 
 	movsd	xmm4,xmm3				; y2
 	mulsd	xmm3,xmm2				; y6
 
-	movlpd	xmm8,qword ptr tan3_p_0
+	movlpd	xmm8,qword ptr tan3_p_0+0
 
 	movsd	xmm5,xmm2				; y4
 	mulsd	xmm2,xmm2				; y8
 
 	mulsd	xmm9,xmm3				; q6
-	mulsd	xmm3,qword ptr tan3_p_2	; p6
+	mulsd	xmm3,qword ptr tan3_p_2+0	; p6
 
 	mulsd	xmm6,xmm5				; q4
-	mulsd	xmm5,qword ptr tan3_p_1	; p4
+	mulsd	xmm5,qword ptr tan3_p_1+0	; p4
 	
 	addsd	xmm2,xmm9				; y8+q6
 
@@ -2668,7 +2668,7 @@ tan_real_0_5_a_s_0_5_3_pn:
 	mulsd	xmm14,xmm1				; 0.5|sqrt 0.5*y
 
 	addsd	xmm3,xmm8				; p6+p4+p2
-	addsd	xmm2,qword ptr tan3_q_0	; y8+q6+q4+q2+q0
+	addsd	xmm2,qword ptr tan3_q_0+0	; y8+q6+q4+q2+q0
 
 	movsd	xmm4,xmm3				; p
 	addsd	xmm4,xmm2				; p+q
@@ -2693,15 +2693,15 @@ tan_real_0_5_a_s_0_5_3_pn:
 	ret
 
 tan_real_0_5_p:
-	movlpd	xmm1,qword ptr atan_0_5_53
-	movlpd	xmm2,qword ptr atan_0_5_53_l
-	movlpd	xmm10,qword ptr real_50_bits
+	movlpd	xmm1,qword ptr atan_0_5_53+0
+	movlpd	xmm2,qword ptr atan_0_5_53_l+0
+	movlpd	xmm10,qword ptr real_50_bits+0
 
 	subsd	xmm1,xmm0				; atan 0.5_h-x
 	addsd	xmm2,xmm12				; atan 0.5_l-n_x_l
 	andpd	xmm10,xmm0				; x_h
 
-	movlpd	xmm11,qword ptr real_1_25
+	movlpd	xmm11,qword ptr real_1_25+0
 	addsd	xmm2,xmm1				; y=x+atan 0.5
 	subsd	xmm0,xmm10				; x_h_l
 	mulsd	xmm10,xmm11				; 1.25x_h
@@ -2710,23 +2710,23 @@ tan_real_0_5_p:
 	mulsd	xmm2,xmm2				; y2
 
 	subsd	xmm0,xmm12				; x_h_l-n_x_l
-	addsd	xmm10,qword ptr real_0_5_m_1_25_atan_0_5_49 ; 1.25x+(0.5-1.25atan 0.5)=0.5+1.25y
+	addsd	xmm10,qword ptr real_0_5_m_1_25_atan_0_5_49+0 ; 1.25x+(0.5-1.25atan 0.5)=0.5+1.25y
 
-	movlpd	xmm12,qword ptr real_0_5_m_1_25_atan_0_5_49_l
-	movlpd	xmm13,qword ptr real_m_1_25
-	movlpd	xmm14,qword ptr real_0_5
+	movlpd	xmm12,qword ptr real_0_5_m_1_25_atan_0_5_49_l+0
+	movlpd	xmm13,qword ptr real_m_1_25+0
+	movlpd	xmm14,qword ptr real_0_5+0
 	jmp		tan_real_0_5_a_s_0_5_3_pn
 
 tan_real_0_5_n:
-	movlpd	xmm1,qword ptr atan_0_5_53
-	movlpd	xmm2,qword ptr atan_0_5_53_l
-	movlpd	xmm10,qword ptr real_50_bits
+	movlpd	xmm1,qword ptr atan_0_5_53+0
+	movlpd	xmm2,qword ptr atan_0_5_53_l+0
+	movlpd	xmm10,qword ptr real_50_bits+0
 
 	addsd	xmm1,xmm0				; x_h+atan 0.5_h
 	subsd	xmm2,xmm12				; -n_x_l+atan 0.5_l
 	andpd	xmm10,xmm0				; x_h
 
-	movlpd	xmm11,qword ptr real_1_25
+	movlpd	xmm11,qword ptr real_1_25+0
 	addsd	xmm2,xmm1				; y=x+atan 0.5
 	subsd	xmm0,xmm10				; x_h_l
 	mulsd	xmm10,xmm11				; 1.25x_h
@@ -2735,11 +2735,11 @@ tan_real_0_5_n:
 	mulsd	xmm2,xmm2				; y2
 
 	subsd	xmm0,xmm12				; x_h_l-n_x_l
-	subsd	xmm10,qword ptr real_0_5_m_1_25_atan_0_5_49 ; 1.25x-(0.5-1.25atan 0.5)=-0.5+1.25y
+	subsd	xmm10,qword ptr real_0_5_m_1_25_atan_0_5_49+0 ; 1.25x-(0.5-1.25atan 0.5)=-0.5+1.25y
 
-	movlpd	xmm12,qword ptr real_1_25_atan_0_5_m_0_5_49_l
-	movlpd	xmm13,qword ptr real_1_25
-	movlpd	xmm14,qword ptr real_0_5
+	movlpd	xmm12,qword ptr real_1_25_atan_0_5_m_0_5_49_l+0
+	movlpd	xmm13,qword ptr real_1_25+0
+	movlpd	xmm14,qword ptr real_0_5+0
 	jmp		tan_real_0_5_a_s_0_5_3_pn
 
 tan_real_too_large:
@@ -2753,19 +2753,19 @@ _T002	segment para 'CODE'
 
 rem_36825084_pi:
 	movsd	xmm1,xmm0	
-	divsd	xmm0,qword ptr real_36825084_pi
+	divsd	xmm0,qword ptr real_36825084_pi+0
 	
-	movq	xmm4,qword ptr round_c
+	movq	xmm4,qword ptr round_c+0
 	movq	xmm2,xmm0
 	psrlq	xmm0,52
 	psubq	xmm4,xmm0
-	movq	xmm5,qword ptr mask_all_one
+	movq	xmm5,qword ptr mask_all_one+0
 	psllq	xmm5,xmm4
 	andpd	xmm5,xmm2
 	
-	movlpd	xmm2,qword ptr real_36825084_pi_27
-	movlpd	xmm3,qword ptr real_36825084_pi_27_27
-	movlpd	xmm4,qword ptr real_36825084_pi_54_l
+	movlpd	xmm2,qword ptr real_36825084_pi_27+0
+	movlpd	xmm3,qword ptr real_36825084_pi_27_27+0
+	movlpd	xmm4,qword ptr real_36825084_pi_54_l+0
 
 	movsd	xmm0,xmm1
 
@@ -2781,59 +2781,59 @@ rem_36825084_pi:
 	subsd	xmm7,xmm0
 	subsd	xmm7,xmm4
 
-	movlpd	xmm1,qword ptr real_4_d_pi
+	movlpd	xmm1,qword ptr real_4_d_pi+0
 
 	mulsd	xmm1,xmm0				; x*4/pi
 
-	ucomisd	xmm1,qword ptr real_3_0
+	ucomisd	xmm1,qword ptr real_3_0+0
 	jae		rem_36825084_pi_g3
 
-	ucomisd	xmm1,qword ptr real_1_0
+	ucomisd	xmm1,qword ptr real_1_0+0
 	jae		rem_36825084_pi_g1
 
-	movlpd	xmm1,qword ptr real_0_0
+	movlpd	xmm1,qword ptr real_0_0+0
 	movsd	xmm5,xmm1
 	movsd	xmm6,xmm1
 	ret
 
 rem_36825084_pi_g1:
-	movlpd	xmm1,qword ptr real_2_0
-	movlpd	xmm5,qword ptr real_0_0
+	movlpd	xmm1,qword ptr real_2_0+0
+	movlpd	xmm5,qword ptr real_0_0+0
 	movsd	xmm6,xmm1
 	ret
 
 rem_36825084_pi_g3:
-	addsd	xmm1,qword ptr real_1_0	; x*4/pi+1
+	addsd	xmm1,qword ptr real_1_0+0	; x*4/pi+1
 	
-	movq	xmm4,qword ptr round_even_c
+	movq	xmm4,qword ptr round_even_c+0
 	movq	xmm2,xmm1
 	psrlq	xmm1,52
 	psubq	xmm4,xmm1
-	movq	xmm1,qword ptr mask_all_one
+	movq	xmm1,qword ptr mask_all_one+0
 	psllq	xmm1,xmm4
 	andpd	xmm1,xmm2				; round_even (x*4/pi+1)
 
-	movq	xmm5,qword ptr mask_all_one_except_last
-	movq	xmm6,qword ptr mask_all_one_except_second_last
+	movq	xmm5,qword ptr mask_all_one_except_last+0
+	movq	xmm6,qword ptr mask_all_one_except_second_last+0
 	psllq	xmm5,xmm4
 	psllq	xmm6,xmm4
 	ret
 
 rem_n_36825084_pi:
 	movsd	xmm1,xmm0	
-	divsd	xmm0,qword ptr real_36825084_pi
+	divsd	xmm0,qword ptr real_36825084_pi+0
 	
-	movq	xmm4,qword ptr m_round_c
+	movq	xmm4,qword ptr m_round_c+0
 	movq	xmm2,xmm0
 	psrlq	xmm0,52
 	psubq	xmm4,xmm0
-	movq	xmm5,qword ptr mask_all_one
+	movq	xmm5,qword ptr mask_all_one+0
 	psllq	xmm5,xmm4
 	andpd	xmm5,xmm2
 	
-	movlpd	xmm2,qword ptr real_36825084_pi_27
-	movlpd	xmm3,qword ptr real_36825084_pi_27_27
-	movlpd	xmm4,qword ptr real_36825084_pi_54_l
+	movlpd	xmm2,qword ptr real_36825084_pi_27+0
+	movlpd	xmm3,qword ptr real_36825084_pi_27_27+0
+	movlpd	xmm4,qword ptr real_36825084_pi_54_l+0
 
 	movsd	xmm0,xmm1
 
@@ -2849,40 +2849,40 @@ rem_n_36825084_pi:
 	subsd	xmm7,xmm0
 	subsd	xmm7,xmm4
 
-	movlpd	xmm1,qword ptr real_4_d_pi
+	movlpd	xmm1,qword ptr real_4_d_pi+0
 
 	mulsd	xmm1,xmm0				; x*4/pi
 
-	ucomisd	xmm1,qword ptr real_m_3_0
+	ucomisd	xmm1,qword ptr real_m_3_0+0
 	jbe		rem_n_36825084_pi_g3
 
-	ucomisd	xmm1,qword ptr real_m_1_0
+	ucomisd	xmm1,qword ptr real_m_1_0+0
 	jbe		rem_n_36825084_pi_g1
 
-	movlpd	xmm1,qword ptr real_0_0
+	movlpd	xmm1,qword ptr real_0_0+0
 	movsd	xmm5,xmm1
 	movsd	xmm6,xmm1
 	ret
 
 rem_n_36825084_pi_g1:
-	movlpd	xmm1,qword ptr real_m_2_0
-	movlpd	xmm5,qword ptr real_0_0
+	movlpd	xmm1,qword ptr real_m_2_0+0
+	movlpd	xmm5,qword ptr real_0_0+0
 	movsd	xmm6,xmm1
 	ret
 	
 rem_n_36825084_pi_g3:
-	subsd	xmm1,qword ptr real_1_0	; x*4/pi-1
+	subsd	xmm1,qword ptr real_1_0+0	; x*4/pi-1
 	
-	movq	xmm4,qword ptr m_round_even_c
+	movq	xmm4,qword ptr m_round_even_c+0
 	movq	xmm2,xmm1
 	psrlq	xmm1,52
 	psubq	xmm4,xmm1
-	movq	xmm1,qword ptr mask_all_one
+	movq	xmm1,qword ptr mask_all_one+0
 	psllq	xmm1,xmm4
 	andpd	xmm1,xmm2				; round_even (x*4/pi-1)
 
-	movq	xmm5,qword ptr mask_all_one_except_last
-	movq	xmm6,qword ptr mask_all_one_except_second_last
+	movq	xmm5,qword ptr mask_all_one_except_last+0
+	movq	xmm6,qword ptr mask_all_one_except_second_last+0
 	psllq	xmm5,xmm4
 	psllq	xmm6,xmm4
 	ret
