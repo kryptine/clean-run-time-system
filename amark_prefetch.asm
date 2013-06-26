@@ -1083,7 +1083,7 @@ pmarkr_large_tuple_or_record:
 
  ifdef NEW_DESCRIPTORS
 	mov	eax,dword ptr (-8)[rax]
-	lea	rdx,__indirection
+	lea	rdx,__indirection+0
 	pop	rbx 
 
 	mov	qword ptr (-8)[rcx],rdx
