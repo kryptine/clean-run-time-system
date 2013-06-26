@@ -156,7 +156,7 @@ finalizer_list_already_reversed:
 finalizer_list_empty:
 
 	mov	rbp,offset free_finalizer_list
-	lea	r9,__Nil-8
+	lea	r9,__Nil-8+0
 	cmp	qword ptr [rbp],r9
 	je	free_finalizer_list_empty
 
