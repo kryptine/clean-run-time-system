@@ -12,27 +12,27 @@ _DATA	ends
 	_TEXT segment
 
 pmark:
-	mov	rax,qword ptr heap_size_65
+	mov	rax,qword ptr heap_size_65+0
 	xor	rbx,rbx 
 
-	mov	qword ptr n_marked_words,rbx
+	mov	qword ptr n_marked_words+0,rbx
 	shl	rax,6
 
-	mov	qword ptr heap_size_64_65,rax 
-	mov	qword ptr lazy_array_list,rbx 
-	
+	mov	qword ptr heap_size_64_65+0,rax 
+	mov	qword ptr lazy_array_list+0,rbx 
+
 	lea	rsi,(-4000)[rsp]
 
-	mov	rax,qword ptr caf_list
+	mov	rax,qword ptr caf_list+0
 
-	mov	qword ptr end_stack,rsi
+	mov	qword ptr end_stack+0,rsi
 
 	mov	r15,0
 	mov	r8,0
 
-	mov	r10,neg_heap_p3
-	mov	r11,heap_size_64_65
-	mov	r13,qword ptr end_stack
+	mov	r10,neg_heap_p3+0
+	mov	r11,heap_size_64_65+0
+	mov	r13,qword ptr end_stack+0
 	mov	r14,0
 
 	test	rax,rax
@@ -53,8 +53,8 @@ pmark_cafs_lp:
 	jne	pmark_cafs_lp
 
 end_pmark_cafs:
-	mov	rsi,qword ptr stack_top
-	mov	rbp,qword ptr stack_p
+	mov	rsi,qword ptr stack_top+0
+	mov	rbp,qword ptr stack_p+0
 
 	mov	r12,rsi 
 	call	pmark_stack_nodes
@@ -340,7 +340,7 @@ pmark_large_tuple_or_record:
 
  ifdef NEW_DESCRIPTORS
 	mov	eax,(-8)[rax]
-	lea	rbp,__indirection
+	lea	rbp,__indirection+0
 	mov	qword ptr (-8)[rcx],rbp
 	movzx	eax,word ptr 4[rax]
 	mov	rbp,rcx
@@ -362,7 +362,7 @@ pmark_tuple_selector_node_2:
 pmark_small_tuple_or_record:
  ifdef NEW_DESCRIPTORS
 	mov	eax,(-8)[rax]
-	lea	rbp,__indirection
+	lea	rbp,__indirection+0
 	mov	qword ptr (-8)[rcx],rbp
 	movzx	eax,word ptr 4[rax]
 	mov	rbp,rcx
@@ -408,7 +408,7 @@ pmark_record_selector_node_1:
 	jne	pmark_node3
 
 	mov	eax,(-8)[rax]
-	lea	rbp,__indirection
+	lea	rbp,__indirection+0
 	mov	qword ptr (-8)[rcx],rbp
 	movzx	eax,word ptr 4[rax]
 	mov	rbp,rcx
@@ -580,13 +580,13 @@ pmark_closure_with_one_boxed_argument:
 	jmp	pmark_node
 
 pmark_hnf_0:
-	lea	r9,__STRING__+2
+	lea	r9,__STRING__+2+0
 	cmp	rax,r9
 	jbe	pmark_string_or_array
 
 	or	dword ptr [rdi+rbx*4],esi 
 
-	lea	r9,CHAR+2
+	lea	r9,CHAR+2+0
 	cmp	rax,r9
 	ja	pmark_normal_hnf_0
 
@@ -1107,7 +1107,7 @@ pmarkr_tuple_selector_node_2:
 pmarkr_small_tuple_or_record:
  ifdef NEW_DESCRIPTORS
 	mov	eax,(-8)[rax]
-	lea	rdx,__indirection
+	lea	rdx,__indirection+0
 	pop	rbx 
 
 	mov	qword ptr (-8)[rcx],rdx
@@ -1164,7 +1164,7 @@ pmarkr_record_selector_node_1:
 
 pmarkr_small_record:
 	mov	eax,dword ptr (-8)[rax]
-	lea	rdx,__indirection
+	lea	rdx,__indirection+0
 	pop	rbx 
 
 	mov	qword ptr (-8)[rcx],rdx
@@ -1656,13 +1656,13 @@ pmarkr_skip_mark_lazy_array_bits:
 	
 	mov	rbp,qword ptr (-8)[rdx]
 	sub	rdx,8
-	mov	rbx,qword ptr lazy_array_list
+	mov	rbx,qword ptr lazy_array_list+0
 	add	rbp,2
 	mov	qword ptr [rdx],rbx 
 	mov	qword ptr (-8)[rcx],rbp 
 	mov	qword ptr (-16)[rcx],rax 
 	sub	rcx,16
-	mov	qword ptr lazy_array_list,rcx 
+	mov	qword ptr lazy_array_list+0,rcx 
 
 	mov	rcx,qword ptr (-8)[rdx]
 	mov	qword ptr (-8)[rdx],rsi 
@@ -1675,11 +1675,11 @@ pmarkr_array_length_0_1:
 
 	mov	rbx,qword ptr 24[rcx]
 	mov	rbp,qword ptr 16[rcx]
-	mov	rdx,qword ptr lazy_array_list
+	mov	rdx,qword ptr lazy_array_list+0
 	mov	qword ptr 24[rcx],rbp 
 	mov	qword ptr 16[rcx],rdx 
 	mov	qword ptr [rcx],rax
-	mov	qword ptr lazy_array_list,rcx 
+	mov	qword ptr lazy_array_list+0,rcx
 	mov	qword ptr 8[rcx],rbx
 	add	rcx,8
 
