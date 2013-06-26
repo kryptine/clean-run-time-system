@@ -3,16 +3,16 @@ COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP = 1
 
 	push	rsi
 
-	mov	rdi,heap_p2
+	mov	rdi,heap_p2+0
 
-	mov	rax,heap_size_257
+	mov	rax,heap_size_257+0
 	shl	rax,7
-	mov	semi_space_size,rax 
+	mov	semi_space_size+0,rax 
 	lea	rsi,[rdi+rax]
 
-	mov	qword ptr (heap2_begin_and_end+8),rsi 
+	mov	qword ptr (heap2_begin_and_end+8)+0,rsi 
 
-	mov	rax,qword ptr caf_list
+	mov	rax,qword ptr caf_list+0
 	test	rax,rax 
 	je	end_copy_cafs
 
@@ -30,7 +30,7 @@ copy_cafs_lp:
 
 end_copy_cafs:
 	mov	rbx,qword ptr [rsp]
-	mov	rbp,stack_p
+	mov	rbp,stack_p+0
 	sub	rbx,rbp 
 	shr	rbx,3
 
@@ -38,7 +38,7 @@ end_copy_cafs:
 	jb	end_copy0
 	call	copy_lp2
 end_copy0:
-	mov	rbp,heap_p2
+	mov	rbp,heap_p2+0
 
 	jmp	copy_lp1
 ;
@@ -686,7 +686,7 @@ copy_record_node2_3_ab_or_b:
 	and	rdx,-4
 	mov	eax,dword ptr (bit_set_table)[rax*4]
 
-	add	rdx,qword ptr heap_copied_vector
+	add	rdx,qword ptr heap_copied_vector+0
 	add	rbp,8
 
 	test	eax,[rdx]
@@ -720,7 +720,7 @@ copy_record_node2_3_b:
 	mov	rdx,qword ptr 8[rdx]
 
 	mov	rcx,rax
-	sub	rax,qword ptr heap_p1
+	sub	rax,qword ptr heap_p1+0
 
 	shr	rax,4
 	mov	qword ptr (-16)[rsi],rdx 
@@ -735,7 +735,7 @@ copy_record_node2_3_b:
 	and	rdx,-4
 	mov	eax,dword ptr (bit_set_table)[rax*4]
 
-	add	rdx,qword ptr heap_copied_vector
+	add	rdx,qword ptr heap_copied_vector+0
 	add	rbp,8
 
 	test	eax,[rdx]
@@ -997,7 +997,7 @@ copy_record_selector_2:
 	mov	d4,qword ptr 16[rax]
 
 	lea	d2,(-24)[d4]
-	sub	d4,qword ptr heap_p1
+	sub	d4,qword ptr heap_p1+0
 
 	mov	d5,d4 
 	and	d4,31*16
@@ -1078,7 +1078,7 @@ copy_strict_record_selector_2_b:
 	shr	d4,2
 	and	d5,-4
 
-	add	d5,qword ptr heap_copied_vector
+	add	d5,qword ptr heap_copied_vector+0
 
 	mov	d4d,dword ptr (bit_set_table)[d4]
 	
@@ -1147,8 +1147,8 @@ copy_string_or_array_2:
 	mov	rcx,rdx
 	jne	copy_array_2
 
-	sub	rdx,heap_p1
-	cmp	rdx,semi_space_size
+	sub	rdx,heap_p1+0
+	cmp	rdx,semi_space_size+0
 	jae	copy_string_or_array_constant
 
 	mov	rdx,8[rcx]
@@ -1191,8 +1191,8 @@ cp_s_arg_lp2:
 	ret
 
 copy_array_2:
-	sub	rdx,heap_p1
-	cmp	rdx,semi_space_size
+	sub	rdx,heap_p1+0
+	cmp	rdx,semi_space_size+0
 	jae	copy_string_or_array_constant
 
 	push	rbx 
@@ -1285,7 +1285,7 @@ end_copy1:
 
 	mov	rcx,offset finalizer_list
 	mov	rdx,offset free_finalizer_list
-	mov	rbp,qword ptr finalizer_list
+	mov	rbp,qword ptr finalizer_list+0
 
 determine_free_finalizers_after_copy:
 	mov	rax,qword ptr [rbp]
@@ -1299,7 +1299,7 @@ determine_free_finalizers_after_copy:
 	jmp	determine_free_finalizers_after_copy
 
 finalizer_not_used_after_copy:
-	lea	r9,__Nil-8
+	lea	r9,__Nil-8+0
 	cmp	rbp,r9
 	je	end_finalizers_after_copy
 
