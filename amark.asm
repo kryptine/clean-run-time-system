@@ -1,22 +1,22 @@
 
-	mov	rax,qword ptr heap_size_65
+	mov	rax,qword ptr heap_size_65+0
 	xor	rbx,rbx 
 	
-	mov	qword ptr n_marked_words,rbx
+	mov	qword ptr n_marked_words+0,rbx
 	shl	rax,6
 
-	mov	qword ptr lazy_array_list,rbx
-	mov	qword ptr heap_size_64_65,rax
+	mov	qword ptr lazy_array_list+0,rbx
+	mov	qword ptr heap_size_64_65+0,rax
 	
 	lea	rsi,(-4000)[rsp]
 
-	mov	rax,qword ptr caf_list
+	mov	rax,qword ptr caf_list+0
 
-	mov	qword ptr end_stack,rsi 
+	mov	qword ptr end_stack+0,rsi 
 
-	mov	r10,neg_heap_p3
-	mov	r11,heap_size_64_65
-	mov	r13,qword ptr end_stack
+	mov	r10,neg_heap_p3+0
+	mov	r11,heap_size_64_65+0
+	mov	r13,qword ptr end_stack+0
 	mov	r14,0
 
 	test	rax,rax 
@@ -37,23 +37,23 @@ _mark_cafs_lp:
 	jne	_mark_cafs_lp
 
 _end_mark_cafs:
-	mov	rsi,qword ptr stack_top
-	mov	rbp,qword ptr stack_p
+	mov	rsi,qword ptr stack_top+0
+	mov	rbp,qword ptr stack_p+0
 
 	mov	r12,rsi 
 	call	_mark_stack_nodes
 
 continue_mark_after_pmark:
-	mov	qword ptr n_marked_words,r14
+	mov	qword ptr n_marked_words+0,r14
 
-	mov	rcx,qword ptr lazy_array_list
+	mov	rcx,qword ptr lazy_array_list+0
 
 	test	rcx,rcx 
 	je	end_restore_arrays
 
 restore_arrays:
-	mov	rbx ,qword ptr [rcx]
-	lea	r9,__ARRAY__+2
+	mov	rbx,qword ptr [rcx]
+	lea	r9,__ARRAY__+2+0
 	mov	qword ptr [rcx],r9
 
 	cmp	rbx,1
@@ -124,13 +124,13 @@ restore_array_size_1:
 	jne	restore_arrays
 
 end_restore_arrays:
-	mov	rdi,qword ptr heap_vector
-	lea	rcx,finalizer_list
-	lea	rdx,free_finalizer_list
+	mov	rdi,qword ptr heap_vector+0
+	lea	rcx,finalizer_list+0
+	lea	rdx,free_finalizer_list+0
 
 	mov	rbp,qword ptr [rcx]
 determine_free_finalizers_after_mark:
-	lea	r9,__Nil-8
+	lea	r9,__Nil-8+0
 	cmp	rbp,r9
 	je	end_finalizers_after_mark
 
@@ -159,10 +159,10 @@ end_finalizers_after_mark:
 
 	call	add_garbage_collect_time
 
-	mov	rax,qword ptr bit_vector_size
+	mov	rax,qword ptr bit_vector_size+0
 
-	mov	rdi,qword ptr n_allocated_words
-	add	rdi,qword ptr n_marked_words
+	mov	rdi,qword ptr n_allocated_words+0
+	add	rdi,qword ptr n_marked_words+0
 	shl	rdi,3
 
 	mov	rsi,rax
@@ -172,7 +172,7 @@ end_finalizers_after_mark:
 	push	rax 
 
 	mov	rax,rdi 
-	mul	qword ptr heap_size_multiple
+	mul	qword ptr heap_size_multiple+0
 	shrd	rax,rdx,8
 	shr	rdx,8
 
@@ -184,14 +184,14 @@ end_finalizers_after_mark:
 	
 	je	not_largest_heap
 
-	mov	rbx,qword ptr heap_size_65
+	mov	rbx,qword ptr heap_size_65+0
 	shl	rbx,6
 
 not_largest_heap:
 	cmp	rbx,rsi 
 	jbe	no_larger_heap
 	
-	mov	rsi,qword ptr heap_size_65
+	mov	rsi,qword ptr heap_size_65+0
 	shl	rsi,6
 	cmp	rbx,rsi
 	jbe	not_larger_than_heap
@@ -199,12 +199,12 @@ not_largest_heap:
 not_larger_than_heap:
 	mov	rax,rbx 
 	shr	rax,3
-	mov	qword ptr bit_vector_size,rax
+	mov	qword ptr bit_vector_size+0,rax
 no_larger_heap:
 
 	mov	rbp,rax
 
-	mov	rdi,qword ptr heap_vector
+	mov	rdi,qword ptr heap_vector+0
 
 	shr	rbp,5
 
@@ -214,13 +214,13 @@ no_larger_heap:
 	mov	dword ptr [rdi+rbp*4],0
 
 no_extra_word:
-	sub	rax,qword ptr n_marked_words
+	sub	rax,qword ptr n_marked_words+0
 	shl	rax,3
-	mov	qword ptr n_last_heap_free_bytes,rax 
+	mov	qword ptr n_last_heap_free_bytes+0,rax 
 
-	mov	rax,qword ptr n_marked_words
+	mov	rax,qword ptr n_marked_words+0
 	shl	rax,3
-	add	qword ptr total_gc_bytes,rax 
+	add	qword ptr total_gc_bytes+0,rax
 
 	test	qword ptr flags,2
 	je	_no_heap_use_message2
@@ -231,7 +231,7 @@ no_extra_word:
 	mov	r13,rsi
 	mov	r14,rdi
 
-	lea	rdi,marked_gc_string_1
+	lea	rdi,marked_gc_string_1+0
  else
 	sub	rsp,32
 
@@ -240,7 +240,7 @@ no_extra_word:
 	call	ew_print_string
 
  ifdef LINUX
-	mov	rdi,qword ptr n_marked_words
+	mov	rdi,qword ptr n_marked_words+0
 	shl	rdi,3
  else
 	mov	rcx,qword ptr n_marked_words
@@ -249,7 +249,7 @@ no_extra_word:
 	call	ew_print_int
 
  ifdef LINUX
-	lea	rdi,heap_use_after_gc_string_2
+	lea	rdi,heap_use_after_gc_string_2+0
  else
 	lea	rcx,heap_use_after_gc_string_2
  endif
@@ -264,11 +264,11 @@ no_extra_word:
 _no_heap_use_message2:
 	call	call_finalizers
 
-	mov	rsi,qword ptr n_allocated_words
+	mov	rsi,qword ptr n_allocated_words+0
 	xor	rbx,rbx 
 
 	mov	rcx,rdi
-	mov	qword ptr n_free_words_after_mark,rbx 
+	mov	qword ptr n_free_words_after_mark+0,rbx
 
 _scan_bits:
 	cmp	ebx,dword ptr [rcx]
@@ -307,29 +307,29 @@ _end_zero_bits:
 	mov	rax,rcx 
 	sub	rax,rdx 
 	shl	rax,3
-	add	qword ptr n_free_words_after_mark,rax 
-	mov	dword ptr (-4)[rcx],ebx 
+	add	qword ptr n_free_words_after_mark+0,rax
+	mov	dword ptr (-4)[rcx],ebx
 
 	cmp	rax,rsi
 	jb	_scan_bits
 
 _found_free_memory:
-	mov	qword ptr bit_counter,rbp
-	mov	qword ptr bit_vector_p,rcx
+	mov	qword ptr bit_counter+0,rbp
+	mov	qword ptr bit_vector_p+0,rcx
 
 	lea	rbx,(-4)[rdx]
 	sub	rbx,rdi 
 	shl	rbx,6
-	mov	rdi,qword ptr heap_p3
+	mov	rdi,qword ptr heap_p3+0
 	add	rdi,rbx 
 
 	mov	r15,rax
 	lea	rbx,[rdi+rax*8]
 
 	sub	r15,rsi
-	mov	rsi,qword ptr stack_top
+	mov	rsi,qword ptr stack_top+0
 
-	mov	qword ptr heap_end_after_gc,rbx 
+	mov	qword ptr heap_end_after_gc+0,rbx 
 
 	jmp	restore_registers_after_gc_and_return
 
@@ -339,12 +339,12 @@ _end_bits:
 	add	rax,4
 _end_bits2:
 	shl	rax,3
-	add	qword ptr n_free_words_after_mark,rax 
+	add	qword ptr n_free_words_after_mark+0,rax
 	cmp	rax,rsi 
 	jae	_found_free_memory
 
 _end_scan:
-	mov	qword ptr bit_counter,rbp
+	mov	qword ptr bit_counter+0,rbp
 	jmp	compact_gc
 
 ; %rbp : pointer to stack element
@@ -536,7 +536,7 @@ _large_tuple_or_record:
 
  ifdef NEW_DESCRIPTORS
 	mov	eax,(-8)[rax]
-	lea	rbp,__indirection
+	lea	rbp,__indirection+0
 	mov	qword ptr (-8)[rcx],rbp
 	movzx	eax,word ptr 4[rax]
 	mov	rbp,rcx
@@ -604,7 +604,7 @@ _mark_record_selector_node_1:
 	jne	_mark_node3
 
 	mov	eax,(-8)[rax]
-	lea	rbp,__indirection
+	lea	rbp,__indirection+0
 	mov	qword ptr (-8)[rcx],rbp
 	movzx	eax,word ptr 4[rax]
 	mov	rbp,rcx
@@ -1264,7 +1264,7 @@ __large_tuple_or_record:
 
  ifdef NEW_DESCRIPTORS
 	mov	eax,dword ptr (-8)[rax]
-	lea	rdx,__indirection
+	lea	rdx,__indirection+0
 	pop	rbx
 
 	mov	qword ptr (-8)[rcx],rdx
@@ -1287,7 +1287,7 @@ __mark_tuple_selector_node_2:
 __small_tuple_or_record:
  ifdef NEW_DESCRIPTORS
 	mov	eax,dword ptr (-8)[rax]
-	lea	rdx,__indirection
+	lea	rdx,__indirection+0
 	pop	rbx 
 
 	mov	qword ptr (-8)[rcx],rdx
@@ -1835,13 +1835,13 @@ __skip_mark_lazy_array_bits:
 	
 	mov	rbp,qword ptr (-8)[rdx]
 	sub	rdx,8
-	mov	rbx,qword ptr lazy_array_list
+	mov	rbx,qword ptr lazy_array_list+0
 	add	rbp,2
 	mov	qword ptr [rdx],rbx 
 	mov	qword ptr (-8)[rcx],rbp 
 	mov	qword ptr (-16)[rcx],rax 
 	sub	rcx,16
-	mov	qword ptr lazy_array_list,rcx 
+	mov	qword ptr lazy_array_list+0,rcx 
 
 	mov	rcx,qword ptr (-8)[rdx]
 	mov	qword ptr (-8)[rdx],rsi 
@@ -1854,11 +1854,11 @@ __mark_array_length_0_1:
 
 	mov	rbx,qword ptr 24[rcx]
 	mov	rbp,qword ptr 16[rcx]
-	mov	rdx,qword ptr lazy_array_list
+	mov	rdx,qword ptr lazy_array_list+0
 	mov	qword ptr 24[rcx],rbp 
 	mov	qword ptr 16[rcx],rdx 
 	mov	qword ptr [rcx],rax
-	mov	qword ptr lazy_array_list,rcx
+	mov	qword ptr lazy_array_list+0,rcx
 	mov	qword ptr 8[rcx],rbx
 	add	rcx,8
 
