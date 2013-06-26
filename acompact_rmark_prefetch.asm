@@ -22,16 +22,16 @@ rmarkp_stack_nodes1:
 rmarkp_next_stack_node:
 	add	rsi,8
 rmarkp_stack_nodes:
-	cmp	rsi,qword ptr end_vector
+	cmp	rsi,qword ptr end_vector+0
 	je	end_rmarkp_nodes
 
 rmarkp_more_stack_nodes:
 	mov	rcx,qword ptr [rsi]
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rcx 
 
-	cmp	rax,qword ptr heap_size_64_65
+	cmp	rax,qword ptr heap_size_64_65+0
 	jnc	rmarkp_next_stack_node
 
 	mov	rbx,rax 
@@ -49,7 +49,7 @@ rmarkp_more_stack_nodes:
 	call	rmarkp_stack_node
 
 	add	rsi,8
-	cmp	rsi,qword ptr end_vector
+	cmp	rsi,qword ptr end_vector+0
 	jne	rmarkp_more_stack_nodes
 	ret
 
@@ -64,10 +64,10 @@ rmarkp_stack_node:
 	jmp	rmarkp_no_reverse
 
 rmarkp_node_d1:
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rcx 
 
-	cmp	rax,qword ptr heap_size_64_65
+	cmp	rax,qword ptr heap_size_64_65+0
 	jnc	rmarkp_next_node
 
 	jmp	rmarkp_node_
@@ -83,14 +83,14 @@ rmarkp_hnf_2:
 	mov	qword ptr 8[rsp],rbx 
 	mov	qword ptr [rsp],rax 
 
-	cmp	rsp,qword ptr end_stack
+	cmp	rsp,qword ptr end_stack+0
 	jb	rmark_using_reversal
 
 rmarkp_node:
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rcx 
 
-	cmp	rax,qword ptr heap_size_64_65
+	cmp	rax,qword ptr heap_size_64_65+0
 	jnc	rmarkp_next_node
 
 	mov	rbx,rsi 
@@ -106,8 +106,8 @@ rmarkp_node_:
 	test	eax,dword ptr [rdi+rdx*4]
 	jne	rmarkp_reverse_and_mark_next_node
 
-	mov	rbp,qword ptr rmarkp_queue_first
-	mov	rdx,qword ptr rmarkp_n_queue_items_16
+	mov	rbp,qword ptr rmarkp_queue_first+0
+	mov	rdx,qword ptr rmarkp_n_queue_items_16+0
 
 	prefetch	[rcx]
 	mov	qword ptr rmarkp_queue[rbp],rcx
@@ -119,7 +119,7 @@ rmarkp_node_:
 	and	rbp,7*32
 	and	rbx,7*32
 
-	mov	qword ptr rmarkp_queue_first,rbp
+	mov	qword ptr rmarkp_queue_first+0,rbp
 
 	cmp	rdx,-(4*32)
 	je	rmarkp_last_item_in_queue
@@ -132,9 +132,9 @@ rmarkp_add_items:
 	mov	rsi,8[rsp]
 	add	rsp,16
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rcx
-	cmp	rax,qword ptr heap_size_64_65
+	cmp	rax,qword ptr heap_size_64_65+0
 	jnc	rmarkp_add_items
 
 	mov	rdx,rax
@@ -159,15 +159,15 @@ rmarkp_add_stacked_item:
 rmarkp_add_items2:
 	mov	rsi,8[rsp]
 	add	rsi,8
-	cmp	rsi,qword ptr end_vector
+	cmp	rsi,qword ptr end_vector+0
 	je	rmarkp_last_item_in_queue
 
 	mov	rcx,[rsi]
 	mov	8[rsp],rsi
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rcx
-	cmp	rax,qword ptr heap_size_64_65
+	cmp	rax,qword ptr heap_size_64_65+0
 	jnc	rmarkp_add_items2
 
 	mov	rdx,rax
@@ -186,8 +186,8 @@ rmarkp_add_items2:
 
 rmarkp_add_item2:
 	prefetch	[rcx]
-	mov	rbp,qword ptr rmarkp_queue_first
-	mov	rdx,qword ptr rmarkp_n_queue_items_16
+	mov	rbp,qword ptr rmarkp_queue_first+0
+	mov	rdx,qword ptr rmarkp_n_queue_items_16+0
 
 	mov	qword ptr rmarkp_queue[rbp],rcx
 	mov	qword ptr rmarkp_queue+8[rbp],rsi
@@ -197,8 +197,8 @@ rmarkp_add_item2:
 
 	sub	rdx,32
 
-	mov	qword ptr rmarkp_queue_first,rbp
-	mov	qword ptr rmarkp_n_queue_items_16,rdx
+	mov	qword ptr rmarkp_queue_first+0,rbp
+	mov	qword ptr rmarkp_n_queue_items_16+0,rdx
 
 	cmp	rdx,-(4*32)
 	jne	rmarkp_add_items2
@@ -213,9 +213,9 @@ rmarkp_add_items3:
 	mov	rcx,[rsi]
 	mov	8[rsp],rsi
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rcx
-	cmp	rax,qword ptr heap_size_64_65
+	cmp	rax,qword ptr heap_size_64_65+0
 	jnc	rmarkp_add_items3
 
 	mov	rdx,rax
@@ -237,8 +237,8 @@ rmarkp_add_items3:
 
 rmarkp_add_item3:
 	prefetch	[rcx]
-	mov	rbp,qword ptr rmarkp_queue_first
-	mov	rdx,qword ptr rmarkp_n_queue_items_16
+	mov	rbp,qword ptr rmarkp_queue_first+0
+	mov	rdx,qword ptr rmarkp_n_queue_items_16+0
 
 	mov	qword ptr rmarkp_queue[rbp],rcx
 	mov	qword ptr rmarkp_queue+8[rbp],rsi
@@ -248,8 +248,8 @@ rmarkp_add_item3:
 
 	sub	rdx,32
 
-	mov	qword ptr rmarkp_queue_first,rbp
-	mov	qword ptr rmarkp_n_queue_items_16,rdx
+	mov	qword ptr rmarkp_queue_first+0,rbp
+	mov	qword ptr rmarkp_n_queue_items_16+0,rdx
 
 	cmp	rdx,-(4*32)
 	jne	rmarkp_add_items3
@@ -257,8 +257,8 @@ rmarkp_add_item3:
 
 rmarkp_add_item:
 	prefetch	[rcx]
-	mov	rbp,qword ptr rmarkp_queue_first
-	mov	rdx,qword ptr rmarkp_n_queue_items_16
+	mov	rbp,qword ptr rmarkp_queue_first+0
+	mov	rdx,qword ptr rmarkp_n_queue_items_16+0
 
 	mov	qword ptr rmarkp_queue[rbp],rcx
 	mov	qword ptr rmarkp_queue+8[rbp],rsi
@@ -268,8 +268,8 @@ rmarkp_add_item:
 
 	sub	rdx,32
 
-	mov	qword ptr rmarkp_queue_first,rbp
-	mov	qword ptr rmarkp_n_queue_items_16,rdx
+	mov	qword ptr rmarkp_queue_first+0,rbp
+	mov	qword ptr rmarkp_n_queue_items_16+0,rdx
 
 	cmp	rdx,-(4*32)
 	jne	rmarkp_add_items
@@ -277,7 +277,7 @@ rmarkp_add_item:
 rmarkp_last_item_in_queue:
 	mov	rcx,qword ptr rmarkp_queue[rbx]
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 
 	mov	rsi,qword ptr rmarkp_queue+8[rbx]
 	mov	rbx,qword ptr rmarkp_queue+16[rbx]
@@ -328,10 +328,10 @@ rmarkp_no_reverse:
 rmarkp_hnf_3:
 	mov	rdx,qword ptr 8[rcx]
 rmarkp_hnf_3_:
-	cmp	rsp,qword ptr end_stack
+	cmp	rsp,qword ptr end_stack+0
 	jb	rmark_using_reversal_
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rdx 
 
 	mov	rbx,rax 
@@ -370,10 +370,10 @@ rmarkp_push_hnf_args:
 	mov	qword ptr [rsi],rcx 
 	mov	qword ptr [rdx],rbp 
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rcx 
 
-	cmp	rax,qword ptr heap_size_64_65
+	cmp	rax,qword ptr heap_size_64_65+0
 	jnc	rmarkp_next_node
 
 	mov	rbx,rdx 
@@ -382,9 +382,9 @@ rmarkp_push_hnf_args:
 rmarkp_no_reverse_argument_pointer:
 	mov	rsi,rdx 
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rcx
-	cmp	rax,qword ptr heap_size_64_65
+	cmp	rax,qword ptr heap_size_64_65+0
 	jnc	rmarkp_next_node
 	mov	rbx,rsi
 	jmp	rmarkp_node_no_prefetch
@@ -417,7 +417,7 @@ rmarkp_record_3:
 rmarkp_record_3_bb:
 	sub	rcx,8
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rdx 
 
 	mov	rbp,rax 
@@ -437,7 +437,7 @@ rmarkp_bit_in_same_word1:
 	test	eax,dword ptr [rdi+rbp*4]
 	je	rmarkp_not_yet_linked_bb
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rcx 
 
 	add	rax,16
@@ -463,7 +463,7 @@ rmarkp_not_yet_linked_bb:
 	jmp	rmarkp_next_node
 
 rmarkp_record_3_ab:
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rdx 
 
 	mov	rbp,rax 
@@ -483,7 +483,7 @@ rmarkp_bit_in_same_word2:
 	test	eax,dword ptr [rdi+rbp*4]
 	je	rmarkp_not_yet_linked_ab
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rcx
 	add	rax,8
 
@@ -508,10 +508,10 @@ rmarkp_not_yet_linked_ab:
 	jmp	rmarkp_hnf_1
 
 rmarkp_record_3_aab:
-	cmp	rsp,qword ptr end_stack
+	cmp	rsp,qword ptr end_stack+0
 	jb	rmark_using_reversal_
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rdx 
 
 	mov	rbp,rax 
@@ -537,10 +537,10 @@ rmarkp_record_3_aab:
 	mov	qword ptr [rsi],rcx 
 	mov	qword ptr [rdx],rbp 
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rcx 
 
-	cmp	rax,qword ptr heap_size_64_65
+	cmp	rax,qword ptr heap_size_64_65+0
 	jnc	rmarkp_next_node
 
 	mov	rbx,rdx 
@@ -568,7 +568,7 @@ rmarkp_hnf_1:
 
 ; selectors
 rmarkp_indirection_node:
-	mov	rdx,qword ptr neg_heap_p3
+	mov	rdx,qword ptr neg_heap_p3+0
 	sub	rcx,8
 	add	rdx,rcx 
 
@@ -591,9 +591,9 @@ rmarkp_selector_node_1:
 	je	rmarkp_indirection_node
 
 	mov	rdx,qword ptr [rcx]
-	mov	qword ptr pointer_compare_address,rbx 
+	mov	qword ptr pointer_compare_address+0,rbx 
 
-	mov	rbx,qword ptr neg_heap_p3
+	mov	rbx,qword ptr neg_heap_p3+0
 	add	rbx,rdx 
 	shr	rbx,3
 
@@ -618,7 +618,7 @@ rmarkp_selector_node_1:
 rmarkp_large_tuple_or_record:
 	mov	d2,qword ptr 16[rdx]
 
-	mov	rbx,qword ptr neg_heap_p3
+	mov	rbx,qword ptr neg_heap_p3+0
 	add	rbx,d2
 	shr	rbx,3
 
@@ -631,7 +631,7 @@ rmarkp_large_tuple_or_record:
 	jne	rmarkp_hnf_1
 
  ifdef NEW_DESCRIPTORS
-	mov	rbx,qword ptr neg_heap_p3
+	mov	rbx,qword ptr neg_heap_p3+0
 	lea	rbx,(-8)[rcx+rbx]
 
 	mov	eax,(-8)[rax]
@@ -643,7 +643,7 @@ rmarkp_large_tuple_or_record:
 	and	dword ptr [rdi+rbx*4],d3d
 
 	movzx	eax,word ptr 4[rax]
-	mov	rbx,qword ptr pointer_compare_address
+	mov	rbx,qword ptr pointer_compare_address+0
 
 	mov	qword ptr (-8)[rcx],offset __indirection
 
@@ -687,7 +687,7 @@ rmarkp_small_tuple_or_record:
 
 	mov	qword ptr [rsi],rcx 
 
-	mov	rbx,qword ptr pointer_compare_address
+	mov	rbx,qword ptr pointer_compare_address+0
 
 	mov	qword ptr (-8)[rdx],offset __indirection
 	mov	qword ptr [rdx],rcx 
@@ -715,7 +715,7 @@ rmarkp_record_selector_node_1:
  ifdef NEW_DESCRIPTORS
 	mov	d2,qword ptr 16[rdx]
 
-	mov	rbx,qword ptr neg_heap_p3
+	mov	rbx,qword ptr neg_heap_p3+0
 	add	rbx,d2
 	shr	rbx,3
 
@@ -728,7 +728,7 @@ rmarkp_record_selector_node_1:
 	jne	rmarkp_hnf_1
 
 rmarkp_small_tuple_or_record:
-	mov	rbx,qword ptr neg_heap_p3
+	mov	rbx,qword ptr neg_heap_p3+0
 	lea	rbx,(-8)[rcx+rbx]
 
 	mov	eax,(-8)[rax]
@@ -740,7 +740,7 @@ rmarkp_small_tuple_or_record:
 	and	dword ptr [rdi+rbx*4],d3d 
 
 	movzx	eax,word ptr 4[rax]
-	mov	rbx,qword ptr pointer_compare_address
+	mov	rbx,qword ptr pointer_compare_address+0
 
 	mov	qword ptr (-8)[rcx],offset __indirection
 
@@ -777,7 +777,7 @@ rmarkp_strict_record_selector_node_1:
 
 	mov	d2,qword ptr 16[rdx]
 
-	mov	rbx,qword ptr neg_heap_p3
+	mov	rbx,qword ptr neg_heap_p3+0
 	add	rbx,d2
 	mov	rbp,rbx 
 
@@ -792,7 +792,7 @@ rmarkp_select_from_small_record:
 	mov	ebx,(-8)[rax]
 	sub	rcx,8
 
-	cmp	rcx,qword ptr pointer_compare_address
+	cmp	rcx,qword ptr pointer_compare_address+0
 	ja	rmarkp_selector_pointer_not_reversed
 
  ifdef NEW_DESCRIPTORS
@@ -887,20 +887,20 @@ rmarkp_next_node:
 	ja	rmarkp_node
 
 rmarkp_next_node_:
-	mov	rdx,qword ptr rmarkp_n_queue_items_16
+	mov	rdx,qword ptr rmarkp_n_queue_items_16+0
 	test	rdx,rdx
 	je	end_rmarkp_nodes
 
 	sub	rsp,16
 
-	mov	rbp,qword ptr rmarkp_queue_first
+	mov	rbp,qword ptr rmarkp_queue_first+0
 
 	lea	rbx,[rbp+rdx]
 	add	rdx,32
 
 	and	rbx,7*32
 
-	mov	qword ptr rmarkp_n_queue_items_16,rdx
+	mov	qword ptr rmarkp_n_queue_items_16+0,rdx
 	jmp	rmarkp_last_item_in_queue
 
 end_rmarkp_nodes:
@@ -934,7 +934,7 @@ rmarkp_push_lazy_args:
 	mov	rsi,rcx 
 	mov	rcx,qword ptr [rcx]
 
-	cmp	rsp,qword ptr end_stack
+	cmp	rsp,qword ptr end_stack+0
 	jae	rmarkp_node
 
 	jmp	rmark_using_reversal
@@ -960,7 +960,7 @@ rmarkp_hnf_0:
 
 	jb	rmarkp_no_normal_hnf_0
 
-	mov	rbp,qword ptr neg_heap_p3
+	mov	rbp,qword ptr neg_heap_p3+0
 	add	rbp,rcx 
 
 	mov	rdx,rbp 
@@ -987,7 +987,7 @@ rmarkp_int_3:
 
 	shl	rbp,4
 	lea	rdx,(small_integers)[rbp]
-	mov	rbp,qword ptr neg_heap_p3
+	mov	rbp,qword ptr neg_heap_p3+0
 	mov	qword ptr [rsi],rdx 
 	add	rbp,rcx 
 
@@ -1004,7 +1004,7 @@ rmarkp_int_3:
 
 rmarkp_char_3:
 	movzx	rdx,byte ptr 8[rcx]
-	mov	rbp,qword ptr neg_heap_p3
+	mov	rbp,qword ptr neg_heap_p3+0
 
 	shl	rdx,4
 	add	rbp,rcx 
@@ -1039,7 +1039,7 @@ rmarkp_no_normal_hnf_0:
 	test	rax,rax 
 	je	rmarkp_b_array
 
-	cmp	rsp,qword ptr end_stack
+	cmp	rsp,qword ptr end_stack+0
 	jb	rmark_array_using_reversal
 
 	sub	rax,256
@@ -1066,7 +1066,7 @@ rmarkp_ab_record_array:
 	jmp	rmarkp_lr_array
 
 rmarkp_b_array:
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rcx
 	add	rax,8
 	mov	rbp,rax
@@ -1087,14 +1087,14 @@ rmarkp_a_record_array:
 	jmp	rmarkp_lr_array
 
 rmarkp_lazy_array:
-	cmp	rsp,qword ptr end_stack
+	cmp	rsp,qword ptr end_stack+0
 	jb	rmark_array_using_reversal
 
 	mov	rax,qword ptr 8[rcx]
 	add	rcx,16
 
 rmarkp_lr_array:
-	mov	rbx,qword ptr neg_heap_p3
+	mov	rbx,qword ptr neg_heap_p3+0
 	add	rbx,rcx 
 	shr	rbx,3
 	add	rbx,rax 
@@ -1149,10 +1149,10 @@ rmarkp_next_array_node:
 rmarkp_array_nodes:
 	mov	rcx,qword ptr [rsi]
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rcx
 
-	cmp	rax,qword ptr heap_size_64_65
+	cmp	rax,qword ptr heap_size_64_65+0
 	jnc	rmarkp_next_array_node
 
 	mov	rbx,rax 
