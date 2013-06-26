@@ -36,10 +36,10 @@ rmarkr_hnf_2:
 	mov	rcx,rbp
 
 rmarkr_node:
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rcx
 
-	cmp	rax,qword ptr heap_size_64_65
+	cmp	rax,qword ptr heap_size_64_65+0
 	jnc	rmarkr_next_node_after_static
 
 	mov	rbx,rax
@@ -76,7 +76,7 @@ rmarkr_arguments:
 rmarkr_hnf_3:
 	mov	rdx,qword ptr 8[rcx]
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rdx
 
 	mov	rbx,rax
@@ -130,7 +130,7 @@ rmarkr_record_3_bb:
 	mov	rdx,qword ptr (16-8)[rcx]
 	sub	rcx,8
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rdx
 
 	mov	rbp,rax
@@ -150,7 +150,7 @@ rmarkr_bit_in_same_word1:
 	test	eax,dword ptr [rdi+rbp*4]
 	je	rmarkr_not_yet_linked_bb
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rcx
 
 	add	rax,2*8
@@ -178,7 +178,7 @@ rmarkr_not_yet_linked_bb:
 rmarkr_record_3_ab:
 	mov	rdx,qword ptr 8[rcx]
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rdx
 
 	mov	rbp,rax
@@ -198,7 +198,7 @@ rmarkr_bit_in_same_word2:
 	test	eax,dword ptr [rdi+rbp*4]
 	je	rmarkr_not_yet_linked_ab
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rcx
 
 	add	rax,8
@@ -226,7 +226,7 @@ rmarkr_not_yet_linked_ab:
 rmarkr_record_3_aab:
 	mov	rdx,qword ptr 8[rcx]
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rdx 
 
 	mov	rbp,rax
@@ -272,7 +272,7 @@ rmarkr_hnf_1:
 	jmp	rmarkr_node
 
 rmarkr_indirection_node:
-	mov	rbx,qword ptr neg_heap_p3
+	mov	rbx,qword ptr neg_heap_p3+0
 	lea	rbx,(-8)[rcx+rbx]
 
 	mov	rax,rbx
@@ -290,7 +290,7 @@ rmarkr_selector_node_1:
 
 	mov	rdx,qword ptr [rcx]
 
-	mov	rbx,qword ptr neg_heap_p3
+	mov	rbx,qword ptr neg_heap_p3+0
 	add	rbx,rdx
 	shr	rbx,3
 
@@ -319,7 +319,7 @@ rmarkr_selector_node_1:
 
 rmarkr_large_tuple_or_record:
 	mov	rbx,qword ptr 16[rdx]
-	add	rbx,qword ptr neg_heap_p3
+	add	rbx,qword ptr neg_heap_p3+0
 	shr	rbx,3
 
 	push	rax
@@ -336,7 +336,7 @@ rmarkr_large_tuple_or_record:
 	jne	rmarkr_hnf_1
 
  ifdef NEW_DESCRIPTORS
-	mov	rbx,qword ptr neg_heap_p3
+	mov	rbx,qword ptr neg_heap_p3+0
 	lea	rbx,(-8)[rcx+rbx]
 
 	push	rcx
@@ -368,7 +368,7 @@ rmarkr_tuple_selector_node_2:
 	jmp	rmarkr_node
  else
 rmarkr_small_tuple_or_record:
-	mov	rbx,qword ptr neg_heap_p3
+	mov	rbx,qword ptr neg_heap_p3+0
 
 	lea	rbx,(-8)[rcx+rbx]
 
@@ -419,7 +419,7 @@ rmarkr_record_selector_node_1:
 	jbe	rmarkr_small_tuple_or_record
 
 	mov	rbx,qword ptr 16[rdx]
-	add	rbx,qword ptr neg_heap_p3
+	add	rbx,qword ptr neg_heap_p3+0
 	shr	rbx,3
 
 	push	rax
@@ -433,7 +433,7 @@ rmarkr_record_selector_node_1:
 	jne	rmarkr_hnf_1
 
 rmarkr_small_tuple_or_record:
-	mov	rbx,qword ptr neg_heap_p3
+	mov	rbx,qword ptr neg_heap_p3+0
 	lea	rbx,(-8)[rcx+rbx]
 
 	push	rcx
@@ -484,7 +484,7 @@ rmarkr_strict_record_selector_node_1:
 	jbe	rmarkr_select_from_small_record
 
 	mov	rbx,qword ptr 16[rdx]
-	add	rbx,qword ptr neg_heap_p3
+	add	rbx,qword ptr neg_heap_p3+0
 
 	push	rax
 	mov	rax,rbx
@@ -619,7 +619,7 @@ rmarkr_hnf_0:
 
 	jb	rmarkr_no_normal_hnf_0
 
-	mov	rbx,qword ptr neg_heap_p3
+	mov	rbx,qword ptr neg_heap_p3+0
 	add	rbx,rcx
 
 	mov	rcx,rbx
@@ -640,7 +640,7 @@ rmarkr_int_3:
 	cmp	rbp,33
 	jnc	rmarkr_next_node
 
-	mov	rbx,qword ptr neg_heap_p3
+	mov	rbx,qword ptr neg_heap_p3+0
 	add	rbx,rcx
 
 	mov	rcx,rbx
@@ -654,7 +654,7 @@ rmarkr_int_3:
 	jmp	rmarkr_next_node_after_static
 
 rmarkr_char_3:
-	mov	rbx,qword ptr neg_heap_p3
+	mov	rbx,qword ptr neg_heap_p3+0
 
 	movzx	rax,byte ptr 8[rcx]
 	add	rbx,rcx
@@ -670,7 +670,7 @@ rmarkr_char_3:
 	jmp	rmarkr_next_node_after_static
 
 rmarkr_no_normal_hnf_0:
-	lea	r9,__ARRAY__+2
+	lea	r9,__ARRAY__+2+0
 	cmp	rax,r9
 	jne	rmarkr_next_node
 
@@ -709,7 +709,7 @@ rmarkr_ab_record_array:
 	jmp	rmarkr_lr_array
 
 rmarkr_b_array:
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rcx
 	add	rax,8
 	mov	rbp,rax
@@ -733,7 +733,7 @@ rmarkr_lazy_array:
 	add	rcx,16
 
 rmarkr_lr_array:
-	mov	rbx,qword ptr neg_heap_p3
+	mov	rbx,qword ptr neg_heap_p3+0
 	add	rbx,rcx 
 	shr	rbx,3
 	add	rbx,rax 
@@ -984,7 +984,7 @@ rmarkr_no_reverse_5:
 	mov	qword ptr [rsi],rcx
 
 rmarkr_next_stack_node:
-	cmp	rsp,qword ptr end_stack
+	cmp	rsp,qword ptr end_stack+0
 	jae	rmarkr_end
 
 	mov	rcx,qword ptr [rsp]
@@ -994,11 +994,11 @@ rmarkr_next_stack_node:
 	cmp	rcx,1
 	ja	rmark_using_reversal
 
-	test	qword ptr flags,4096
+	test	qword ptr flags+0,4096
 	je	rmark_next_node_
 	jmp	rmarkp_next_node_
 
 rmarkr_end:
-	test	qword ptr flags,4096
+	test	qword ptr flags+0,4096
 	je	rmark_next_node
 	jmp	rmarkp_next_node
