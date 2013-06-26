@@ -1,16 +1,16 @@
 
 ; mark used nodes and pointers in argument parts and link backward pointers
 
-	mov	rax,qword ptr heap_size_65
+	mov	rax,qword ptr heap_size_65+0
 	shl	rax,6
-	mov	qword ptr heap_size_64_65,rax 
+	mov	qword ptr heap_size_64_65+0,rax 
 
 	lea	rax,(-16000)[rsp]
-	mov	qword ptr end_stack,rax
+	mov	qword ptr end_stack+0,rax
 
-	mov	rax,qword ptr caf_list
+	mov	rax,qword ptr caf_list+0
 
-	test	qword ptr flags,4096
+	test	qword ptr flags+0,4096
 	jne	pmarkr
 
 	test	rax,rax 
@@ -23,19 +23,19 @@ mark_cafs_lp:
 	mov	rax,qword ptr [rax]
 	lea	rcx,[rsi+rax*8]
 
-	mov	qword ptr end_vector,rcx 
+	mov	qword ptr end_vector+0,rcx 
 
 	call	rmark_stack_nodes
-	
+
 	pop	rax
 	test	rax,rax 
 	jne	mark_cafs_lp
 
 end_mark_cafs:
-	mov	rsi,qword ptr stack_p
+	mov	rsi,qword ptr stack_p+0
 
-	mov	rcx,qword ptr stack_top
-	mov	qword ptr end_vector,rcx 
+	mov	rcx,qword ptr stack_top+0
+	mov	qword ptr end_vector+0,rcx 
 
 	call	rmark_stack_nodes
 
@@ -54,7 +54,7 @@ rmarkp_cafs_lp:
 	mov	rax,qword ptr [rax]
 	lea	rcx,[rsi+rax*8]
 
-	mov	qword ptr end_vector,rcx
+	mov	qword ptr end_vector+0,rcx
 
 	call	rmarkp_stack_nodes
 	
@@ -63,10 +63,10 @@ rmarkp_cafs_lp:
 	jne	rmarkp_cafs_lp
 
 end_rmarkp_cafs:
-	mov	rsi,qword ptr stack_p
+	mov	rsi,qword ptr stack_p+0
 
-	mov	rcx,qword ptr stack_top
-	mov	qword ptr end_vector,rcx
+	mov	rcx,qword ptr stack_top+0
+	mov	qword ptr end_vector+0,rcx
 
 	call	rmarkp_stack_nodes
 
@@ -84,8 +84,8 @@ end_rmarkp_cafs:
 
 compact_heap:
 
-	mov	rcx,offset finalizer_list
-	mov	rdx,offset free_finalizer_list
+	mov	rcx,offset finalizer_list+0
+	mov	rdx,offset free_finalizer_list+0
 
 	mov	rbp,qword ptr [rcx]
 determine_free_finalizers_after_compact1:
@@ -93,7 +93,7 @@ determine_free_finalizers_after_compact1:
 	cmp	rbp,r9
 	je	end_finalizers_after_compact1
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rbp 
 	mov	rbx,rax 
 	and	rax,31*9
@@ -143,8 +143,8 @@ finalizer_not_used_after_compact1:
 end_finalizers_after_compact1:
 	mov	qword ptr [rdx],rbp 
 
-	mov	rcx,qword ptr finalizer_list
-	lea	r9,__Nil-8
+	mov	rcx,qword ptr finalizer_list+0
+	lea	r9,__Nil-8+0
 	cmp	rcx,r9
 	je	finalizer_list_empty
 	test	rcx,3
@@ -155,7 +155,7 @@ end_finalizers_after_compact1:
 finalizer_list_already_reversed:
 finalizer_list_empty:
 
-	mov	rbp ,offset free_finalizer_list
+	mov	rbp,offset free_finalizer_list
 	lea	r9,__Nil-8
 	cmp	qword ptr [rbp],r9
 	je	free_finalizer_list_empty
@@ -171,25 +171,25 @@ no_pmarkr:
 
 free_finalizer_list_empty:
 
-	mov	rax,qword ptr heap_size_65
+	mov	rax,qword ptr heap_size_65+0
 	mov	rbx,rax 
 	shl	rbx,6
 
-	add	rbx,qword ptr heap_p3
+	add	rbx,qword ptr heap_p3+0
 
-	mov	qword ptr end_heap_p3,rbx 
+	mov	qword ptr end_heap_p3+0,rbx 
 
 	add	rax,3
 	shr	rax,2
 	mov	r12,rax
 
-	mov	r8,qword ptr heap_vector
+	mov	r8,qword ptr heap_vector+0
 
 	lea	rbx,4[r8]
 	neg	rbx
-	mov	qword ptr neg_heap_vector_plus_4,rbx 
+	mov	qword ptr neg_heap_vector_plus_4+0,rbx 
 
-	mov	rdi,qword ptr heap_p3
+	mov	rdi,qword ptr heap_p3+0
 	xor	rsi,rsi 
 	jmp	skip_zeros
 
@@ -204,7 +204,7 @@ skip_zeros:
 	je	skip_zeros
 ; %rbp : free
 end_skip_zeros:
-	mov	rbp,qword ptr neg_heap_vector_plus_4
+	mov	rbp,qword ptr neg_heap_vector_plus_4+0
 
 	add	rbp,r8
 
@@ -279,11 +279,11 @@ end_list_2:
 
 copy_record_arguments_all_b:
 	push	rbx
-	mov	rbx,qword ptr heap_vector
+	mov	rbx,qword ptr heap_vector+0
 
 update_up_list_1r:
 	mov	rdx,rax
-	add	rax,qword ptr neg_heap_p3
+	add	rax,qword ptr neg_heap_p3+0
 
 	push	rcx 
 
@@ -311,7 +311,7 @@ copy_argument_part_1r:
 	mov	qword ptr [rdi],rax 
 	add	rdi,8
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rcx
 	shr	rax,3
 
@@ -324,10 +324,10 @@ copy_argument_part_1r:
 	mov	esi,dword ptr [r8]
 	add	r8,4
 
-	mov	rbp,qword ptr neg_heap_vector_plus_4
+	mov	rbp,qword ptr neg_heap_vector_plus_4+0
 	add	rbp,r8
 	shl	rbp,6
-	add	rbp,qword ptr heap_p3
+	add	rbp,qword ptr heap_p3+0
 
 bit_in_this_word:
 	shr	esi,1
@@ -371,7 +371,7 @@ copy_argument_part_2r:
 	cmp	rax,rcx 
 	jb	copy_record_argument_2
 
-	cmp	rax,qword ptr end_heap_p3
+	cmp	rax,qword ptr end_heap_p3+0
 	jae	copy_record_argument_2
 
 	mov	rdx,rax 
@@ -392,7 +392,7 @@ copy_record_pointers:
 	cmp	rdx,rcx 
 	jb	copy_record_pointers_2
 
-	cmp	rdx,qword ptr end_heap_p3
+	cmp	rdx,qword ptr end_heap_p3+0
 	jae	copy_record_pointers_2
 
 	mov	rax,qword ptr [rdx]
@@ -444,7 +444,7 @@ copy_argument_part_2:
 	cmp	rax,rcx 
 	jc	copy_arguments_1
 
-	cmp	rax,qword ptr end_heap_p3
+	cmp	rax,qword ptr end_heap_p3+0
 	jnc	copy_arguments_1
 
 	mov	rdx,rax
@@ -462,7 +462,7 @@ copy_argument_part_arguments:
 	cmp	rdx,rcx 
 	jc	copy_arguments_2
 
-	cmp	rdx,qword ptr end_heap_p3
+	cmp	rdx,qword ptr end_heap_p3+0
 	jnc	copy_arguments_2
 
 	mov	rax,qword ptr [rdx]
@@ -521,7 +521,7 @@ move_hnf_3:
 	cmp	rdx,rcx 
 	jc	move_hnf_3_1
 
-	cmp	rdx,qword ptr end_heap_p3
+	cmp	rdx,qword ptr end_heap_p3+0
 	jnc	move_hnf_3_1
 
 	lea	rax,1[rdi]
@@ -536,7 +536,7 @@ move_hnf_3_1:
 	cmp	rdx,rcx 
 	jc	move_hnf_3_2
 
-	cmp	rdx,qword ptr end_heap_p3
+	cmp	rdx,qword ptr end_heap_p3+0
 	jnc	move_hnf_3_2
 
 	lea	rax,(8+2+1)[rdi]
@@ -557,7 +557,7 @@ move_hnf_2:
 	cmp	rdx,rcx 
 	jc	move_hnf_2_1
 
-	cmp	rdx,qword ptr end_heap_p3
+	cmp	rdx,qword ptr end_heap_p3+0
 	jnc	move_hnf_2_1
 
 	lea	rax,1[rdi]
@@ -572,11 +572,11 @@ move_hnf_2_1:
 	cmp	rdx,rcx 
 	jc	move_hnf_2_2
 
-	cmp	rdx,qword ptr end_heap_p3
+	cmp	rdx,qword ptr end_heap_p3+0
 	jnc	move_hnf_2_2
 
 	lea	rax,(8+1)[rdi]
-	mov	rbx ,qword ptr [rdx]
+	mov	rbx,qword ptr [rdx]
 	mov	qword ptr [rdx],rax 
 	mov	rdx,rbx
 move_hnf_2_2:
@@ -593,7 +593,7 @@ move_hnf_1:
 	cmp	rdx,rcx 
 	jc	move_hnf_1_
 
-	cmp	rdx,qword ptr end_heap_p3
+	cmp	rdx,qword ptr end_heap_p3+0
 	jnc	move_hnf_1_
 
 	lea	rax,1[rdi]
@@ -626,7 +626,7 @@ move_record_3_1a:
 	cmp	rdx,rcx 
 	jb	move_record_3_1b
 
-	cmp	rdx,qword ptr end_heap_p3
+	cmp	rdx,qword ptr end_heap_p3+0
 	jae	move_record_3_1b
 
 	lea	rax,1[rdi]
@@ -642,16 +642,16 @@ move_record_3_1b:
 	cmp	rdx,rcx 
 	jb	move_record_3_2
 
-	cmp	rdx,qword ptr end_heap_p3
+	cmp	rdx,qword ptr end_heap_p3+0
 	jae	move_record_3_2
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 
 	push	rbp 
 
 	add	rax,rdx 
 
-	mov	rbx,qword ptr heap_vector
+	mov	rbx,qword ptr heap_vector+0
 	add	rax,8
 	mov	rbp,rax 
 	and	rbp,31*8
@@ -660,7 +660,7 @@ move_record_3_1b:
 	test	ebp,dword ptr [rbx+rax*4]
 	je	not_linked_record_argument_part_3_b
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rdi 
 
 	mov	rbp,rax 
@@ -675,7 +675,7 @@ move_record_3_1b:
 not_linked_record_argument_part_3_b:
 	or	dword ptr [rbx+rax*4],ebp 
 
-	mov	rax,qword ptr neg_heap_p3
+	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rdi 
 
 	mov	rbp,rax 
@@ -694,7 +694,7 @@ move_record_3_2:
 	mov	qword ptr [rdi],rdx 
 	add	rdi,8
 
-	mov	rbx,qword ptr neg_heap_p3
+	mov	rbx,qword ptr neg_heap_p3+0
 	add	rbx,rcx
 	shr	rbx,3
 	dec	rbx
@@ -735,7 +735,7 @@ move_record_2_ab:
 	jae	move_record_2_1
 
 	lea	rax,1[rdi]
-	mov	rbx ,qword ptr [rdx]
+	mov	rbx,qword ptr [rdx]
 	mov	qword ptr [rdx],rax 
 	mov	rdx,rbx
 move_record_2_1:
@@ -953,7 +953,7 @@ move_array_ab_a_elements:
 	cmp	rbx,rcx 
 	jb	move_array_element_ab
 
-	cmp	rbx,qword ptr end_heap_p3
+	cmp	rbx,qword ptr end_heap_p3+0
 	jnc	move_array_element_ab
 
 	mov	rdx,rbx 
@@ -1035,7 +1035,7 @@ move_lazy_node_arguments:
 	cmp	rdx,rcx 
 	jc	move_lazy_node_arguments_
 
-	cmp	rdx,qword ptr end_heap_p3
+	cmp	rdx,qword ptr end_heap_p3+0
 	jnc	move_lazy_node_arguments_
 
 	mov	rax,qword ptr [rdx]
@@ -1066,7 +1066,7 @@ move_lazy_node_1:
 	cmp	rdx,rcx 
 	jc	move_lazy_node_1_
 
-	cmp	rdx,qword ptr end_heap_p3
+	cmp	rdx,qword ptr end_heap_p3+0
 	jnc	move_lazy_node_1_
 
 	lea	rax,1[rdi]
@@ -1105,7 +1105,7 @@ move_closure_with_unboxed_arguments_lp:
 	cmp	rdx,rcx 
 	jc	move_closure_with_unboxed_arguments_
 
-	cmp	rdx,qword ptr end_heap_p3
+	cmp	rdx,qword ptr end_heap_p3+0
 	jnc	move_closure_with_unboxed_arguments_
 
 	mov	rax,qword ptr [rdx]
