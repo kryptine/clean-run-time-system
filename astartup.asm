@@ -2709,7 +2709,7 @@ out_of_memory_4_1:
 out_of_memory_4:
 	call	add_garbage_collect_time
 	
-	mov	rbp,offset out_of_memory_string_4+0
+	mov	rbp,offset out_of_memory_string_4
 	jmp	print_error
 
 zero_bit_vector:
