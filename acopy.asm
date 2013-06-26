@@ -672,7 +672,7 @@ copy_record_node2_3_ab_or_b:
 	mov	rdx,qword ptr 8[rdx]
 
 	mov	rcx,rax
-	sub	rax,qword ptr heap_p1
+	sub	rax,qword ptr heap_p1+0
 
 	shr	rax,4
 	mov	qword ptr 8[rdi],rdx 
@@ -1007,7 +1007,7 @@ copy_record_selector_2:
 	shr	d4,2
 	and	d5,-4
 
-	add	d5,qword ptr heap_copied_vector
+	add	d5,qword ptr heap_copied_vector+0
 
 	mov	d4d,dword ptr (bit_set_table)[d4]
 
@@ -1068,7 +1068,7 @@ copy_strict_record_selector_2_b:
 	mov	d4,qword ptr 16[rax]
 
 	lea	d2,(-24)[d4]
-	sub	d4,qword ptr heap_p1
+	sub	d4,qword ptr heap_p1+0
 
 	mov	d5,d4 
 	and	d4,31*16
@@ -1281,7 +1281,7 @@ copy_string_or_array_constant:
 	ret
 
 end_copy1:
-	mov	heap_end_after_gc,rsi
+	mov	heap_end_after_gc+0,rsi
 
 	mov	rcx,offset finalizer_list
 	mov	rdx,offset free_finalizer_list
