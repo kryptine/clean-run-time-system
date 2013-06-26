@@ -2576,7 +2576,7 @@ gc1:
 	mov	qword ptr 16[rax],rcx 
 	mov	qword ptr 24[rax],rdx 
 	
-	mov	rbx ,qword ptr stack_p
+	mov	rbx,qword ptr stack_p+0
 	mov	qword ptr 32[rax],rbx 
 
 	mov	qword ptr 40[rax],rsi 
