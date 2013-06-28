@@ -2632,19 +2632,31 @@ no_heap_use_message:
 	jne	copy_to_compact_with_alloc_in_extra_heap
 
 	movsx	rax,byte ptr garbage_collect_flag+0
-	
+
 	mov	rcx,qword ptr heap2_begin_and_end+0
 	mov	rdx,qword ptr (heap2_begin_and_end+8)+0
 
+ ifdef PIC
+	lea	rbx,heap_p1+0
+ else
 	mov	rbx,offset heap_p1
+ endif
 	
 	test	rax,rax 
 	je	gc0
 	
+ ifdef PIC
+	lea	rbx,heap_p2+0
+ else
 	mov	rbx,offset heap_p2
+ endif
 	jg	gc1
 
+ ifdef PIC
+	lea	rbx,heap_p3+0
+ else
 	mov	rbx,offset heap_p3
+ endif
 	xor	rcx,rcx 
 	xor	rdx,rdx 
 
@@ -2666,16 +2678,38 @@ gc1:
 	mov	qword ptr 40[rax],rsi 
 	mov	qword ptr 48[rax],0
 	mov	qword ptr 56[rax],0
-	
+
+ ifdef PIC
+	lea	rbp,small_integers+0
+	mov	qword ptr 64[rax],rbp
+	lea	rbp,static_characters+0
+	mov	qword ptr 72[rax],rbp
+ else
 	mov	qword ptr 64[rax],offset small_integers
 	mov	qword ptr 72[rax],offset static_characters
-	
+ endif
+
+ ifdef PIC
+	lea	rbp,dINT+2+0
+	mov	qword ptr 80[rax],rbp
+	lea	rbp,CHAR+2+0
+	mov	qword ptr 88[rax],rbp
+	lea	rbp,REAL+2+0
+	mov	qword ptr 96[rax],rbp
+	lea	rbp,BOOL+2+0
+	mov	qword ptr 104[rax],rbp
+	lea	rbp,__STRING__+2+0
+	mov	qword ptr 112[rax],rbp
+	lea	rbp,__ARRAY__+2+0
+	mov	qword ptr 120[rax],rbp
+ else
 	mov	qword ptr 80[rax],offset dINT+2
 	mov	qword ptr 88[rax],offset CHAR+2
 	mov	qword ptr 96[rax],offset REAL+2
 	mov	qword ptr 104[rax],offset BOOL+2
 	mov	qword ptr 112[rax],offset __STRING__+2
 	mov	qword ptr 120[rax],offset __ARRAY__+2
+ endif
 
 	mov	rbp,rsp
 	and	rsp,-16
@@ -2792,8 +2826,12 @@ out_of_memory_4_2:
 out_of_memory_4_1:
 out_of_memory_4:
 	call	add_garbage_collect_time
-	
+
+ ifdef PIC
+	lea	rbp,out_of_memory_string_4+0
+ else
 	mov	rbp,offset out_of_memory_string_4
+ endif
 	jmp	print_error
 
 zero_bit_vector:
