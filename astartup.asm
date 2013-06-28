@@ -2779,7 +2779,11 @@ end_call_finalizers:
 copy_to_compact_with_alloc_in_extra_heap:
 	mov	rcx,qword ptr heap2_begin_and_end+0
 	mov	rdx,qword ptr (heap2_begin_and_end+8)+0
+ ifdef PIC
+	lea	rbx,heap_p2+0
+ else
 	mov	rbx,offset heap_p2
+ endif
 	jmp	gc1
 
 allow_prefetch_for_athlon:
