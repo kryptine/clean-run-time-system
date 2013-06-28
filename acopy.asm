@@ -946,7 +946,12 @@ copy_selector_2:
 	jne	copy_arity_1_node2_
 
 	movzx	d3,word ptr 4[d3]
+ ifdef PIC
+	lea	r9,__indirection+0
+	mov	qword ptr [rdx],r9
+ else
 	mov	qword ptr [rdx],offset __indirection
+ endif
 
 	cmp	d3,16
 	jl	copy_selector_2_1
@@ -1077,7 +1082,12 @@ copy_selector_2__:
   endif
 copy_record_selector_2_:
 	movzx	d3,word ptr 4[d3]
+ ifdef PIC
+	lea	r9,__indirection+0
+	mov	qword ptr [rdx],r9
+ else
 	mov	qword ptr [rdx],offset __indirection
+ endif
 
 	cmp	d3,16
 	jle	copy_record_selector_3
