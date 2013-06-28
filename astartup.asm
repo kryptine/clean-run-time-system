@@ -2052,22 +2052,38 @@ add_time:
 
 add_garbage_collect_time:
 	call	get_time_diff
+ ifdef PIC
+	lea	rcx,garbage_collect_time+0
+ else
 	mov	rcx,offset garbage_collect_time
+ endif
 	jmp	add_time
 
 add_IO_time:
 	call	get_time_diff
+ ifdef PIC
+	lea	rcx,IO_time+0
+ else
 	mov	rcx,offset IO_time
+ endif
 	jmp	add_time
 
 add_mark_compact_garbage_collect_time:
 	call	get_time_diff
+ ifdef PIC
+	lea	rcx,mark_compact_garbage_collect_time+0
+ else
 	mov	rcx,offset mark_compact_garbage_collect_time
+ endif
 	jmp	add_time
 
 add_compact_garbage_collect_time:
 	call	get_time_diff
+ ifdef PIC
+	lea	rcx,compact_garbage_collect_time+0
+ else
 	mov	rcx,offset compact_garbage_collect_time
+ endif
 	jmp	add_time
 ;
 ;	the garbage collector
@@ -2163,7 +2179,7 @@ collect_0_:
 	mov	rsi,rbx
 
 	xor	rbx,rbx
-	mov	rcx,qword ptr bit_vector_p
+	mov	rcx,qword ptr bit_vector_p+0
 
 scan_bits:
 	cmp	ebx,dword ptr[rcx]
