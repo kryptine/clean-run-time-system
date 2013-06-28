@@ -138,7 +138,12 @@ determine_free_finalizers_after_mark:
 	mov	rbx,rax 
 	and	rax,31*8
 	shr	rbx,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	esi,dword ptr [r9+rax]
+ else
 	mov	esi,dword ptr (bit_set_table2)[rax]
+ endif
 	test	esi,dword ptr [rdi+rbx*4]
 	je	finalizer_not_used_after_mark
 
@@ -363,10 +368,15 @@ _mark_stack_nodes_:
 	cmp	rdx,r11
 	jnc	_mark_stack_nodes
 
-	mov	rbx,rdx 
+	mov	rbx,rdx
 	and	rdx,31*8
 	shr	rbx,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	esi,dword ptr [r9+rdx]
+ else
 	mov	esi,dword ptr (bit_set_table2)[rdx]
+ endif
 
 	test	esi,dword ptr [rdi+rbx*4]
 	jne	_mark_stack_nodes
@@ -401,7 +411,12 @@ _mark_node:
 	mov	rbx,rdx 
 	and	rdx,31*8
 	shr	rbx,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	esi,dword ptr [r9+rdx]
+ else
 	mov	esi,dword ptr (bit_set_table2)[rdx]
+ endif
 
 	test	esi,dword ptr [rdi+rbx*4]
 	jne	_mark_next_node
@@ -441,7 +456,12 @@ fits_in_word_1:
 	and	rax,31*8
 	shr	rbx,8
 
+ ifdef PIC
+	lea	r9,bit_set_table2+0]
+	mov	esi,dword ptr [r9+rax]
+ else
 	mov	esi,dword ptr (bit_set_table2)[rax]
+ endif
 
 	test	esi,dword ptr [rdi+rbx*4]
 	jne	_shared_argument_part
@@ -509,7 +529,12 @@ _mark_selector_node_1:
 
 	add	rbp,1
 
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	esi,dword ptr [r9+rsi]
+ else
 	mov	esi,dword ptr (bit_set_table2)[rsi]
+ endif
 	jle	_mark_record_selector_node_1
 
 	test	esi,dword ptr [rdi+rbx*4]
@@ -530,7 +555,12 @@ _large_tuple_or_record:
 	mov	rbx,rbp
 	and	rbp,31*8
 	shr	rbx,8
+ ifdef PIC
+	lea	r8,bit_set_table2+0
+	mov	ebp,dword ptr [r8+rbp]
+ else
 	mov	ebp,dword ptr (bit_set_table2)[rbp]
+ endif
 	test	ebp,dword ptr [rdi+rbx*4]
 	jne	_mark_node3
 
@@ -599,7 +629,12 @@ _mark_record_selector_node_1:
 	mov	rbx,rbp
 	and	rbp,31*8
 	shr	rbx,8
+ ifdef PIC
+	lea	r8,bit_set_table2+0
+	mov	ebp,dword ptr [r8+rbp]
+ else
 	mov	ebp,dword ptr (bit_set_table2)[rbp]
+ endif
 	test	ebp,dword ptr [rdi+rbx*4]
 	jne	_mark_node3
 
@@ -639,7 +674,12 @@ _mark_strict_record_selector_node_1:
 	mov	rbx,rbp 
 	and	rbp,31*8
 	shr	rbx,8
+ ifdef PIC
+	lea	r8,bit_set_table2+0
+	mov	ebp,dword ptr [r8+rbp]
+ else
 	mov	ebp,dword ptr (bit_set_table2)[rbp]
+ endif
 	test	ebp,dword ptr [rdi+rbx*4]
 	jne	_mark_node3
 
@@ -817,7 +857,12 @@ fits_in_word_13:
 	shr	rax,8
 	sub	rbx,1
 
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	edx,dword ptr [r9+rsi]
+ else
 	mov	edx,dword ptr (bit_set_table2)[rsi]
+ endif
 	jb	_mark_record_3_bb
 
 	test	edx,dword ptr [rdi+rax*4]
@@ -1056,9 +1101,19 @@ _mark_array_using_reversal:
 
 _mark_strict_basic_array:
 	mov	rax,qword ptr 8[rcx]
+ ifdef PIC
+	lea	r9,dINT+2+0
+	cmp	rbp,r9
+ else
 	cmp	rbp,offset dINT+2
+ endif
 	jle	_mark_strict_int_or_real_array
+ ifdef PIC
+	lea	r9,BOOL+2+0
+	cmp	rbp,r9
+ else
 	cmp	rbp,offset BOOL+2
+ endif
 	je	_mark_strict_bool_array
 _mark_strict_int32_or_real32_array:
 	add	rax,6+1
@@ -1143,7 +1198,12 @@ __mark_arguments:
 	jb	__mark_hnf_1
 
 __mark_hnf_3:
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	edx,dword ptr [r9+rdx]
+ else
 	mov	edx,dword ptr (bit_set_table2)[rdx]
+ endif
 	add	r14,3
 
 	or	dword ptr [rdi+rbx*4],edx
@@ -1162,7 +1222,12 @@ fits__in__word__1:
 
 	shr	rbx,8
 
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	edx,dword ptr [r9+rax]
+ else
 	mov	edx,dword ptr (bit_set_table2)[rax]
+ endif
 	test	edx,dword ptr [rdi+rbx*4]
 	jne	__shared_argument_part
 
@@ -1194,7 +1259,12 @@ fits__in__word__2:
 	jmp	__mark_node
 
 __mark_hnf_1:
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	edx,dword ptr [r9+rdx]
+ else
 	mov	edx,dword ptr (bit_set_table2)[rdx]
+ endif
 	add	r14,2
 	or	dword ptr [rdi+rbx*4],edx 
 	cmp	rdx,40000000h
@@ -1238,7 +1308,12 @@ __mark_selector_node_1:
 	mov	rbx,rax 
 	and	rax,31*8
 	shr	rbx,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	eax,dword ptr [r9+rax]
+ else
 	mov	eax,dword ptr (bit_set_table2)[rax]
+ endif
 	test	eax,dword ptr [rdi+rbx*4]
 	pop	rax 
 	jne	__mark_no_selector_2
@@ -1252,14 +1327,26 @@ __mark_selector_node_1:
 
 __large_tuple_or_record:
 	mov	r8,qword ptr 16[rbp]
+ ifndef PIC
 	mov	r9,r8
+ endif
 
 	add	r8,r10
 	mov	rbx,r8
 	and	r8,31*8
 	shr	rbx,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	r8d,dword ptr [r9+r8]
+ else
 	mov	r8d,dword ptr (bit_set_table2)[r8]
+ endif
 	test	r8d,dword ptr [rdi+rbx*4]
+
+ ifdef PIC
+	mov	r9,qword ptr 16[rbp]
+ endif
+
 	jne	__mark_no_selector_2
 
  ifdef NEW_DESCRIPTORS
@@ -1318,7 +1405,12 @@ __mark_record_selector_node_1:
 	mov	rbx,rax 
 	and	rax,31*8
 	shr	rbx,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	eax,dword ptr [r9+rax]
+ else
 	mov	eax,dword ptr (bit_set_table2)[rax]
+ endif
 	test	eax,dword ptr [rdi+rbx*4]
 	pop	rax
 	jne	__mark_no_selector_2
@@ -1332,14 +1424,26 @@ __mark_record_selector_node_1:
 	jbe	__small_record
 
 	mov	r8,qword ptr 16[rbp]
+ ifndef PIC
 	mov	r9,r8
+ endif
 
 	add	r8,r10
 	mov	rbx,r8
 	and	r8,31*8
 	shr	rbx,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	r8d,dword ptr [r9+r8]
+ else
 	mov	r8d,dword ptr (bit_set_table2)[r8]
+ endif
 	test	r8d,dword ptr [rdi+rbx*4]
+
+ ifdef PIC
+	mov	r9,qword ptr 16[rbp]
+ endif
+
 	jne	__mark_no_selector_2
 
 __small_record:
@@ -1368,7 +1472,12 @@ __mark_strict_record_selector_node_1:
 	mov	rbx,rax
 	and	rax,31*8
 	shr	rbx,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	eax,dword ptr [r9+rax]
+ else
 	mov	eax,dword ptr (bit_set_table2)[rax]
+ endif
 	test	eax,dword ptr [rdi+rbx *4]
 	pop	rax 
 	jne	__mark_no_selector_2
@@ -1381,16 +1490,27 @@ __mark_strict_record_selector_node_1:
 	jle	__select_from_small_record
 
 	mov	r8,qword ptr 16[rbp]
+ ifndef PIC
 	mov	r9,r8
+ endif
 
 	add	r8,r10
 	mov	rbx,r8 
 	and	r8,31*8
 	shr	rbx,8
+ ifdef PIC
+	mov	r9,bit_set_table2+0
+	mov	r8d,dword ptr [r9+r8]
+ else
 	mov	r8d,dword ptr (bit_set_table2)[r8]
+ endif
 	test	r8d,dword ptr [rdi+rbx*4]
 	jne	__mark_no_selector_2
-	
+
+ ifdef PIC
+	mov	r9,qword ptr 16[rbp]
+ endif
+
 __select_from_small_record:
  ifdef NEW_DESCRIPTORS
 	mov	eax,(-8)[rax]
@@ -1436,7 +1556,12 @@ __mark_indirection_node:
 	jmp	__mark_node
 
 __mark_hnf_2:
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	edx,dword ptr [r9+rdx]
+ else
 	mov	edx,dword ptr (bit_set_table2)[rdx]
+ endif
 	add	r14,3
 	or	dword ptr [rdi+rbx*4],edx
 	cmp	rdx,20000000h
@@ -1461,7 +1586,12 @@ __mark_node:
 	mov	rbx,rdx 
 	and	rdx,31*8
 	shr	rbx,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	ebp,dword ptr [r9+rdx]
+ else
 	mov	ebp,dword ptr (bit_set_table2)[rdx]
+ endif
 	test	ebp,dword ptr [rdi+rbx*4]
 	je	__mark_arguments
 
@@ -1520,7 +1650,12 @@ __mark_lazy_node:
 
 	add	rbp,1
 	mov	rax,rdx 
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	edx,dword ptr [r9+rdx]
+ else
 	mov	edx,dword ptr (bit_set_table2)[rdx]
+ endif
 	add	r14,rbp
 
 	lea	rax,[rax+rbp*8]
@@ -1556,7 +1691,12 @@ __mark_closure_with_unboxed_arguments:
 	push	rcx 
 	lea	rcx,[rdx+rbp*8]
 
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	edx,dword ptr [r9+rdx]
+ else
 	mov	edx,dword ptr (bit_set_table2)[rdx]
+ endif
 	sub	rbp,rax 
 
 	or	dword ptr [rdi+rbx*4],edx 
@@ -1576,7 +1716,12 @@ __mark_closure_1_with_unboxed_argument:
 	jmp	__mark_node2_bb
 
 __mark_hnf_0:
-	cmp	rax,offset dINT+2
+ ifdef PIC
+	lea	r9,dINT+2+0
+	cmp	rax,r9
+ else
+ 	cmp	rax,offset dINT+2
+ endif
 	jne	__no_int_3
 
 	mov	rbp,qword ptr 8[rcx]
@@ -1584,7 +1729,12 @@ __mark_hnf_0:
 	jb	____small_int
 
 __mark_real_bool_or_small_string:
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	edx,dword ptr [r9+rdx]
+ else
 	mov	edx,dword ptr (bit_set_table2)[rdx]
+ endif
 	add	r14,2
 	or	dword ptr [rdi+rbx*4],edx 
 	cmp	rdx,40000000h
@@ -1594,19 +1744,39 @@ __mark_real_bool_or_small_string:
 
 ____small_int:
 	shl	rbp,4
+ ifdef PIC
+	lea	rcx,small_integers+0
+	add	rcx,rbp
+ else
 	lea	rcx,(small_integers)[rbp]
+ endif
 	jmp	__mark_next_node
 
 __no_int_3:
+ ifdef PIC
+	lea	r9,__STRING__+2+0
+	cmp	rax,r9
+ else
 	cmp	rax,offset __STRING__+2
+ endif
 	jbe	__mark_string_or_array
 
+ ifdef PIC
+ 	lea	r9,CHAR+2+0
+ 	cmp	rax,r9
+ else
  	cmp	rax,offset CHAR+2
+ endif
  	jne	__no_char_3
 
 	movzx	rbp,byte ptr 8[rcx]
 	shl	rbp,4
+ ifdef PIC
+	lea	rcx,static_characters+0
+	add	rcx,rbp
+ else
 	lea	rcx,(static_characters)[rbp]
+ endif
 	jmp	__mark_next_node
 
 __no_char_3:
@@ -1620,7 +1790,12 @@ __no_char_3:
 	jmp	__mark_next_node
 
 __mark_node2_bb:
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	edx,dword ptr [r9+rdx]
+ else
 	mov	edx,dword ptr (bit_set_table2)[rdx]
+ endif
 	add	r14,3
 
 	or	dword ptr [rdi+rbx*4],edx
@@ -1637,7 +1812,12 @@ __mark__record:
 	jl	__mark_record_1
 
 __mark_record_3:
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	edx,dword ptr [r9+rdx]
+ else
 	mov	edx,dword ptr (bit_set_table2)[rdx]
+ endif
 	add	r14,3
 	or	dword ptr [rdi+rbx*4],edx 
 	cmp	rdx,20000000h
@@ -1654,7 +1834,12 @@ fits__in__word__13:
 
 	push	rsi 
 
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	esi,dword ptr [r9+rdx]
+ else
 	mov	esi,dword ptr (bit_set_table2)[rdx]
+ endif
 	test	esi,dword ptr [rdi+rax*4]
 	jne	__shared_record_argument_part
 
@@ -1712,7 +1897,12 @@ __shared_record_argument_part:
 	jmp	__mark_next_node
 
 __mark_record_2:
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	edx,dword ptr [r9+rdx]
+ else
 	mov	edx,dword ptr (bit_set_table2)[rdx]
+ endif
 	add	r14,3
 	or	dword ptr [rdi+rbx*4],edx 
 	cmp	rdx,20000000h
@@ -1786,7 +1976,12 @@ __mark__ab__record__array:
 	pop	rbx 
 	pop	rdx 
 
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	edx,dword ptr [r9+rdx]
+ else
 	mov	edx,dword ptr (bit_set_table2)[rdx]
+ endif
 	or	dword ptr [rdi+rbx*4],edx
 
 	lea	rdx,[rcx+rax*8]
@@ -1802,7 +1997,12 @@ __mark_lazy_array:
 	add	rcx,16
 
 __mark_lr_array:
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	edx,dword ptr [r9+rdx]
+ else
 	mov	edx,dword ptr (bit_set_table2)[rdx]
+ endif
 	mov	rbp,r10
 	or	dword ptr [rdi+rbx*4],edx 
 	lea	rdx,[rcx+rax*8]
@@ -1877,9 +2077,19 @@ __mark_b_record_array:
 
 __mark_strict_basic_array:
 	mov	rax,qword ptr 8[rcx]
+ ifdef PIC
+	lea	r9,dINT+2+0
+	cmp	rbp,r9
+ else
 	cmp	rbp,offset dINT+2
+ endif
 	jle	__mark__strict__int__or__real__array
+ ifdef PIC
+	lea	r9,BOOL+2+0
+	cmp	rbp,r9
+ else
 	cmp	rbp,offset BOOL+2
+ endif
 	je	__mark__strict__bool__array
 __mark__strict__int32__or__real32__array:
 	add	rax,6+1
@@ -1899,7 +2109,12 @@ __mark_string_:
 	shr	rax,3
 
 __mark_basic_array:
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	edx,dword ptr [r9+rdx]
+ else
 	mov	edx,dword ptr (bit_set_table2)[rdx]
+ endif
 	add	r14,rax 
 
 	or	dword ptr [rdi+rbx*4],edx 
