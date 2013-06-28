@@ -1327,16 +1327,36 @@ print_symbol_sc:
 print_symbol_2:
 	mov	rax,[rcx]
 
+ ifdef PIC
+	lea	rbp,dINT+2+0
+	cmp	rax,rbp
+ else
 	cmp	rax,offset dINT+2
+ endif
 	je	print_int_node
 
+ ifdef PIC
+	lea	rbp,CHAR+2+0
+	cmp	rax,rbp
+ else
 	cmp	rax,offset CHAR+2
+ endif
 	je	print_char_denotation
 
+ ifdef PIC
+	lea	rbp,BOOL+2+0
+	cmp	rax,rbp
+ else
 	cmp	rax,offset BOOL+2
+ endif
 	je	print_bool
 
+ ifdef PIC
+	lea	rbp,REAL+2+0
+	cmp	rax,rbp
+ else
 	cmp	rax,offset REAL+2
+ endif
 	je	print_real_node
 	
 	test	rbx,rbx 
@@ -1722,10 +1742,18 @@ BtoAC:
 	test	al,al 
 	je	BtoAC_false
 BtoAC_true:
+ ifdef PIC
+	lea	rcx,true_string+0
+ else
 	mov	rcx,offset true_string
+ endif
 	ret
 BtoAC_false:
+ ifdef PIC
+	lea	rcx,false_string+0
+ else
 	mov	rcx,offset false_string
+ endif
 	ret
 
 RtoAC:
@@ -1749,12 +1777,20 @@ RtoAC:
 	jmp	return_sprintf_buffer
 
 ItoAC:
+ ifdef PIC
+	lea	rcx,sprintf_buffer+0
+ else
 	mov	rcx,offset sprintf_buffer
+ endif
 	call	int_to_string
 	
 	mov	rax,rcx
+ ifdef PIC
+	lea	rcx,sprintf_buffer+0
+	sub	rax,rcx
+ else
 	sub	rax,offset sprintf_buffer
-
+ endif
 	jmp	sprintf_buffer_to_string
 
 	public	convert_int_to_string
