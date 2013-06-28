@@ -390,17 +390,32 @@ arguments_already_copied_2:
 	ret
 
 copy_arity_0_node2:
+ ifdef PIC
+	lea	r9,__STRING__+2+0
+	cmp	rcx,r9
+ else
 	cmp	rcx,offset __STRING__+2
+ endif
 	jbe	copy_string_or_array_2
 
+ ifdef PIC
+	lea	r9,CHAR+2+0
+	cmp	rcx,r9
+ else
 	cmp	rcx,offset CHAR+2
+ endif
 	ja	copy_normal_hnf_0_2
 
 copy_int_bool_or_char_2:
 	mov	rax,8[rdx]
 	je	copy_char_2
 
+ ifdef PIC
+	lea	r9,dINT+2+0
+	cmp	rcx,r9
+ else
 	cmp	rcx,offset dINT+2
+ endif
 	jne	no_small_int_or_char_2
 
 copy_int_2:
@@ -410,7 +425,12 @@ copy_int_2:
 	shl	rax,4
 	add	rbp,8
 
+ ifdef PIC
+	lea	r9,small_integers+0
+	add	rax,r9
+ else
 	add	rax,offset small_integers
+ endif
 	sub	rbx,1
 
 	mov	(-8)[rbp],rax 
@@ -423,7 +443,12 @@ copy_char_2:
 	shl	rax,4
 	add	rbp,8
 
+ ifdef PIC
+	lea	r9,static_characters+0
+	add	rax,r9
+ else
 	add	rax,offset static_characters
+ endif
 	sub	rbx,1
 
 	mov	(-8)[rbp],rax 
@@ -609,7 +634,12 @@ copy_record_node2_3:
 	mov	qword ptr [rbp],rdi
 
 	and	rdx,-4
+  ifdef PIC
+	lea	r9,bit_set_table+0
+	mov	eax,dword ptr [r9+rax*4]
+  else
 	mov	eax,dword ptr (bit_set_table)[rax*4]
+  endif
 
 	add	rdx,qword ptr heap_copied_vector
 	add	rbp,8
@@ -684,7 +714,12 @@ copy_record_node2_3_ab_or_b:
 	mov	qword ptr [rbp],rdi
 
 	and	rdx,-4
+ ifdef PIC
+	lea	r9,bit_set_table+0
+	mov	eax,dword ptr [r9+rax*4]
+ else
 	mov	eax,dword ptr (bit_set_table)[rax*4]
+ endif
 
 	add	rdx,qword ptr heap_copied_vector+0
 	add	rbp,8
@@ -733,7 +768,12 @@ copy_record_node2_3_b:
 	mov	qword ptr [rbp],rsi
 
 	and	rdx,-4
+ ifdef PIC
+	lea	r9,bit_set_table+0
+	mov	eax,dword ptr [r9+rax*4]
+ else
 	mov	eax,dword ptr (bit_set_table)[rax*4]
+ endif
 
 	add	rdx,qword ptr heap_copied_vector+0
 	add	rbp,8
@@ -931,7 +971,12 @@ copy_selector_2_2:
 
 copy_selector_2_:
 	movzx	d3,word ptr 4[d3]
+  ifdef PIC
+	lea	r9,__indirection+0
+	mov	qword ptr [rdx],r9
+  else
 	mov	qword ptr [rdx],offset __indirection
+  endif
 
 	mov	rcx,qword ptr [rax+d3]
 	mov	qword ptr 8[rdx],rcx
@@ -1009,7 +1054,12 @@ copy_record_selector_2:
 
 	add	d5,qword ptr heap_copied_vector+0
 
+ ifdef PIC
+	lea	r9,bit_set_table+0
+	mov	d4d,dword ptr [r9+d4]
+ else
 	mov	d4d,dword ptr (bit_set_table)[d4]
+ endif
 
 	and	d4d,dword ptr [d5]
 
@@ -1080,7 +1130,12 @@ copy_strict_record_selector_2_b:
 
 	add	d5,qword ptr heap_copied_vector+0
 
+ ifdef PIC
+	lea	r9,bit_set_table+0
+	mov	d4d,dword ptr [r9+d4]
+ else
 	mov	d4d,dword ptr (bit_set_table)[d4]
+ endif
 	
 	and	d4d,[d5]
 
@@ -1234,10 +1289,20 @@ copy_array_a3:
 copy_strict_basic_array_2:
 	mov	rbx,qword ptr 8[rcx]
 
+ ifdef PIC
+	lea	r9,dINT+2+0
+	cmp	rax,r9
+ else
 	cmp	rax,offset dINT+2
+ endif
 	jle	copy_int_or_real_array_2
 
+ ifdef PIC
+	lea	r9,BOOL+2+0
+	cmp	rax,r9
+ else
 	cmp	rax,offset BOOL+2
+ endif
 	je	copy_bool_array_2
 
 copy_int32_or_real32_array_2:
@@ -1283,8 +1348,16 @@ copy_string_or_array_constant:
 end_copy1:
 	mov	heap_end_after_gc+0,rsi
 
+ ifdef PIC
+	lea	rcx,finalizer_list+0
+ else
 	mov	rcx,offset finalizer_list
+ endif
+ ifdef PIC
+	lea	rdx,free_finalizer_list+0
+ else
 	mov	rdx,offset free_finalizer_list
+ endif
 	mov	rbp,qword ptr finalizer_list+0
 
 determine_free_finalizers_after_copy:
