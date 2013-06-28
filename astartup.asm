@@ -1864,16 +1864,28 @@ end_reverse_digits:
 	ret
 
 return_sprintf_buffer:
+ ifdef PIC
+	lea	rax,sprintf_buffer-1+0
+ else
 	mov	rax,offset sprintf_buffer-1
+ endif
 skip_characters:
 	inc	rax 
 	cmp	byte ptr [rax],0
 	jne	skip_characters
 
+ ifdef PIC
+	lea	rcx,sprintf_buffer+0
+	sub	rax,rcx
+ else
 	sub	rax,offset sprintf_buffer
-
+ endif
 sprintf_buffer_to_string:
+ ifdef PIC
+	lea	rcx,sprintf_buffer+0
+ else
 	mov	rcx,offset sprintf_buffer
+ endif
 build_string:
 
 	lea	rbx,16+7[rax]
@@ -1911,13 +1923,33 @@ eqD:	mov	rax,[rcx]
 	cmp	rax,[rdx]
 	jne	eqD_false
 
+ ifdef PIC
+	lea	rbp,dINT+2+0
+	cmp	rax,rbp
+ else
 	cmp	rax,offset dINT+2
+ endif
 	je	eqD_INT
+ ifdef PIC
+	lea	rbp,CHAR+2+0
+	cmp	rax,rbp
+ else
 	cmp	rax,offset CHAR+2
+ endif
 	je	eqD_CHAR
-	cmp	rax ,offset BOOL+2
+ ifdef PIC
+	lea	rbp,BOOL+2+0
+	cmp	rax,rbp
+ else
+	cmp	rax,offset BOOL+2
+ endif
 	je	eqD_BOOL
-	cmp	rax ,offset REAL+2
+ ifdef PIC
+	lea	rbp,REAL+2+0
+	cmp	rax,rbp
+ else
+	cmp	rax,offset REAL+2
+ endif
 	je	eqD_REAL
 
 	mov	rax ,1
