@@ -457,7 +457,7 @@ fits_in_word_1:
 	shr	rbx,8
 
  ifdef PIC
-	lea	r9,bit_set_table2+0]
+	lea	r9,bit_set_table2+0
 	mov	esi,dword ptr [r9+rax]
  else
 	mov	esi,dword ptr (bit_set_table2)[rax]
