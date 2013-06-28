@@ -1280,7 +1280,12 @@ __shared_argument_part:
 __mark_no_selector_2:
 	pop	rbx
 __mark_no_selector_1:
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	edx,dword ptr [r9+rdx]
+ else
 	mov	edx,dword ptr (bit_set_table2)[rdx]
+ endif
 	add	r14,3
 	or	dword ptr [rdi+rbx*4],edx 
 	cmp	rdx,20000000h
