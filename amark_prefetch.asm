@@ -183,7 +183,7 @@ pmark_add_items2:
 	prefetch	[rcx]
 
  ifdef PIC
-	lea	r9,queue+0 
+	lea	r9,queue+0
 	mov	qword ptr [r9+r8],rcx 
  else
 	mov	qword ptr (queue)[r8],rcx 
