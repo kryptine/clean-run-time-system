@@ -1405,7 +1405,7 @@ pmarkr_indirection_node:
 
 pmarkr_hnf_2:
  ifdef PIC
-	lea	r9,bit_set_table2[rdx]
+	lea	r9,bit_set_table2+0
 	mov	edx,dword ptr[r9+rdx]
  else
 	mov	edx,dword ptr (bit_set_table2)[rdx]
