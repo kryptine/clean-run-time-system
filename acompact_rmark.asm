@@ -8,7 +8,7 @@ rmark_stack_nodes1:
 rmark_next_stack_node:
 	add	rsi,8
 rmark_stack_nodes:
-	cmp	rsi,qword ptr end_vector
+	cmp	rsi,qword ptr end_vector+0
 	je	end_rmark_nodes
 
 rmark_more_stack_nodes:
