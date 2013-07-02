@@ -95,8 +95,8 @@ determine_free_finalizers_after_compact1:
 
 	mov	rax,qword ptr neg_heap_p3[rip]
 	add	rax,rbp 
-	mov	rbx,rax 
-	and	rax,31*9
+	mov	rbx,rax
+	and	rax,31*8
 	shr	rbx,8
 	lea	r9,bit_set_table2[rip]
 	mov	esi,dword ptr [r9+rax]
