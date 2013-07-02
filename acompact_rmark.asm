@@ -638,7 +638,7 @@ rmark_strict_record_selector_node_1:
 	and	rbp,31
  ifdef PIC
 	lea	r9,bit_set_table+0
-	mov	ebp,dword ptr [rr9+bp*4]
+	mov	ebp,dword ptr [r9+bp*4]
  else
 	mov	ebp,dword ptr (bit_set_table)[rbp*4]
  endif
