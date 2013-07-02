@@ -7,10 +7,11 @@ rmark_stack_nodes1:
 
 rmark_next_stack_node:
 	add	rsi,8
+rmark_stack_nodes:
 	cmp	rsi,qword ptr end_vector[rip]
 	je	end_rmark_nodes
 
-rmark_stack_nodes:
+rmark_more_stack_nodes:
 	mov	rcx,qword ptr [rsi]
 
 	mov	rax,qword ptr neg_heap_p3[rip]
@@ -36,7 +37,7 @@ rmark_stack_nodes:
 
 	add	rsi,8
 	cmp	rsi,qword ptr end_vector[rip]
-	att_jne	rmark_stack_nodes
+	att_jne	rmark_more_stack_nodes
 	ret
 
 rmark_stack_node:
