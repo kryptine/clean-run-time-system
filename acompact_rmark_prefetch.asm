@@ -279,9 +279,16 @@ rmarkp_add_item3:
 	mov	rbp,qword ptr rmarkp_queue_first+0
 	mov	rdx,qword ptr rmarkp_n_queue_items_16+0
 
+ ifdef PIC
+	lea	r9,rmarkp_queue+0
+	mov	qword ptr [r9+rbp],rcx
+	mov	qword ptr 8[r9+rbp],rsi
+	mov	qword ptr 16[r9+rbp],rsi
+ else
 	mov	qword ptr rmarkp_queue[rbp],rcx
 	mov	qword ptr rmarkp_queue+8[rbp],rsi
 	mov	qword ptr rmarkp_queue+16[rbp],rsi
+ endif
 	add	rbp,32
 	and	rbp,7*32
 
@@ -330,8 +337,13 @@ rmarkp_last_item_in_queue:
 
 	mov	rax,qword ptr neg_heap_p3+0
 
+ ifdef PIC
+	mov	rsi,qword ptr 8[r9+rbx]
+	mov	rbx,qword ptr 16[r9+rbx]
+ else
 	mov	rsi,qword ptr rmarkp_queue+8[rbx]
 	mov	rbx,qword ptr rmarkp_queue+16[rbx]
+ endif
 
 	add	rax,rcx
 
