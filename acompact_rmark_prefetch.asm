@@ -37,7 +37,12 @@ rmarkp_more_stack_nodes:
 	mov	rbx,rax 
 	and	rax,31*8
 	shr	rbx,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	eax,dword ptr [r9+rax]
+ else
 	mov	eax,dword ptr (bit_set_table2)[rax]
+ endif
 	mov	ebp,dword ptr [rdi+rbx*4]
 	test	rbp,rax 
 	jne	rmarkp_stack_nodes1
@@ -102,7 +107,12 @@ rmarkp_node_:
 	mov	rdx,rax 
 	and	rax,31*8
 	shr	rdx,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	eax,dword ptr [r9+rax]
+ else
 	mov	eax,dword ptr (bit_set_table2)[rax]
+ endif
 	test	eax,dword ptr [rdi+rdx*4]
 	jne	rmarkp_reverse_and_mark_next_node
 
@@ -110,9 +120,16 @@ rmarkp_node_:
 	mov	rdx,qword ptr rmarkp_n_queue_items_16+0
 
 	prefetch	[rcx]
+ ifdef PIC
+ 	lea	r9,rmarkp_queue+0
+	mov	qword ptr [r9+rbp],rcx
+	mov	qword ptr 8[r9+rbp],rsi
+	mov	qword ptr 16[r9+rbp],rbx
+ else
 	mov	qword ptr rmarkp_queue[rbp],rcx
 	mov	qword ptr rmarkp_queue+8[rbp],rsi
 	mov	qword ptr rmarkp_queue+16[rbp],rbx
+ endif
 	lea	rbx,[rbp+rdx]
 	add	rbp,32
 
@@ -140,7 +157,12 @@ rmarkp_add_items:
 	mov	rdx,rax
 	and	rax,31*8
 	shr	rdx,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	eax,dword ptr [r9+rax]
+ else
 	mov	eax,dword ptr bit_set_table2[rax]
+ endif
 	mov	ebp,dword ptr [rdi+rdx*4]
 	test	rbp,rax
 	je	rmarkp_add_item
@@ -173,7 +195,12 @@ rmarkp_add_items2:
 	mov	rdx,rax
 	and	rax,31*8
 	shr	rdx,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	eax,dword ptr [r9+rax]
+ else
 	mov	eax,dword ptr bit_set_table2[rax]
+ endif
 	mov	ebp,dword ptr [rdi+rdx*4]
 	test	rbp,rax
 	je	rmarkp_add_item2
@@ -189,9 +216,16 @@ rmarkp_add_item2:
 	mov	rbp,qword ptr rmarkp_queue_first+0
 	mov	rdx,qword ptr rmarkp_n_queue_items_16+0
 
+ ifdef PIC
+ 	lea	r9,rmarkp_queue+0
+	mov	qword ptr [r9+rbp],rcx
+	mov	qword ptr 8[r9+rbp],rsi
+	mov	qword ptr 16[r9+rbp],-1
+ else
 	mov	qword ptr rmarkp_queue[rbp],rcx
 	mov	qword ptr rmarkp_queue+8[rbp],rsi
 	mov	qword ptr rmarkp_queue+16[rbp],-1
+ endif
 	add	rbp,32
 	and	rbp,7*32
 
@@ -221,7 +255,12 @@ rmarkp_add_items3:
 	mov	rdx,rax
 	and	rax,31*8
 	shr	rdx,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	eax,dword ptr [r9+rax]
+ else
 	mov	eax,dword ptr bit_set_table2[rax]
+ endif
 	mov	ebp,[rdi+rdx*4]
 	test	rbp,rax
 	je	rmarkp_add_item3
@@ -260,9 +299,16 @@ rmarkp_add_item:
 	mov	rbp,qword ptr rmarkp_queue_first+0
 	mov	rdx,qword ptr rmarkp_n_queue_items_16+0
 
+ ifdef PIC
+ 	lea	r9,rmarkp_queue+0
+	mov	qword ptr [r9+rbp],rcx
+	mov	qword ptr 8[r9+rbp],rsi
+	mov	qword ptr 16[r9+rbp],rsi
+ else
 	mov	qword ptr rmarkp_queue[rbp],rcx
 	mov	qword ptr rmarkp_queue+8[rbp],rsi
 	mov	qword ptr rmarkp_queue+16[rbp],rsi
+ endif
 	add	rbp,32
 	and	rbp,7*32
 
@@ -275,7 +321,12 @@ rmarkp_add_item:
 	jne	rmarkp_add_items
 
 rmarkp_last_item_in_queue:
+ ifdef PIC
+	lea	r9,rmarkp_queue+0
+	mov	rcx,qword ptr [r9+rbx]
+ else
 	mov	rcx,qword ptr rmarkp_queue[rbx]
+ endif
 
 	mov	rax,qword ptr neg_heap_p3+0
 
@@ -291,7 +342,12 @@ rmarkp_node_no_prefetch:
 	mov	rdx,rax 
 	and	rax,31*8
 	shr	rdx,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	eax,dword ptr [r9+rax]
+ else
 	mov	eax,dword ptr (bit_set_table2)[rax]
+ endif
 	mov	ebp,dword ptr [rdi+rdx*4]
 	test	rbp,rax 
 	jne	rmarkp_reverse_and_mark_next_node
@@ -337,7 +393,12 @@ rmarkp_hnf_3_:
 	mov	rbx,rax 
 	and	rax,31*8
 	shr	rbx,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	eax,dword ptr [r9+rax]
+ else
 	mov	eax,dword ptr (bit_set_table2)[rax]
+ endif
 	test	eax,[rdi+rbx*4]
 	jne	rmarkp_shared_argument_part
 
@@ -423,7 +484,12 @@ rmarkp_record_3_bb:
 	mov	rbp,rax 
 	and	rax,31*8
 	shr	rbp,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	eax,dword ptr [r9+rax]
+ else
 	mov	eax,dword ptr (bit_set_table2)[rax]
+ endif
 	or	dword ptr [rdi+rbp*4],eax 
 	
 	cmp	rdx,rcx 
@@ -445,7 +511,12 @@ rmarkp_bit_in_same_word1:
 	mov	rbp,rax 
 	and	rax,31*8
 	shr	rbp,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	eax,dword ptr [r9+rax]
+ else
 	mov	eax,dword ptr (bit_set_table2)[rax]
+ endif
 	or	dword ptr [rdi+rbp*4],eax 
 
 	mov	rbp,qword ptr [rdx]
@@ -469,7 +540,12 @@ rmarkp_record_3_ab:
 	mov	rbp,rax 
 	and	rax,31*8
 	shr	rbp,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	eax,dword ptr [r9+rax]
+ else
 	mov	eax,dword ptr (bit_set_table2)[rax]
+ endif
 	or	dword ptr [rdi+rbp*4],eax 
 
 	cmp	rdx,rcx 
@@ -490,7 +566,12 @@ rmarkp_bit_in_same_word2:
 	mov	rbp,rax 
 	and	rax,31*8
 	shr	rbp,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	eax,dword ptr [r9+rax]
+ else
 	mov	eax,dword ptr (bit_set_table2)[rax]
+ endif
 	or	dword ptr [rdi+rbp*4],eax 
 
 	mov	rbp,qword ptr [rdx]
@@ -517,7 +598,12 @@ rmarkp_record_3_aab:
 	mov	rbp,rax 
 	and	rax,31*8
 	shr	rbp,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	eax,dword ptr [r9+rax]
+ else
 	mov	eax,dword ptr (bit_set_table2)[rax]
+ endif
 	test	eax,dword ptr [rdi+rbp*4]
 	jne	rmarkp_shared_argument_part
 	or	dword ptr [rdi+rbp*4],eax 
@@ -575,7 +661,12 @@ rmarkp_indirection_node:
 	mov	rbp,rdx 
 	and	rbp,31*8
 	shr	rdx,8
+ ifdef PIC
+	lea	r9,bit_clear_table2+0
+	mov	ebp,dword ptr [r9+rbp]
+ else
 	mov	ebp,dword ptr (bit_clear_table2)[rbp]
+ endif
 	and	dword ptr [rdi+rdx*4],ebp 
 
 	mov	rdx,rcx
@@ -603,7 +694,12 @@ rmarkp_selector_node_1:
 	mov	rbp,rbx 
 	shr	rbx,5
 	and	rbp,31
+ ifdef PIC
+	lea	r9,bit_set_table+0
+	mov	ebp,dword ptr [r9+rbp*4]
+ else
 	mov	ebp,dword ptr (bit_set_table)[rbp*4]
+ endif
 	mov	ebx,dword ptr [rdi+rbx*4]
 	and	rbx,rbp 
 	jne	rmarkp_hnf_1
@@ -625,7 +721,12 @@ rmarkp_large_tuple_or_record:
 	mov	rbp,rbx 
 	shr	rbx,5
 	and	rbp,31
+ ifdef PIC
+	lea	r9,bit_set_table+0
+	mov	ebp,dword ptr [r9+rbp*4]
+ else
 	mov	ebp,dword ptr (bit_set_table)[rbp*4]
+ endif
 	mov	ebx,dword ptr [rdi+rbx*4]
 	and	rbx,rbp 
 	jne	rmarkp_hnf_1
@@ -639,13 +740,23 @@ rmarkp_large_tuple_or_record:
 	mov	d3,rbx 
 	and	d3,31*8
 	shr	rbx,8
+ ifdef PIC
+	lea	r9,bit_clear_table2+0
+	mov	d3d,dword ptr [r9+d3]
+ else
 	mov	d3d,dword ptr (bit_clear_table2)[d3]
+ endif
 	and	dword ptr [rdi+rbx*4],d3d
 
 	movzx	eax,word ptr 4[rax]
 	mov	rbx,qword ptr pointer_compare_address+0
 
+ ifdef PIC
+	lea	r9,__indirection+0
+	mov	qword ptr (-8)[rcx],r9
+ else
 	mov	qword ptr (-8)[rcx],offset __indirection
+ endif
 
 	cmp	rax,16
 	jl	rmarkp_tuple_or_record_selector_node_2
@@ -700,7 +811,12 @@ rmarkp_record_selector_node_1:
 	mov	rbp,rbx
 	shr	rbx,5
 	and	rbp,31
+ ifdef PIC
+	lea	r9,bit_set_table+0
+	mov	ebp,dword ptr [r9+rbp*4]
+ else
 	mov	ebp,dword ptr (bit_set_table)[rbp*4]
+ endif
 	mov	ebx,dword ptr [rdi+rbx*4]
 	and	rbx,rbp
 	jne	rmarkp_hnf_1
@@ -722,7 +838,12 @@ rmarkp_record_selector_node_1:
 	mov	rbp,rbx 
 	shr	rbx,5
 	and	rbp,31
+ ifdef PIC
+	lea	r9,bit_set_table+0
+	mov	ebp,dword ptr [r9+rbp*4]
+ else
 	mov	ebp,dword ptr (bit_set_table)[rbp*4]
+ endif
 	mov	ebx,dword ptr [rdi+rbx*4]
 	and	rbx,rbp 
 	jne	rmarkp_hnf_1
@@ -736,13 +857,23 @@ rmarkp_small_tuple_or_record:
 	mov	d3,rbx
 	and	d3,31*8
 	shr	rbx,8
+ ifdef PIC
+	lea	r9,bit_clear_table2+0
+	mov	d3d,dword ptr [r9+d3]
+ else
 	mov	d3d,dword ptr (bit_clear_table2)[d3]
+ endif
 	and	dword ptr [rdi+rbx*4],d3d 
 
 	movzx	eax,word ptr 4[rax]
 	mov	rbx,qword ptr pointer_compare_address+0
 
+ ifdef PIC
+	lea	r9,__indirection+0
+	mov	qword ptr (-8)[rcx],r9
+ else
 	mov	qword ptr (-8)[rcx],offset __indirection
+ endif
 
 	cmp	rax,16
 	jle	rmarkp_tuple_or_record_selector_node_2
@@ -763,7 +894,12 @@ rmarkp_strict_record_selector_node_1:
 	mov	rbp,rbx 
 	shr	rbx,5
 	and	rbp,31
+ ifdef PIC
+	lea	r9,bit_set_table+0
+	mov	ebp,dword ptr [r9+rbp*4]
+ else
 	mov	ebp,dword ptr (bit_set_table)[rbp*4]
+ endif
 	mov	ebx,dword ptr [rdi+rbx*4]
 	and	rbx,rbp 
 	jne	rmarkp_hnf_1
@@ -783,7 +919,12 @@ rmarkp_strict_record_selector_node_1:
 
 	shr	rbx,8
 	and	rbp,31*8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	ebp,dword ptr [r9+rbp]
+ else
 	mov	ebp,dword ptr (bit_set_table2)[rbp]
+ endif
 	mov	ebx,dword ptr [rdi+rbx*4]
 	and	rbx,rbp
 	jne	rmarkp_hnf_1
@@ -952,10 +1093,20 @@ rmarkp_closure_with_unboxed_arguments:
 	jmp	rmarkp_next_node
 
 rmarkp_hnf_0:
+ ifdef PIC
+	lea	r9,dINT+2+0
+	cmp	rax,r9
+ else
 	cmp	rax,offset dINT+2
+ endif
 	je	rmarkp_int_3
 
+ ifdef PIC
+	lea	r9,CHAR+2+0
+	cmp	rax,r9
+ else
 	cmp	rax,offset CHAR+2
+ endif
  	je	rmarkp_char_3
 
 	jb	rmarkp_no_normal_hnf_0
@@ -966,7 +1117,12 @@ rmarkp_hnf_0:
 	mov	rdx,rbp 
 	and	rdx,31*8
 	shr	rbp,8
+ ifdef PIC
+	lea	r9,bit_clear_table2+0
+	mov	edx,dword ptr [r9+rdx]
+ else
 	mov	edx,dword ptr (bit_clear_table2)[rdx]
+ endif
 	and	dword ptr [rdi+rbp*4],edx 
 
  ifdef NEW_DESCRIPTORS
@@ -986,7 +1142,12 @@ rmarkp_int_3:
 	jnc	rmarkp_next_node
 
 	shl	rbp,4
+ ifdef PIC
+	lea	rdx,small_integers+0
+	add	rdx,rbp
+ else
 	lea	rdx,(small_integers)[rbp]
+ endif
 	mov	rbp,qword ptr neg_heap_p3+0
 	mov	qword ptr [rsi],rdx 
 	add	rbp,rcx 
@@ -994,7 +1155,12 @@ rmarkp_int_3:
 	mov	rdx,rbp 
 	and	rdx,31*8
 	shr	rbp,8
+ ifdef PIC
+	lea	r9,bit_clear_table2+0
+	mov	edx,dword ptr [r9+rdx]
+ else
 	mov	edx,dword ptr (bit_clear_table2)[rdx]
+ endif
 	and	dword ptr [rdi+rbp*4],edx 
 
 	cmp	rcx,rbx
@@ -1007,14 +1173,24 @@ rmarkp_char_3:
 	mov	rbp,qword ptr neg_heap_p3+0
 
 	shl	rdx,4
-	add	rbp,rcx 
+	add	rbp,rcx
+ ifdef PIC
+	lea	r9,static_characters+0
+	add	rdx,r9
+ else
 	add	rdx,offset static_characters
+ endif
 	mov	qword ptr [rsi],rdx 
 
 	mov	rdx,rbp 
 	and	rdx,31*8
 	shr	rbp,8
+ ifdef PIC
+	lea	r9,bit_clear_table2+0
+	mov	edx,dword ptr [r9+rdx]
+ else
 	mov	edx,dword ptr (bit_clear_table2)[rdx]
+ endif
 	and	dword ptr [rdi+rbp*4],edx
 
 	cmp	rcx,rbx
@@ -1072,7 +1248,12 @@ rmarkp_b_array:
 	mov	rbp,rax
 	and	rax,31*8
 	shr	rbp,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	eax,dword ptr [r9+rax]
+ else
 	mov	eax,dword ptr (bit_set_table2)[rax]
+ endif
 	or	dword ptr [rdi+rbp*4],eax
 
 	jmp	rmarkp_next_node
@@ -1102,7 +1283,12 @@ rmarkp_lr_array:
 	mov	rdx,rbx 
 	and	rbx,31
 	shr	rdx,5
+ ifdef PIC
+	lea	r9,bit_set_table+0
+	mov	ebx,dword ptr [r9+rbx*4]
+ else
 	mov	ebx,dword ptr (bit_set_table)[rbx*4]
+ endif
 	or	dword ptr [rdi+rdx*4],ebx 
 
 	cmp	rax,1
@@ -1158,7 +1344,12 @@ rmarkp_array_nodes:
 	mov	rbx,rax 
 	and	rax,31*8
 	shr	rbx,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	eax,dword ptr [r9+rax]
+ else
 	mov	eax,dword ptr (bit_set_table2)[rax]
+ endif
 	mov	ebp,dword ptr [rdi+rbx*4]
 	test	rbp,rax 
 	jne	rmarkp_array_nodes1
