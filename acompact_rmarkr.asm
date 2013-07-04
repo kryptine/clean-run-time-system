@@ -771,7 +771,7 @@ rmarkr_int_3:
 	and	dword ptr [rdi+rbx*4],ecx 
 
  ifdef PIC
-	lea	rcx,small_integers
+	lea	rcx,small_integers+0
 	add	rcx,rbp
  else
 	lea	rcx,(small_integers)[rbp]
@@ -797,7 +797,7 @@ rmarkr_char_3:
 
 	shl	rax,4
  ifdef PIC
-	lea	rcx,static_characters
+	lea	rcx,static_characters+0
 	add	rcx,rax
  else
 	lea	rcx,static_characters[rax]
