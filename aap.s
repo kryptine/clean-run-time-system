@@ -1030,7 +1030,12 @@ add_empty_node_2:
 	sub	r15,3
 	jb	add_empty_node_2_gc
 add_empty_node_2_gc_:
+ .ifdef PIC
+	lea	rbp,__cycle__in__spine[rip]
+	mov	qword ptr [rdi],rbp
+ .else
 	mov	qword ptr [rdi],offset __cycle__in__spine
+ .endif
 	mov	r8,rdx
 	mov	rdx,rcx
 	mov	rcx,rdi
@@ -1045,7 +1050,12 @@ add_empty_node_3:
 	jb	add_empty_node_3_gc
 add_empty_node_3_gc_:
 	mov	qword ptr [rsi],rdi
+ .ifdef PIC
+	lea	rbp,__cycle__in__spine[rip]
+	mov	qword ptr [rdi],rbp
+ .else
 	mov	qword ptr [rdi],offset __cycle__in__spine
+ .endif
 	add	rsi,8
 	add	rdi,24
 	ret
@@ -1060,7 +1070,12 @@ add_empty_node_4_gc_:
 	mov	r9,qword ptr -8[rsi]
 	mov	qword ptr [rsi],r9
 	mov	qword ptr -8[rsi],rdi
+ .ifdef PIC
+	lea	rbp,__cycle__in__spine[rip]
+	mov	qword ptr [rdi],rbp
+ .else
 	mov	qword ptr [rdi],offset __cycle__in__spine
+ .endif
 	add	rsi,8
 	add	rdi,24
 	ret
@@ -1077,7 +1092,12 @@ add_empty_node_5_gc_:
 	mov	r9,qword ptr -16[rsi]
 	mov	qword ptr -8[rsi],r9
 	mov	qword ptr -16[rsi],rdi
+ .ifdef PIC
+	lea	rbp,__cycle__in__spine[rip]
+	mov	qword ptr [rdi],rbp
+ .else
 	mov	qword ptr [rdi],offset __cycle__in__spine
+ .endif
 	add	rsi,8
 	add	rdi,24
 	ret
@@ -1096,7 +1116,12 @@ add_empty_node_6_gc_:
 	mov	r9,qword ptr -24[rsi]
 	mov	qword ptr -16[rsi],r9
 	mov	qword ptr -24[rsi],rdi
+ .ifdef PIC
+	lea	rbp,__cycle__in__spine[rip]
+	mov	qword ptr [rdi],rbp
+ .else
 	mov	qword ptr [rdi],offset __cycle__in__spine
+ .endif
 	add	rsi,8
 	add	rdi,24
 	ret
@@ -1117,7 +1142,12 @@ add_empty_node_7_gc_:
 	mov	r9,qword ptr -32[rsi]
 	mov	qword ptr -24[rsi],r9
 	mov	qword ptr -32[rsi],rdi
+ .ifdef PIC
+	lea	rbp,__cycle__in__spine[rip]
+	mov	qword ptr [rdi],rbp
+ .else
 	mov	qword ptr [rdi],offset __cycle__in__spine
+ .endif
 	add	rsi,8
 	add	rdi,24
 	ret
@@ -1140,7 +1170,12 @@ add_empty_node_8_gc_:
 	mov	r9,qword ptr -40[rsi]
 	mov	qword ptr -32[rsi],r9
 	mov	qword ptr -40[rsi],rdi
+ .ifdef PIC
+	lea	rbp,__cycle__in__spine[rip]
+	mov	qword ptr [rdi],rbp
+ .else
 	mov	qword ptr [rdi],offset __cycle__in__spine
+ .endif
 	add	rsi,8
 	add	rdi,24
 	ret
@@ -1165,7 +1200,12 @@ add_empty_node_9_gc_:
 	mov	r9,qword ptr -48[rsi]
 	mov	qword ptr -40[rsi],r9
 	mov	qword ptr -48[rsi],rdi
+ .ifdef PIC
+	lea	rbp,__cycle__in__spine[rip]
+	mov	qword ptr [rdi],rbp
+ .else
 	mov	qword ptr [rdi],offset __cycle__in__spine
+ .endif
 	add	rsi,8
 	add	rdi,24
 	ret
@@ -1192,7 +1232,12 @@ add_empty_node_10_gc_:
 	mov	r9,qword ptr -56[rsi]
 	mov	qword ptr -48[rsi],r9
 	mov	qword ptr -56[rsi],rdi
+ .ifdef PIC
+	lea	rbp,__cycle__in__spine[rip]
+	mov	qword ptr [rdi],rbp
+ .else
 	mov	qword ptr [rdi],offset __cycle__in__spine
+ .endif
 	add	rsi,8
 	add	rdi,24
 	ret
@@ -1221,7 +1266,12 @@ add_empty_node_11_gc_:
 	mov	r9,qword ptr -64[rsi]
 	mov	qword ptr -56[rsi],r9
 	mov	qword ptr -64[rsi],rdi
+ .ifdef PIC
+	lea	rbp,__cycle__in__spine[rip]
+	mov	qword ptr [rdi],rbp
+ .else
 	mov	qword ptr [rdi],offset __cycle__in__spine
+ .endif
 	add	rsi,8
 	add	rdi,24
 	ret
@@ -1264,7 +1314,12 @@ add_empty_node_12_lp:
 	sub	rbx,1
 	jne	add_empty_node_12_lp
 	mov	qword ptr [rax],rdi
+ .ifdef PIC
+	lea	rbp,__cycle__in__spine[rip]
+	mov	qword ptr [rdi],rbp
+ .else
 	mov	qword ptr [rdi],offset __cycle__in__spine
+ .endif
 	add	rsi,8
 	add	rdi,24
 	ret
@@ -1306,7 +1361,12 @@ add_empty_node_13_lp:
 	sub	rbx,1
 	jne	add_empty_node_13_lp
 	mov	qword ptr -8[rax],rdi
+ .ifdef PIC
+	lea	rbp,__cycle__in__spine[rip]
+	mov	qword ptr [rdi],rbp
+ .else
 	mov	qword ptr [rdi],offset __cycle__in__spine
+ .endif
 	add	rsi,8
 	add	rdi,24
 	ret
@@ -1350,7 +1410,12 @@ add_empty_node_14_lp:
 	sub	rbx,1
 	jne	add_empty_node_14_lp
 	mov	qword ptr -16[rax],rdi
+ .ifdef PIC
+	lea	rbp,__cycle__in__spine[rip]
+	mov	qword ptr [rdi],rbp
+ .else
 	mov	qword ptr [rdi],offset __cycle__in__spine
+ .endif
 	add	rsi,8
 	add	rdi,24
 	ret
@@ -1396,7 +1461,12 @@ add_empty_node_15_lp:
 	sub	rbx,1
 	jne	add_empty_node_15_lp
 	mov	qword ptr -24[rax],rdi
+ .ifdef PIC
+	lea	rbp,__cycle__in__spine[rip]
+	mov	qword ptr [rdi],rbp
+ .else
 	mov	qword ptr [rdi],offset __cycle__in__spine
+ .endif
 	add	rsi,8
 	add	rdi,24
 	ret
