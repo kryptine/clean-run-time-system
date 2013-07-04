@@ -807,7 +807,7 @@ move_record_2_ab:
 	cmp	rdx,rcx 
 	jb	move_record_2_1
 
-	cmp	rdx,qword ptr end_heap_p3
+	cmp	rdx,qword ptr end_heap_p3+0
 	jae	move_record_2_1
 
 	lea	rax,1[rdi]
@@ -898,12 +898,12 @@ skip_zeros_a:
 	test	rsi,rsi
 	je	skip_zeros_a
 
-	mov	rbp,qword ptr neg_heap_vector_plus_4
+	mov	rbp,qword ptr neg_heap_vector_plus_4+0
 	add	rbp,r8
 
 	shl	rbp,6
 
-	add	rbp,qword ptr heap_p3
+	add	rbp,qword ptr heap_p3+0
 
 bsf_and_end_array_bit:
 	mov	rax,rsi
@@ -1105,7 +1105,7 @@ move_array_lp1:
 	cmp	rax,rcx 
 	jb	move_array_element
 
-	cmp	rax,qword ptr end_heap_p3
+	cmp	rax,qword ptr end_heap_p3+0
 	jnc	move_array_element
 
 	mov	rsi,qword ptr [rax]
