@@ -84,8 +84,13 @@ end_rmarkp_cafs:
 
 compact_heap:
 
+ ifdef PIC
+	lea	rcx,finalizer_list+0+0
+	lea	rdx,free_finalizer_list+0
+ else
 	mov	rcx,offset finalizer_list+0
 	mov	rdx,offset free_finalizer_list+0
+ endif
 
 	mov	rbp,qword ptr [rcx]
 determine_free_finalizers_after_compact1:
@@ -95,10 +100,15 @@ determine_free_finalizers_after_compact1:
 
 	mov	rax,qword ptr neg_heap_p3+0
 	add	rax,rbp 
-	mov	rbx,rax 
+	mov	rbx,rax
 	and	rax,31*8
 	shr	rbx,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	esi,dword ptr [r9+rax]
+ else
 	mov	esi,dword ptr (bit_set_table2)[rax]
+ endif
 	test	esi,dword ptr [rdi+rbx*4]
 	je	finalizer_not_used_after_compact1
 
@@ -114,7 +124,12 @@ finalizer_find_descriptor:
 	test	rax,1
 	jne	finalizer_find_descriptor_lp
 
+ ifdef PIC
+	lea	r9,e____system__kFinalizerGCTemp+2+0
+	mov	qword ptr [rsi],r9
+ else
 	mov	qword ptr [rsi],offset e____system__kFinalizerGCTemp+2
+ endif
 
 	cmp	rbp,rcx 
 	ja	finalizer_no_reverse
@@ -130,7 +145,12 @@ finalizer_no_reverse:
 	jmp	determine_free_finalizers_after_compact1
 
 finalizer_not_used_after_compact1:
+ ifdef PIC
+	lea	r9,e____system__kFinalizerGCTemp+2+0
+	mov	qword ptr [rbp],r9
+ else
 	mov	qword ptr [rbp],offset e____system__kFinalizerGCTemp+2
+ endif
 
 	mov	qword ptr [rdx],rbp 
 	lea	rdx,8[rbp]
@@ -150,17 +170,31 @@ end_finalizers_after_compact1:
 	test	rcx,3
 	jne	finalizer_list_already_reversed
 	mov	rax,qword ptr [rcx]
+ ifdef PIC
+	lea	r9,finalizer_list+1+0
+	mov	qword ptr [rcx],r9
+ else
 	mov	qword ptr [rcx],offset finalizer_list+1
+ endif
 	mov	qword ptr finalizer_list+0,rax 
 finalizer_list_already_reversed:
 finalizer_list_empty:
 
+ ifdef PIC
+	lea	rbp,free_finalizer_list+0
+ else
 	mov	rbp,offset free_finalizer_list
+ endif
 	lea	r9,__Nil-8+0
 	cmp	qword ptr [rbp],r9
 	je	free_finalizer_list_empty
 
+ ifdef PIC
+	lea	r9,free_finalizer_list+8+0
+	mov	qword ptr end_vector+0,r9
+ else
 	mov	qword ptr end_vector+0,offset free_finalizer_list+8
+ endif
 
 	test	qword ptr flags+0,4096
 	je	no_pmarkr
@@ -209,10 +243,13 @@ end_skip_zeros:
 	add	rbp,r8
 
 	shl	rbp,6
-	add	rbp,qword ptr heap_p3
+	add	rbp,qword ptr heap_p3+0
 
 bsf_and_copy_nodes:
 	movzx	rax,sil
+ ifdef PIC
+	lea	r9,first_one_bit_table[rip]
+ endif
 	test	rax,rax
 	jne	found_bit1
 	movzx	rcx,si
@@ -223,24 +260,39 @@ bsf_and_copy_nodes:
 	jne	found_bit3
 	mov	rcx,rsi
 	shr	rcx,24
+ ifdef PIC
+	movzx	rcx,byte ptr [r9+rcx*1]
+ else
 	movzx	rcx,byte ptr first_one_bit_table[rcx*1]
+ endif
 	add	rcx,24
 	jmp	copy_nodes
 
 found_bit3:
 	shr	rax,16
+ ifdef PIC
+	movzx	rcx,byte ptr [r9+rax*1]
+ else
 	movzx	rcx,byte ptr first_one_bit_table[rax*1]
+ endif
 	add	rcx,16
 	jmp	copy_nodes
 
 found_bit2:
+ ifdef PIC
+	movzx	rcx,byte ptr [r9+rcx*1]
+ else
 	movzx	rcx,byte ptr first_one_bit_table[rcx*1]
+ endif
 	add	rcx,8
 	jmp	copy_nodes
 
 found_bit1:
+ ifdef PIC
+	movzx	rcx,byte ptr [r9+rax*1]
+ else
 	movzx	rcx,byte ptr first_one_bit_table[rax*1]
-
+ endif
 copy_nodes:
 	mov	rax,qword ptr [rbp+rcx*8]
 	shr	esi,1
@@ -292,7 +344,12 @@ update_up_list_1r:
 	shr	rax,8
 	and	rcx,31*8
 
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	ecx,dword ptr [r9+rcx*1]
+ else
 	mov	ecx,dword ptr bit_set_table2[rcx*1]
+ endif
 	mov	eax,dword ptr [rbx+rax*4]
 
 	and	rax,rcx 
@@ -656,7 +713,12 @@ move_record_3_1b:
 	mov	rbp,rax 
 	and	rbp,31*8
 	shr	rax,8
+ ifdef PIC
+	lea	r9,bit_set_table2+0
+	mov	ebp,dword ptr [r9+rbp]
+ else
 	mov	ebp,dword ptr bit_set_table2[rbp]
+ endif
 	test	ebp,dword ptr [rbx+rax*4]
 	je	not_linked_record_argument_part_3_b
 
@@ -666,7 +728,11 @@ move_record_3_1b:
 	mov	rbp,rax 
 	and	rbp,31*8
 	shr	rax,8
+ ifdef PIC
+	mov	ebp,dword ptr [r9+rbp]
+ else
 	mov	ebp,dword ptr bit_set_table2[rbp]
+ endif
 	or	dword ptr [rbx+rax*4],ebp
 	pop	rbp
 
@@ -681,7 +747,12 @@ not_linked_record_argument_part_3_b:
 	mov	rbp,rax 
 	and	rbp,31*8
 	shr	rax,8
+ ifdef PIC
+	lea	r9,bit_clear_table2+0
+	mov	ebp,dword ptr [r9+rbp]
+ else
 	mov	ebp,dword ptr bit_clear_table2[rbp]
+ endif
 	and	dword ptr [rbx+rax*4],ebp 
 	pop	rbp 
 
@@ -714,7 +785,12 @@ bit_in_next_word:
 	mov	esi,dword ptr [r8]
 	add	r8,4
 
+ ifdef PIC
+	lea	r9,bit_clear_table+0
+	and	esi,dword ptr [r9+rbx*4]
+ else
 	and	esi,dword ptr bit_clear_table[rbx*4]
+ endif
 
 	test	rsi,rsi
 	je	skip_zeros
@@ -772,9 +848,19 @@ copy_normal_hnf_0:
 	jmp	find_non_zero_long
 
 move_hnf_0:
+ ifdef PIC
+	lea	r9,__STRING__+2+0
+	cmp	rax,r9
+ else
 	cmp	rax,offset __STRING__+2
+ endif
 	jbe	move_string_or_array
+ ifdef PIC
+	lea	r9,CHAR+2+0
+	cmp	rax,r9
+ else
 	cmp	rax,offset CHAR+2
+ endif
 	jbe	move_real_int_bool_or_char
 
 	test	rsi,rsi
@@ -821,6 +907,9 @@ skip_zeros_a:
 
 bsf_and_end_array_bit:
 	mov	rax,rsi
+ ifdef PIC
+	lea	r9,first_one_bit_table+0
+ endif
 	mov	rdx,rsi
 	and	rax,0ffh
 	jne	a_found_bit1
@@ -831,21 +920,37 @@ bsf_and_end_array_bit:
 	and	rax,0ff0000h
 	jne	a_found_bit3
 	shr	rdx,24
+ ifdef PIC
+	movzx	rcx,byte ptr [r9+rdx*1]
+ else
 	movzx	rcx,byte ptr first_one_bit_table[rdx*1]
+ endif
 	add	rcx,24
 	jmp	end_array_bit
 a_found_bit3:
 	shr	rax,16
+ ifdef PIC
+	movzx	rcx,byte ptr [r9+rax*1]
+ else
 	movzx	rcx,byte ptr first_one_bit_table[rax*1]
+ endif
 	add	rcx,16
 	jmp	end_array_bit
 a_found_bit2:
 	shr	rdx,8
+ ifdef PIC
+	movzx	rcx,byte ptr [r9+rdx*1]
+ else
 	movzx	rcx,byte ptr first_one_bit_table[rdx*1]
+ endif
 	add	rcx,8
 	jmp	end_array_bit
 a_found_bit1:
+ ifdef PIC
+	movzx	rcx,byte ptr [r9+rax*1]
+ else
 	movzx	rcx,byte ptr first_one_bit_table[rax*1]
+ endif
 
 end_array_bit:
 	lea	rbx,[rbp+rcx*8]
@@ -875,9 +980,19 @@ move_b_array:
 
 move_strict_basic_array:
 	mov	rax,rdx
+ ifdef PIC
+	lea	r9,dINT+2+0
+	cmp	rbx,r9
+ else
 	cmp	rbx,offset dINT+2
+ endif
 	jle	cp_s_arg_lp3
+ ifdef PIC
+	lea	r9,BOOL+2+0
+	cmp	rbx,r9
+ else
 	cmp	rbx,offset BOOL+2
+ endif
 	je	move_bool_array
 
 move_int32_or_real32_array:
@@ -1157,7 +1272,12 @@ restore_finalizer_descriptors:
 	cmp	rcx,r9
 	je	end_restore_finalizer_descriptors
 
+ ifdef PIC
+	lea	r9,e____system__kFinalizer+2+0
+	mov	qword ptr [rcx],r8
+ else
 	mov	qword ptr [rcx],offset e____system__kFinalizer+2
+ endif
 	mov	rcx,qword ptr 8[rcx]
 	jmp	restore_finalizer_descriptors
 
