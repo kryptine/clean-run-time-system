@@ -1033,7 +1033,12 @@ add_empty_node_2:
 	sub	d7,3
 	jb	add_empty_node_2_gc
 add_empty_node_2_gc_:
+ ifdef PIC
+	lea	rbp,__cycle__in__spine+0
+	mov	qw [a6],rbp
+ else
 	mov	qw [a6],offset __cycle__in__spine
+ endif
 	mov	a2,a1
 	mov	a1,a0
 	mov	a0,a6
@@ -1048,7 +1053,12 @@ add_empty_node_3:
 	jb	add_empty_node_3_gc
 add_empty_node_3_gc_:
 	mov	qw [a5],a6
+ ifdef PIC
+	lea	rbp,__cycle__in__spine+0
+	mov	qw [a6],rbp
+ else
 	mov	qw [a6],offset __cycle__in__spine
+ endif
 	add	a5,8
 	add	a6,24
 	ret
@@ -1063,7 +1073,12 @@ add_empty_node_4_gc_:
 	mov	a3,qw -8[a5]
 	mov	qw [a5],a3
 	mov	qw -8[a5],a6
+ ifdef PIC
+	lea	rbp,__cycle__in__spine+0
+	mov	qw [a6],rbp
+ else
 	mov	qw [a6],offset __cycle__in__spine
+ endif
 	add	a5,8
 	add	a6,24
 	ret
@@ -1080,7 +1095,12 @@ add_empty_node_5_gc_:
 	mov	a3,qw -16[a5]
 	mov	qw -8[a5],a3
 	mov	qw -16[a5],a6
+ ifdef PIC
+	lea	rbp,__cycle__in__spine+0
+	mov	qw [a6],rbp
+ else
 	mov	qw [a6],offset __cycle__in__spine
+ endif
 	add	a5,8
 	add	a6,24
 	ret
@@ -1099,7 +1119,12 @@ add_empty_node_6_gc_:
 	mov	a3,qw -24[a5]
 	mov	qw -16[a5],a3
 	mov	qw -24[a5],a6
+ ifdef PIC
+	lea	rbp,__cycle__in__spine+0
+	mov	qw [a6],rbp
+ else
 	mov	qw [a6],offset __cycle__in__spine
+ endif
 	add	a5,8
 	add	a6,24
 	ret
@@ -1120,7 +1145,12 @@ add_empty_node_7_gc_:
 	mov	a3,qw -32[a5]
 	mov	qw -24[a5],a3
 	mov	qw -32[a5],a6
+ ifdef PIC
+	lea	rbp,__cycle__in__spine+0
+	mov	qw [a6],rbp
+ else
 	mov	qw [a6],offset __cycle__in__spine
+ endif
 	add	a5,8
 	add	a6,24
 	ret
@@ -1143,7 +1173,12 @@ add_empty_node_8_gc_:
 	mov	a3,qw -40[a5]
 	mov	qw -32[a5],a3
 	mov	qw -40[a5],a6
+ ifdef PIC
+	lea	rbp,__cycle__in__spine+0
+	mov	qw [a6],rbp
+ else
 	mov	qw [a6],offset __cycle__in__spine
+ endif
 	add	a5,8
 	add	a6,24
 	ret
@@ -1168,7 +1203,12 @@ add_empty_node_9_gc_:
 	mov	a3,qw -48[a5]
 	mov	qw -40[a5],a3
 	mov	qw -48[a5],a6
+ ifdef PIC
+	lea	rbp,__cycle__in__spine+0
+	mov	qw [a6],rbp
+ else
 	mov	qw [a6],offset __cycle__in__spine
+ endif
 	add	a5,8
 	add	a6,24
 	ret
@@ -1195,7 +1235,12 @@ add_empty_node_10_gc_:
 	mov	a3,qw -56[a5]
 	mov	qw -48[a5],a3
 	mov	qw -56[a5],a6
+ ifdef PIC
+	lea	rbp,__cycle__in__spine+0
+	mov	qw [a6],rbp
+ else
 	mov	qw [a6],offset __cycle__in__spine
+ endif
 	add	a5,8
 	add	a6,24
 	ret
@@ -1224,7 +1269,12 @@ add_empty_node_11_gc_:
 	mov	a3,qw -64[a5]
 	mov	qw -56[a5],a3
 	mov	qw -64[a5],a6
+ ifdef PIC
+	lea	rbp,__cycle__in__spine+0
+	mov	qw [a6],rbp
+ else
 	mov	qw [a6],offset __cycle__in__spine
+ endif
 	add	a5,8
 	add	a6,24
 	ret
@@ -1267,7 +1317,12 @@ add_empty_node_12_lp:
 	sub	d1,1
 	jne	add_empty_node_12_lp
 	mov	qw [d0],a6
+ ifdef PIC
+	lea	rbp,__cycle__in__spine+0
+	mov	qw [a6],rbp
+ else
 	mov	qw [a6],offset __cycle__in__spine
+ endif
 	add	a5,8
 	add	a6,24
 	ret
@@ -1309,7 +1364,12 @@ add_empty_node_13_lp:
 	sub	d1,1
 	jne	add_empty_node_13_lp
 	mov	qw -8[d0],a6
+ ifdef PIC
+	lea	rbp,__cycle__in__spine+0
+	mov	qw [a6],rbp
+ else
 	mov	qw [a6],offset __cycle__in__spine
+ endif
 	add	a5,8
 	add	a6,24
 	ret
@@ -1353,7 +1413,12 @@ add_empty_node_14_lp:
 	sub	d1,1
 	jne	add_empty_node_14_lp
 	mov	qw -16[d0],a6
+ ifdef PIC
+	lea	rbp,__cycle__in__spine+0
+	mov	qw [a6],rbp
+ else
 	mov	qw [a6],offset __cycle__in__spine
+ endif
 	add	a5,8
 	add	a6,24
 	ret
@@ -1399,7 +1464,12 @@ add_empty_node_15_lp:
 	sub	d1,1
 	jne	add_empty_node_15_lp
 	mov	qw -24[d0],a6
+ ifdef PIC
+	lea	rbp,__cycle__in__spine+0
+	mov	qw [a6],rbp
+ else
 	mov	qw [a6],offset __cycle__in__spine
+ endif
 	add	a5,8
 	add	a6,24
 	ret
