@@ -3128,7 +3128,12 @@ guard_page_or_access_violation_exception:
 
 stack_overflow_exception:
 	mov	rax,qword ptr 8[rcx]
+ ifdef PIC
+	lea	rax,stack_overflow+0
+	mov	qword ptr (0F8h)[rax],rax
+ else
 	mov	qword ptr (0F8h)[rax],offset stack_overflow
+ endif
 
 	mov	rax,-1
 	ret
@@ -3136,7 +3141,11 @@ stack_overflow_exception:
 stack_overflow:
 	call	add_execute_time
 
+ ifdef PIC
+	lea	rbp,stack_overflow_string+0
+ else
 	mov	rbp,offset stack_overflow_string
+ endif
 	jmp	print_error
 
 IO_error:
@@ -3183,7 +3192,7 @@ print_error:
 	mov	rsp,rbp
 
 halt:
-	mov	rsp,halt_sp
+	mov	rsp,halt_sp+0
 
  ifdef PROFILE
 	call	write_profile_stack
@@ -3296,7 +3305,12 @@ eval_upd_0:
 	mov	rbp,rax
  endif
 eval_upd_1:
+ ifdef PIC
+	lea	r8,__indirection+0
+	mov	qword ptr [rdx],r8
+ else
 	mov	qword ptr [rdx],offset __indirection
+ endif
 	mov	rax,8[rdx]
 	mov	8[rdx],rcx 
 	mov	rdx,rax 
@@ -3307,7 +3321,12 @@ eval_upd_1:
 	mov	rbp,rax
  endif
 eval_upd_2:
+ ifdef PIC
+	lea	r8,__indirection+0
+	mov	qword ptr [rdx],r8
+ else
 	mov	qword ptr [rdx],offset __indirection
+ endif
 	mov	r8,8[rdx]
 	mov	8[rdx],rcx
 	mov	rdx,16[rdx]
@@ -3318,7 +3337,12 @@ eval_upd_2:
 	mov	rbp,rax
  endif
 eval_upd_3:
+ ifdef PIC
+	lea	r8,__indirection+0
+	mov	qword ptr [rdx],r8
+ else
 	mov	qword ptr [rdx],offset __indirection
+ endif
 	mov	r8,8[rdx]
 	mov	8[rdx],rcx
 	mov	[rsi],rcx
@@ -3332,7 +3356,12 @@ eval_upd_3:
 	mov	rbp,rax
  endif
 eval_upd_4:
+ ifdef PIC
+	lea	r8,__indirection+0
+	mov	qword ptr [rdx],r8
+ else
 	mov	qword ptr [rdx],offset __indirection
+ endif
 	mov	r8,8[rdx]
 	mov	8[rdx],rcx 
 	mov	[rsi],rcx 
@@ -3348,7 +3377,12 @@ eval_upd_4:
 	mov	rbp,rax
  endif
 eval_upd_5:
+ ifdef PIC
+	lea	r8,__indirection+0
+	mov	qword ptr [rdx],r8
+ else
 	mov	qword ptr [rdx],offset __indirection
+ endif
 	mov	r8,8[rdx]
 	mov	[rsi],rcx 
 	mov	8[rdx],rcx 
@@ -3366,7 +3400,12 @@ eval_upd_5:
 	mov	rbp,rax
  endif
 eval_upd_6:
+ ifdef PIC
+	lea	r8,__indirection+0
+	mov	qword ptr [rdx],r8
+ else
 	mov	qword ptr [rdx],offset __indirection
+ endif
 	mov	r8,8[rdx]
 	mov	[rsi],rcx 
 	mov	8[rdx],rcx 
@@ -3389,7 +3428,12 @@ eval_upd_7:
 	mov	rax,0
 	mov	rbx,40
 eval_upd_n:
+ ifdef PIC
+	lea	r8,__indirection+0
+	mov	qword ptr [rdx],r8
+ else
 	mov	qword ptr [rdx],offset __indirection
+ endif
 	mov	r8,8[rdx]
 	mov	[rsi],rcx 
 	mov	8[rdx],rcx 
