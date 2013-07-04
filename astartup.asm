@@ -3296,7 +3296,12 @@ eval_fill2:
 	mov	rbp,rax
  endif
 eval_upd_0:
+ ifdef PIC
+	lea	r8,__indirection+0
+	mov	qword ptr [rdx],r8
+ else
 	mov	qword ptr [rdx],offset __indirection
+ endif
 	mov	8[rdx],rcx 
 	jmp	rbp
 
@@ -3701,7 +3706,12 @@ gc_r_3:
 ; fill_node
 
 	mov	r8,rdi
+ ifdef PIC
+	lea	rbp,__STRING__+2+0
+	mov	qword ptr [rdi],rbp
+ else
 	mov	qword ptr [rdi],offset __STRING__+2
+ endif
 
 ; store length
 
@@ -3771,7 +3781,11 @@ gc_3:	call	collect_2
 	jmp	gc_r_3
 
 empty_string:
+ ifdef PIC
+	lea	rcx,zero_length_string+0
+ else
 	mov	rcx,offset zero_length_string
+ endif
 	ret
 
 sliceAC:
@@ -3800,7 +3814,12 @@ r_gc_4:
 	sub	rbp,2
 	lea	rdx,16[rcx+rbx]
 
+ ifdef PIC
+	lea	rcx,__STRING__+2+0
+	mov	qword ptr [rdi],rcx
+ else
 	mov	qword ptr [rdi],offset __STRING__+2
+ endif
 	mov	8[rdi],rax 
 
 ; copy part of string
@@ -3838,8 +3857,13 @@ r_gc_5:
 	shr	rbp,3
 
 	mov	rdx,rcx 
-	mov	r8,rdi 
+	mov	r8,rdi
+ ifdef PIC
+	lea	rcx,__STRING__+2+0
+	mov	qword ptr [rdi],rcx
+ else
 	mov	qword ptr [rdi],offset __STRING__+2
+ endif
 	mov	rcx,8[rdx]
 	add	rdx,16
 	mov	8[rdi],rcx 
@@ -3861,10 +3885,18 @@ gc_5:	call	collect_1
 	jmp	r_gc_5
 
 update_string_error:
+ ifdef PIC
+	lea	rbp,high_index_string+0
+ else
 	mov	rbp,offset high_index_string
+ endif
 	test	rax,rax 
 	jns	update_string_error_2
-	mov	rbp,offset low_index_string
+ ifdef PIC
+	lea	rbp,low_index_string+0
+ else
+ 	mov	rbp,offset low_index_string
+ endif
 update_string_error_2:
 	jmp	print_error
 
@@ -4000,7 +4032,12 @@ string_to_string_node:
 
 string_to_string_node_r:
 	sub	rbx,2
+ ifdef PIC
+	lea	rbp,__STRING__+2+0
+	mov	qword ptr [rdi],rbp
+ else
 	mov	qword ptr [rdi],offset __STRING__+2
+ endif
 	mov	qword ptr 8[rdi],rax 
 	mov	rbp,rdi
 	add	rdi,16
@@ -4032,11 +4069,21 @@ int_array_to_node:
 	jl	int_array_to_node_gc
 
 int_array_to_node_r:
+ ifdef PIC
+	lea	rbx,__ARRAY__+2+0
+	mov	qword ptr [rdi],rbx
+ else
 	mov	qword ptr [rdi],offset __ARRAY__+2
+ endif
 	mov	rdx,rcx
 	mov	qword ptr 8[rdi],rax
 	mov	rcx,rdi
+ ifdef PIC
+	lea	rbx,dINT+2+0
+	mov	qword ptr 16[rdi],rbx
+ else
 	mov	qword ptr 16[rdi],offset dINT+2
+ endif
 	add	rdi,24
 	jmp	int_or_real_array_to_node_4
 
@@ -4065,11 +4112,21 @@ real_array_to_node:
 	jl	real_array_to_node_gc
 
 real_array_to_node_r:
+ ifdef PIC
+	lea	rbx,__ARRAY__+2+0
+	mov	qword ptr [rdi],rbx
+ else
 	mov	qword ptr [rdi],offset __ARRAY__+2
+ endif
 	mov	rdx,rcx
 	mov	qword ptr 8[rdi],rax
 	mov	rcx,rdi
-	mov	qword ptr 16[rdi],offset REAL+2
+ ifdef PIC
+	lea	rbx,REAL+2+0
+	mov	qword ptr 16[rdi],rbx
+ else
+ 	mov	qword ptr 16[rdi],offset REAL+2
+ endif
 	add	rdi,24
 	jmp	int_or_real_array_to_node_4
 
@@ -4185,9 +4242,19 @@ _create_arrayB:
 	call	collect_0
 no_collect_4574:
 	mov	rcx,rdi
+ ifdef PIC
+	lea	rdx,__ARRAY__+2+0
+	mov	qword ptr [rdi],rdx
+ else
 	mov	qword ptr [rdi],offset __ARRAY__+2
-	mov	qword ptr 8[rdi],rbx 
+ endif
+	mov	qword ptr 8[rdi],rbx
+ ifdef PIC
+	lea	rdx,BOOL+2+0
+	mov	qword ptr 16[rdi],rdx
+ else
 	mov	qword ptr 16[rdi],offset BOOL+2
+ endif
 	lea	rdi,[rdi+rax*8]
 	ret
 
@@ -4199,8 +4266,13 @@ _create_arrayC:
 	jge	no_collect_4573
 	call	collect_0
 no_collect_4573:
-	mov	rcx,rdi 
+	mov	rcx,rdi
+ ifdef PIC
+	lea	rdx,offset __STRING__+2+0
+	mov	qword ptr [rdi],rdx
+ else
 	mov	qword ptr [rdi],offset __STRING__+2
+ endif
 	mov	qword ptr 8[rdi],rbx 
 	lea	rdi,[rdi+rax*8]
 	ret
@@ -4212,7 +4284,12 @@ _create_arrayI:
 	call	collect_0
 no_collect_4572:
 	mov	rcx,rdi
+ ifdef PIC
+	lea	rdx,__ARRAY__+2+0
+	mov	qword ptr [rdi],rdx
+ else
 	mov	qword ptr [rdi],offset __ARRAY__+2
+ endif
 	mov	qword ptr 8[rdi],rax
 	lea	rbp,dINT+2+0
 	mov	qword ptr 16[rdi],rbp
@@ -4228,9 +4305,19 @@ _create_arrayI32:
 	call	collect_0
 no_collect_3572:
 	mov	rcx,rdi
+ ifdef PIC
+	lea	rdx,__ARRAY__+2+0
+	mov	qword ptr [rdi],rdx
+ else
 	mov	qword ptr [rdi],offset __ARRAY__+2
+ endif
 	mov	qword ptr 8[rdi],rbx
+ ifdef PIC
+	lea	rdx,INT32+2+0
+	mov	qword ptr 16[rdi],rdx
+ else
 	mov	qword ptr 16[rdi],offset INT32+2
+ endif
 	lea	rdi,[rdi+rax*8]
 	ret
 
@@ -4241,9 +4328,19 @@ _create_arrayR:
 	call	collect_0
 no_collect_4580:
 	mov	rcx,rdi
+ ifdef PIC
+	lea	rdx,__ARRAY__+2+0
+	mov	qword ptr [rdi],rdx
+ else
 	mov	qword ptr [rdi],offset __ARRAY__+2
+ endif
 	mov	qword ptr 8[rdi],rax
+ ifdef PIC
+	lea	rdx,REAL+2+0
+	mov	qword ptr 16[rdi],rdx
+ else
 	mov	qword ptr 16[rdi],offset REAL+2
+ endif
 	lea	rdi,24[rdi+rax*8]
 	ret
 
@@ -4256,9 +4353,19 @@ _create_arrayR32:
 	call	collect_0
 no_collect_3580:
 	mov	rcx,rdi
+ ifdef PIC
+	lea	rdx,__ARRAY__+2+0
+	mov	qword ptr [rdi],rdx
+ else
 	mov	qword ptr [rdi],offset __ARRAY__+2
+ endif
 	mov	qword ptr 8[rdi],rax
+ ifdef PIC
+	lea	rdx,REAL32+2+0
+	mov	qword ptr 16[rdi],rdx
+ else
 	mov	qword ptr 16[rdi],offset REAL32+2
+ endif
 	lea	rdi,[rdi+rax*8]
 	ret
 
@@ -4273,7 +4380,12 @@ _create_r_array:
 	jge	no_collect_4586
 	call	collect_1
 no_collect_4586:
+ ifdef PIC
+	lea	rdx,__ARRAY__+2+0
+	mov	qword ptr [rdi],rdx
+ else
 	mov	qword ptr [rdi],offset __ARRAY__+2
+ endif
 	mov	rdx,rcx
 	mov	qword ptr 8[rdi],rax
 	mov	rcx,rdi 
@@ -4392,9 +4504,19 @@ no_collect_4575:
 	shl	rbp,32
 	or	rax,rbp
 	mov	rcx,rdi
+ ifdef PIC
+	lea	rdx,__ARRAY__+2+0
+	mov	qword ptr [rdi],rdx
+ else
 	mov	qword ptr [rdi],offset __ARRAY__+2
+ endif
 	mov	qword ptr 8[rdi],r10
+ ifdef PIC
+	lea	rdx,BOOL+2+0
+	mov	qword ptr 16[rdi],rdx
+ else
 	mov	qword ptr 16[rdi],offset BOOL+2
+ endif
 	add	rdi,24
 	jmp	create_arrayBCI
 
@@ -4416,8 +4538,13 @@ no_collect_4578:
 	mov	rbp,rax
 	shl	rbp,32
 	or	rax,rbp
-	mov	rcx,rdi 
+	mov	rcx,rdi
+ ifdef PIC
+	lea	rdx,__STRING__+2+0
+	mov	qword ptr [rdi],rdx
+ else
 	mov	qword ptr [rdi],offset __STRING__+2
+ endif
 	mov	qword ptr 8[rdi],r10
 	add	rdi,16
 	jmp	create_arrayBCI
@@ -4430,10 +4557,20 @@ create_arrayI32:
 	jge	no_collect_3577
 	call	collect_0
 no_collect_3577:
-	mov	rcx,rdi 
+	mov	rcx,rdi
+ ifdef PIC
+	lea	rdx,__ARRAY__+2+0
+	mov	qword ptr [rdi],rdx
+ else
 	mov	qword ptr [rdi],offset __ARRAY__+2
+ endif
 	mov	qword ptr 8[rdi],r10
+ ifdef PIC
+	lea	rdx,INT32+2+0
+	mov	qword ptr 16[rdi],rdx
+ else
 	mov	qword ptr 16[rdi],offset INT32+2
+ endif
 	add	rdi,24
 
 	sub	rbx,3
@@ -4487,10 +4624,20 @@ create_arrayR32:
 	jge	no_collect_3579
 	call	collect_0
 no_collect_3579:
-	mov	rcx,rdi 
+	mov	rcx,rdi
+ ifdef PIC
+	lea	rdx,__ARRAY__+2+0
+	mov	qword ptr [rdi],rdx
+ else
 	mov	qword ptr [rdi],offset __ARRAY__+2
+ endif
 	mov	qword ptr 8[rdi],r10
+ ifdef PIC
+	lea	rdx,REAL32+2+0
+	mov	qword ptr 16[rdi],rdx
+ else
 	mov	qword ptr 16[rdi],offset REAL32+2
+ endif
 	add	rdi,24
 
 	sub	rax,3
@@ -4510,10 +4657,20 @@ create_arrayR:
 	jge	no_collect_4579
 	call	collect_0
 no_collect_4579:
-	mov	rcx,rdi 
+	mov	rcx,rdi
+ ifdef PIC
+	lea	rdx,__ARRAY__+2+0
+	mov	qword ptr [rdi],rdx
+ else
 	mov	qword ptr [rdi],offset __ARRAY__+2
+ endif
 	mov	qword ptr 8[rdi],rax
+ ifdef PIC
+	lea	rdx,REAL+2+0
+	mov	qword ptr 16[rdi],rdx
+ else
 	mov	qword ptr 16[rdi],offset REAL+2
+ endif
 	add	rdi,24
 	jmp	st_fillr_array
 fillr_array:
@@ -4533,7 +4690,12 @@ create_array:
 no_collect_4576:
 	mov	rbx,rcx 
 	mov	rcx,rdi
+ ifdef PIC
+	lea	rdx,__ARRAY__+2+0
+	mov	qword ptr [rdi],rdx
+ else
 	mov	qword ptr [rdi],offset __ARRAY__+2
+ endif
 	mov	qword ptr 8[rdi],rax 
 	mov	qword ptr 16[rdi],0
 	add	rdi,24
@@ -4562,7 +4724,12 @@ create_R_array_1:
 	call	collect_0
 no_collect_4581:
 	mov	rcx,rdi
-	mov	qword ptr [rdi],offset __ARRAY__+2
+ ifdef PIC
+	lea	rdx,__ARRAY__+2+0
+	mov	qword ptr [rdi],rdx
+ else
+ 	mov	qword ptr [rdi],offset __ARRAY__+2
+ endif
 	mov	qword ptr 8[rdi],rax 
 	mov	qword ptr 16[rdi],rbx 
 	add	rdi,24
@@ -4602,8 +4769,13 @@ create_R_array_2:
 	jge	no_collect_4582
 	call	collect_0
 no_collect_4582:
-	mov	rcx,rdi 
+	mov	rcx,rdi
+ ifdef PIC
+	lea	rdx,__ARRAY__+2+0
+	mov	qword ptr [rdi],rdx
+ else
 	mov	qword ptr [rdi],offset __ARRAY__+2
+ endif
 	mov	qword ptr 8[rdi],rax 
 	mov	qword ptr 16[rdi],rbx 
 	add	rdi,24
@@ -4641,7 +4813,12 @@ create_R_array_3:
 	call	collect_0
 no_collect_4583:
 	mov	rcx,rdi
+ ifdef PIC
+	lea	rdx,__ARRAY__+2+0
+	mov	qword ptr [rdi],rdx
+ else
 	mov	qword ptr [rdi],offset __ARRAY__+2
+ endif
 	mov	qword ptr 8[rdi],rax 
 	mov	qword ptr 16[rdi],rbx 
 	add	rdi,24
@@ -4691,8 +4868,13 @@ create_R_array_4:
 	jge	no_collect_4584
 	call	collect_0
 no_collect_4584:
-	mov	rcx,rdi 
+	mov	rcx,rdi
+ ifdef PIC
+	lea	rdx,__ARRAY__+2+0
+	mov	qword ptr [rdi],rdx
+ else
 	mov	qword ptr [rdi],offset __ARRAY__+2
+ endif
 	mov	qword ptr 8[rdi],rax 
 	mov	qword ptr 16[rdi],rbx 
 	add	rdi,24
@@ -4746,7 +4928,12 @@ create_R_array_5:
 	jge	no_collect_4585
 	call	collect_0
 no_collect_4585:
+ ifdef PIC
+	lea	rcx,__ARRAY__+2+0
+	mov	qword ptr [rdi],rcx
+ else
 	mov	qword ptr [rdi],offset __ARRAY__+2
+ endif
 	mov	qword ptr 8[rdi],rax
 	mov	qword ptr 16[rdi],rbx
 	mov	rcx,rdi
