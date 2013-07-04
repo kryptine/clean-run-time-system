@@ -417,7 +417,7 @@ rmarkr_large_tuple_or_record:
 	mov	rcx,qword ptr (-24)[rdx+rax]
 	pop	rdx
  ifdef PIC
-	lea	r9,__indirection
+	lea	r9,__indirection+0
 	mov	qword ptr (-8)[rdx],r9
  else
 	mov	qword ptr (-8)[rdx],offset __indirection
@@ -429,7 +429,7 @@ rmarkr_tuple_selector_node_2:
 	mov	rcx,qword ptr [rdx]
 	pop	rdx
  ifdef PIC
-	lea	r9,__indirection
+	lea	r9,__indirection+0
 	mov	qword ptr (-8)[rdx],r9
  else
 	mov	qword ptr (-8)[rdx],offset __indirection
