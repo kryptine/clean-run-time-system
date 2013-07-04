@@ -259,7 +259,11 @@ readFString:
 	ret
 
 readFString_error:
+ .ifdef PIC
+	lea	rbp,freadstring_error[rip]
+ .else
 	mov	rbp,offset freadstring_error
+ .endif
 	jmp	print_error
 
 readFS:	lea	rbp,16+7[rax]
@@ -269,7 +273,12 @@ readFS:	lea	rbp,16+7[rax]
 readFS_r_gc:
 	add	r15,rbp
 
+ .ifdef PIC
+	lea	rbx,__STRING__+2[rip]
+	mov	qword ptr [rdi],rbx
+ .else
 	mov	qword ptr [rdi],offset __STRING__+2
+ .endif
 	mov	8[rdi],rax
 	mov	rbx,r10
 
@@ -304,8 +313,13 @@ readLineF:
 	jb	readLineF_gc
 
 readLineF_r_gc:
+ .ifdef PIC
+	lea	rdx,__STRING__+2[rip]
+	mov	qword ptr [rdi],rdx
+ .else
 	mov	qword ptr [rdi],offset __STRING__+2
-
+ .endif
+ 
 	lea	rdx,16[rdi]
 	mov	rbp,rsp
 	and	rsp,-16
@@ -350,7 +364,12 @@ readLineF_lp:
 
 	mov	r12,rdi
 
+ .ifdef PIC
+	lea	rbp,__STRING__+2[rip]
+	mov	qword ptr [rdi],rbp
+ .else
 	mov	qword ptr [rdi],offset __STRING__+2
+ .endif
 
 	mov	8[rdi],rax
 	add	rdi,16
@@ -491,7 +510,11 @@ writeFString:
 	ret
 
 writeFString_error:
+ .ifdef PIC
+	lea	rbp,fwritestring_error[rip]
+ .else
 	mov	rbp,offset fwritestring_error
+ .endif
 	jmp	print_error
 
 endF:
@@ -686,7 +709,12 @@ readSFS:
 readSFS_r_gc:
 	add	r15,rbp
 
+ .ifdef PIC
+	lea	rcx,__STRING__+2[rip]
+	mov	qword ptr [rdi],rcx
+ .else
 	mov	qword ptr [rdi],offset __STRING__+2
+ .endif
 
 	push	rbx
 
@@ -726,7 +754,12 @@ readLineSF:
 readLineSF_r_gc:
 	push	rax
 
+ .ifdef PIC
+	lea	rcx,__STRING__+2[rip]
+	mov	qword ptr [rdi],rcx
+ .else
 	mov	qword ptr [rdi],offset __STRING__+2
+ .endif
 
 	mov	rcx,rsp
 	lea	rdx,16[rdi]
@@ -773,7 +806,12 @@ readLineSF_lp:
 
 	mov	r12,rdi
 
+ .ifdef PIC
+	lea	rbp,__STRING__+2[rip]
+	mov	qword ptr [rdi],rbp
+ .else
 	mov	qword ptr [rdi],offset __STRING__+2
+ .endif
 
 	mov	8[rdi],rax
 	add	rdi,16
