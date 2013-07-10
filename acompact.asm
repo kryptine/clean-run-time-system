@@ -85,11 +85,11 @@ end_rmarkp_cafs:
 compact_heap:
 
  ifdef PIC
-	lea	rcx,finalizer_list+0+0
+	lea	rcx,finalizer_list+0
 	lea	rdx,free_finalizer_list+0
  else
-	mov	rcx,offset finalizer_list+0
-	mov	rdx,offset free_finalizer_list+0
+	mov	rcx,offset finalizer_list
+	mov	rdx,offset free_finalizer_list
  endif
 
 	mov	rbp,qword ptr [rcx]
