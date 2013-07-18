@@ -143,7 +143,7 @@ void set_home_and_appl_path (char *command)
 }
 
 #if defined (SOLARIS) || defined (I486)
-extern long ab_stack_size,heap_size,flags;
+long ab_stack_size,heap_size,flags;
 #else
 extern long stack_size,heap_size,flags;
 #endif
@@ -152,7 +152,7 @@ extern long stack_size,heap_size,flags;
 extern long ab_stack_size=512*1024,heap_size=2048*1024,flags=8;
 */
 #ifdef MARKING_GC
-extern long heap_size_multiple,initial_heap_size;
+long heap_size_multiple,initial_heap_size;
 #endif
 
 #ifdef STACK_OVERFLOW_EXCEPTION_HANDLER
