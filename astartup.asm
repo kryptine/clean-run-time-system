@@ -614,7 +614,11 @@ abc_main:
  endif
 
  ifdef LINUX
+  ifdef PIC
+	call	__start@PLT
+  else
 	call	__start
+  endif
 
 exit_:
  else
@@ -784,7 +788,11 @@ init_clean:
 	and	rsp,-16
  ifdef LINUX
 	mov	rdi,rax
+  ifdef PIC
+	call	malloc@PLT
+  else
 	call	malloc
+  endif
  else
 	mov	rcx,rax
 	call	allocate_memory
@@ -805,7 +813,11 @@ init_clean:
 	mov	r14,rdi
 	mov	rdi,qword ptr ab_stack_size+0
 	add	rdi,7
+  ifdef PIC
+	call	malloc@PLT
+  else
 	call	malloc
+  endif
 	mov	rdi,r14
  else
 	mov	rcx,qword ptr ab_stack_size
@@ -954,7 +966,11 @@ no_memory_3:
  
  ifdef LINUX
 	mov	rdi,heap_mbp+0
+  ifdef PIC
+	call	free@PLT
+  else
 	call	free
+  endif
  else
 	mov	rcx,heap_mbp
 	call	free_memory
@@ -1195,10 +1211,18 @@ no_print_execution_time:
 	and	rsp,-16
  ifdef LINUX
 	mov	rdi,stack_mbp+0
+  ifdef PIC
+	call	free@PLT
+  else
 	call	free
+  endif
 
 	mov	rdi,heap_mbp+0
+  ifdef PIC
+	call	free@PLT
+  else
 	call	free
+  endif
  else
 	mov	rcx,stack_mbp
 	sub	rsp,32
@@ -1819,7 +1843,11 @@ RtoAC:
 	lea	rsi,printf_real_string+0
 	lea	rdi,sprintf_buffer+0
 	mov	rax,1
+  ifdef PIC
+	call	sprintf@PLT
+  else
 	call	sprintf
+  endif
 	mov	rsi,r13
 	mov	rdi,r14
  else
@@ -2050,7 +2078,11 @@ init_timer:
 	mov	r13,rsi
 	mov	r14,rdi
 	mov	rdi,rsp
+  ifdef PIC
+	call    times@PLT
+  else
 	call    times
+  endif
 	mov	rsi,r13
 	mov	rdi,r14
 	mov	eax,[rsp]
@@ -2079,7 +2111,11 @@ get_time_diff:
 	mov	r13,rsi
 	mov	r14,rdi
 	mov	rdi,rsp
+  ifdef PIC
+	call    times@PLT
+  else
 	call    times
+  endif
 	mov	rsi,r13
 	mov	rdi,r14
 	mov	eax,[rsp]
@@ -3275,7 +3311,11 @@ return_code_set:
  ifdef LINUX
 	mov	edi,dword ptr return_code+0
 	and	rsp,-16
+  ifdef PIC
+	call	exit@PLT
+  else
 	call	exit
+  endif
  else
 	push	qword ptr return_code
 	call	(ExitProcess)
