@@ -454,7 +454,8 @@ _DATA	ends
 	public	e__system__nind
 	public	e__system__eaind
 ; old names of the previous two labels for compatibility, remove later
-	public	__indirection,__eaind
+	public	__indirection
+	public	__eaind
 	extrn	e__system__dind:near
 	public	eval_fill
 
