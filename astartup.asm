@@ -420,9 +420,36 @@ _DATA	ends
 	public	yet_args_needed_3
 	public	yet_args_needed_4
 
-	public	_c3,_c4,_c5,_c6,_c7,_c8,_c9,_c10,_c11,_c12
-	public	_c13,_c14,_c15,_c16,_c17,_c18,_c19,_c20,_c21,_c22
-	public	_c23,_c24,_c25,_c26,_c27,_c28,_c29,_c30,_c31,_c32
+	public	_c3
+	public	_c4
+	public	_c5
+	public	_c6
+	public	_c7
+	public	_c8
+	public	_c9
+	public	_c10
+	public	_c11
+	public	_c12
+	public	_c13
+	public	_c14
+	public	_c15
+	public	_c16
+	public	_c17
+	public	_c18
+	public	_c19
+	public	_c20
+	public	_c21
+	public	_c22
+	public	_c23
+	public	_c24
+	public	_c25
+	public	_c26
+	public	_c27
+	public	_c28
+	public	_c29
+	public	_c30
+	public	_c31
+	public	_c32
 
 	public	e__system__nind
 	public	e__system__eaind
@@ -431,13 +458,39 @@ _DATA	ends
 	extrn	e__system__dind:near
 	public	eval_fill
 
-	public	eval_upd_0,eval_upd_1,eval_upd_2,eval_upd_3,eval_upd_4
-	public	eval_upd_5,eval_upd_6,eval_upd_7,eval_upd_8,eval_upd_9
-	public	eval_upd_10,eval_upd_11,eval_upd_12,eval_upd_13,eval_upd_14
-	public	eval_upd_15,eval_upd_16,eval_upd_17,eval_upd_18,eval_upd_19
-	public	eval_upd_20,eval_upd_21,eval_upd_22,eval_upd_23,eval_upd_24
-	public	eval_upd_25,eval_upd_26,eval_upd_27,eval_upd_28,eval_upd_29
-	public	eval_upd_30,eval_upd_31,eval_upd_32
+	public	eval_upd_0
+	public	eval_upd_1
+	public	eval_upd_2
+	public	eval_upd_3
+	public	eval_upd_4
+	public	eval_upd_5
+	public	eval_upd_6
+	public	eval_upd_7
+	public	eval_upd_8
+	public	eval_upd_9
+	public	eval_upd_10
+	public	eval_upd_11
+	public	eval_upd_12
+	public	eval_upd_13
+	public	eval_upd_14
+	public	eval_upd_15
+	public	eval_upd_16
+	public	eval_upd_17
+	public	eval_upd_18
+	public	eval_upd_19
+	public	eval_upd_20
+	public	eval_upd_21
+	public	eval_upd_22
+	public	eval_upd_23
+	public	eval_upd_24
+	public	eval_upd_25
+	public	eval_upd_26
+	public	eval_upd_27
+	public	eval_upd_28
+	public	eval_upd_29
+	public	eval_upd_30
+	public	eval_upd_31
+	public	eval_upd_32
 
 	public	repl_args_b
 	public	push_arg_b
