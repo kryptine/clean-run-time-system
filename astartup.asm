@@ -3345,7 +3345,11 @@ eval_fill:
 	lea	rax,e__system__eaind+0
 	jmp	rax
 	db	0,0,0
+ ifdef PIC
+	dd	e__system__dind-.
+ else
 	dd	e__system__dind
+ endif
 	dd	-2
 e__system__nind:
 __indirection:
