@@ -1114,7 +1114,7 @@ copy_strict_record_selector_2:
 	je	copy_arity_1_node2_
 
  ifdef PIC
-	movsxd	rd3,dword ptr (-8)[rcx]
+	movsxd	d3,dword ptr (-8)[rcx]
  else
 	mov	d3d,dword ptr (-8)[rcx]
  endif
