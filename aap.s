@@ -122,404 +122,652 @@
 
 ap_32:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,32*16
+ .else
 	mov	rbx,32*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap32
 
 ap_31:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,31*16
+ .else
 	mov	rbx,31*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap31
 
 ap_30:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,30*16
+ .else
 	mov	rbx,30*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap30
 
 ap_29:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,29*16
+ .else
 	mov	rbx,29*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap29
 
 ap_28:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,28*16
+ .else
 	mov	rbx,28*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap28
 
 ap_27:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,27*16
+ .else
 	mov	rbx,27*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap27
 
 ap_26:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,26*16
+ .else
 	mov	rbx,26*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap26
 
 ap_25:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,25*16
+ .else
 	mov	rbx,25*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap25
 
 ap_24:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,24*16
+ .else
 	mov	rbx,24*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap24
 
 ap_23:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,23*16
+ .else
 	mov	rbx,23*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap23
 
 ap_22:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,22*16
+ .else
 	mov	rbx,22*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap22
 
 ap_21:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,21*16
+ .else
 	mov	rbx,21*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap21
 
 ap_20:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,20*16
+ .else
 	mov	rbx,20*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap20
 
 ap_19:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,19*16
+ .else
 	mov	rbx,19*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap19
 
 ap_18:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,18*16
+ .else
 	mov	rbx,18*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap18
 
 ap_17:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,17*16
+ .else
 	mov	rbx,17*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap17
 
 ap_16:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,16*16
+ .else
 	mov	rbx,16*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap16
 
 ap_15:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,15*16
+ .else
 	mov	rbx,15*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap15
 
 ap_14:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,14*16
+ .else
 	mov	rbx,14*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap14
 
 ap_13:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,13*16
+ .else
 	mov	rbx,13*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap13
 
 ap_12:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,12*16
+ .else
 	mov	rbx,12*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap12
 
 ap_11:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,11*16
+ .else
 	mov	rbx,11*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap11
 
 ap_10:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,10*16
+ .else
 	mov	rbx,10*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap10
 
 ap_9:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,9*16
+ .else
 	mov	rbx,9*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap9
 
 ap_8:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,8*16
+ .else
 	mov	rbx,8*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap8
 
 ap_7:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,7*16
+ .else
 	mov	rbx,7*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap7
 
 ap_6:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,6*16
+ .else
 	mov	rbx,6*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap6
 
 ap_5:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,5*16
+ .else
 	mov	rbx,5*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap5
 
 ap_4:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,4*16
+ .else
 	mov	rbx,4*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap4
 
 ap_3:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,3*16
+ .else
 	mov	rbx,3*8
+ .endif
 	cmp	word ptr [r9],bx
 	je	fast_ap
 
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap3
 
 ap_2:
 	mov	r9,qword ptr [r8]
+ .ifdef PIC
+	mov	rbx,2*16
+ .else
 	mov	rbx,2*8
+ .endif
 	cmp	word ptr [r9],bx
 	jne	no_fast_ap2_
 
 fast_ap_2_2_:
 	movzx	rax,word ptr -2[r9]
 	add	rbx,r9
+ .ifdef PIC
+	mov	r9,qword ptr -10[rbx]
+ .else
 	mov	r9d,dword ptr -6[rbx]
+ .endif
 .ifdef PROFILE
 	sub	r9,24
 .else
@@ -543,7 +791,11 @@ no_fast_ap2_:
 	mov	qword ptr [rsi],rcx
 	mov	rcx,rdx
 	mov	rdx,r8
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 	add	rsi,8
 	jmp	no_fast_ap2
 
@@ -563,7 +815,11 @@ fast_ap_2:
 fast_ap:
 	movzx	rax,word ptr -2[r9]
 	add	rbx,r9
+ .ifdef PIC
+	mov	r9,qword ptr -10[rbx]
+ .else
 	mov	r9d,dword ptr -6[rbx]
+ .endif
 .ifdef PROFILE
 	sub	r9,24
 .else
@@ -663,11 +919,19 @@ no_fast_ap32:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,31*16
+ .else
 	mov	rbx,31*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap31:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -675,11 +939,19 @@ no_fast_ap31:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,30*16
+ .else
 	mov	rbx,30*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap30:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -687,11 +959,19 @@ no_fast_ap30:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,29*16
+ .else
 	mov	rbx,29*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap29:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -699,11 +979,19 @@ no_fast_ap29:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,28*16
+ .else
 	mov	rbx,28*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap28:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -711,11 +999,19 @@ no_fast_ap28:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,27*16
+ .else
 	mov	rbx,27*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap27:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -723,11 +1019,19 @@ no_fast_ap27:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,26*16
+ .else
 	mov	rbx,26*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap26:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -735,11 +1039,19 @@ no_fast_ap26:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,25*16
+ .else
 	mov	rbx,25*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap25:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -747,11 +1059,19 @@ no_fast_ap25:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,24*16
+ .else
 	mov	rbx,24*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap24:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -759,11 +1079,19 @@ no_fast_ap24:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,23*16
+ .else
 	mov	rbx,23*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap23:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -771,11 +1099,19 @@ no_fast_ap23:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,22*16
+ .else
 	mov	rbx,22*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap22:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -783,11 +1119,19 @@ no_fast_ap22:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,21*16
+ .else
 	mov	rbx,21*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap21:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -795,11 +1139,19 @@ no_fast_ap21:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,20*16
+ .else
 	mov	rbx,20*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap20:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -807,11 +1159,19 @@ no_fast_ap20:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,19*16
+ .else
 	mov	rbx,19*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap19:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -819,11 +1179,19 @@ no_fast_ap19:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,18*16
+ .else
 	mov	rbx,18*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap18:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -831,11 +1199,19 @@ no_fast_ap18:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,17*16
+ .else
 	mov	rbx,17*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap17:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -843,11 +1219,19 @@ no_fast_ap17:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,16*16
+ .else
 	mov	rbx,16*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap16:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -855,11 +1239,19 @@ no_fast_ap16:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,15*16
+ .else
 	mov	rbx,15*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap15:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -867,11 +1259,19 @@ no_fast_ap15:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,14*16
+ .else
 	mov	rbx,14*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap14:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -879,11 +1279,19 @@ no_fast_ap14:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,13*16
+ .else
 	mov	rbx,13*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap13:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -891,11 +1299,19 @@ no_fast_ap13:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,12*16
+ .else
 	mov	rbx,12*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap12:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -903,11 +1319,19 @@ no_fast_ap12:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,11*16
+ .else
 	mov	rbx,11*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap11:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -915,11 +1339,19 @@ no_fast_ap11:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,10*16
+ .else
 	mov	rbx,10*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap10:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -927,11 +1359,19 @@ no_fast_ap10:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,9*16
+ .else
 	mov	rbx,9*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap9:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -939,11 +1379,19 @@ no_fast_ap9:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,8*16
+ .else
 	mov	rbx,8*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap8:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -951,11 +1399,19 @@ no_fast_ap8:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,7*16
+ .else
 	mov	rbx,7*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap7:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -963,11 +1419,19 @@ no_fast_ap7:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,6*16
+ .else
 	mov	rbx,6*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap6:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -975,11 +1439,19 @@ no_fast_ap6:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,5*16
+ .else
 	mov	rbx,5*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap5:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -987,11 +1459,19 @@ no_fast_ap5:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,4*16
+ .else
 	mov	rbx,4*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap4:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -999,11 +1479,19 @@ no_fast_ap4:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,3*16
+ .else
 	mov	rbx,3*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap3:
 	call	r8
 	mov	r9,qword ptr [rcx]
@@ -1011,19 +1499,31 @@ no_fast_ap3:
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
 
+ .ifdef PIC
+	mov	rbx,2*16
+ .else
 	mov	rbx,2*8
+ .endif
  	cmp	word ptr [r9],bx
 	je	fast_ap_2
 
+ .ifdef PIC
+	mov	r8,qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
+ .endif
 no_fast_ap2:
 	call	r8
 	mov	r9,qword ptr [rcx]
 	mov	rdx,rcx
 	mov	rcx,qword ptr -8[rsi]
 	sub	rsi,8
+ .ifdef PIC
+	jmp	qword ptr 6[r9]
+ .else
 	mov	r8d,dword ptr 2[r9]
 	jmp	r8
+ .endif
 
 
 add_empty_node_2:
@@ -1482,7 +1982,11 @@ yet_args_needed_0_gc_r:
 	mov	qword ptr 8[rdi],rcx
 	mov	rax,qword ptr [rdx]
 	mov	rcx,rdi
+ .ifdef PIC
+	add	rax,16
+ .else
 	add	rax,8
+ .endif
 	mov	qword ptr [rdi],rax
 	add	rdi,16
 	ret
@@ -1519,7 +2023,11 @@ yet_args_needed_1_gc_r:
 	mov	qword ptr 16[rdi],rcx
 	mov	rax,qword ptr [rdx]
 	mov	rcx,rdi
+ .ifdef PIC
+	add	rax,16
+ .else
 	add	rax,8
+ .endif
 	mov	qword ptr [rdi],rax
 	mov	rbx,qword ptr 8[rdx]
 	mov	qword ptr 8[rdi],rbx
@@ -1569,7 +2077,11 @@ yet_args_needed_2:
 gc_r_22:
 	mov	rax,qword ptr [rdx]
 	mov	qword ptr 8[rdi],rcx
+ .ifdef PIC
+	add	rax,16
+ .else
 	add	rax,8
+ .endif
 	mov	r10,qword ptr 8[rdx]
 	mov	qword ptr 16[rdi],rax
 	lea	rcx,16[rdi]
@@ -1625,7 +2137,11 @@ yet_args_needed_3:
 gc_r_23:
 	mov	rax,qword ptr [rdx]
 	mov	qword ptr 16[rdi],rcx
+ .ifdef PIC
+	add	rax,16
+ .else
 	add	rax,8
+ .endif
 	mov	r10,qword ptr 8[rdx]
 	mov	qword ptr 24[rdi],rax
 	mov	rdx,qword ptr 16[rdx]
@@ -1687,7 +2203,11 @@ yet_args_needed_4:
 gc_r_24:
 	mov	rax,qword ptr [rdx]
 	mov	qword ptr 24[rdi],rcx
+ .ifdef PIC
+	add	rax,16
+ .else
 	add	rax,8
+ .endif
 	mov	r10,qword ptr 8[rdx]
 	mov	qword ptr 32[rdi],rax
 	mov	rdx,qword ptr 16[rdx]
@@ -2433,7 +2953,11 @@ yet_args_needed_cp_a:
 	jge	yet_args_needed_cp_a
 
 	mov	qword ptr [rdi],rcx
+ .ifdef PIC
+	add	rbx,16
+ .else
 	add	rbx,8
+ .endif
 	mov	qword ptr 8[rdi],rbx
 	lea	rcx,8[rdi]
 	mov	qword ptr 16[rdi],r11
