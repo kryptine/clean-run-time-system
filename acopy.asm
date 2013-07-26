@@ -898,7 +898,7 @@ copy_indirection_2:
 	cmp	dword ptr (-4)[rcx],-2
 	je	skip_indirections_2
 
-	mov	eax,(-4)[rcx]
+	movsxd	rax,dword ptr(-4)[rcx]
 	test	rax,rax 
 	jle	copy_arity_0_node2_
 	jmp	copy_node2_1_
@@ -935,7 +935,11 @@ copy_selector_2:
 	test	d2b,2
  	je	copy_arity_1_node2_
 
+ ifdef PIC
+	movsxd	d3,dword ptr (-8)[rcx]
+ else
 	mov	d3d,dword ptr (-8)[rcx]
+ endif
 
 	cmp	word ptr (-2)[d2],2
 	jbe	copy_selector_2_
@@ -945,11 +949,12 @@ copy_selector_2:
 	test	byte ptr [d2],1
 	jne	copy_arity_1_node2_
 
-	movzx	d3,word ptr 4[d3]
  ifdef PIC
+	movzx	d3,word ptr (4-8)[rcx+d3]
 	lea	r9,__indirection+0
 	mov	qword ptr [rdx],r9
  else
+	movzx	d3,word ptr 4[d3]
 	mov	qword ptr [rdx],offset __indirection
  endif
 
@@ -975,11 +980,12 @@ copy_selector_2_2:
 	jmp	continue_after_selector_2
 
 copy_selector_2_:
-	movzx	d3,word ptr 4[d3]
   ifdef PIC
+	movzx	d3,word ptr (4-8)[rcx+d3]
 	lea	r9,__indirection+0
 	mov	qword ptr [rdx],r9
   else
+	movzx	d3,word ptr 4[d3]
 	mov	qword ptr [rdx],offset __indirection
   endif
 
@@ -1081,11 +1087,12 @@ copy_selector_2__:
 	jne	copy_arity_1_node2_
   endif
 copy_record_selector_2_:
-	movzx	d3,word ptr 4[d3]
  ifdef PIC
+	movzx	d3,word ptr (4-8)[rcx+d3]
 	lea	r9,__indirection+0
 	mov	qword ptr [rdx],r9
  else
+	movzx	d3,word ptr 4[d3]
 	mov	qword ptr [rdx],offset __indirection
  endif
 
@@ -1106,7 +1113,11 @@ copy_strict_record_selector_2:
 	test	d2b,2
 	je	copy_arity_1_node2_
 
+ ifdef PIC
+	movsxd	rd3,dword ptr (-8)[rcx]
+ else
 	mov	d3d,dword ptr (-8)[rcx]
+ endif
 
 	cmp	word ptr (-2)[d2],258
 	jbe	copy_strict_record_selector_2_
@@ -1152,8 +1163,15 @@ copy_strict_record_selector_2_b:
 	jne	copy_arity_1_node2_
 
 copy_strict_record_selector_2_:
+ ifdef PIC
+	add	d3,rcx
+ endif
  ifdef NEW_DESCRIPTORS
+  ifdef PIC
+	movzx	rcx,word ptr (4-8)[d3]
+  else
 	movzx	rcx,word ptr 4[d3]
+  endif
 	cmp	rcx,16
 	jle	copy_strict_record_selector_3
 	mov	rcx,qword ptr [d2+rcx]
@@ -1163,7 +1181,11 @@ copy_strict_record_selector_3:
 copy_strict_record_selector_4:
 	mov	qword ptr 8[rdx],rcx
 
+ ifdef PIC
+	movzx	rcx,word ptr (6-8)[d3]
+ else
 	movzx	rcx,word ptr 6[d3]
+ endif
 	test	rcx,rcx
 	je	copy_strict_record_selector_6
 	cmp	rcx,16
@@ -1174,7 +1196,11 @@ copy_strict_record_selector_5:
 	mov	qword ptr 16[rdx],rcx
 copy_strict_record_selector_6:
 
+ ifdef PIC
+	mov	rcx,qword ptr ((-8)-8)[d3]
+ else
 	mov	rcx,qword ptr (-8)[d3]
+ endif
 	mov	qword ptr [rdx],rcx
 	jmp	in_hnf_2
  else
