@@ -565,10 +565,19 @@ _large_tuple_or_record:
 	jne	_mark_node3
 
  ifdef NEW_DESCRIPTORS
+  ifdef PIC
+	movsxd	rbp,dword ptr(-8)[rax]
+	add	rax,rbp
+  else
 	mov	eax,(-8)[rax]
+  endif
 	lea	rbp,__indirection+0
 	mov	qword ptr (-8)[rcx],rbp
+  ifdef PIC
+	movzx	eax,word ptr (4-8)[rax]
+  else
 	movzx	eax,word ptr 4[rax]
+  endif
 	mov	rbp,rcx
 
 	cmp	rax,16
@@ -587,10 +596,19 @@ _mark_tuple_selector_node_2:
 
 _small_tuple_or_record:
  ifdef NEW_DESCRIPTORS
+  ifdef PIC
+	movsxd	rbp,dword ptr(-8)[rax]
+	add	rax,rbp
+  else
 	mov	eax,(-8)[rax]
+  endif
 	lea	rbp,__indirection+0
 	mov	qword ptr (-8)[rcx],rbp
+  ifdef PIC
+	movzx	eax,word ptr (4-8)[rax]
+  else
 	movzx	eax,word ptr 4[rax]
+  endif
 	mov	rbp,rcx
 _mark_tuple_selector_node_1:
 	mov	rcx,qword ptr [rdx+rax]
@@ -638,10 +656,19 @@ _mark_record_selector_node_1:
 	test	ebp,dword ptr [rdi+rbx*4]
 	jne	_mark_node3
 
+  ifdef PIC
+	movsxd	rbp,dword ptr(-8)[rax]
+	add	rax,rbp
+  else
 	mov	eax,(-8)[rax]
+  endif
 	lea	rbp,__indirection+0
 	mov	qword ptr (-8)[rcx],rbp
+  ifdef PIC
+	movzx	eax,word ptr (4-8)[rax]
+  else
 	movzx	eax,word ptr 4[rax]
+  endif
 	mov	rbp,rcx
 
 	cmp	rax,16
@@ -684,11 +711,20 @@ _mark_strict_record_selector_node_1:
 	jne	_mark_node3
 
 _select_from_small_record:
+ ifdef PIC
+	movsxd	rbx,dword ptr (-8)[rax]
+	add	rax,rbx
+ else
 	mov	eax,dword ptr (-8)[rax]
+ endif
 	sub	rcx,8
 
  ifdef NEW_DESCRIPTORS
+  ifdef PIC
+	movzx	ebx,word ptr (4-8)[rax]
+  else
 	movzx	ebx,word ptr 4[rax]
+  endif
 	cmp	rbx,16
 	jle	_mark_strict_record_selector_node_2
 	mov	rbx,qword ptr (-24)[r9+rbx]
@@ -698,7 +734,11 @@ _mark_strict_record_selector_node_2:
 _mark_strict_record_selector_node_3:
 	mov	qword ptr 8[rcx],rbx
 
+  ifdef PIC
+	movzx	ebx,word ptr (6-8)[rax]
+  else
 	movzx	ebx,word ptr 6[rax]
+  endif
 	test	rbx,rbx
 	je	_mark_strict_record_selector_node_5
 	cmp	rbx,16
@@ -710,7 +750,11 @@ _mark_strict_record_selector_node_4:
 	mov	qword ptr 16[rcx],rbx
 _mark_strict_record_selector_node_5:
 
+  ifdef PIC
+	mov	rax,qword ptr ((-8)-8)[rax]
+  else
 	mov	rax,qword ptr (-8)[rax]
+  endif
 	mov	qword ptr [rcx],rax
  else
 	mov	eax,4[rax]
@@ -1355,12 +1399,21 @@ __large_tuple_or_record:
 	jne	__mark_no_selector_2
 
  ifdef NEW_DESCRIPTORS
+  ifdef PIC
+	movsxd	rdx,dword ptr (-8)[rax]
+	add	rax,rdx
+  else
 	mov	eax,dword ptr (-8)[rax]
+  endif
 	lea	rdx,__indirection+0
 	pop	rbx
 
 	mov	qword ptr (-8)[rcx],rdx
+  ifdef PIC
+	movzx	eax,word ptr (4-8)[rax]
+  else
 	movzx	eax,word ptr 4[rax]
+  endif
 	mov	r8,rcx
 
 	cmp	rax,16
@@ -1378,12 +1431,21 @@ __mark_tuple_selector_node_2:
 
 __small_tuple_or_record:
  ifdef NEW_DESCRIPTORS
+   ifdef PIC
+	movsxd	rdx,dword ptr (-8)[rax]
+	add	rax,rdx
+  else
 	mov	eax,dword ptr (-8)[rax]
+  endif
 	lea	rdx,__indirection+0
 	pop	rbx 
 
 	mov	qword ptr (-8)[rcx],rdx
+  ifdef PIC
+	movzx	eax,word ptr (4-8)[rax]
+  else
 	movzx	eax,word ptr 4[rax]
+  endif
 	mov	r8,rcx
 __mark_tuple_selector_node_1:
 	mov	rcx,qword ptr [rbp+rax]
@@ -1452,12 +1514,21 @@ __mark_record_selector_node_1:
 	jne	__mark_no_selector_2
 
 __small_record:
+ ifdef PIC
+	movsxd	rdx,dword ptr(-8)[rax]
+	add	rax,rdx
+ else
 	mov	eax,(-8)[rax]
+ endif
 	lea	rdx,__indirection+0
 	pop	rbx 
 
 	mov	qword ptr (-8)[rcx],rdx
+ ifdef PIC
+	movzx	eax,word ptr (4-8)[rax]
+ else
 	movzx	eax,word ptr 4[rax]
+ endif
 	mov	r8,rcx
 
 	cmp	rax,16
@@ -1504,24 +1575,34 @@ __mark_strict_record_selector_node_1:
 	and	r8,31*8
 	shr	rbx,8
  ifdef PIC
-	mov	r9,bit_set_table2+0
+	lea	r9,bit_set_table2+0
 	mov	r8d,dword ptr [r9+r8]
  else
 	mov	r8d,dword ptr (bit_set_table2)[r8]
  endif
 	test	r8d,dword ptr [rdi+rbx*4]
-	jne	__mark_no_selector_2
 
  ifdef PIC
 	mov	r9,qword ptr 16[rbp]
  endif
 
+	jne	__mark_no_selector_2
+
 __select_from_small_record:
  ifdef NEW_DESCRIPTORS
+  ifdef PIC
+	movsxd	rbx,dword ptr(-8)[rax]
+	add	rax,rbx
+  else
 	mov	eax,(-8)[rax]
+  endif
 	sub	rcx,8
 
+  ifdef PIC
+	movzx	ebx,word ptr (4-8)[rax]
+  else
 	movzx	ebx,word ptr 4[rax]
+  endif
 	cmp	rbx,16
 	jle	__mark_strict_record_selector_node_2
 	mov	rbx,qword ptr (-24)[r9+rbx]
@@ -1531,7 +1612,11 @@ __mark_strict_record_selector_node_2:
 __mark_strict_record_selector_node_3:
 	mov	qword ptr 8[rcx],rbx
 
+  ifdef PIC
+	movzx	ebx,word ptr (6-8)[rax]
+  else
 	movzx	ebx,word ptr 6[rax]
+  endif
 	test	rbx,rbx
 	je	__mark_strict_record_selector_node_5
 	cmp	rbx,16
@@ -1544,7 +1629,11 @@ __mark_strict_record_selector_node_4:
 __mark_strict_record_selector_node_5:
 	pop	rbx
 
+  ifdef PIC
+	mov	rax,qword ptr ((-8)-8)[rax]
+  else
 	mov	rax,qword ptr (-8)[rax]
+  endif
 	mov	qword ptr [rcx],rax
  else
 	mov	eax,(-8)[rax]
