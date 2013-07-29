@@ -211,7 +211,7 @@ free_finalizer_list_empty:
 
 	add	rbx,qword ptr heap_p3+0
 
-	mov	qword ptr end_heap_p3+0,rbx 
+	mov	qword ptr end_heap_p3+0,rbx
 
 	add	rax,3
 	shr	rax,2
@@ -248,7 +248,7 @@ end_skip_zeros:
 bsf_and_copy_nodes:
 	movzx	rax,sil
  ifdef PIC
-	lea	r9,first_one_bit_table[rip]
+	lea	r9,first_one_bit_table+0
  endif
 	test	rax,rax
 	jne	found_bit1
@@ -1274,7 +1274,7 @@ restore_finalizer_descriptors:
 
  ifdef PIC
 	lea	r9,e____system__kFinalizer+2+0
-	mov	qword ptr [rcx],r8
+	mov	qword ptr [rcx],r9
  else
 	mov	qword ptr [rcx],offset e____system__kFinalizer+2
  endif
