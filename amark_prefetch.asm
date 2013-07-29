@@ -18,7 +18,7 @@ pmark:
 	mov	qword ptr n_marked_words+0,rbx
 	shl	rax,6
 
-	mov	qword ptr heap_size_64_65+0,rax 
+	mov	qword ptr heap_size_64_65+0,rax
 	mov	qword ptr lazy_array_list+0,rbx 
 
 	lea	rsi,(-4000)[rsp]
@@ -398,10 +398,19 @@ pmark_large_tuple_or_record:
 	jne	pmark_node3
 
  ifdef NEW_DESCRIPTORS
+  ifdef PIC
+	movsxd	rbp,dword ptr(-8)[rax]
+	add	rax,rbp
+  else
 	mov	eax,(-8)[rax]
+  endif
 	lea	rbp,__indirection+0
 	mov	qword ptr (-8)[rcx],rbp
+  ifdef PIC
+	movzx	eax,word ptr (4-8)[rax]
+  else
 	movzx	eax,word ptr 4[rax]
+  endif
 	mov	rbp,rcx
 
 	cmp	rax,16
@@ -420,10 +429,19 @@ pmark_tuple_selector_node_2:
 
 pmark_small_tuple_or_record:
  ifdef NEW_DESCRIPTORS
+  ifdef PIC
+	movsxd	rbp,dword ptr(-8)[rax]
+	add	rax,rbp
+  else
 	mov	eax,(-8)[rax]
+  endif
 	lea	rbp,__indirection+0
 	mov	qword ptr (-8)[rcx],rbp
+  ifdef PIC
+	movzx	eax,word ptr (4-8)[rax]
+  else
 	movzx	eax,word ptr 4[rax]
+  endif
 	mov	rbp,rcx
 pmark_tuple_selector_node_1:
 	mov	rcx,qword ptr [rdx+rax]
@@ -471,10 +489,19 @@ pmark_record_selector_node_1:
 	test	ebp,dword ptr [rdi+rbx*4]
 	jne	pmark_node3
 
+ ifdef PIC
+	movsxd	rbp,dword ptr(-8)[rax]
+	add	rax,rbp
+ else
 	mov	eax,(-8)[rax]
+ endif
 	lea	rbp,__indirection+0
 	mov	qword ptr (-8)[rcx],rbp
+ ifdef PIC
+	movzx	eax,word ptr (4-8)[rax]
+ else
 	movzx	eax,word ptr 4[rax]
+ endif
 	mov	rbp,rcx
 
 	cmp	rax,16
@@ -517,11 +544,20 @@ pmark_strict_record_selector_node_1:
 	jne	pmark_node3
 	
 pmark_select_from_small_record:
+ ifdef PIC
+	movsxd	rbx,dword ptr(-8)[rax]
+	add	rax,rbx
+ else
 	mov	eax,(-8)[rax]
+ endif
 	sub	rcx,8
 
  ifdef NEW_DESCRIPTORS
+  ifdef PIC
+	movzx	ebx,word ptr (4-8)[rax]
+  else
 	movzx	ebx,word ptr 4[rax]
+  endif
 	cmp	rbx,16
 	jle	pmark_strict_record_selector_node_2
 	mov	rbx,qword ptr (-24)[r9+rbx]
@@ -531,7 +567,11 @@ pmark_strict_record_selector_node_2:
 pmark_strict_record_selector_node_3:
 	mov	qword ptr 8[rcx],rbx
 
+  ifdef PIC
+	movzx	ebx,word ptr (6-8)[rax]
+  else
 	movzx	ebx,word ptr 6[rax]
+  endif
 	test	rbx,rbx
 	je	pmark_strict_record_selector_node_5
 	cmp	rbx,16
@@ -543,7 +583,11 @@ pmark_strict_record_selector_node_4:
 	mov	qword ptr 16[rcx],rbx
 pmark_strict_record_selector_node_5:
 
+  ifdef PIC
+	mov	rax,qword ptr ((-8)-8)[rax]
+  else
 	mov	rax,qword ptr (-8)[rax]
+  endif
 	mov	qword ptr [rcx],rax
  else
 	mov	eax,4[rax]
@@ -1196,12 +1240,21 @@ pmarkr_large_tuple_or_record:
 	jne	pmarkr_no_selector_2
 
  ifdef NEW_DESCRIPTORS
+  ifdef PIC
+	movsxd	rdx,dword ptr (-8)[rax]
+	add	rax,rdx
+  else
 	mov	eax,dword ptr (-8)[rax]
+  endif
 	lea	rdx,__indirection+0
 	pop	rbx 
 
 	mov	qword ptr (-8)[rcx],rdx
+  ifdef PIC
+	movzx	eax,word ptr (4-8)[rax]
+  else
 	movzx	eax,word ptr 4[rax]
+  endif
 	mov	r8,rcx
 
 	cmp	rax,16
@@ -1220,12 +1273,21 @@ pmarkr_tuple_selector_node_2:
 
 pmarkr_small_tuple_or_record:
  ifdef NEW_DESCRIPTORS
+  ifdef PIC
+	movsxd	rdx,dword ptr(-8)[rax]
+	add	rax,rdx
+  else
 	mov	eax,(-8)[rax]
+  endif
 	lea	rdx,__indirection+0
 	pop	rbx 
 
 	mov	qword ptr (-8)[rcx],rdx
+  ifdef PIC
+	movzx	eax,word ptr (4-8)[rax]
+  else
 	movzx	eax,word ptr 4[rax]
+  endif
 	mov	r8,rcx
 pmarkr_tuple_selector_node_1:
 	mov	rcx,qword ptr [rbp+rax]
@@ -1280,7 +1342,7 @@ pmarkr_record_selector_node_1:
 	and	r8,31*8
 	shr	rbx,8
  ifdef PIC
- 	lea	r9,bit_set_table2+0
+	lea	r9,bit_set_table2+0
 	mov	r8d,dword ptr [r9+r8]
  else
 	mov	r8d,dword ptr (bit_set_table2)[r8]
@@ -1294,12 +1356,21 @@ pmarkr_record_selector_node_1:
 	jne	pmarkr_no_selector_2
 
 pmarkr_small_record:
+  ifdef PIC
+	movsxd	rdx,dword ptr (-8)[rax]
+	add	rax,rdx
+  else
 	mov	eax,dword ptr (-8)[rax]
+  endif
 	lea	rdx,__indirection+0
 	pop	rbx 
 
 	mov	qword ptr (-8)[rcx],rdx
+  ifdef PIC
+	movzx	eax,word ptr (4-8)[rax]
+  else
 	movzx	eax,word ptr 4[rax]
+  endif
 	mov	r8,rcx
 
 	cmp	rax,16
@@ -1320,7 +1391,7 @@ pmarkr_strict_record_selector_node_1:
 	and	rax,31*8
 	shr	rbx,8
  ifdef PIC
- 	lea	r9,bit_set_table2+0
+	lea	r9,bit_set_table2+0
 	mov	eax,dword ptr [r9+rax]
  else
 	mov	eax,dword ptr (bit_set_table2)[rax]
@@ -1361,10 +1432,19 @@ pmarkr_strict_record_selector_node_1:
 
 pmarkr_select_from_small_record:
  ifdef NEW_DESCRIPTORS
+  ifdef PIC
+	movsxd	rbx,dword ptr(-8)[rax]
+	add	rax,rbx
+  else
 	mov	eax,(-8)[rax]
+  endif
 	sub	rcx,8
 
+  ifdef PIC
+	movzx	ebx,word ptr (4-8)[rax]
+  else
 	movzx	ebx,word ptr 4[rax]
+  endif
 	cmp	rbx,16
 	jle	pmarkr_strict_record_selector_node_2
 	mov	rbx,qword ptr (-24)[r9+rbx]
@@ -1374,7 +1454,11 @@ pmarkr_strict_record_selector_node_2:
 pmarkr_strict_record_selector_node_3:
 	mov	qword ptr 8[rcx],rbx
 
+  ifdef PIC
+	movzx	ebx,word ptr (6-8)[rax]
+  else
 	movzx	ebx,word ptr 6[rax]
+  endif
 	test	rbx,rbx
 	je	pmarkr_strict_record_selector_node_5
 	cmp	rbx,16
@@ -1387,7 +1471,11 @@ pmarkr_strict_record_selector_node_4:
 pmarkr_strict_record_selector_node_5:
 	pop	rbx
 
+  ifdef PIC
+	mov	rax,qword ptr ((-8-8))[rax]
+  else
 	mov	rax,qword ptr (-8)[rax]
+  endif
 	mov	qword ptr [rcx],rax
  else
 	mov	eax,(-8)[rax]
@@ -1406,7 +1494,7 @@ pmarkr_indirection_node:
 pmarkr_hnf_2:
  ifdef PIC
 	lea	r9,bit_set_table2+0
-	mov	edx,dword ptr[r9+rdx]
+	mov	edx,dword ptr [r9+rdx]
  else
 	mov	edx,dword ptr (bit_set_table2)[rdx]
  endif
