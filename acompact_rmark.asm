@@ -477,7 +477,12 @@ rmark_large_tuple_or_record:
 	mov	rbx,qword ptr neg_heap_p3+0
 	lea	rbx,(-8)[rcx+rbx]
 
+  ifdef PIC
+	movsxd	d3,dword ptr (-8)[rax]
+	add	rax,d3
+  else
 	mov	eax,dword ptr (-8)[rax]
+  endif
 
 	mov	d3,rbx 
 	and	d3,31*8
@@ -490,7 +495,11 @@ rmark_large_tuple_or_record:
  endif
 	and	dword ptr [rdi+rbx*4],d3d
 
+ ifdef PIC
+	movzx	eax,word ptr (4-8)[rax]
+ else
 	movzx	eax,word ptr 4[rax]
+ endif
 	mov	rbx,qword ptr pointer_compare_address+0
 
  ifdef PIC
@@ -594,7 +603,12 @@ rmark_small_tuple_or_record:
 	mov	rbx,qword ptr neg_heap_p3+0
 	lea	rbx,(-8)[rcx+rbx]
 
+ ifdef PIC
+	movsxd	d3,dword ptr(-8)[rax]
+	add	rax,d3
+ else
 	mov	eax,(-8)[rax]
+ endif
 
 	mov	d3,rbx
 	and	d3,31*8
@@ -607,7 +621,11 @@ rmark_small_tuple_or_record:
  endif
 	and	dword ptr [rdi+rbx*4],d3d 
 
+ ifdef PIC
+	movzx	eax,word ptr (4-8)[rax]
+ else
 	movzx	eax,word ptr 4[rax]
+ endif
 	mov	rbx,qword ptr pointer_compare_address+0
 
  ifdef PIC
@@ -672,14 +690,23 @@ rmark_strict_record_selector_node_1:
 	jne	rmark_hnf_1
 
 rmark_select_from_small_record:
+ ifdef PIC
+	movsxd	rbx,dword ptr(-8)[rax]
+	add	rbx,rax
+ else
 	mov	ebx,(-8)[rax]
+ endif
 	sub	rcx,8
 
 	cmp	rcx,qword ptr pointer_compare_address+0
 	ja	rmark_selector_pointer_not_reversed
 
  ifdef NEW_DESCRIPTORS
+  ifdef PIC
+	movzx	eax,word ptr (4-8)[rbx]
+  else
 	movzx	eax,word ptr 4[rbx]
+  endif
 	cmp	rax,16
 	jle	rmark_strict_record_selector_node_2
 	mov	rax,qword ptr (-24)[d2+rax]
@@ -689,7 +716,11 @@ rmark_strict_record_selector_node_2:
 rmark_strict_record_selector_node_3:
 	mov	qword ptr 8[rcx],rax
 
+  ifdef PIC
+	movzx	eax,word ptr (6-8)[rbx]
+  else
 	movzx	eax,word ptr 6[rbx]
+  endif
 	test	rax,rax
 	je	rmark_strict_record_selector_node_5
 	cmp	rax,16
@@ -701,7 +732,11 @@ rmark_strict_record_selector_node_4:
 	mov	qword ptr 16[rcx],rax
 rmark_strict_record_selector_node_5:
 
+  ifdef PIC
+	mov	rax,qword ptr ((-8)-8)[rbx]
+  else
 	mov	rax,qword ptr (-8)[rbx]
+  endif
  else
 	mov	qword ptr [rcx],rax 
 	mov	qword ptr [rsi],rcx 
@@ -720,7 +755,11 @@ rmark_strict_record_selector_node_5:
 
 rmark_selector_pointer_not_reversed:
  ifdef NEW_DESCRIPTORS
+  ifdef PIC
+	movzx	eax,word ptr (4-8)[rbx]
+  else
 	movzx	eax,word ptr 4[rbx]
+  endif
 	cmp	rax,16
 	jle	rmark_strict_record_selector_node_6
 	mov	rax,qword ptr (-24)[d2+rax]
@@ -730,7 +769,11 @@ rmark_strict_record_selector_node_6:
 rmark_strict_record_selector_node_7:
 	mov	qword ptr 8[rcx],rax
 
+  ifdef PIC
+	movzx	eax,word ptr (6-8)[rbx]
+  else
 	movzx	eax,word ptr 6[rbx]
+  endif
 	test	rax,rax
 	je	rmark_strict_record_selector_node_9
 	cmp	rax,16
@@ -742,7 +785,11 @@ rmark_strict_record_selector_node_8:
 	mov	qword ptr 16[rcx],rax
 rmark_strict_record_selector_node_9:
 
+  ifdef PIC
+	mov	rax,qword ptr ((-8)-8)[rbx]
+  else
 	mov	rax,qword ptr (-8)[rbx]
+  endif
 	mov	qword ptr [rcx],rax
  else
 	mov	ebx,4[rbx]
