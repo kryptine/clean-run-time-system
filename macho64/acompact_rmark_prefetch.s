@@ -248,6 +248,7 @@ rmarkp_add_item3:
 	mov	rdx,qword ptr rmarkp_n_queue_items_16[rip]
 
 	lea	r9,rmarkp_queue[rip]
+	mov	qword ptr [r9+rbp],rcx
 	mov	qword ptr 8[r9+rbp],rsi
 	mov	qword ptr 16[r9+rbp],rsi
 	add	rbp,32
