@@ -396,7 +396,12 @@ rmarkr_large_tuple_or_record:
 
 	push	rcx
 
+  ifdef PIC
+	movsxd	rcx,dword ptr (-8)[rax]
+	add	rax,rcx
+  else
 	mov	eax,dword ptr (-8)[rax]
+  endif
 
 	mov	rcx,rbx
 	and	rcx,31*8
@@ -409,7 +414,11 @@ rmarkr_large_tuple_or_record:
  endif
 	and	dword ptr [rdi+rbx*4],ecx
 
+ ifdef PIC
+	movzx	eax,word ptr (4-8)[rax]
+ else
 	movzx	eax,word ptr 4[rax]
+ endif
 	cmp	rax,16
 	jl	rmarkr_tuple_or_record_selector_node_2
 	mov	rdx,qword ptr 16[rdx]
@@ -518,7 +527,12 @@ rmarkr_small_tuple_or_record:
 
 	push	rcx
 
+ ifdef PIC
+	movsxd	rcx,dword ptr(-8)[rax]
+	add	rax,rcx
+ else
 	mov	eax,(-8)[rax]
+ endif
 
 	mov	rcx,rbx
 	and	rcx,31*8
@@ -531,7 +545,11 @@ rmarkr_small_tuple_or_record:
  endif
 	and	dword ptr [rdi+rbx*4],ecx 
 
+ ifdef PIC
+	movzx	eax,word ptr (4-8)[rax]
+ else
 	movzx	eax,word ptr 4[rax]
+ endif
 	cmp	rax,16
 	jle	rmarkr_tuple_or_record_selector_node_2
 	mov	rdx,qword ptr 16[rdx]
@@ -600,11 +618,20 @@ rmarkr_strict_record_selector_node_1:
 	jne	rmarkr_hnf_1
 
 rmarkr_select_from_small_record:
+ ifdef PIC
+	movsxd	rbx,dword ptr(-8)[rax]
+	add	rax,rbx
+ else
 	mov	eax,(-8)[rax]
+ endif
 	sub	rcx,8
 
  ifdef NEW_DESCRIPTORS
+  ifdef PIC
+	movzx	ebx,word ptr (4-8)[rax]
+  else
 	movzx	ebx,word ptr 4[rax]
+  endif
 	cmp	rbx,16
 	jle	rmarkr_strict_record_selector_node_2
 	add	rbx,qword ptr 16[rdx]
@@ -615,7 +642,11 @@ rmarkr_strict_record_selector_node_2:
 rmarkr_strict_record_selector_node_3:
 	mov	qword ptr 8[rcx],rbx
 
+  ifdef PIC
+	movzx	ebx,word ptr (6-8)[rax]
+  else
 	movzx	ebx,word ptr 6[rax]
+  endif
 	test	rbx,rbx
 	je	rmarkr_strict_record_selector_node_5
 	cmp	rbx,16
@@ -627,7 +658,11 @@ rmarkr_strict_record_selector_node_4:
 	mov	qword ptr 16[rcx],rbx
 rmarkr_strict_record_selector_node_5:
 
+  ifdef PIC
+	mov	rax,qword ptr ((-8)-8)[rbx]
+  else
 	mov	rax,qword ptr (-8)[rbx]
+  endif
 	mov	qword ptr [rcx],rax
  else
 	mov	eax,4[rax]
@@ -763,7 +798,7 @@ rmarkr_int_3:
 	shr	rbx,8
  ifdef PIC
 	lea	r9,bit_clear_table2+0
-	mov	ecx,dword ptr[r9+rcx]
+	mov	ecx,dword ptr [r9+rcx]
  else
 	mov	ecx,dword ptr (bit_clear_table2)[rcx]
  endif
