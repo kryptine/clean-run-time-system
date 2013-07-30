@@ -1359,7 +1359,12 @@ printD:	test	al,2
 
 DtoAC_record:
  ifdef NEW_DESCRIPTORS
+  ifdef PIC
+	movsxd	rbx,dword ptr (-6)[rax]
+	lea	rbp,(-6)[rax+rbx]
+  else
 	movsxd	rbp,dword ptr (-6)[rax]
+  endif
  else
 	movsx	rbp,dword ptr (-4)[rbp]
  endif
@@ -1451,6 +1456,9 @@ printD_:
 
 print_record:
 	movsxd	rbp,dword ptr (-6)[rax]
+  ifdef PIC
+	lea	rbp,-6[rax+rbp]
+  endif
 	jmp	print_string_a2
  else
 	lea	rbp,(-2)[rax]
