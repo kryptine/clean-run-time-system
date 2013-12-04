@@ -752,7 +752,13 @@ static long parse_integer (register char *s)
 }
 #endif
 
+#ifdef PIC
+__attribute__ ((visibility("default")))
+#endif
 int global_argc;
+#ifdef PIC
+__attribute__ ((visibility("default")))
+#endif
 char **global_argv;
 
 #ifdef TIME_PROFILE
