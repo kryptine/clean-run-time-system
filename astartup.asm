@@ -346,10 +346,16 @@ first_one_bit_table	label ptr
 
 	align(1 shl  3)
 
+ ifndef PIC
 ;	public	small_integers
 	comm	small_integers:33*16
 ;	public	static_characters
 	comm	static_characters:256*16
+ else
+	include	astartup_chars_and_ints.asm
+	public	__start_address
+__start_address	dq 0
+ endif
 
 ;	extrn	clean_exception_handler:near
 ;	public	clean_unwind_info
@@ -506,7 +512,9 @@ _DATA	ends
 	public	print_error
 
  ifdef LINUX
+  ifndef PIC
 	.globl	__start
+  endif
  else
 	extrn	_start:near
  endif
@@ -615,7 +623,7 @@ abc_main:
 
  ifdef LINUX
   ifdef PIC
-	call	__start@PLT
+	call	qword ptr [__start_address[rip]]
   else
 	call	__start
   endif
@@ -3397,6 +3405,15 @@ eval_fill2:
 	mov	16[rcx],rbp 
 	ret
 
+ ifdef PIC
+	public	eval_upd_0_
+eval_upd_0_:
+	lea	r8,__indirection+0
+	mov	qword ptr [rdx],r8
+	mov	8[rdx],rcx 
+	ret
+ endif
+
  ifdef PROFILE
 	call	profile_n
 	mov	rbp,rax
@@ -3410,6 +3427,17 @@ eval_upd_0:
  endif
 	mov	8[rdx],rcx 
 	jmp	rbp
+
+ ifdef PIC
+	public	eval_upd_1_
+eval_upd_1_:
+	lea	r8,__indirection+0
+	mov	qword ptr [rdx],r8
+	mov	rax,8[rdx]
+	mov	8[rdx],rcx 
+	mov	rdx,rax 
+	ret
+ endif
 
  ifdef PROFILE
 	call	profile_n
@@ -3427,6 +3455,17 @@ eval_upd_1:
 	mov	rdx,rax 
 	jmp	rbp
 
+ ifdef PIC
+	public	eval_upd_2_
+eval_upd_2_:
+	lea	r8,__indirection+0
+	mov	qword ptr [rdx],r8
+	mov	r8,8[rdx]
+	mov	8[rdx],rcx
+	mov	rdx,16[rdx]
+	ret
+ endif
+
  ifdef PROFILE
 	call	profile_n
 	mov	rbp,rax
@@ -3442,6 +3481,20 @@ eval_upd_2:
 	mov	8[rdx],rcx
 	mov	rdx,16[rdx]
 	jmp	rbp 
+
+ ifdef PIC
+ 	public eval_upd_3_
+eval_upd_3_:
+	lea	r8,__indirection+0
+	mov	qword ptr [rdx],r8
+	mov	r8,8[rdx]
+	mov	8[rdx],rcx
+	mov	[rsi],rcx
+	mov	rcx,24[rdx]
+	add	rsi,8
+	mov	rdx,16[rdx]
+	ret
+ endif
 
  ifdef PROFILE
 	call	profile_n
@@ -3461,6 +3514,22 @@ eval_upd_3:
 	add	rsi,8
 	mov	rdx,16[rdx]
 	jmp	rbp
+
+ ifdef PIC
+ 	public eval_upd_4_
+eval_upd_4_:
+	lea	r8,__indirection+0
+	mov	qword ptr [rdx],r8
+	mov	r8,8[rdx]
+	mov	8[rdx],rcx 
+	mov	[rsi],rcx 
+	mov	rbx,32[rdx]
+	mov	8[rsi],rbx 
+	mov	rcx,24[rdx]
+	add	rsi,16
+	mov	rdx,16[rdx]
+	ret
+ endif
 
  ifdef PROFILE
 	call	profile_n
@@ -3482,6 +3551,24 @@ eval_upd_4:
 	add	rsi,16
 	mov	rdx,16[rdx]
 	jmp	rbp
+
+ ifdef PIC
+ 	public eval_upd_5_
+eval_upd_5_:
+	lea	r8,__indirection+0
+	mov	qword ptr [rdx],r8
+	mov	r8,8[rdx]
+	mov	[rsi],rcx 
+	mov	8[rdx],rcx 
+	mov	rbx,40[rdx]
+	mov	8[rsi],rbx 
+	mov	rbx,32[rdx]
+	mov	16[rsi],rbx 
+	mov	rcx,24[rdx]
+	add	rsi,24
+	mov	rdx,16[rdx]
+	ret
+ endif
 
  ifdef PROFILE
 	call	profile_n
@@ -3505,6 +3592,26 @@ eval_upd_5:
 	add	rsi,24
 	mov	rdx,16[rdx]
 	jmp	rbp
+
+ ifdef PIC
+ 	public eval_upd_6_
+eval_upd_6_:
+	lea	r8,__indirection+0
+	mov	qword ptr [rdx],r8
+	mov	r8,8[rdx]
+	mov	[rsi],rcx 
+	mov	8[rdx],rcx 
+	mov	rbx,48[rdx]
+	mov	8[rsi],rbx
+	mov	rbx,40[rdx]
+	mov	16[rsi],rbx 
+	mov	rbx,32[rdx]
+	mov	24[rsi],rbx 
+	mov	rcx,24[rdx]
+	add	rsi,32
+	mov	rdx,16[rdx]
+	ret
+ endif
 
  ifdef PROFILE
 	call	profile_n
@@ -3530,6 +3637,39 @@ eval_upd_6:
 	add	rsi,32
 	mov	rdx,16[rdx]
 	jmp	rbp 
+
+ ifdef PIC
+ 	public eval_upd_7_
+eval_upd_7_:
+	mov	rax,0
+	mov	rbx,40
+eval_upd_n_:
+	lea	r8,__indirection+0
+	mov	qword ptr [rdx],r8
+	mov	r8,8[rdx]
+	mov	[rsi],rcx 
+	mov	8[rdx],rcx 
+	add	rdx,rbx 
+	mov	rbx,16[rdx ]
+	mov	8[rsi],rbx 
+	mov	rbx,8[rdx]
+	mov	16[rsi],rbx 
+	mov	rbx,[rdx]
+	mov	24[rsi],rbx 
+	add	rsi,32
+
+eval_upd_n_lp_:
+	mov	rbx,(-8)[rdx]
+	sub	rdx,8
+	mov	[rsi],rbx 
+	add	rsi,8
+	sub	rax,1
+	jnc	eval_upd_n_lp_
+
+	mov	rcx,(-8)[rdx]
+	mov	rdx,(-16)[rdx ]
+	ret
+ endif
 
  ifdef PROFILE
 	call	profile_n
@@ -3569,6 +3709,14 @@ eval_upd_n_lp:
 	mov	rdx,(-16)[rdx ]
 	jmp	rbp 
 
+ ifdef PIC
+ 	public eval_upd_8_
+eval_upd_8_:
+	mov	rax,1
+	mov	rbx,48
+	jmp	eval_upd_n
+ endif
+
  ifdef PROFILE
 	call	profile_n
 	mov	rbp,rax
@@ -3577,6 +3725,14 @@ eval_upd_8:
 	mov	rax,1
 	mov	rbx,48
 	jmp	eval_upd_n
+
+ ifdef PIC
+ 	public eval_upd_9_
+eval_upd_9_:
+	mov	rax,2
+	mov	rbx,56
+	jmp	eval_upd_n_
+ endif
 
  ifdef PROFILE
 	call	profile_n
@@ -3587,6 +3743,14 @@ eval_upd_9:
 	mov	rbx,56
 	jmp	eval_upd_n
 
+ ifdef PIC
+ 	public eval_upd_10_
+eval_upd_10_:
+	mov	rax,3
+	mov	rbx,64
+	jmp	eval_upd_n_
+ endif
+
  ifdef PROFILE
 	call	profile_n
 	mov	rbp,rax
@@ -3595,6 +3759,14 @@ eval_upd_10:
 	mov	rax,3
 	mov	rbx,64
 	jmp	eval_upd_n
+
+ ifdef PIC
+ 	public eval_upd_11_
+eval_upd_11_:
+	mov	rax,4
+	mov	rbx,72
+	jmp	eval_upd_n_
+ endif
 
  ifdef PROFILE
 	call	profile_n
@@ -3605,6 +3777,14 @@ eval_upd_11:
 	mov	rbx,72
 	jmp	eval_upd_n
 
+ ifdef PIC
+ 	public eval_upd_12_
+eval_upd_12_:
+	mov	rax,5
+	mov	rbx,80
+	jmp	eval_upd_n_
+ endif
+
  ifdef PROFILE
 	call	profile_n
 	mov	rbp,rax
@@ -3613,6 +3793,14 @@ eval_upd_12:
 	mov	rax,5
 	mov	rbx,80
 	jmp	eval_upd_n
+
+ ifdef PIC
+ 	public eval_upd_13_
+eval_upd_13_:
+	mov	rax,6
+	mov	rbx,88
+	jmp	eval_upd_n_
+ endif
 
  ifdef PROFILE
 	call	profile_n
@@ -3623,6 +3811,14 @@ eval_upd_13:
 	mov	rbx,88
 	jmp	eval_upd_n
 
+ ifdef PIC
+ 	public eval_upd_14_
+eval_upd_14_:
+	mov	rax,7
+	mov	rbx,96
+	jmp	eval_upd_n_
+ endif
+
  ifdef PROFILE
 	call	profile_n
 	mov	rbp,rax
@@ -3631,6 +3827,14 @@ eval_upd_14:
 	mov	rax,7
 	mov	rbx,96
 	jmp	eval_upd_n
+
+ ifdef PIC
+ 	public eval_upd_15_
+eval_upd_15_:
+	mov	rax,8
+	mov	rbx,104
+	jmp	eval_upd_n_
+ endif
 
  ifdef PROFILE
 	call	profile_n
@@ -3641,6 +3845,14 @@ eval_upd_15:
 	mov	rbx,104
 	jmp	eval_upd_n
 
+ ifdef PIC
+ 	public eval_upd_16_
+eval_upd_16_:
+	mov	rax,9
+	mov	rbx,112
+	jmp	eval_upd_n_
+ endif
+
  ifdef PROFILE
 	call	profile_n
 	mov	rbp,rax
@@ -3649,6 +3861,14 @@ eval_upd_16:
 	mov	rax,9
 	mov	rbx,112
 	jmp	eval_upd_n
+
+ ifdef PIC
+ 	public eval_upd_17_
+eval_upd_17_:
+	mov	rax,10
+	mov	rbx,120
+	jmp	eval_upd_n_
+ endif
 
  ifdef PROFILE
 	call	profile_n
@@ -3659,6 +3879,14 @@ eval_upd_17:
 	mov	rbx,120
 	jmp	eval_upd_n
 
+ ifdef PIC
+ 	public eval_upd_18_
+eval_upd_18_:
+	mov	rax,11
+	mov	rbx,128
+	jmp	eval_upd_n_
+ endif
+
  ifdef PROFILE
 	call	profile_n
 	mov	rbp,rax
@@ -3667,6 +3895,14 @@ eval_upd_18:
 	mov	rax,11
 	mov	rbx,128
 	jmp	eval_upd_n
+
+ ifdef PIC
+ 	public eval_upd_19_
+eval_upd_19_:
+	mov	rax,12
+	mov	rbx,136
+	jmp	eval_upd_n_
+ endif
 
  ifdef PROFILE
 	call	profile_n
@@ -3677,6 +3913,14 @@ eval_upd_19:
 	mov	rbx,136
 	jmp	eval_upd_n
 
+ ifdef PIC
+ 	public eval_upd_20_
+eval_upd_20_:
+	mov	rax,13
+	mov	rbx,144
+	jmp	eval_upd_n_
+ endif
+
  ifdef PROFILE
 	call	profile_n
 	mov	rbp,rax
@@ -3685,6 +3929,14 @@ eval_upd_20:
 	mov	rax,13
 	mov	rbx,144
 	jmp	eval_upd_n
+
+ ifdef PIC
+ 	public eval_upd_21_
+eval_upd_21_:
+	mov	rax,14
+	mov	rbx,152
+	jmp	eval_upd_n_
+ endif
 
  ifdef PROFILE
 	call	profile_n
@@ -3695,6 +3947,14 @@ eval_upd_21:
 	mov	rbx,152
 	jmp	eval_upd_n
 
+ ifdef PIC
+ 	public eval_upd_22_
+eval_upd_22_:
+	mov	rax,15
+	mov	rbx,160
+	jmp	eval_upd_n_
+ endif
+
  ifdef PROFILE
 	call	profile_n
 	mov	rbp,rax
@@ -3703,6 +3963,14 @@ eval_upd_22:
 	mov	rax,15
 	mov	rbx,160
 	jmp	eval_upd_n
+
+ ifdef PIC
+ 	public eval_upd_23_
+eval_upd_23_:
+	mov	rax,16
+	mov	rbx,168
+	jmp	eval_upd_n_
+ endif
 
  ifdef PROFILE
 	call	profile_n
@@ -3713,6 +3981,14 @@ eval_upd_23:
 	mov	rbx,168
 	jmp	eval_upd_n
 
+ ifdef PIC
+ 	public eval_upd_24_
+eval_upd_24_:
+	mov	rax,17
+	mov	rbx,176
+	jmp	eval_upd_n_
+ endif
+
  ifdef PROFILE
 	call	profile_n
 	mov	rbp,rax
@@ -3721,6 +3997,14 @@ eval_upd_24:
 	mov	rax,17
 	mov	rbx,176
 	jmp	eval_upd_n
+
+ ifdef PIC
+ 	public eval_upd_25_
+eval_upd_25_:
+	mov	rax,18
+	mov	rbx,184
+	jmp	eval_upd_n_
+ endif
 
  ifdef PROFILE
 	call	profile_n
@@ -3731,6 +4015,14 @@ eval_upd_25:
 	mov	rbx,184
 	jmp	eval_upd_n
 
+ ifdef PIC
+ 	public eval_upd_26_
+eval_upd_26_:
+	mov	rax,19
+	mov	rbx,192
+	jmp	eval_upd_n_
+ endif
+
  ifdef PROFILE
 	call	profile_n
 	mov	rbp,rax
@@ -3739,6 +4031,14 @@ eval_upd_26:
 	mov	rax,19
 	mov	rbx,192
 	jmp	eval_upd_n
+
+ ifdef PIC
+ 	public eval_upd_27_
+eval_upd_27_:
+	mov	rax,20
+	mov	rbx,200
+	jmp	eval_upd_n_
+ endif
 
  ifdef PROFILE
 	call	profile_n
@@ -3749,6 +4049,14 @@ eval_upd_27:
 	mov	rbx,200
 	jmp	eval_upd_n
 
+ ifdef PIC
+ 	public eval_upd_28_
+eval_upd_28_:
+	mov	rax,21
+	mov	rbx,208
+	jmp	eval_upd_n_
+ endif
+
  ifdef PROFILE
 	call	profile_n
 	mov	rbp,rax
@@ -3757,6 +4065,14 @@ eval_upd_28:
 	mov	rax,21
 	mov	rbx,208
 	jmp	eval_upd_n
+
+ ifdef PIC
+ 	public eval_upd_29_
+eval_upd_29_:
+	mov	rax,22
+	mov	rbx,216
+	jmp	eval_upd_n_
+ endif
 
  ifdef PROFILE
 	call	profile_n
@@ -3767,6 +4083,14 @@ eval_upd_29:
 	mov	rbx,216
 	jmp	eval_upd_n
 
+ ifdef PIC
+ 	public eval_upd_30_
+eval_upd_30_:
+	mov	rax,23
+	mov	rbx,224
+	jmp	eval_upd_n_
+ endif
+
  ifdef PROFILE
 	call	profile_n
 	mov	rbp,rax
@@ -3776,6 +4100,14 @@ eval_upd_30:
 	mov	rbx,224
 	jmp	eval_upd_n
 
+ ifdef PIC
+ 	public eval_upd_31_
+eval_upd_31_:
+	mov	rax,24
+	mov	rbx,232
+	jmp	eval_upd_n_
+ endif
+
  ifdef PROFILE
 	call	profile_n
 	mov	rbp,rax
@@ -3784,6 +4116,14 @@ eval_upd_31:
 	mov	rax,24
 	mov	rbx,232
 	jmp	eval_upd_n
+
+ ifdef PIC
+ 	public eval_upd_32_
+eval_upd_32_:
+	mov	rax,25
+	mov	rbx,240
+	jmp	eval_upd_n_
+ endif
 
  ifdef PROFILE
 	call	profile_n
