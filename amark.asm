@@ -864,6 +864,11 @@ _mark_real_int_bool_or_char:
 	or	dword ptr 4[rdi+rbx*4],1
 	jmp	_mark_next_node
 
+ ifdef PIC
+_mark_normal_hnf_0_:
+	or	dword ptr [rdi+rbx*4],esi 
+ endif
+
 _mark_normal_hnf_0:
 	inc	r14
 	jmp	_mark_next_node
@@ -965,6 +970,12 @@ _mark_record_1:
 
 _mark_string_or_array:
 	je	_mark_string_
+
+ ifdef PIC
+	lea	r9,__ARRAY__+2+0
+	cmp	rax,r9
+	jb	_mark_normal_hnf_0_
+ endif
 
 _mark_array:
 	mov	rbp,qword ptr 16[rcx]
@@ -1876,6 +1887,10 @@ __no_int_3:
 __no_char_3:
 	jb	__mark_real_bool_or_small_string
 
+ ifdef PIC
+__mark_normal_hnf_0:
+ endif
+
  ifdef NEW_DESCRIPTORS
 	lea	rcx,((-8)-2)[rax]
  else
@@ -2017,6 +2032,12 @@ __mark_record_1:
 
 __mark_string_or_array:
 	je	__mark_string_
+
+ ifdef PIC
+	lea	r9,__ARRAY__+2+0
+	cmp	rax,r9
+	jb	__mark_normal_hnf_0
+ endif
 
 __mark_array:
 	mov	rbp,qword ptr 16[rcx]

@@ -862,6 +862,9 @@ move_hnf_0:
 	cmp	rax,offset CHAR+2
  endif
 	jbe	move_real_int_bool_or_char
+ ifdef PIC
+move_normal_hnf_0:
+ endif
 
 	test	rsi,rsi
 	jne	bsf_and_copy_nodes
@@ -887,6 +890,11 @@ cp_s_arg_lp3:
 	jmp	find_non_zero_long
 
 move_array:
+ ifdef PIC
+	lea	r9,__ARRAY__+2+0
+	cmp	rax,r9
+	jb	move_normal_hnf_0
+ endif
 	test	rsi,rsi
 	push	rcx
 	jne	bsf_and_end_array_bit

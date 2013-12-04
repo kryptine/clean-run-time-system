@@ -1235,9 +1235,19 @@ copy_arity_0_node2_:
 	ret
 
 copy_string_or_array_2:
+ ifdef PIC
+	je	copy_string_2
+	lea	r9,__ARRAY__+2+0
+	cmp	rcx,r9
+	jb	copy_normal_hnf_0_2
+	mov	rcx,rdx
+	jmp	copy_array_2
+copy_string_2:
+	mov	rcx,rdx
+ else
 	mov	rcx,rdx
 	jne	copy_array_2
-
+ endif
 	sub	rdx,heap_p1+0
 	cmp	rdx,semi_space_size+0
 	jae	copy_string_or_array_constant
