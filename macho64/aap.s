@@ -1432,8 +1432,8 @@ yet_args_needed_0_gc:
 
 	.align	2
 	sub	r15,3
-	jae short build_node_2_gc_r
-	jmp short build_node_2_gc
+	jae L2
+	jmp L1
 	nop
 	.align	2	
  .if PROFILE
@@ -1464,10 +1464,12 @@ yet_args_needed_1_gc_r:
 	add	rdi,24
 	ret
 
+L1:
 yet_args_needed_1_gc:
 	att_call	collect_2
 	att_jmp	yet_args_needed_1_gc_r
 
+L2:
 build_node_2_gc_r:
 	mov	qword ptr [rdi],rbx
 	mov	qword ptr 8[rdi],rdx
@@ -1483,8 +1485,8 @@ build_node_2_gc:
 
 	.align	2
 	sub	r15,5
-	jae short build_node_3_gc_r
-	jmp short build_node_3_gc
+	jae short L3
+	jmp short L4
 	nop
 	.align	2
  .if PROFILE
@@ -1521,6 +1523,7 @@ gc_r_22:
 gc_22:	att_call	collect_2
 	att_jmp	gc_r_22
 
+L3:
 build_node_3_gc_r:
 	mov	qword ptr [rdi],rbx
 	lea	rbp,24[rdi]
@@ -1532,6 +1535,7 @@ build_node_3_gc_r:
 	add	rdi,40
 	ret
 
+L4:
 build_node_3_gc:
 	att_call	collect_2
 	att_jmp	build_node_3_gc_r
@@ -1539,8 +1543,8 @@ build_node_3_gc:
 
 	.align	2
 	sub	r15,6
-	jae short build_node_4_gc_r
-	jmp short build_node_4_gc
+	jae L5
+	jmp L6
 	nop
 	.align	2
  .if PROFILE
@@ -1580,6 +1584,7 @@ gc_r_23:
 gc_23:	att_call	collect_2
 	att_jmp	gc_r_23
 
+L5:
 build_node_4_gc_r:
 	mov	qword ptr [rdi],rbx
 	lea	rbp,24[rdi]
@@ -1594,6 +1599,7 @@ build_node_4_gc_r:
 	add	rdi,48
 	ret
 
+L6:
 build_node_4_gc:
 	att_call	collect_2
 	att_jmp	build_node_4_gc_r
@@ -1601,7 +1607,7 @@ build_node_4_gc:
 
 	.align	2
 	sub	r15,7
-	jae short build_node_5_gc_r
+	jae short L7
 	jmp 	build_node_5_gc
 	nop
 	.align	2	
@@ -1644,6 +1650,7 @@ gc_r_24:
 gc_24:	att_call	collect_2
 	att_jmp	gc_r_24
 
+L7:
 build_node_5_gc_r:
 	mov	qword ptr [rdi],rbx
 	lea	rbp,24[rdi]
