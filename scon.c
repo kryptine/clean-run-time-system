@@ -809,75 +809,77 @@ int main (int argc,char **argv)
 #endif
 	
 	set_home_and_appl_path (argv[0]);
-	
-	for (arg_n=1; arg_n<argc; ++arg_n){
-		char *s;
-		
-		s=argv[arg_n];
-		if (*s!='-')
-			break;
 
-		++s;
-		if (!strcmp (s,"h")){
-			++arg_n;
-			if (arg_n>=argc){
-				printf ("Heapsize missing\n");
-				return -1;
-			}
-			heap_size=parse_size (argv[arg_n]);
-		} else if (!strcmp (s,"s")){
-			++arg_n;
-			if (arg_n>=argc){
-				printf ("Stacksize missing\n");
-				return -1;
-			}
+	arg_n=1;	
+	if ((flags & 8192)==0)
+		for (; arg_n<argc; ++arg_n){
+			char *s;
+			
+			s=argv[arg_n];
+			if (*s!='-')
+				break;
+
+			++s;
+			if (!strcmp (s,"h")){
+				++arg_n;
+				if (arg_n>=argc){
+					printf ("Heapsize missing\n");
+					return -1;
+				}
+				heap_size=parse_size (argv[arg_n]);
+			} else if (!strcmp (s,"s")){
+				++arg_n;
+				if (arg_n>=argc){
+					printf ("Stacksize missing\n");
+					return -1;
+				}
 #if defined (SOLARIS) || defined (I486)
-			ab_stack_size=parse_size (argv[arg_n]);
+				ab_stack_size=parse_size (argv[arg_n]);
 #else
-			stack_size=parse_size (argv[arg_n]);
+				stack_size=parse_size (argv[arg_n]);
 #endif
-		} else if (!strcmp (s,"b"))
-			flags |= 1;
-		else if (!strcmp (s,"sc"))
-			flags &= ~1;
-		else if (!strcmp (s,"t"))
-			flags |= 8;
-		else if (!strcmp (s,"nt"))
-			flags &= ~8;
-		else if (!strcmp (s,"gc"))
-			flags |= 2;
-		else if (!strcmp (s,"ngc"))
-			flags &= ~2;
-		else if (!strcmp (s,"st"))
-			flags |= 4;
-		else if (!strcmp (s,"nst"))
-			flags &= ~4;
-		else if (!strcmp (s,"nr"))
-			flags |= 16;
+			} else if (!strcmp (s,"b"))
+				flags |= 1;
+			else if (!strcmp (s,"sc"))
+				flags &= ~1;
+			else if (!strcmp (s,"t"))
+				flags |= 8;
+			else if (!strcmp (s,"nt"))
+				flags &= ~8;
+			else if (!strcmp (s,"gc"))
+				flags |= 2;
+			else if (!strcmp (s,"ngc"))
+				flags &= ~2;
+			else if (!strcmp (s,"st"))
+				flags |= 4;
+			else if (!strcmp (s,"nst"))
+				flags &= ~4;
+			else if (!strcmp (s,"nr"))
+				flags |= 16;
 #ifdef MARKING_GC
-		else if (!strcmp (s,"gcm"))
-			flags |= 64;
-		else if (!strcmp (s,"gcc"))
-			flags &= ~64;
-		else if (!strcmp (s,"gci")){
-			++arg_n;
-			if (arg_n>=argc){
-				printf ("Initial heap size missing\n");
-				exit (-1);
-			}
-			initial_heap_size=parse_size (argv[arg_n]);
-		} else if (!strcmp (s,"gcf")){
-			++arg_n;
-			if (arg_n>=argc){
-				printf ("Next heap size factor missing\n");
-				exit (-1);
-			}
-			heap_size_multiple=parse_integer (argv[arg_n])<<8;
-		}	
+			else if (!strcmp (s,"gcm"))
+				flags |= 64;
+			else if (!strcmp (s,"gcc"))
+				flags &= ~64;
+			else if (!strcmp (s,"gci")){
+				++arg_n;
+				if (arg_n>=argc){
+					printf ("Initial heap size missing\n");
+					exit (-1);
+				}
+				initial_heap_size=parse_size (argv[arg_n]);
+			} else if (!strcmp (s,"gcf")){
+				++arg_n;
+				if (arg_n>=argc){
+					printf ("Next heap size factor missing\n");
+					exit (-1);
+				}
+				heap_size_multiple=parse_integer (argv[arg_n])<<8;
+			}	
 #endif
-		else
-			break;
-	}
+			else
+				break;
+		}
 
 	--arg_n;
 	argv[arg_n]=argv[0];

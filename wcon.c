@@ -1617,98 +1617,100 @@ int clean_main (void)
 		heap_size_multiple=MAXIMUM_HEAP_SIZE_MULTIPLE;
 #endif
 
-	for (arg_n=1; arg_n<argc; ++arg_n){
-		char *s;
-		
-		s=argv[arg_n];
-		if (*s!='-')
-			break;
+	arg_n=1;
+	if ((flags & 8192)==0)
+		for (; arg_n<argc; ++arg_n){
+			char *s;
+			
+			s=argv[arg_n];
+			if (*s!='-')
+				break;
 
-		++s;
-		if (EQ_STRING1 (s,'h')){
-   			long s;
+			++s;
+			if (EQ_STRING1 (s,'h')){
+				long s;
 
-			++arg_n;
-			if (arg_n>=argc){
-				w_print_string ("Heapsize missing\n");
-				return -1;
-			}
-			s=parse_size (argv[arg_n]);
-			if (s<0)
-				return -1;
-			heap_size=s;
-		} else if (EQ_STRING1 (s,'s')){
-   			long s;
+				++arg_n;
+				if (arg_n>=argc){
+					w_print_string ("Heapsize missing\n");
+					return -1;
+				}
+				s=parse_size (argv[arg_n]);
+				if (s<0)
+					return -1;
+				heap_size=s;
+			} else if (EQ_STRING1 (s,'s')){
+				long s;
 
-			++arg_n;
-			if (arg_n>=argc){
-				w_print_string ("Stacksize missing\n");
-				return -1;
-			}
-			s=parse_size (argv[arg_n]);
-			if (s<0)
-				return -1;
-			ab_stack_size=s;
-		} else if (EQ_STRING1 (s,'b'))
-			flags |= 1;
-		else if (EQ_STRING2 (s,'s','c'))
-			flags &= ~1;
-		else if (EQ_STRING1 (s,'t'))
-			flags |= SHOW_EXECUTION_TIME_MASK;
-		else if (EQ_STRING2 (s,'n','t'))
-			flags &= ~SHOW_EXECUTION_TIME_MASK;
-		else if (EQ_STRING2 (s,'g','c'))
-			flags |= 2;
-		else if (EQ_STRING3 (s,'n','g','c'))
-			flags &= ~2;
-		else if (EQ_STRING2 (s,'s','t'))
-			flags |= 4;
-		else if (EQ_STRING3 (s,'n','s','t'))
-			flags &= ~4;
-		else if (EQ_STRING2 (s,'n','r'))
-			flags |= NO_RESULT_MASK;
+				++arg_n;
+				if (arg_n>=argc){
+					w_print_string ("Stacksize missing\n");
+					return -1;
+				}
+				s=parse_size (argv[arg_n]);
+				if (s<0)
+					return -1;
+				ab_stack_size=s;
+			} else if (EQ_STRING1 (s,'b'))
+				flags |= 1;
+			else if (EQ_STRING2 (s,'s','c'))
+				flags &= ~1;
+			else if (EQ_STRING1 (s,'t'))
+				flags |= SHOW_EXECUTION_TIME_MASK;
+			else if (EQ_STRING2 (s,'n','t'))
+				flags &= ~SHOW_EXECUTION_TIME_MASK;
+			else if (EQ_STRING2 (s,'g','c'))
+				flags |= 2;
+			else if (EQ_STRING3 (s,'n','g','c'))
+				flags &= ~2;
+			else if (EQ_STRING2 (s,'s','t'))
+				flags |= 4;
+			else if (EQ_STRING3 (s,'n','s','t'))
+				flags &= ~4;
+			else if (EQ_STRING2 (s,'n','r'))
+				flags |= NO_RESULT_MASK;
 #ifdef GC_FLAGS
-		else if (EQ_STRING3 (s,'g','c','m'))
-			flags |= 64;
-		else if (EQ_STRING3 (s,'g','c','c'))
-			flags &= ~64;
-		else if (EQ_STRING3 (s,'g','c','i')){
-			int s;
-			
-			++arg_n;
-			if (arg_n>=argc){
-				w_print_string ("Initial heap size missing\n");
-				return -1;
+			else if (EQ_STRING3 (s,'g','c','m'))
+				flags |= 64;
+			else if (EQ_STRING3 (s,'g','c','c'))
+				flags &= ~64;
+			else if (EQ_STRING3 (s,'g','c','i')){
+				int s;
+				
+				++arg_n;
+				if (arg_n>=argc){
+					w_print_string ("Initial heap size missing\n");
+					return -1;
+				}
+				s=parse_size (argv[arg_n]);
+				if (s<0)
+					return -1;
+				initial_heap_size=s;
+			} else if (EQ_STRING3 (s,'g','c','f')){
+				int i;
+				
+				++arg_n;
+				if (arg_n>=argc){
+					w_print_string ("Next heap size factor missing\n");
+					return -1;
+				}
+				i=parse_integer (argv[arg_n]);
+				if (i<0)
+					return -1;
+				heap_size_multiple=i<<8;
 			}
-			s=parse_size (argv[arg_n]);
-			if (s<0)
-				return -1;
-			initial_heap_size=s;
-		} else if (EQ_STRING3 (s,'g','c','f')){
-			int i;
-			
-			++arg_n;
-			if (arg_n>=argc){
-				w_print_string ("Next heap size factor missing\n");
-				return -1;
-			}
-			i=parse_integer (argv[arg_n]);
-			if (i<0)
-				return -1;
-			heap_size_multiple=i<<8;
-		}
 # ifdef AI64
-		else if (EQ_STRING3 (s,'g','c','p'))
-			flags |= 4096;
+			else if (EQ_STRING3 (s,'g','c','p'))
+				flags |= 4096;
 # endif
 #endif
 #ifdef WINDOWS
-		else if (EQ_STRING3 (s,'c','o','n'))
-			console_flag=1;
+			else if (EQ_STRING3 (s,'c','o','n'))
+				console_flag=1;
 #endif
-		else
-			break;
-	}
+			else
+				break;
+		}
 
 	--arg_n;
 	argv[arg_n]=argv[0];
