@@ -603,11 +603,24 @@ _DATA	ends
 
 abc_main:
 	push	rbx
-	push	rcx
-	push	rdx 
 	push	rbp 
 	push	rsi 
 	push	rdi 
+ ifndef LINUX
+	db	49h
+	push	rsp
+	db	49h
+	push	rbp
+	db	49h
+	push	rsi
+	db	49h
+	push	rdi
+ else
+	push	r12
+	push	r13
+	push	r14
+	push	r15
+ endif
 
 	call	init_clean
 	test	rax,rax
@@ -638,11 +651,24 @@ exit:
 	call	exit_clean
 
 init_error:
+ ifndef LINUX
+	db	49h
+	pop	rdi
+	db	49h
+	pop	rsi
+	db	49h
+	pop	rbp
+	db	49h
+	pop	rsp
+ else
+	pop	r15
+	pop	r14
+	pop	r13
+	pop	r12
+ endif
 	pop	rdi
 	pop	rsi
 	pop	rbp
-	pop	rdx
-	pop	rcx
 	pop	rbx
 
  ifdef LINUX
