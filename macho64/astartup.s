@@ -629,11 +629,24 @@ first_one_bit_table:
 
 _abc_main:
 	push	rbx
-	push	rcx
-	push	rdx 
 	push	rbp 
 	push	rsi 
 	push	rdi 
+ .if ! LINUX
+	.byte	0x49
+	push	rsp
+	.byte	0x49
+	push	rbp
+	.byte	0x49
+	push	rsi
+	.byte	0x49
+	push	rdi
+ .else
+	push	r12
+	push	r13
+	push	r14
+	push	r15
+ .endif
 
 	call	init_clean
 	test	rax,rax
@@ -660,11 +673,24 @@ exit:
 	call	exit_clean
 
 init_error:
+ .if ! LINUX
+	.byte	0x49
+	pop	rdi
+	.byte	0x49
+	pop	rsi
+	.byte	0x49
+	pop	rbp
+	.byte	0x49
+	pop	rsp
+ .else
+	pop	r15
+	pop	r14
+	pop	r13
+	pop	r12
+ .endif
 	pop	rdi
 	pop	rsi
 	pop	rbp
-	pop	rdx
-	pop	rcx
 	pop	rbx
 
  .if LINUX
