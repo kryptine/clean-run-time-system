@@ -802,21 +802,23 @@ void create_profile_file_name (unsigned char *profile_file_name_string)
 		if (r==0){
 		    int length_file_name,size_time_profile_file_name_suffix;
 
-		size_time_profile_file_name_suffix=sizeof (time_profile_file_name_suffix);
-		length_file_name=0;
-        while (profile_file_name[length_file_name]!='\0')
-			++length_file_name;
+			realpath (exec_path,profile_file_name);
 
-		if (length_file_name+size_time_profile_file_name_suffix>MY_PATH_MAX)
-			length_file_name=MY_PATH_MAX-size_time_profile_file_name_suffix;
+			size_time_profile_file_name_suffix=sizeof (time_profile_file_name_suffix);
+			length_file_name=0;
+			while (profile_file_name[length_file_name]!='\0')
+				++length_file_name;
 
-		strcat (&profile_file_name[length_file_name],time_profile_file_name_suffix);
-		*(size_t*)&profile_file_name_string[sizeof(size_t)] = length_file_name+size_time_profile_file_name_suffix-1;
-	} else {
-		profile_file_name[0]='\0';
+			if (length_file_name+size_time_profile_file_name_suffix>MY_PATH_MAX)
+				length_file_name=MY_PATH_MAX-size_time_profile_file_name_suffix;
 
-		strcpy (profile_file_name,&time_profile_file_name_suffix[1]);
-		*(size_t*)&profile_file_name_string[sizeof(size_t)] = sizeof (time_profile_file_name_suffix)-1;
+			strcat (&profile_file_name[length_file_name],time_profile_file_name_suffix);
+			*(size_t*)&profile_file_name_string[sizeof(size_t)] = length_file_name+size_time_profile_file_name_suffix-1;
+		} else {
+			profile_file_name[0]='\0';
+
+			strcpy (profile_file_name,&time_profile_file_name_suffix[1]);
+			*(size_t*)&profile_file_name_string[sizeof(size_t)] = sizeof (time_profile_file_name_suffix)-1;
 		}
 	}
 # endif

@@ -10,8 +10,8 @@ as afileIO3.s -o afileIO3.o
 # ld -r startup.o ../scon.o afileIO3.o ufileIO2.o -o _startup.o
 libtool -static -o _startup.o startup.o ../scon.o afileIO3.o ufileIO2.o
 # Because of a bug in ld, the following does not work anymore (MacOSX 10.7 and 10.8)
-# ld -r startupTrace.o ../scon.o afileIO3.o ufileIO2.o -o _startupTrace.o
+# ld -r startupTrace.o ../scon-trace.o afileIO3.o ufileIO2.o -o _startupTrace.o
 libtool -static -o _startupTrace.o startupTrace.o ../scon-trace.o afileIO3.o ufileIO2.o
 # Because of a bug in ld, the following does not work anymore (MacOSX 10.7 and 10.8)
-# ld -r startupProfile.o ../scon.o afileIO3.o ufileIO2.o -o _startupProfile.o
+# ld -r startupProfile.o ../scon-profile.o afileIO3.o ufileIO2.o -o _startupProfile.o
 libtool -static -o _startupProfile.o startupProfile.o ../scon-profile.o afileIO3.o ufileIO2.o

@@ -1,32 +1,34 @@
 
-  .text
+	.text
 
-  .globl init_profiler
-  .globl profile_r
-  .globl profile_l
-  .globl profile_l2
-  .globl profile_n
-  .globl profile_n2
-  .globl profile_s
-  .globl profile_s2
-  .globl profile_t
-  .globl write_profile_information
-  .globl write_profile_stack
-  .globl stack_trace_depth
+	.globl	init_profiler
+	.globl	profile_r
+	.globl	profile_l
+	.globl	profile_l2
+	.globl	profile_n
+	.globl	profile_n2
+	.globl	profile_s
+	.globl	profile_s2
+	.globl	profile_t
+	.globl	write_profile_information
+	.globl	write_profile_stack
+	.globl	stack_trace_depth
 
  .if ! LINUX
-   .globl allocate_memory
+	.globl	allocate_memory
  .endif
-   .globl __STRING__
-   .globl openF
-   .globl closeF
-   .globl writeFC
-   .globl writeFI
-   .globl ab_stack_size
-   .globl ew_print_string
-   .globl ew_print_char
-   .globl ew_print_text
-   .globl create_profile_file_name
+	.globl	__STRING__
+	.globl	openF
+	.globl	closeF
+	.globl	writeFC
+	.globl	writeFI
+	.globl	_ab_stack_size
+	.globl	_ew_print_string
+	.globl	_ew_print_char
+	.globl	_ew_print_text
+	.globl	_create_profile_file_name
+
+	.globl	profile_file_name
 /* extrn print_error */
 /* extrn profile_stack_pointer */
 
@@ -508,7 +510,7 @@ write_profile_information:
  .else
 	lea	rcx,profile_file_name[rip]
  .endif
-	att_call create_profile_file_name
+	att_call _create_profile_file_name
  .if LINUX
 	mov	rsi,r13
 	mov	rdi,r14
@@ -534,7 +536,8 @@ write_profile_lp:
 
 	push	rdx
 
-	mov	edx,dword ptr (-4)[rdx]
+	movsx	rax,dword ptr (-4)[rdx]
+	lea	rdx,-4[rdx+rax]
 	mov	eax,dword ptr [rdx]
 	add	rdx,4
 
@@ -642,7 +645,7 @@ write_profile_stack:
  .else
 	lea	rcx,stack_trace_string[rip]
  .endif
-	att_call ew_print_string
+	att_call _ew_print_string
  .if LINUX
 	mov	rsi,r13
 	mov	rdi,r14
@@ -679,14 +682,14 @@ write_functions_on_stack:
 	mov	r14,rdi
 	mov	rdi,rcx
  .endif
-	att_call ew_print_string
+	att_call _ew_print_string
 
  .if LINUX
 	lea	rdi,module_string[rip]
  .else
 	lea	rcx,module_string[rip]
  .endif
-	att_call ew_print_string
+	att_call _ew_print_string
 
  .if LINUX
 	mov	rsi,r12
@@ -695,21 +698,21 @@ write_functions_on_stack:
 	mov	rdx,r12
 	mov	rcx,r13
  .endif
-	att_call ew_print_text
+	att_call _ew_print_text
 
  .if LINUX
 	mov	rdi,']
  .else
 	mov	rcx,']
  .endif
-	att_call ew_print_char
+	att_call _ew_print_char
 
  .if LINUX
 	mov	rdi,10
  .else
 	mov	rcx,10
  .endif
-	att_call ew_print_char
+	att_call _ew_print_char
  
 .if LINUX
 	mov	rsi,r11
@@ -734,7 +737,7 @@ init_profiler:
  .if LINUX
 	mov	r13,rsi
 	mov	r14,rdi
-	mov	rdi,qword ptr ab_stack_size[rip]
+	mov	rdi,qword ptr _ab_stack_size[rip]
 	att_call _malloc
 	mov	rsi,r13
 	mov	rdi,r14
@@ -774,69 +777,71 @@ init_profiler_error:
 
 	.data
 
-	.align 8
+	.align	8
 
 global_n_free_records_in_block:
-	.quad 0
+	.quad	0
 /* 0 n free records in block */
 global_last_allocated_block:
-	.quad 0
+	.quad	0
 /* 8 latest allocated block */
 global_profile_records:
-	.quad 0
+	.quad	0
 /* 16 profile record list */
 global_time_hi:
-	.long 0
+	.long	0
 /* 24 clock */
 global_time_lo:
-	.long 0
+	.long	0
 global_last_tail_call:
-	.quad 0
+	.quad	0
 /* last tail calling function */
 global_n_words_free:
-	.quad 0
+	.quad	0
 
 profile_file_name:
-	.quad __STRING__+2
-	.quad 0
-	.quad 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.quad 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.quad 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.quad 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-	.quad 0
+	.quad	__STRING__+2
+	.quad	0
+	.quad	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.quad	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.quad	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.quad	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	.quad	0
+
 stack_trace_depth:
-	.quad 12
-	.align 8
+	.quad	12
+
+	.align	8
 
 /* m_system also defined in istartup.s */
-/* m_system:*/
-/*	.quad 6*/
-/*	.ascii "System"*/
-/*	.byte 0*/
-/*	.byte 0*/
+/* m_system: */
+/*	.quad	6 */
+/*	.ascii	"System" */
+/*	.byte	0 */
+/*	.byte	0 */
 
-	.long	m_system
+	.long	m_system-.
 start_string:
-	.quad 0
-	.ascii "start"
-	.byte 0
+	.quad	0
+	.ascii	"start"
+	.byte	0
 	.align	8
 not_enough_memory_for_profile_stack:
-	.ascii "not enough memory for profile stack"
-	.byte 10
-	.byte 0
+	.ascii	"not enough memory for profile stack"
+	.byte	10
+	.byte	0
 not_enough_memory_for_profiler:
-	.ascii "not enough memory for profiler"
-	.byte 10
-	.byte 0
+	.ascii	"not enough memory for profiler"
+	.byte	10
+	.byte	0
 stack_trace_string:
-	.ascii "Stack trace:"
-	.byte 10
-	.byte 0
+	.ascii	"Stack trace:"
+	.byte	10
+	.byte	0
 module_string:
-	.ascii " [module: "
-	.byte 0
+	.ascii	" [module: "
+	.byte	0
 	.align	8
 
-/*	end*/
+/*	end */
 
