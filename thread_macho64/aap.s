@@ -1008,7 +1008,7 @@ no_fast_ap3:
 
 	mov	rbx,2*16
  	cmp	word ptr [rbp],bx
-	att_je	fast_ap_2
+	att_je	fast_ap_2_2
 
 	mov	r8,qword ptr 6[rbp]
 no_fast_ap2:

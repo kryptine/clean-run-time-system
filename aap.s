@@ -1505,7 +1505,7 @@ no_fast_ap3:
 	mov	rbx,2*8
  .endif
  	cmp	word ptr [r9],bx
-	je	fast_ap_2
+	je	fast_ap_2_2
 
  .ifdef PIC
 	mov	r8,qword ptr 6[r9]

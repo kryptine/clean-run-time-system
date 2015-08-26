@@ -1016,7 +1016,7 @@ no_fast_ap3:
 
 	mov	d1,2*8
  	cmp	word ptr [a3],d1w
-	je	fast_ap_2
+	je	fast_ap_2_2
 
 	mov	a2l,dword ptr 2[a3]
 no_fast_ap2:

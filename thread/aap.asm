@@ -1000,7 +1000,7 @@ no_fast_ap3:
 
 	mov	rbx,2*8
  	cmp	word ptr [rbp],bx
-	je	fast_ap_2
+	je	fast_ap_2_2
 
 	mov	r8d,dword ptr 2[rbp]
 no_fast_ap2:
