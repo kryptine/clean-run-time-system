@@ -998,7 +998,7 @@ int file_end (long fn)
 		
 		/* not portable to all compilers: */
 #ifdef LINUX
-# ifdef MACH_O64
+# if defined (MACH_O64) || defined (ANDROID)
 		if (file_p->_r>0)
 # else
 /*
@@ -1608,7 +1608,7 @@ int file_s_end (long fn,unsigned long position)
 		
 			/* not portable to all compilers: */
 #ifdef LINUX
-# ifdef MACH_O64
+# if defined (MACH_O64) || defined (ANDROID)
 			if (file_p->_r>0)
 # else
 /*
