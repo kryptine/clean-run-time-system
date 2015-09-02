@@ -21,7 +21,7 @@
 #ifndef SOLARIS
 # define MARKING_GC
 #endif
-#ifndef A64
+#if !defined (A64) && !defined (ARM)
 # define STACK_OVERFLOW_EXCEPTION_HANDLER
 #else
 # undef STACK_OVERFLOW_EXCEPTION_HANDLER
@@ -142,7 +142,7 @@ void set_home_and_appl_path (char *command)
 #endif
 }
 
-#if defined (SOLARIS) || defined (I486)
+#if defined (SOLARIS) || defined (I486) || defined (ARM)
 extern long ab_stack_size,heap_size,flags;
 #else
 extern long stack_size,heap_size,flags;
@@ -864,7 +864,7 @@ int main (int argc,char **argv)
 					printf ("Stacksize missing\n");
 					return -1;
 				}
-#if defined (SOLARIS) || defined (I486)
+#if defined (SOLARIS) || defined (I486) || defined (ARM)
 				ab_stack_size=parse_size (argv[arg_n]);
 #else
 				stack_size=parse_size (argv[arg_n]);
