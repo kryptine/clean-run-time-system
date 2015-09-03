@@ -4312,5 +4312,5 @@ r_to_i_real:
 	.ltorg
 
 .if NEW_DESCRIPTORS
-# include "armap.s"
+	.include "armap.s"
 .endif
