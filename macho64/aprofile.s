@@ -667,7 +667,7 @@ write_functions_on_stack:
 	mov	rcx,qword ptr name_[rbx]
 
 	push	rbp
-\
+
 	mov	edx,dword ptr (-4)[rcx]
 	add	rcx,8
 
