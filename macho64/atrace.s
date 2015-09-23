@@ -316,7 +316,7 @@ write_functions_on_stack:
 	push	rbp
 
  .if LINUX
-	movsx	rdx,dword ptr (-4)[rcx]
+	movsxd	rdx,dword ptr (-4)[rcx]
 	lea	rdx,-4[rcx+rdx]
 	lea	rdi,8[rcx]
 	mov	r12,rdx

@@ -536,7 +536,7 @@ write_profile_lp:
 
 	push	rdx
 
-	movsx	rax,dword ptr (-4)[rdx]
+	movsxd	rax,dword ptr (-4)[rdx]
 	lea	rdx,-4[rdx+rax]
 	mov	eax,dword ptr [rdx]
 	add	rdx,4
@@ -667,7 +667,7 @@ write_functions_on_stack:
 	mov	rcx,qword ptr name_[rbx]
 
 	push	rbp
-
+\
 	mov	edx,dword ptr (-4)[rcx]
 	add	rcx,8
 
