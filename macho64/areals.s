@@ -4788,7 +4788,7 @@ exp_real_3_large:
 exp_real_3_larger:
 	ucomisd	xmm0,qword ptr real_max[rip]
 	ja		exp_real_3_inf_or_nan
-	movlpd	xmm0,qword ptr qword ptr real_2_p_1023[rip]
+	movlpd	xmm0,qword ptr real_2_p_1023[rip]
 	mulsd	xmm0,xmm0
 exp_real_3_inf_or_nan:
 	ret
@@ -7027,9 +7027,9 @@ exp2_l_pn:
 
 	cvtpd2dq xmm8,xmm1
 
-	ucomisd	xmm1,qword ptr qword ptr real_1023[rip]
+	ucomisd	xmm1,qword ptr real_1023[rip]
 	ja		exp2_overflow0
-	ucomisd	xmm1,qword ptr qword ptr real_m_1022[rip]
+	ucomisd	xmm1,qword ptr real_m_1022[rip]
 	jb		exp2_underflow0
 
 	movq	xmm9,qword ptr qw_1023[rip]
@@ -7046,7 +7046,7 @@ exp2_l_pn:
 	ret
 
 exp2_overflow0:
-	ucomisd	xmm1,qword ptr qword ptr real_1025[rip]
+	ucomisd	xmm1,qword ptr real_1025[rip]
 	ja		exp2_overflow
 
 	movq	xmm9,qword ptr qw_1021[rip]
@@ -7064,12 +7064,12 @@ exp2_overflow0:
 	ret
 
 exp2_overflow:
-	movlpd	xmm0,qword ptr qword ptr real_2_p_1023[rip]
+	movlpd	xmm0,qword ptr real_2_p_1023[rip]
 	mulsd	xmm0,xmm0
 	ret
 
 exp2_underflow0:
-	ucomisd	xmm1,qword ptr qword ptr real_m_1076[rip]
+	ucomisd	xmm1,qword ptr real_m_1076[rip]
 	jbe		exp2_underflow
 
 	movq	xmm9,qword ptr qw_1078[rip]
@@ -7087,7 +7087,7 @@ exp2_underflow0:
 	ret
 
 exp2_underflow:
-	movlpd	xmm0,qword ptr qword ptr real_0_0[rip]
+	movlpd	xmm0,qword ptr real_0_0[rip]
 	ret
 
 	.data
