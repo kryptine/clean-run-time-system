@@ -1,6 +1,10 @@
 
 	.intel_syntax noprefix
 
+	.macro	jmp_short_opcode
+	.byte	0xeb
+	.endmacro
+
 /*	d0 = rax */
 /*	d1 = rbx */
 /*	d2 = r10 */
@@ -1430,12 +1434,26 @@ yet_args_needed_0_gc:
 	att_jmp	yet_args_needed_0_gc_r
 
 
-	.align	2
-	sub	r15,3
-	jae L2
-	jmp L1
+	.p2align 3
 	nop
-	.align	2	
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	jmp	yet_args_needed_1_gc
+	.p2align 3
+	nop
+	nop
+	nop
+	nop
+	sub	r15,3
+	jae	build_node_2_gc_r
+	jmp_short_opcode
+	.byte	-24	
+	.p2align 3
  .if PROFILE
 	nop
 	nop
@@ -1452,7 +1470,8 @@ yet_args_needed_0_gc:
  .endif
 yet_args_needed_1:
 	sub	r15,3
-	jb	yet_args_needed_1_gc
+	jb	yet_args_needed_1_gc_
+/* yet_args_needed_1_gc_ to avoid a bug in the Mach-O assembler */
 yet_args_needed_1_gc_r:
 	mov	qword ptr 16[rdi],rcx
 	mov	rax,qword ptr [rdx]
@@ -1464,12 +1483,11 @@ yet_args_needed_1_gc_r:
 	add	rdi,24
 	ret
 
-L1:
 yet_args_needed_1_gc:
+yet_args_needed_1_gc_:
 	att_call	collect_2
 	att_jmp	yet_args_needed_1_gc_r
 
-L2:
 build_node_2_gc_r:
 	mov	qword ptr [rdi],rbx
 	mov	qword ptr 8[rdi],rdx
@@ -1483,12 +1501,26 @@ build_node_2_gc:
 	att_jmp	build_node_2_gc_r
 
 
-	.align	2
-	sub	r15,5
-	jae short L3
-	jmp short L4
+	.p2align 3
 	nop
-	.align	2
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	jmp build_node_3_gc
+	.p2align 3
+	nop
+	nop
+	nop
+	nop
+	sub	r15,5
+	att_jae	build_node_3_gc_r
+	jmp_short_opcode
+	.byte	-24
+	.p2align 3
  .if PROFILE
 	nop
 	nop
@@ -1523,7 +1555,6 @@ gc_r_22:
 gc_22:	att_call	collect_2
 	att_jmp	gc_r_22
 
-L3:
 build_node_3_gc_r:
 	mov	qword ptr [rdi],rbx
 	lea	rbp,24[rdi]
@@ -1535,18 +1566,30 @@ build_node_3_gc_r:
 	add	rdi,40
 	ret
 
-L4:
 build_node_3_gc:
 	att_call	collect_2
 	att_jmp	build_node_3_gc_r
 
-
-	.align	2
-	sub	r15,6
-	jae L5
-	jmp L6
+	.p2align 3
 	nop
-	.align	2
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	jmp	build_node_4_gc
+	.p2align 3
+	nop
+	nop
+	nop
+	nop
+	sub	r15,6
+	jae	build_node_4_gc_r
+	jmp_short_opcode
+	.byte	-24
+	.p2align 3
  .if PROFILE
 	nop
 	nop
@@ -1584,7 +1627,6 @@ gc_r_23:
 gc_23:	att_call	collect_2
 	att_jmp	gc_r_23
 
-L5:
 build_node_4_gc_r:
 	mov	qword ptr [rdi],rbx
 	lea	rbp,24[rdi]
@@ -1599,18 +1641,31 @@ build_node_4_gc_r:
 	add	rdi,48
 	ret
 
-L6:
 build_node_4_gc:
 	att_call	collect_2
 	att_jmp	build_node_4_gc_r
 
 
-	.align	2
-	sub	r15,7
-	jae short L7
-	jmp 	build_node_5_gc
+	.p2align 3
 	nop
-	.align	2	
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	nop
+	jmp 	build_node_5_gc
+	.p2align 3
+	nop
+	nop
+	nop
+	nop
+	sub	r15,7
+	jae	build_node_5_gc_r
+	jmp_short_opcode
+	.byte	-24
+	.p2align 3
  .if PROFILE
 	nop
 	nop
@@ -1650,7 +1705,6 @@ gc_r_24:
 gc_24:	att_call	collect_2
 	att_jmp	gc_r_24
 
-L7:
 build_node_5_gc_r:
 	mov	qword ptr [rdi],rbx
 	lea	rbp,24[rdi]
