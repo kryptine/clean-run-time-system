@@ -48,39 +48,39 @@ profile_t:
 	rdtsc
 
 	push	rcx
-	mov	rcx,qword ptr profile_stack_pointer[rip]
+	mov	rcx,qword ptr [rip+profile_stack_pointer]
 
-	sub	edx,dword ptr global_time_hi[rip]
+	sub	edx,dword ptr [rip+global_time_hi]
 	push	rbx
-	mov	ebx,dword ptr global_time_lo[rip]
+	mov	ebx,dword ptr [rip+global_time_lo]
 	mov	eax,eax
 
 	shl	rdx,32
 	sub	rax,rbx
-	mov	rbx,qword ptr (-8)[rcx]
+	mov	rbx,qword ptr [rcx-8]
 
 	add	rax,rdx
 	
 	sub	rcx,8
-	mov	qword ptr global_last_tail_call[rip],rbx
+	mov	qword ptr [rip+global_last_tail_call],rbx
 
-	mov	qword ptr profile_stack_pointer[rip],rcx
+	mov	qword ptr [rip+profile_stack_pointer],rcx
 
-	inc	qword ptr n_profiler_calls[rbx]
-	add	qword ptr time[rbx],rax
+	inc	qword ptr [rbx+n_profiler_calls]
+	add	qword ptr [rbx+time],rax
 
-	mov	rax,qword ptr global_n_words_free[rip]
-	mov	qword ptr global_n_words_free[rip],r15
+	mov	rax,qword ptr [rip+global_n_words_free]
+	mov	qword ptr [rip+global_n_words_free],r15
 	sub	rax,r15
-	add	qword ptr n_words_allocated[rbx],rax
+	add	qword ptr [rbx+n_words_allocated],rax
 
 	pop	rbx
 	pop	rcx
 
 	rdtsc
-	mov	dword ptr global_time_hi[rip],edx
+	mov	dword ptr [rip+global_time_hi],edx
 	pop	rdx
-	mov	dword ptr global_time_lo[rip],eax
+	mov	dword ptr [rip+global_time_lo],eax
 	pop	rax
 	ret
 
@@ -90,39 +90,39 @@ profile_r:
 	rdtsc
 
 	push	rcx
-	mov	rcx,qword ptr profile_stack_pointer[rip]
+	mov	rcx,qword ptr [rip+profile_stack_pointer]
 
-	sub	edx,dword ptr global_time_hi[rip]
+	sub	edx,dword ptr [rip+global_time_hi]
 	push	rbx
-	mov	ebx,dword ptr global_time_lo[rip]
+	mov	ebx,dword ptr [rip+global_time_lo]
 	mov	eax,eax
 
 	shl	rdx,32
 	sub	rax,rbx
-	mov	rbx,qword ptr (-8)[rcx]
+	mov	rbx,qword ptr [rcx-8]
 
 	add	rax,rdx
 
 	sub	rcx,8
-	mov	qword ptr global_last_tail_call[rip],0
+	mov	qword ptr [rip+global_last_tail_call],0
 
-	mov	qword ptr profile_stack_pointer[rip],rcx
+	mov	qword ptr [rip+profile_stack_pointer],rcx
 
-	inc	qword ptr n_profiler_calls[rbx]
-	add	qword ptr time[rbx],rax
+	inc	qword ptr [rbx+n_profiler_calls]
+	add	qword ptr [rbx+time],rax
 
-	mov	rax,qword ptr global_n_words_free[rip]
-	mov	qword ptr global_n_words_free[rip],r15
+	mov	rax,qword ptr [rip+global_n_words_free]
+	mov	qword ptr [rip+global_n_words_free],r15
 	sub	rax,r15
-	add	qword ptr n_words_allocated[rbx],rax
+	add	qword ptr [rbx+n_words_allocated],rax
 
 	pop	rbx
 	pop	rcx
 
 	rdtsc
-	mov	dword ptr global_time_hi[rip],edx
+	mov	dword ptr [rip+global_time_hi],edx
 	pop	rdx
-	mov	dword ptr global_time_lo[rip],eax
+	mov	dword ptr [rip+global_time_lo],eax
 	pop	rax
 	ret
 
@@ -139,19 +139,19 @@ profile_l:
 allocate_function_profile_record_lr:
 	push	rcx
 	
-	mov	rbp,qword ptr global_last_tail_call[rip]
-	mov	rcx,qword ptr profile_stack_pointer[rip]
+	mov	rbp,qword ptr [rip+global_last_tail_call]
+	mov	rcx,qword ptr [rip+profile_stack_pointer]
 
 	test	rbp,rbp
 	jne	use_tail_calling_function_l
 
-	mov	rbp,qword ptr (-8)[rcx]
+	mov	rbp,qword ptr [rcx-8]
 use_tail_calling_function_lr:
 
 	mov	qword ptr [rcx],rbx
 	add	rcx,8
 	
-	inc	qword ptr n_curried_calls[rbx]
+	inc	qword ptr [rbx+n_curried_calls]
 	att_jmp profile_n_
 
 allocate_function_profile_record_l:
@@ -159,7 +159,7 @@ allocate_function_profile_record_l:
 	att_jmp allocate_function_profile_record_lr
 
 use_tail_calling_function_l:
-	mov	qword ptr global_last_tail_call[rip],0
+	mov	qword ptr [rip+global_last_tail_call],0
 	att_jmp use_tail_calling_function_lr
 
 profile_l2:
@@ -175,20 +175,20 @@ profile_l2:
 allocate_function_profile_record_l2r:
 	push	rcx
 	
-	mov	rbp,qword ptr global_last_tail_call[rip]
-	mov	rcx,qword ptr profile_stack_pointer[rip]
+	mov	rbp,qword ptr [rip+global_last_tail_call]
+	mov	rcx,qword ptr [rip+profile_stack_pointer]
 	
 	test	rbp,rbp
 	jne	use_tail_calling_function_l2
 
-	mov	rbp,qword ptr (-8)[rcx]
+	mov	rbp,qword ptr [rcx-8]
 use_tail_calling_function_l2r:
 
 	mov	qword ptr [rcx],rbx
-	mov	qword ptr 8[rcx],rbx
+	mov	qword ptr [rcx+8],rbx
 	add	rcx,16
 
-	inc	qword ptr n_curried_calls[rbx]
+	inc	qword ptr [rbx+n_curried_calls]
 	att_jmp profile_n_
 
 allocate_function_profile_record_l2:
@@ -196,7 +196,7 @@ allocate_function_profile_record_l2:
 	att_jmp allocate_function_profile_record_l2r
 
 use_tail_calling_function_l2:
-	mov	qword ptr global_last_tail_call[rip],0
+	mov	qword ptr [rip+global_last_tail_call],0
 	att_jmp use_tail_calling_function_l2r
 
 profile_n:
@@ -212,19 +212,19 @@ profile_n:
 allocate_function_profile_record_nr:
 	push	rcx
 	
-	mov	rbp,qword ptr global_last_tail_call[rip]
-	mov	rcx,qword ptr profile_stack_pointer[rip]
+	mov	rbp,qword ptr [rip+global_last_tail_call]
+	mov	rcx,qword ptr [rip+profile_stack_pointer]
 
 	test	rbp,rbp
 	jne	use_tail_calling_function_n
 
-	mov	rbp,qword ptr (-8)[rcx]
+	mov	rbp,qword ptr [rcx-8]
 use_tail_calling_function_nr:
 
 	mov	qword ptr [rcx],rbx
 	add	rcx,8
 
-	inc	qword ptr n_lazy_calls[rbx]
+	inc	qword ptr [rbx+n_lazy_calls]
 	att_jmp profile_n_
 
 allocate_function_profile_record_n:
@@ -232,7 +232,7 @@ allocate_function_profile_record_n:
 	att_jmp allocate_function_profile_record_nr
 
 use_tail_calling_function_n:
-	mov	qword ptr global_last_tail_call[rip],0
+	mov	qword ptr [rip+global_last_tail_call],0
 	att_jmp use_tail_calling_function_nr
 
 profile_n2:
@@ -248,20 +248,20 @@ profile_n2:
 allocate_function_profile_record_n2r:
 	push	rcx
 	
-	mov	rbp,qword ptr global_last_tail_call[rip]
-	mov	rcx,qword ptr profile_stack_pointer[rip]
+	mov	rbp,qword ptr [rip+global_last_tail_call]
+	mov	rcx,qword ptr [rip+profile_stack_pointer]
 
 	test	rbp,rbp
 	jne	use_tail_calling_function_n2
 
-	mov	rbp,qword ptr (-8)[rcx]
+	mov	rbp,qword ptr [rcx-8]
 use_tail_calling_function_n2r:
 
 	mov	qword ptr [rcx],rbx
-	mov	qword ptr 8[rcx],rbx
+	mov	qword ptr [rcx+8],rbx
 	add	rcx,16
 
-	inc	qword ptr n_lazy_calls[rbx]
+	inc	qword ptr [rbx+n_lazy_calls]
 	att_jmp profile_n_
 
 allocate_function_profile_record_n2:
@@ -269,7 +269,7 @@ allocate_function_profile_record_n2:
 	att_jmp allocate_function_profile_record_n2r
 
 use_tail_calling_function_n2:
-	mov	qword ptr global_last_tail_call[rip],0
+	mov	qword ptr [rip+global_last_tail_call],0
 	att_jmp use_tail_calling_function_n2r
 
 profile_s2:
@@ -285,17 +285,17 @@ profile_s2:
 allocate_function_profile_record_s2r:
 	push	rcx
 
-	mov	rbp,qword ptr global_last_tail_call[rip]
-	mov	rcx,qword ptr profile_stack_pointer[rip]
+	mov	rbp,qword ptr [rip+global_last_tail_call]
+	mov	rcx,qword ptr [rip+profile_stack_pointer]
 	
 	test	rbp,rbp
 	jne	use_tail_calling_function_s2
 
-	mov	rbp,qword ptr (-8)[rcx]
+	mov	rbp,qword ptr [rcx-8]
 use_tail_calling_function_s2r:
 
 	mov	qword ptr [rcx],rbx
-	mov	qword ptr 8[rcx],rbx
+	mov	qword ptr [rcx+8],rbx
 	add	rcx,16
 	att_jmp profile_s_
 
@@ -304,7 +304,7 @@ allocate_function_profile_record_s2:
 	att_jmp allocate_function_profile_record_s2r
 
 use_tail_calling_function_s2:
-	mov	qword ptr global_last_tail_call[rip],0
+	mov	qword ptr [rip+global_last_tail_call],0
 	att_jmp use_tail_calling_function_s2r
 
 profile_s:
@@ -320,26 +320,26 @@ profile_s:
 allocate_function_profile_record_sr:
 	push	rcx
 
-	mov	rbp,qword ptr global_last_tail_call[rip]
-	mov	rcx,qword ptr profile_stack_pointer[rip]
+	mov	rbp,qword ptr [rip+global_last_tail_call]
+	mov	rcx,qword ptr [rip+profile_stack_pointer]
 	
 	test	rbp,rbp
 	jne	use_tail_calling_function_s
 
-	mov	rbp,qword ptr (-8)[rcx]
+	mov	rbp,qword ptr [rcx-8]
 use_tail_calling_function_sr:
 
 	mov	qword ptr [rcx],rbx
 	add	rcx,8
 
 profile_s_:
-	inc	qword ptr n_strict_calls[rbx]
+	inc	qword ptr [rbx+n_strict_calls]
 
 profile_n_:
-	mov	qword ptr profile_stack_pointer[rip],rcx
+	mov	qword ptr [rip+profile_stack_pointer],rcx
 
-	sub	edx,dword ptr global_time_hi[rip]
-	mov	ebx,dword ptr global_time_lo[rip]
+	sub	edx,dword ptr [rip+global_time_hi]
+	mov	ebx,dword ptr [rip+global_time_lo]
 	mov	eax,eax
 
 	shl	rdx,32
@@ -347,21 +347,21 @@ profile_n_:
 
 	add	rax,rdx
 
-	inc	qword ptr n_profiler_calls[rbp]
-	add	qword ptr time[rbp],rax
+	inc	qword ptr [rbp+n_profiler_calls]
+	add	qword ptr [rbp+time],rax
 
-	mov	rax,qword ptr global_n_words_free[rip]
-	mov	qword ptr global_n_words_free[rip],r15
+	mov	rax,qword ptr [rip+global_n_words_free]
+	mov	qword ptr [rip+global_n_words_free],r15
 	sub	rax,r15
-	add	qword ptr n_words_allocated[rbp],rax
+	add	qword ptr [rbp+n_words_allocated],rax
 
 	pop	rcx
 	pop	rbx
 
 	rdtsc
-	mov	dword ptr global_time_hi[rip],edx
+	mov	dword ptr [rip+global_time_hi],edx
 	pop	rdx
-	mov	dword ptr global_time_lo[rip],eax
+	mov	dword ptr [rip+global_time_lo],eax
 	pop	rax
 	ret
 
@@ -370,7 +370,7 @@ allocate_function_profile_record_s:
 	att_jmp allocate_function_profile_record_sr
 
 use_tail_calling_function_s:
-	mov	qword ptr global_last_tail_call[rip],0
+	mov	qword ptr [rip+global_last_tail_call],0
 	att_jmp use_tail_calling_function_sr
 
 
@@ -379,8 +379,8 @@ use_tail_calling_function_s:
 
 allocate_function_profile_record:
 	push	rax
-	mov	rax,qword ptr global_n_free_records_in_block[rip]
-	mov	rbx,qword ptr global_last_allocated_block[rip]
+	mov	rax,qword ptr [rip+global_n_free_records_in_block]
+	mov	rbx,qword ptr [rip+global_last_allocated_block]
 
 	test	rax,rax
 	jne	no_alloc
@@ -392,29 +392,29 @@ allocate_function_profile_record:
  .if LINUX
 	sub	rsp,104
 	mov	qword ptr [rsp],rsi
-	mov	qword ptr 8[rsp],rdi
-	mov	qword ptr 16[rsp],r8
-	mov	qword ptr 24[rsp],r10
-	mov	qword ptr 32[rsp],r11
-	movsd	qword ptr 40[rsp],xmm0
-	movsd	qword ptr 48[rsp],xmm1
-	movsd	qword ptr 56[rsp],xmm2
-	movsd	qword ptr 64[rsp],xmm3
-	movsd	qword ptr 72[rsp],xmm4
-	movsd	qword ptr 80[rsp],xmm5
-	movsd	qword ptr 88[rsp],xmm6
-	movsd	qword ptr 96[rsp],xmm7
+	mov	qword ptr [rsp+8],rdi
+	mov	qword ptr [rsp+16],r8
+	mov	qword ptr [rsp+24],r10
+	mov	qword ptr [rsp+32],r11
+	movsd	qword ptr [rsp+40],xmm0
+	movsd	qword ptr [rsp+48],xmm1
+	movsd	qword ptr [rsp+56],xmm2
+	movsd	qword ptr [rsp+64],xmm3
+	movsd	qword ptr [rsp+72],xmm4
+	movsd	qword ptr [rsp+80],xmm5
+	movsd	qword ptr [rsp+88],xmm6
+	movsd	qword ptr [rsp+96],xmm7
  .else
 	sub	rsp,72
 	mov	qword ptr [rsp],r8
-	mov	qword ptr 8[rsp],r10
-	mov	qword ptr 16[rsp],r11
-	movsd	qword ptr 24[rsp],xmm0
-	movsd	qword ptr 32[rsp],xmm1
-	movsd	qword ptr 40[rsp],xmm2
-	movsd	qword ptr 48[rsp],xmm3
-	movsd	qword ptr 56[rsp],xmm4
-	movsd	qword ptr 64[rsp],xmm5
+	mov	qword ptr [rsp+8],r10
+	mov	qword ptr [rsp+16],r11
+	movsd	qword ptr [rsp+24],xmm0
+	movsd	qword ptr [rsp+32],xmm1
+	movsd	qword ptr [rsp+40],xmm2
+	movsd	qword ptr [rsp+48],xmm3
+	movsd	qword ptr [rsp+56],xmm4
+	movsd	qword ptr [rsp+64],xmm5
  .endif
 
 	mov	rbp,rsp
@@ -432,29 +432,29 @@ allocate_function_profile_record:
 
  .if LINUX
 	mov	rsi,qword ptr [rsp]
-	mov	rdi,qword ptr 8[rsp]
-	mov	r8,qword ptr 16[rsp]
-	mov	r10,qword ptr 24[rsp]
-	mov	r11,qword ptr 32[rsp]
-	movlpd	xmm0,qword ptr 40[rsp]
-	movlpd	xmm1,qword ptr 48[rsp]
-	movlpd	xmm2,qword ptr 56[rsp]
-	movlpd	xmm3,qword ptr 64[rsp]
-	movlpd	xmm4,qword ptr 72[rsp]
-	movlpd	xmm5,qword ptr 80[rsp]
-	movlpd	xmm6,qword ptr 88[rsp]
-	movlpd	xmm7,qword ptr 96[rsp]
+	mov	rdi,qword ptr [rsp+8]
+	mov	r8,qword ptr [rsp+16]
+	mov	r10,qword ptr [rsp+24]
+	mov	r11,qword ptr [rsp+32]
+	movlpd	xmm0,qword ptr [rsp+40]
+	movlpd	xmm1,qword ptr [rsp+48]
+	movlpd	xmm2,qword ptr [rsp+56]
+	movlpd	xmm3,qword ptr [rsp+64]
+	movlpd	xmm4,qword ptr [rsp+72]
+	movlpd	xmm5,qword ptr [rsp+80]
+	movlpd	xmm6,qword ptr [rsp+88]
+	movlpd	xmm7,qword ptr [rsp+96]
 	add	rsp,104
  .else
 	mov	r8,qword ptr [rsp]
-	mov	r10,qword ptr 8[rsp]
-	mov	r11,qword ptr 16[rsp]
-	movlpd	xmm0,qword ptr 24[rsp]
-	movlpd	xmm1,qword ptr 32[rsp]
-	movlpd	xmm2,qword ptr 40[rsp]
-	movlpd	xmm3,qword ptr 48[rsp]
-	movlpd	xmm4,qword ptr 56[rsp]
-	movlpd	xmm5,qword ptr 64[rsp]
+	mov	r10,qword ptr [rsp+8]
+	mov	r11,qword ptr [rsp+16]
+	movlpd	xmm0,qword ptr [rsp+24]
+	movlpd	xmm1,qword ptr [rsp+32]
+	movlpd	xmm2,qword ptr [rsp+40]
+	movlpd	xmm3,qword ptr [rsp+48]
+	movlpd	xmm4,qword ptr [rsp+56]
+	movlpd	xmm5,qword ptr [rsp+64]
 	add	rsp,72
  .endif
 
@@ -468,34 +468,34 @@ allocate_function_profile_record:
 
 	mov	rbx,rax
 	mov	rax,128
-	mov	qword ptr global_last_allocated_block[rip],rbx
+	mov	qword ptr [rip+global_last_allocated_block],rbx
 
 no_alloc:	
 	dec	rax
-	mov	qword ptr global_n_free_records_in_block[rip],rax
-	lea	rax,FunctionProfile[rbx]
-	mov	qword ptr global_last_allocated_block[rip],rax
+	mov	qword ptr [rip+global_n_free_records_in_block],rax
+	lea	rax,[rbx+FunctionProfile]
+	mov	qword ptr [rip+global_last_allocated_block],rax
 
 	xor	rax,rax
-	mov	qword ptr time[rbx],rax
-	mov	qword ptr n_profiler_calls[rbx],rax
-	mov	qword ptr n_strict_calls[rbx],rax
-	mov	qword ptr n_lazy_calls[rbx],rax
-	mov	qword ptr n_curried_calls[rbx],rax
-	mov	qword ptr n_words_allocated[rbx],rax
+	mov	qword ptr [rbx+time],rax
+	mov	qword ptr [rbx+n_profiler_calls],rax
+	mov	qword ptr [rbx+n_strict_calls],rax
+	mov	qword ptr [rbx+n_lazy_calls],rax
+	mov	qword ptr [rbx+n_curried_calls],rax
+	mov	qword ptr [rbx+n_words_allocated],rax
 
-	mov	rax,qword ptr global_profile_records[rip]
-	mov	qword ptr name_[rbx],rbp
+	mov	rax,qword ptr [rip+global_profile_records]
+	mov	qword ptr [rbx+name_],rbp
 
-	mov	qword ptr next[rbx],rax
-	mov	qword ptr global_profile_records[rip],rbx
+	mov	qword ptr [rbx+next],rax
+	mov	qword ptr [rip+global_profile_records],rbx
 
 	mov	qword ptr [rbp],rbx
 	pop	rax
 	ret
 
 no_memory:
-	lea	rbp,not_enough_memory_for_profiler[rip]
+	lea	rbp,[rip+not_enough_memory_for_profiler]
 	pop	rax
 	att_jmp print_error
 
@@ -506,9 +506,9 @@ write_profile_information:
  .if LINUX
 	mov	r13,rsi
 	mov	r14,rdi
-	lea	rdi,profile_file_name[rip]
+	lea	rdi,[rip+profile_file_name]
  .else
-	lea	rcx,profile_file_name[rip]
+	lea	rcx,[rip+profile_file_name]
  .endif
 	att_call _create_profile_file_name
  .if LINUX
@@ -518,26 +518,26 @@ write_profile_information:
 	mov	rsp,rbp
 
 	mov	rax,1
-	lea	rcx,profile_file_name[rip]
+	lea	rcx,[rip+profile_file_name]
 	att_call openF
 
 	test	r10,r10
 	je	cannot_open
 	
-	mov	rbp,qword ptr global_profile_records[rip]
+	mov	rbp,qword ptr [rip+global_profile_records]
 
 write_profile_lp:	
 	test	rbp,rbp
 	je	end_list
 
-	mov	rdx,qword ptr name_[rbp]
+	mov	rdx,qword ptr [rbp+name_]
 
 	push	rbp
 
 	push	rdx
 
-	movsxd	rax,dword ptr (-4)[rdx]
-	lea	rdx,-4[rdx+rax]
+	movsxd	rax,dword ptr [rdx-4]
+	lea	rdx,[rdx+rax-4]
 	mov	eax,dword ptr [rdx]
 	add	rdx,4
 
@@ -558,7 +558,7 @@ write_module_name_lp:
 	att_jmp write_module_name_lp
 
 end_module_name:
-	mov	r10,' 
+	mov	r10,32 # ' '
 	att_call writeFC
 
 	pop	rdx
@@ -566,7 +566,7 @@ end_module_name:
 	add	rdx,7
 	
 write_function_name_lp:
-	movzx	r10,byte ptr 1[rdx]
+	movzx	r10,byte ptr [rdx+1]
 	add	rdx,1
 
 	test	r10,r10
@@ -581,44 +581,44 @@ write_function_name_lp:
 	att_jmp write_function_name_lp
 
 end_function_name:
-	mov	r10,' 
+	mov	r10,32 # ' '
 	att_call writeFC
 
 	mov	rbp,qword ptr [rsp]
-	mov	r10,qword ptr n_strict_calls[rbp]
+	mov	r10,qword ptr [rbp+n_strict_calls]
 	att_call writeFI_space
 
 	mov	rbp,qword ptr [rsp]
-	mov	r10,qword ptr n_lazy_calls[rbp]
+	mov	r10,qword ptr [rbp+n_lazy_calls]
 	att_call writeFI_space
 
 	mov	rbp,qword ptr [rsp]
-	mov	r10,qword ptr n_curried_calls[rbp]
+	mov	r10,qword ptr [rbp+n_curried_calls]
 	att_call writeFI_space
 
 	mov	rbp,qword ptr [rsp]
-	mov	r10,qword ptr n_profiler_calls[rbp]
+	mov	r10,qword ptr [rbp+n_profiler_calls]
 	att_call writeFI_space
 
 	mov	rbp,qword ptr [rsp]
-	mov	r10,qword ptr n_words_allocated[rbp]
+	mov	r10,qword ptr [rbp+n_words_allocated]
 	att_call writeFI_space
 
 	mov	rbp,qword ptr [rsp]
-	mov	r10,qword ptr time[rbp]
+	mov	r10,qword ptr [rbp+time]
 	att_call writeFI
 
 	mov	r10,10
 	att_call writeFC
 
 	pop	rbp
-	mov	rbp,qword ptr next[rbp]
+	mov	rbp,qword ptr [rbp+next]
 	att_jmp write_profile_lp
 
 writeFI_space:
 	att_call writeFI
 
-	mov	r10,' 
+	mov	r10,32 # ' '
 	att_jmp writeFC
 
 end_list:
@@ -628,7 +628,7 @@ cannot_open:
 	ret
 
 write_profile_stack:
-	mov	rax,qword ptr profile_stack_pointer[rip]
+	mov	rax,qword ptr [rip+profile_stack_pointer]
 
 	test	rax,rax
 	je	stack_not_initialised
@@ -641,9 +641,9 @@ write_profile_stack:
  .if LINUX
 	mov	r13,rsi
 	mov	r14,rdi
-	lea	rdi,stack_trace_string[rip]
+	lea	rdi,[rip+stack_trace_string]
  .else
-	lea	rcx,stack_trace_string[rip]
+	lea	rcx,[rip+stack_trace_string]
  .endif
 	att_call _ew_print_string
  .if LINUX
@@ -655,24 +655,24 @@ write_profile_stack:
 	pop	rax
 
 /*	mov	rbp,12 */
-	mov	rbp,qword ptr stack_trace_depth[rip]
+	mov	rbp,qword ptr [rip+stack_trace_depth]
 write_functions_on_stack:
-	mov	rbx,qword ptr (-8)[rax]
+	mov	rbx,qword ptr [rax-8]
 	sub	rax,8
 
 	test	rbx,rbx
 	je	end_profile_stack
 
 	push	rax
-	mov	rcx,qword ptr name_[rbx]
+	mov	rcx,qword ptr [rbx+name_]
 
 	push	rbp
 
-	mov	edx,dword ptr (-4)[rcx]
+	mov	edx,dword ptr [rcx-4]
 	add	rcx,8
 
 	mov	r12d,dword ptr [rdx]
-	lea	r13,4[rdx]
+	lea	r13,[rdx+4]
 
 	mov	rbp,rsp
 	sub	rsp,40
@@ -685,9 +685,9 @@ write_functions_on_stack:
 	att_call _ew_print_string
 
  .if LINUX
-	lea	rdi,module_string[rip]
+	lea	rdi,[rip+module_string]
  .else
-	lea	rcx,module_string[rip]
+	lea	rcx,[rip+module_string]
  .endif
 	att_call _ew_print_string
 
@@ -701,9 +701,9 @@ write_functions_on_stack:
 	att_call _ew_print_text
 
  .if LINUX
-	mov	rdi,']
+	mov	rdi,93 # ']'
  .else
-	mov	rcx,']
+	mov	rcx,93 # ']'
  .endif
 	att_call _ew_print_char
 
@@ -737,12 +737,12 @@ init_profiler:
  .if LINUX
 	mov	r13,rsi
 	mov	r14,rdi
-	mov	rdi,qword ptr _ab_stack_size[rip]
+	mov	rdi,qword ptr [rip+_ab_stack_size]
 	att_call _malloc
 	mov	rsi,r13
 	mov	rdi,r14
  .else
-	mov	rcx,qword ptr ab_stack_size[rip]
+	mov	rcx,qword ptr [rip+ab_stack_size]
 	att_call allocate_memory
  .endif
 	mov	rsp,rbp
@@ -752,27 +752,27 @@ init_profiler:
 
 	push	rax
 
-	lea	rbp,start_string[rip]
+	lea	rbp,[rip+start_string]
 	att_call allocate_function_profile_record
 
 	pop	rdx
 
-	mov	qword ptr 8[rdx],rbx
+	mov	qword ptr [rdx+8],rbx
 	mov	qword ptr [rdx],0
 	add	rdx,16
-	mov	qword ptr profile_stack_pointer[rip],rdx
-	mov	qword ptr global_last_tail_call[rip],0
+	mov	qword ptr [rip+profile_stack_pointer],rdx
+	mov	qword ptr [rip+global_last_tail_call],0
 
-	mov	qword ptr global_n_words_free[rip],r15
+	mov	qword ptr [rip+global_n_words_free],r15
 
 	rdtsc
-	mov	dword ptr global_time_hi[rip],edx
-	mov	dword ptr global_time_lo[rip],eax
+	mov	dword ptr [rip+global_time_hi],edx
+	mov	dword ptr [rip+global_time_lo],eax
 	ret
 
 init_profiler_error:
-	mov	qword ptr profile_stack_pointer[rip],0
-	lea	rbp,not_enough_memory_for_profile_stack[rip]
+	mov	qword ptr [rip+profile_stack_pointer],0
+	lea	rbp,[rip+not_enough_memory_for_profile_stack]
 	att_jmp print_error
 
 	.data
