@@ -152,7 +152,7 @@ openF:
 	mov	r13,rsi
 	mov	rsi,rax
 	mov	r14,rdi
-	lea	rdi,8[rcx]
+	lea	rdi,[rcx+8]
 	att_call	_open_file
 	mov	rsp,rbp
 	mov	rsi,r13
@@ -257,7 +257,7 @@ readFR:
 	ret
 
 readFString:
-	mov	rbp,8[rcx]
+	mov	rbp,[rcx+8]
 	cmp	r11,rbp
 	jae	readFString_error
 
@@ -269,7 +269,7 @@ readFString:
 
 	push	r11
 
-	lea	rdx,16[rcx+r11]
+	lea	rdx,[rcx+r11+16]
 	mov	rbp,rsp
 	or	rsp,-16
 	mov	r13,rsi
@@ -289,26 +289,26 @@ readFString:
 	ret
 
 readFString_error:
-	lea	rbp,freadstring_error[rip]
+	lea	rbp,[rip+freadstring_error]
 	att_jmp	print_error
 
-readFS:	lea	rbp,16+7[rax]
+readFS:	lea	rbp,[rax+16+7]
 	shr	rbp,3
 	sub	r15,rbp
 	jb	readFS_gc
 readFS_r_gc:
 	add	r15,rbp
 
-	lea	rbx,__STRING__+2[rip]
+	lea	rbx,[rip+__STRING__+2]
 	mov	qword ptr [rdi],rbx
-	mov	8[rdi],rax
+	mov [rdi+8],rax
 	mov	rbx,r10
 
-	lea	rdx,16[rdi]
+	lea	rdx,[rdi+16]
 	mov	rbp,rsp
 	and	rsp,-16
 	mov	r13,rsi
-	lea	rsi,8[rdi]
+	lea	rsi,[rdi+8]
 	mov	r14,rdi
 	mov	rdi,r10
 	att_call	_file_read_characters
@@ -335,14 +335,14 @@ readLineF:
 	jb	readLineF_gc
 
 readLineF_r_gc:
-	lea	rdx,__STRING__+2[rip]
+	lea	rdx,[rip+__STRING__+2]
 	mov	qword ptr [rdi],rdx
 
-	lea	rdx,16[rdi]
+	lea	rdx,[rdi+16]
 	mov	rbp,rsp
 	and	rsp,-16
 	mov	r13,rsi
-	lea	rsi,-16[r15*8]
+	lea	rsi,[r15*8-16]
 	mov	r14,rdi
 	mov	rdi,rbx
 	att_call	_file_read_line
@@ -350,20 +350,20 @@ readLineF_r_gc:
 	mov	rsi,r13
 	mov	rdi,r14
 
-	mov	8[rdi],rax
+	mov [rdi+8],rax
 
 	test	rax,rax
 	att_jns	readFS_end
 
-	lea	rax,-16[r15*8]
+	lea	rax,[r15*8-16]
 	mov	r12,rdi
-	mov	8[rdi],rax
+	mov [rdi+8],rax
 	add	rdi,16
 
 readLineF_lp:
 	add	rdi,rax
 
-	mov	r13,8[r12]
+	mov	r13,[r12+8]
 	mov	rcx,r12
 	shr	r13,3
 	xor	r15,r15
@@ -373,19 +373,19 @@ readLineF_lp:
 	att_call	collect_1
 
 	add	r15,r13
-	mov	rax,8[rcx]
-	lea	rdx,16[rcx]
-	lea	rcx,7[rax]
+	mov	rax,[rcx+8]
+	lea	rdx,[rcx+16]
+	lea	rcx,[rax+7]
 	shr	rcx,3
 	sub	r15,2
 	sub	r15,rcx
 
 	mov	r12,rdi
 
-	lea	rbp,__STRING__+2[rip]
+	lea	rbp,[rip+__STRING__+2]
 	mov	qword ptr [rdi],rbp
 
-	mov	8[rdi],rax
+	mov [rdi+8],rax
 	add	rdi,16
 	jmp	st_copy_string1
 
@@ -432,10 +432,10 @@ readLineF_gc:
 	att_jmp	readLineF_r_gc
 
 readLineF_again:
-	mov	rcx,8[r12]
+	mov	rcx,[r12+8]
 	lea	rax,[r15*8]
 	add	rcx,rax
-	mov	8[r12],rcx
+	mov [r12+8],rcx
 	att_jmp	readLineF_lp
 
 writeFC:
@@ -487,9 +487,9 @@ writeFS:
 	mov	rbp,rsp
 	and	rsp,-16
 	mov	r13,rsi
-	mov	rsi,8[rcx]
+	mov	rsi,[rcx+8]
 	mov	r14,rdi
-	lea	rdi,16[rcx]
+	lea	rdi,[rcx+16]
 	att_call	_file_write_characters
 	mov	rsp,rbp
 	mov	rsi,r13
@@ -499,7 +499,7 @@ writeFS:
 	ret
 
 writeFString:
-	mov	rbp,8[rcx]
+	mov	rbp,[rcx+8]
 	cmp	r11,rbp
 	jae	writeFString_error
 
@@ -513,7 +513,7 @@ writeFString:
 	mov	r13,rsi
 	mov	rsi,r10
 	mov	r14,rdi
-	lea	rdi,16[rcx+r11]
+	lea	rdi,[rcx+r11+16]
 	att_call	_file_write_characters
 	mov	rsp,rbp
 	mov	rsi,r13
@@ -524,7 +524,7 @@ writeFString:
 	ret
 
 writeFString_error:
-	lea	rbp,fwritestring_error[rip]
+	lea	rbp,[rip+fwritestring_error]
 	att_jmp	print_error
 
 endF:
@@ -626,7 +626,7 @@ openSF:
 	mov	r13,rsi
 	mov	rsi,rax
 	mov	r14,rdi
-	lea	rdi,8[rcx]
+	lea	rdi,[rcx+8]
 	att_call	_open_s_file
 	mov	rsp,rbp
 	mov	rsi,r13
@@ -712,14 +712,14 @@ readSFR:
 	ret
 
 readSFS:
-	lea	rbp,16+7[rax]
+	lea	rbp,[rax+16+7]
 	shr	rbp,3
 	sub	r15,rbp
 	jb	readSFS_gc
 readSFS_r_gc:
 	add	r15,rbp
 
-	lea	rcx,__STRING__+2[rip]
+	lea	rcx,[rip+__STRING__+2]
 	mov	qword ptr [rdi],rcx
 
 	push	rbx
@@ -727,7 +727,7 @@ readSFS_r_gc:
 	mov	rbx,r10
 	
 	mov	rcx,rsp
-	lea	rdx,8[rdi]
+	lea	rdx,[rdi+8]
 	mov	rbp,rsp
 	and	rsp,-16
 	mov	r13,rsi
@@ -760,15 +760,15 @@ readLineSF:
 readLineSF_r_gc:
 	push	rax
 
-	lea	rcx,__STRING__+2[rip]
+	lea	rcx,[rip+__STRING__+2]
 	mov	qword ptr [rdi],rcx
 
 	mov	rcx,rsp
-	lea	rdx,16[rdi]
+	lea	rdx,[rdi+16]
 	mov	rbp,rsp
 	and	rsp,-16
 	mov	r13,rsi
-	lea	rsi,-16[r15*8]
+	lea	rsi,[r15*8-16]
 	mov	r14,rdi
 	mov	rdi,rbx
 	att_call	_file_read_s_line
@@ -776,20 +776,20 @@ readLineSF_r_gc:
 	mov	rsi,r13
 	mov	rdi,r14
 
-	mov	8[rdi],rax
+	mov [rdi+8],rax
 
 	test	rax,rax
 	att_jns	readSFS_end
 
-	lea	rax,-16[r15*8]
+	lea	rax,[r15*8-16]
 	mov	r12,rdi
-	mov	8[rdi],rax
+	mov [rdi+8],rax
 	add	rdi,16
 
 readLineSF_lp:
 	add	rdi,rax
 
-	mov	r13,8[r12]
+	mov	r13,[r12+8]
 	mov	rcx,r12
 	shr	r13,3
 	xor	r15,r15
@@ -799,19 +799,19 @@ readLineSF_lp:
 	att_call	collect_1
 
 	add	r15,r13
-	mov	rax,8[rcx]
-	lea	rdx,16[rcx]
-	lea	rcx,7[rax]
+	mov	rax,[rcx+8]
+	lea	rdx,[rcx+16]
+	lea	rcx,[rax+7]
 	shr	rcx,3
 	sub	r15,2
 	sub	r15,rcx
 
 	mov	r12,rdi
 
-	lea	rbp,__STRING__+2[rip]
+	lea	rbp,[rip+__STRING__+2]
 	mov	qword ptr [rdi],rbp
 
-	mov	8[rdi],rax
+	mov [rdi+8],rax
 	add	rdi,16
 	jmp	st_copy_string2
 
@@ -859,10 +859,10 @@ readLineSF_gc:
 	att_jmp	readLineSF_r_gc
 
 readLineSF_again:
-	mov	rcx,8[r12]
+	mov	rcx,[r12+8]
 	lea	rax,[r15*8]
 	add	rcx,rax
-	mov	8[r12],rcx
+	mov [r12+8],rcx
 	att_jmp	readLineSF_lp
 
 endSF:
