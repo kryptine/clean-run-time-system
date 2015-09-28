@@ -3,42 +3,42 @@ COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP = 1
 
 	push	rsi
 
-	mov	rdi,heap_p2[rip]
+	mov	rdi,[rip+heap_p2]
 
-	mov	rax,heap_size_257[rip]
+	mov	rax,[rip+heap_size_257]
 	shl	rax,7
-	mov	semi_space_size[rip],rax 
+	mov	[rip+semi_space_size],rax 
 	lea	rsi,[rdi+rax]
 
-	mov	qword ptr (heap2_begin_and_end+8)[rip],rsi 
+	mov	qword ptr [rip+heap2_begin_and_end+8],rsi 
 
-	mov	rax,qword ptr caf_list[rip]
+	mov	rax,qword ptr [rip+caf_list]
 	test	rax,rax 
 	je	end_copy_cafs
 
 copy_cafs_lp:
-	push	(-8)[rax]
+	push	[rax-8]
 	
-	lea	rbp,8[rax]
+	lea	rbp,[rax+8]
 	mov	rbx,qword ptr [rax]
 	sub	rbx,1
 	call	copy_lp2
 	
-	pop	rax 
-	test	rax,rax 
+	pop	rax
+	test	rax,rax
 	att_jne	copy_cafs_lp
 
 end_copy_cafs:
 	mov	rbx,qword ptr [rsp]
-	mov	rbp,stack_p[rip]
-	sub	rbx,rbp 
+	mov	rbp,[rip+stack_p]
+	sub	rbx,rbp
 	shr	rbx,3
 
 	sub	rbx,1
 	jb	end_copy0
 	att_call	copy_lp2
 end_copy0:
-	mov	rbp,heap_p2[rip]
+	mov	rbp,[rip+heap_p2]
 
 	jmp	copy_lp1
 /* */
@@ -46,11 +46,11 @@ end_copy0:
 /* */
 
 in_hnf_1_2:
-	dec	rbx 
+	dec	rbx
 copy_lp2_lp1:
 	att_call	copy_lp2
 copy_lp1:
-	cmp	rbp,rdi 
+	cmp	rbp,rdi
 	jae	end_copy1
 
 	mov	rax,[rbp]
@@ -58,9 +58,9 @@ copy_lp1:
 	test	al,2
 	je	not_in_hnf_1
 in_hnf_1:
-	movzx	rbx,word ptr (-2)[rax]
+	movzx	rbx,word ptr [rax-2]
 
-	test	rbx,rbx 
+	test	rbx,rbx
 	je	copy_array_21
 
 	cmp	rbx,2
@@ -69,12 +69,12 @@ in_hnf_1:
 	cmp	rbx,256
 	jae	copy_record_21
 	
-	mov	rax,8[rbp]
+	mov	rax,[rbp+8]
 
 	test	al,1
 	jne	node_without_arguments_part
 
-	push	rbx 
+	push	rbx
 	xor	rbx,rbx 
 	
 	att_call	copy_lp2
@@ -89,7 +89,7 @@ node_without_arguments_part:
 	dec	rax 
 	xor	rbx,rbx 
 
-	mov	8[rbp],rax 
+	mov	[rbp+8],rax 
 	att_call	copy_lp2
 	
 	add	rbp,8
@@ -99,7 +99,7 @@ copy_record_21:
 	sub	rbx,258
 	ja	copy_record_arguments_3
 
-	movzx	rbx,word ptr (-2+2)[rax]
+	movzx	rbx,word ptr [rax-2+2]
  .if COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
 	att_jb	in_hnf_1_2
 
@@ -124,10 +124,10 @@ copy_record_arguments_1:
  .endif
 
 copy_record_arguments_3:
-	test	byte ptr 8[rbp],1
+	test	byte ptr [rbp+8],1
 	jne	record_node_without_arguments_part
 
-	movzx	rdx,word ptr (-2+2)[rax]
+	movzx	rdx,word ptr [rax-2+2]
  .if COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
 	sub	rdx,1
  .else
@@ -137,7 +137,7 @@ copy_record_arguments_3:
 	je	copy_record_arguments_3abb
  .endif
 
-	lea	rcx,(3*8)[rbp+rbx*8]
+	lea	rcx,[rbp+rbx*8+3*8]
 	push	rcx 
 	push	rdx 
 
@@ -161,19 +161,19 @@ copy_record_arguments_3abb:
 	
 	pop	rbx 
 	
-	lea	rbp,(2*8)[rbp+rbx*8]
+	lea	rbp,[rbp+rbx*8+2*8]
 	jmp	copy_lp1
 
 copy_record_arguments_3b:
-	lea	rbp,(3*8)[rbp+rbx*8]
+	lea	rbp,[rbp+rbx*8+3*8]
 	jmp	copy_lp1
  .endif
 
 record_node_without_arguments_part:
-	and	qword ptr 8[rbp],-2
+	and	qword ptr [rbp+8],-2
 
  .if ! COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
-	cmp	word ptr (-2+2)[rax],0
+	cmp	word ptr [rax-2+2],0
 	je	record_node_without_arguments_part_3b
  .endif
 
@@ -190,7 +190,7 @@ record_node_without_arguments_part_3b:
  .endif
 
 not_in_hnf_1:
-	movsxd	rbx,dword ptr (-4)[rax]
+	movsxd	rbx,dword ptr [rax-4]
 	cmp	rbx,257
 	jge	copy_unboxed_closure_arguments
 	sub	rbx,1
@@ -227,13 +227,13 @@ copy_unboxed_closure_arguments1:
 	att_jmp	copy_lp1
 
 copy_array_21:
-	mov	rbx,qword ptr 8[rbp]
+	mov	rbx,qword ptr [rbp+8]
 	add	rbp,16
 	test	rbx,rbx 
 	je	copy_array_21_a
 
-	movzx	rax,word ptr (-2)[rbx]
-	movzx	rbx,word ptr (-2+2)[rbx]
+	movzx	rax,word ptr [rbx-2]
+	movzx	rbx,word ptr [rbx-2+2]
 	sub	rax,256
 	test	rbx,rbx 
 	je	copy_array_21_b
@@ -242,7 +242,7 @@ copy_array_21:
 	je	copy_array_21_r_a
 
 copy_array_21_ab:
-	cmp	qword ptr (-16)[rbp],0
+	cmp	qword ptr [rbp-16],0
 	att_je	copy_lp1
 
 	sub	rax,rbx 
@@ -251,15 +251,15 @@ copy_array_21_ab:
 
 	push	rbx 
 	push	rax 
-	mov	rbx,qword ptr (-16)[rbp]
+	mov	rbx,qword ptr [rbp-16]
 	sub	rbx,1
 	push	rbx 
 
 copy_array_21_lp_ab:
-	mov	rbx,qword ptr 16[rsp]
+	mov	rbx,qword ptr [rsp+16]
 	att_call	copy_lp2
 
-	add	rbp,qword ptr 8[rsp]
+	add	rbp,qword ptr [rsp+8]
 	sub	qword ptr [rsp],1
 	att_jnc	copy_array_21_lp_ab
 	
@@ -267,20 +267,20 @@ copy_array_21_lp_ab:
 	att_jmp	copy_lp1
 
 copy_array_21_b:
-	mov	rbx,qword ptr (-16)[rbp]
+	mov	rbx,qword ptr [rbp-16]
 	imul	rbx,rax 
 	lea	rbp,[rbp+rbx*8]
 	att_jmp	copy_lp1
 
 copy_array_21_r_a:
-	mov	rbx,qword ptr (-16)[rbp]
+	mov	rbx,qword ptr [rbp-16]
 	imul	rbx,rax
 	sub	rbx,1
 	att_jc	copy_lp1
 	att_jmp	copy_lp2_lp1
 
 copy_array_21_a:
-	mov	rbx,qword ptr (-16)[rbp]
+	mov	rbx,qword ptr [rbp-16]
 	sub	rbx,1
 	att_jc	copy_lp1
 	att_jmp	copy_lp2_lp1
@@ -299,7 +299,7 @@ continue_after_selector_2:
 	je	not_in_hnf_2
 
 in_hnf_2:
-	movzx	rax,word ptr (-2)[rcx]
+	movzx	rax,word ptr [rcx-2]
 	test	rax,rax
 	je	copy_arity_0_node2
 
@@ -309,36 +309,36 @@ in_hnf_2:
 	sub	rax,2
 	mov	[rbp],rdi 
 
-	lea	rbp,8[rbp ]
+	lea	rbp,[rbp +8]
 	ja	copy_hnf_node2_3
 
 	mov	[rdi],rcx
 	jb	copy_hnf_node2_1
 
 	inc	rdi
-	mov	rcx,8[rdx]
+	mov	rcx,[rdx+8]
 
 	mov	[rdx],rdi 
-	mov	rax,16[rdx]
+	mov	rax,[rdx+16]
 
 	sub	rbx,1
-	mov	(8-1)[rdi],rcx 
+	mov	[rdi+8-1],rcx 
 
-	mov	(16-1)[rdi],rax 
-	lea	rdi,(24-1)[rdi]
+	mov	[rdi+16-1],rax 
+	lea	rdi,[rdi+24-1]
 
 	att_jae	copy_lp2
 	ret
 
 copy_hnf_node2_1:
 	inc	rdi 
-	mov	rax,8[rdx]
+	mov	rax,[rdx+8]
 
 	sub	rbx,1
 	mov	[rdx],rdi
 
-	mov	(8-1)[rdi],rax 
-	lea	rdi,(16-1)[rdi]
+	mov	[rdi+8-1],rax 
+	lea	rdi,[rdi+16-1]
 
 	att_jae	copy_lp2
 	ret
@@ -348,10 +348,10 @@ copy_hnf_node2_3:
 	inc	rdi 
 
 	mov	[rdx],rdi 
-	mov	rcx,8[rdx]
+	mov	rcx,[rdx+8]
 
-	mov	(8-1)[rdi],rcx 
-	mov	rcx,16[rdx]
+	mov	[rdi+8-1],rcx 
+	mov	rcx,[rdx+16]
 
 	add	rdi,24-1
 	mov	rdx,[rcx]
@@ -359,13 +359,13 @@ copy_hnf_node2_3:
 	test	dl,1
 	jne	arguments_already_copied_2
 
-	mov	(-8)[rdi],rdi 
+	mov	[rdi-8],rdi 
 	add	rcx,8
 
 	mov	[rdi],rdx 
 	inc	rdi
 
-	mov	(-8)[rcx],rdi 
+	mov	[rcx-8],rdi 
 	add	rdi,8-1
 
 cp_hnf_arg_lp2:
@@ -383,26 +383,26 @@ cp_hnf_arg_lp2:
 	ret
 
 arguments_already_copied_2:
-	mov	(-8)[rdi],rdx 
+	mov	[rdi-8],rdx 
 
 	sub	rbx,1
 	att_jae	copy_lp2
 	ret
 
 copy_arity_0_node2:
-	lea	r9,__STRING__+2[rip]
+	lea	r9,[rip+__STRING__+2]
 	cmp	rcx,r9
 	jbe	copy_string_or_array_2
 
-	lea	r9,CHAR+2[rip]
+	lea	r9,[rip+CHAR+2]
 	cmp	rcx,r9
 	ja	copy_normal_hnf_0_2
 
 copy_int_bool_or_char_2:
-	mov	rax,8[rdx]
+	mov	rax,[rdx+8]
 	je	copy_char_2
 
-	lea	r9,dINT+2[rip]
+	lea	r9,[rip+dINT+2]
 	cmp	rcx,r9
 	jne	no_small_int_or_char_2
 
@@ -413,11 +413,11 @@ copy_int_2:
 	shl	rax,4
 	add	rbp,8
 
-	lea	r9,small_integers[rip]
+	lea	r9,[rip+small_integers]
 	add	rax,r9
 	sub	rbx,1
 
-	mov	(-8)[rbp],rax 
+	mov	[rbp-8],rax 
 	att_jae	copy_lp2
 	ret
 
@@ -427,11 +427,11 @@ copy_char_2:
 	shl	rax,4
 	add	rbp,8
 
-	lea	r9,static_characters[rip]
+	lea	r9,[rip+static_characters]
 	add	rax,r9
 	sub	rbx,1
 
-	mov	(-8)[rbp],rax 
+	mov	[rbp-8],rax 
 	att_jae	copy_lp2
 	ret
 	
@@ -439,16 +439,16 @@ no_small_int_or_char_2:
  .if COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
 copy_record_node2_1_b:
  .endif
-	mov	(-16)[rsi],rcx 
+	mov	[rsi-16],rcx 
 	add	rbp,8
 
-	mov	(-8)[rsi],rax 
+	mov	[rsi-8],rax 
 	sub	rsi,15
 
 	mov	[rdx],rsi 
 	dec	rsi
 
-	mov	(-8)[rbp],rsi 
+	mov	[rbp-8],rsi
 
 	sub	rbx,1
 	att_jae	copy_lp2
@@ -459,7 +459,7 @@ copy_normal_hnf_0_2:
 	sub	rbx,1
 
 	mov	[rbp],rcx 
-	lea	rbp,8[rbp]
+	lea	rbp,[rbp+8]
 	att_jae	copy_lp2
 	ret
 
@@ -468,7 +468,7 @@ already_copied_2:
 	sub	rbx,1
 
 	mov	[rbp],rcx 
-	lea	rbp,8[rbp]
+	lea	rbp,[rbp+8]
 
 	att_jae	copy_lp2
 	ret
@@ -480,22 +480,22 @@ copy_record_2:
  .if COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
  	jb	copy_record_node2_1
  
- 	cmp	word ptr (-2+2)[rcx],0
+ 	cmp	word ptr [rcx-2+2],0
 	att_je	copy_record_node2_bb
 
 	mov	qword ptr [rbp],rdi
 	mov	qword ptr [rdi],rcx
 
-	lea	rcx,1[rdi]
-	mov	rax,qword ptr 8[rdx]
+	lea	rcx,[rdi+1]
+	mov	rax,qword ptr [rdx+8]
 
 	mov	qword ptr [rdx],rcx
 
-	mov	qword ptr 8[rdi],rax
-	mov	rax,qword ptr 16[rdx]
+	mov	qword ptr [rdi+8],rax
+	mov	rax,qword ptr [rdx+16]
 
 	add	rbp,8
-	mov	qword ptr 16[rdi],rax
+	mov	qword ptr [rdi+16],rax
 
 	add	rdi,24
 	sub	rbx,1
@@ -503,16 +503,16 @@ copy_record_2:
 	ret
 
 copy_record_node2_1:
-	mov	rax,qword ptr 8[rdx]
+	mov	rax,qword ptr [rdx+8]
 
-	cmp	word ptr (-2+2)[rcx],0
+	cmp	word ptr [rcx-2+2],0
 	att_je	copy_record_node2_1_b
 
 	mov	qword ptr [rbp],rdi
 	mov	qword ptr [rdi],rcx
 
-	lea	rcx,1[rdi]
-	mov	qword ptr 8[rdi],rax
+	lea	rcx,[rdi+1]
+	mov	qword ptr [rdi+8],rax
 
 	mov	qword ptr [rdx],rcx
 	add	rbp,8
@@ -523,22 +523,22 @@ copy_record_node2_1:
 	ret
 
 copy_record_node2_bb:
-	mov	(-24)[rsi],rcx 
+	mov [rsi-24],rcx 
 	sub	rsi,24-1
 
 	mov	[rdx],rsi 
 	dec	rsi 
 
-	mov	rax,8[rdx]
-	mov	rcx,16[rdx]
+	mov	rax,[rdx+8]
+	mov	rcx,[rdx+16]
 
 	mov	[rbp],rsi 
 	add	rbp,8
 
-	mov	8[rsi],rax 
+	mov	[rsi+8],rax 
 	sub	rbx,1
 
-	mov	16[rsi],rcx 
+	mov [rsi+16],rcx 
 
 	att_jae	copy_lp2
 	ret
@@ -547,17 +547,17 @@ copy_record_node2_bb:
 	mov	qword ptr [rbp],rdi
 	mov	qword ptr [rdi],rcx
 
-	lea	rcx,1[rdi]
-	mov	rax,qword ptr 8[rdx]
+	lea	rcx,[rdi+1]
+	mov	rax,qword ptr [rdx+8]
 
 	mov	qword ptr [rdx],rcx
 	jb	copy_record_node2_1
 
-	mov	qword ptr 8[rdi],rax
-	mov	rax,qword ptr 16[rdx]
+	mov	qword ptr [rdi+8],rax
+	mov	rax,qword ptr [rdx+16]
 
 	add	rbp,8
-	mov	qword ptr 16[rdi],rax
+	mov	qword ptr [rdi+16],rax
 
 	add	rdi,24
 	sub	rbx,1
@@ -566,7 +566,7 @@ copy_record_node2_bb:
 
 copy_record_node2_1:
 	add	rbp,8
-	mov	qword ptr 8[rdi],rax 
+	mov	qword ptr [rdi+8],rax 
 
 	add	rdi,16
 	sub	rbx,1
@@ -576,21 +576,21 @@ copy_record_node2_1:
 
 copy_record_node2_3:
  .if COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
- 	cmp	word ptr (-2+2)[rcx],1
+ 	cmp	word ptr [rcx-2+2],1
  	jbe	copy_record_node2_3_ab_or_b
  .endif
 
 	push	rax 
-	lea	rax,1[rdi]
+	lea	rax,[rdi+1]
 	
 	mov	qword ptr [rdx],rax 
-	mov	rax,qword ptr 16[rdx]
+	mov	rax,qword ptr [rdx+16]
 
 	mov	qword ptr [rdi],rcx 
-	mov	rdx,qword ptr 8[rdx]
+	mov	rdx,qword ptr [rdx+8]
 
  .if COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
-	mov	qword ptr 8[rdi],rdx 
+	mov	qword ptr [rdi+8],rdx 
 	mov	qword ptr [rbp],rdi
 	add	rbp,8
 
@@ -602,7 +602,7 @@ copy_record_node2_3:
 	sub	rax,qword ptr heap_p1
 
 	shr	rax,4
-	mov	qword ptr 8[rdi],rdx 
+	mov	qword ptr [rdi+8],rdx 
 
 	mov	rdx,rax 
 	and	rax,31
@@ -611,7 +611,7 @@ copy_record_node2_3:
 	mov	qword ptr [rbp],rdi
 
 	and	rdx,-4
-	mov	eax,dword ptr (bit_set_table)[rax*4]
+	mov	eax,dword ptr [rax*4+bit_set_table]
 
 	add	rdx,qword ptr heap_copied_vector
 	add	rbp,8
@@ -621,10 +621,10 @@ copy_record_node2_3:
 
 	or	[rdx],eax
  .endif
-	lea	rdx,24[rdi]
+	lea	rdx,[rdi+24]
 
 	pop	rax
-	mov	qword ptr 16[rdi],rdx
+	mov	qword ptr [rdi+16],rdx
 
 	add	rdi,25
 	mov	rdx,qword ptr [rcx]
@@ -632,7 +632,7 @@ copy_record_node2_3:
 	mov	qword ptr [rcx],rdi
 	add	rcx,8
 
-	mov	qword ptr (-1)[rdi],rdx
+	mov	qword ptr [rdi-1],rdx
 	add	rdi,7
 
 cp_record_arg_lp2:
@@ -653,7 +653,7 @@ record_arguments_already_copied_2:
 	mov	rdx,qword ptr [rcx]
 	pop	rax 
 
-	mov	qword ptr 16[rdi],rdx 
+	mov	qword ptr [rdi+16],rdx 
 	add	rdi,24
 
 	sub	rbx,1
@@ -665,19 +665,19 @@ copy_record_node2_3_ab_or_b:
 	jb	copy_record_node2_3_b
 
 	push	rax
-	lea	rax,1[rdi]
+	lea	rax,[rdi+1]
 
 	mov	qword ptr [rdx],rax 
-	mov	rax,qword ptr 16[rdx]
+	mov	rax,qword ptr [rdx+16]
 
 	mov	qword ptr [rdi],rcx 
-	mov	rdx,qword ptr 8[rdx]
+	mov	rdx,qword ptr [rdx+8]
 
 	mov	rcx,rax 
-	sub	rax,qword ptr heap_p1[rip]
+	sub	rax,qword ptr [rip+heap_p1]
 
 	shr	rax,4
-	mov	qword ptr 8[rdi],rdx 
+	mov	qword ptr [rdi+8],rdx 
 
 	mov	rdx,rax 
 	and	rax,31
@@ -686,10 +686,10 @@ copy_record_node2_3_ab_or_b:
 	mov	qword ptr [rbp],rdi
 
 	and	rdx,-4
-	lea	r9,bit_set_table[rip]
+	lea	r9,[rip+bit_set_table]
 	mov	eax,dword ptr [r9+rax*4]
 
-	add	rdx,qword ptr heap_copied_vector[rip]
+	add	rdx,qword ptr [rip+heap_copied_vector]
 	add	rbp,8
 
 	test	eax,[rdx]
@@ -706,7 +706,7 @@ copy_record_node2_3_ab_or_b:
 	push	rsi
 	add	rsi,1
 	
-	mov	qword ptr 16[rdi],rsi
+	mov	qword ptr [rdi+16],rsi
 	add	rdi,24
 	
 	mov	rdx,qword ptr [rcx]
@@ -714,19 +714,19 @@ copy_record_node2_3_ab_or_b:
 
 copy_record_node2_3_b:
 	push	rax
-	lea	rax,(-24+1)[rsi]
+	lea	rax,[rsi-24+1]
 
 	mov	qword ptr [rdx],rax 
-	mov	rax,qword ptr 16[rdx]
+	mov	rax,qword ptr [rdx+16]
 
-	mov	qword ptr (-24)[rsi],rcx 
-	mov	rdx,qword ptr 8[rdx]
+	mov	qword ptr [rsi-24],rcx 
+	mov	rdx,qword ptr [rdx+8]
 
 	mov	rcx,rax 
-	sub	rax,qword ptr heap_p1[rip]
+	sub	rax,qword ptr [rip+heap_p1]
 
 	shr	rax,4
-	mov	qword ptr (-16)[rsi],rdx 
+	mov	qword ptr [rsi-16],rdx 
 
 	mov	rdx,rax 
 	and	rax,31
@@ -736,10 +736,10 @@ copy_record_node2_3_b:
 	mov	qword ptr [rbp],rsi
 
 	and	rdx,-4
-	lea	r9,bit_set_table[rip]
+	lea	r9,[rip+bit_set_table]
 	mov	eax,dword ptr [r9+rax*4]
 
-	add	rdx,qword ptr heap_copied_vector[rip]
+	add	rdx,qword ptr [rip+heap_copied_vector]
 	add	rbp,8
 
 	test	eax,[rdx]
@@ -754,7 +754,7 @@ copy_record_node2_3_b:
 	shl	rax,3
 	sub	rsi,rax
 
-	mov	qword ptr 16[rdx],rsi
+	mov	qword ptr [rdx+16],rsi
 
 	mov	rdx,qword ptr [rcx]
 
@@ -764,7 +764,7 @@ copy_record_node2_3_b:
 cp_record_arg_lp3_c:
 	mov	qword ptr [rcx],rsi
 	add	rcx,8
-	mov	qword ptr (-1) [rsi],rdx
+	mov	qword ptr [rsi-1],rdx
 	add	rsi,7
 
 cp_record_arg_lp3:
@@ -788,7 +788,7 @@ record_arguments_already_copied_3_b:
 	pop	rax
 	
 	sub	rdx,1
-	mov	qword ptr 16[rsi],rdx
+	mov	qword ptr [rsi+16],rdx
 	
 	sub	rbx,1
 	att_jae	copy_lp2
@@ -799,7 +799,7 @@ not_in_hnf_2:
 	test	cl,1
 	att_jne	already_copied_2
 
-	movsxd	rax,dword ptr (-4)[rcx]
+	movsxd	rax,dword ptr [rcx-4]
 	test	rax,rax 
 	jle	copy_arity_0_node2_
 
@@ -813,9 +813,9 @@ copy_node2_3:
 	mov	[rdi],rcx 
 	inc	rdi
 	mov	[rdx],rdi
-	mov	rcx,8[rdx]
+	mov	rcx,[rdx+8]
 	add	rdx,16
-	mov	(8-1)[rdi],rcx 
+	mov [rdi+8-1],rcx 
 	add	rdi,16-1
 
 cp_arg_lp2:
@@ -838,10 +838,10 @@ copy_arity_1_node2_:
 	add	rbp,8
 	mov	[rdx],rdi 
 
-	mov	rax,8[rdx]
-	mov	(-1)[rdi],rcx 
+	mov	rax,[rdx+8]
+	mov [rdi-1],rcx 
 
-	mov	(8-1)[rdi],rax 
+	mov [rdi+8-1],rax 
 	add	rdi,24-1
 
 	sub	rbx,1
@@ -850,7 +850,7 @@ copy_arity_1_node2_:
 
 copy_indirection_2:
 	mov	rax,rdx 
-	mov	rdx,8[rdx]
+	mov	rdx,[rdx+8]
 
 	mov	rcx,[rdx]
 	test	cl,2
@@ -859,16 +859,16 @@ copy_indirection_2:
 	test	cl,1
 	att_jne	already_copied_2
 
-	cmp	dword ptr (-4)[rcx],-2
+	cmp	dword ptr [rcx-4],-2
 	je	skip_indirections_2
 
-	movsxd	rax,dword ptr(-4)[rcx]
+	movsxd	rax,dword ptr [rcx-4]
 	test	rax,rax 
 	att_jle	copy_arity_0_node2_
 	att_jmp	copy_node2_1_
 
 skip_indirections_2:
-	mov	rdx,8[rdx]
+	mov	rdx,[rdx+8]
 
 	mov	rcx,[rdx]
 	test	cl,2
@@ -876,12 +876,12 @@ skip_indirections_2:
 	test	cl,1
 	att_jne	update_indirection_list_2
 
-	cmp	dword ptr (-4)[rcx],-2
+	cmp	dword ptr [rcx-4],-2
 	att_je	skip_indirections_2
 
 update_indirection_list_2:
-	lea	rcx,8[rax]
-	mov	rax,8[rax]
+	lea	rcx,[rax+8]
+	mov	rax,[rax+8]
 	mov	[rcx],rdx 
 	cmp	rdx,rax 
 	att_jne	update_indirection_list_2
@@ -893,80 +893,80 @@ copy_selector_2:
 	att_je	copy_indirection_2
 	jl	copy_record_selector_2
 
-	mov	rax,8[rdx]
+	mov	rax,[rdx+8]
 
 	mov	r10,[rax]
 	test	r10b,2
  	att_je	copy_arity_1_node2_
 
-	movsxd	r11,dword ptr (-8)[rcx]
+	movsxd	r11,dword ptr [rcx-8]
 
-	cmp	word ptr (-2)[r10],2
+	cmp	word ptr [r10-2],2
 	jbe	copy_selector_2_
  
- 	mov	r10,16[rax]
+ 	mov	r10,[rax+16]
 
 	test	byte ptr [r10],1
 	att_jne	copy_arity_1_node2_
 
-	movzx	r11,word ptr (4-8)[rcx+r11]
-	lea	r9,__indirection[rip]
+	movzx	r11,word ptr [rcx+r11+4-8]
+	lea	r9,[rip+__indirection]
 	mov	qword ptr [rdx],r9
 
 	cmp	r11,16
 	jl	copy_selector_2_1
 	je	copy_selector_2_2
 
-	mov	rcx,qword ptr (-24)[r10+r11]
-	mov	qword ptr 8[rdx],rcx
+	mov	rcx,qword ptr [r10+r11-24]
+	mov	qword ptr [rdx+8],rcx
 	mov	rdx,rcx
 	att_jmp	continue_after_selector_2
 
 copy_selector_2_1:
-	mov	rcx,qword ptr 8[rax]
-	mov	qword ptr 8[rdx],rcx
+	mov	rcx,qword ptr [rax+8]
+	mov	qword ptr [rdx+8],rcx
 	mov	rdx,rcx
 	att_jmp	continue_after_selector_2
 
 copy_selector_2_2:
 	mov	rcx,qword ptr [r10]
-	mov	qword ptr 8[rdx],rcx
+	mov	qword ptr [rdx+8],rcx
 	mov	rdx,rcx
 	att_jmp	continue_after_selector_2
 
 copy_selector_2_:
-	movzx	r11,word ptr (4-8)[rcx+r11]
-	lea	r9,__indirection[rip]
+	movzx	r11,word ptr [rcx+r11+4-8]
+	lea	r9,[rip+__indirection]
 	mov	qword ptr [rdx],r9
 
 	mov	rcx,qword ptr [rax+r11]
-	mov	qword ptr 8[rdx],rcx
+	mov	qword ptr [rdx+8],rcx
 	mov	rdx,rcx
 	att_jmp	continue_after_selector_2
 
 copy_record_selector_2:
 	cmp	rax,-3
- 	mov	rax,qword ptr 8[rdx]
+ 	mov	rax,qword ptr [rdx+8]
 	mov	r10,qword ptr [rax]
 	je	copy_strict_record_selector_2
 
  	test	r10b,2
 	att_je	copy_arity_1_node2_
 
-	movsxd	r11,dword ptr (-8)[rcx]
+	movsxd	r11,dword ptr [rcx-8]
 
-	cmp	word ptr (-2)[r10],258
+	cmp	word ptr [r10-2],258
 	jbe	copy_record_selector_2_
 
  .if COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
-	cmp	word ptr (-2+2)[r10],2
+	cmp	word ptr [r10-2+2],2
 	jae	copy_selector_2__
  .endif
 
-	mov	r12,qword ptr 16[rax]
+	mov	r12,qword ptr [rax+16]
 
-	lea	r10,(-24)[r12]
-	sub	r12,qword ptr heap_p1[rip]
+	lea	r10,[r12-24]
+	sub	r12,qword ptr [rip+heap_p1]
 
 	mov	r13,r12 
 	and	r12,31*16
@@ -976,9 +976,9 @@ copy_record_selector_2:
 	shr	r12,2
 	and	r13,-4
 
-	add	r13,qword ptr heap_copied_vector[rip]
+	add	r13,qword ptr [rip+heap_copied_vector]
 
-	lea	r9,bit_set_table[rip]
+	lea	r9,[rip+bit_set_table]
 	mov	r12d,dword ptr [r9+r12]
 
 	and	r12d,dword ptr [r13]
@@ -986,16 +986,16 @@ copy_record_selector_2:
 	att_je	copy_record_selector_2_
 	att_jmp	copy_arity_1_node2_
 copy_selector_2__:
-	mov	r12,qword ptr 16[rax]
-	lea	r10,(-24)[r12]
+	mov	r12,qword ptr [rax+16]
+	lea	r10,[r12-24]
 	test	byte ptr [r12],1
 	att_jne	copy_arity_1_node2_	
  .else
 	jne	copy_arity_1_node2_
  .endif
 copy_record_selector_2_:
-	movzx	r11,word ptr (4-8)[rcx+r11]
-	lea	r9,__indirection[rip]
+	movzx	r11,word ptr [rcx+r11+4-8]
+	lea	r9,[rip+__indirection]
 	mov	qword ptr [rdx],r9
 
 	cmp	r11,16
@@ -1003,7 +1003,7 @@ copy_record_selector_2_:
 	mov	rax,r10
 copy_record_selector_3:
 	mov	rcx,qword ptr [rax+r11]
-	mov	qword ptr 8[rdx],rcx
+	mov	qword ptr [rdx+8],rcx
 	mov	rdx,rcx
 	att_jmp	continue_after_selector_2
 
@@ -1011,17 +1011,17 @@ copy_strict_record_selector_2:
 	test	r10b,2
 	att_je	copy_arity_1_node2_
 
-	movsxd	r11,dword ptr (-8)[rcx]
+	movsxd	r11,dword ptr [rcx-8]
 
-	cmp	word ptr (-2)[r10],258
+	cmp	word ptr [r10-2],258
 	jbe	copy_strict_record_selector_2_
 
  .if COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
-	cmp	word ptr (-2+2)[r10],2
+	cmp	word ptr [r10-2+2],2
 	jb	copy_strict_record_selector_2_b
 
-	mov	r12,qword ptr 16[rax]
-	lea	r10,(-24)[r12]
+	mov	r12,qword ptr [rax+16]
+	lea	r10,[r12-24]
 	test	byte ptr [r12],1
 	att_jne	copy_arity_1_node2_	
 
@@ -1030,10 +1030,10 @@ copy_strict_record_selector_2:
 copy_strict_record_selector_2_b:
  .endif
 
-	mov	r12,qword ptr 16[rax]
+	mov	r12,qword ptr [rax+16]
 
-	lea	r10,(-24)[r12]
-	sub	r12,qword ptr heap_p1[rip]
+	lea	r10,[r12-24]
+	sub	r12,qword ptr [rip+heap_p1]
 
 	mov	r13,r12 
 	and	r12,31*16
@@ -1043,9 +1043,9 @@ copy_strict_record_selector_2_b:
 	shr	r12,2
 	and	r13,-4
 
-	add	r13,qword ptr heap_copied_vector[rip]
+	add	r13,qword ptr [rip+heap_copied_vector]
 
-	lea	r9,bit_set_table[rip]
+	lea	r9,[rip+bit_set_table]
 	mov	r12d,dword ptr [r9+r12]
 	
 	and	r12d,[r13]
@@ -1054,7 +1054,7 @@ copy_strict_record_selector_2_b:
 
 copy_strict_record_selector_2_:
 	add	r11,rcx
-	movzx	rcx,word ptr (4-8)[r11]
+	movzx	rcx,word ptr [r11+4-8]
 	cmp	rcx,16
 	jle	copy_strict_record_selector_3
 	mov	rcx,qword ptr [r10+rcx]
@@ -1062,9 +1062,9 @@ copy_strict_record_selector_2_:
 copy_strict_record_selector_3:
 	mov	rcx,qword ptr [rax+rcx]
 copy_strict_record_selector_4:
-	mov	qword ptr 8[rdx],rcx
+	mov	qword ptr [rdx+8],rcx
 
-	movzx	rcx,word ptr (6-8)[r11]
+	movzx	rcx,word ptr [r11+6-8]
 	test	rcx,rcx
 	je	copy_strict_record_selector_6
 	cmp	rcx,16
@@ -1072,20 +1072,20 @@ copy_strict_record_selector_4:
 	mov	rax,r10
 copy_strict_record_selector_5:
 	mov	rcx,qword ptr [rax+rcx]
-	mov	qword ptr 16[rdx],rcx
+	mov	qword ptr [rdx+16],rcx
 copy_strict_record_selector_6:
 
-	mov	rcx,qword ptr ((-8)-8)[r11]
+	mov	rcx,qword ptr [r11-8-8]
 	mov	qword ptr [rdx],rcx
 	att_jmp	in_hnf_2
 
 copy_arity_0_node2_:
 	att_jl	copy_selector_2
 
-	mov	(-24)[rsi],rcx 
+	mov [rsi-24],rcx 
 	sub	rsi,24
 	mov	[rbp],rsi 
-	lea	rax,1[rsi]
+	lea	rax,[rsi+1]
 
 	add	rbp,8
 	mov	[rdx],rax 
@@ -1098,11 +1098,11 @@ copy_string_or_array_2:
 	mov	rcx,rdx 
 	jne	copy_array_2
 
-	sub	rdx,heap_p1[rip]
-	cmp	rdx,semi_space_size[rip]
+	sub	rdx,[rip+heap_p1]
+	cmp	rdx,[rip+semi_space_size]
 	jae	copy_string_or_array_constant
 
-	mov	rdx,8[rcx]
+	mov	rdx,[rcx+8]
 	add	rbp,8
 
 	add	rdx,7
@@ -1117,14 +1117,14 @@ copy_string_or_array_2:
 	mov	rbx,[rcx]
 	add	rcx,8
 
-	mov	(-16)[rsi],rbx 
+	mov [rsi-16],rbx 
 	sub	rsi,16
 
-	mov	(-8)[rbp],rsi 
-	lea	rdx,1[rsi]
+	mov [rbp-8],rsi 
+	lea	rdx,[rsi+1]
 	
-	mov	(-8)[rcx],rdx 
-	lea	rdx,8[rsi]
+	mov [rcx-8],rdx 
+	lea	rdx,[rsi+8]
 
 cp_s_arg_lp2:
 	mov	rbx,[rcx]
@@ -1142,30 +1142,30 @@ cp_s_arg_lp2:
 	ret
 
 copy_array_2:
-	sub	rdx,heap_p1[rip]
-	cmp	rdx,semi_space_size[rip]
+	sub	rdx,[rip+heap_p1]
+	cmp	rdx,[rip+semi_space_size]
 	att_jae	copy_string_or_array_constant
 
 	push	rbx 
 
-	mov	rax,qword ptr 16[rcx]
+	mov	rax,qword ptr [rcx+16]
 	test	rax,rax 
 	je	copy_array_a2
 
-	movzx 	rbx,word ptr (-2)[rax]
+	movzx 	rbx,word ptr [rax-2]
 
 	test	rbx,rbx 
 	je	copy_strict_basic_array_2
 	
 	sub	rbx,256
-	imul	rbx,qword ptr 8[rcx]
+	imul	rbx,qword ptr [rcx+8]
 	jmp	copy_array_a3
 
 copy_array_a2:
-	mov	rbx,qword ptr 8[rcx]
+	mov	rbx,qword ptr [rcx+8]
 copy_array_a3:
 	mov	rdx,rdi 
-	lea	rdi,24[rdi+rbx*8]
+	lea	rdi,[rdi+rbx*8+24]
 
 	mov	qword ptr [rbp],rdx 
 	mov	rax,qword ptr [rcx]
@@ -1173,23 +1173,23 @@ copy_array_a3:
 	add	rbp,8
 	mov	qword ptr [rdx],rax 
 
-	lea	rax,1[rdx]
+	lea	rax,[rdx+1]
 	add	rdx,8
 
 	mov	qword ptr [rcx],rax 
 	add	rcx,8
 
-	lea	rax,1[rbx]
+	lea	rax,[rbx+1]
 	att_jmp	cp_s_arg_lp2
 
 copy_strict_basic_array_2:
-	mov	rbx,qword ptr 8[rcx]
+	mov	rbx,qword ptr [rcx+8]
 
-	lea	r9,dINT+2[rip]
+	lea	r9,[rip+dINT+2]
 	cmp	rax,r9
 	jle	copy_int_or_real_array_2
 
-	lea	r9,BOOL+2[rip]
+	lea	r9,[rip+BOOL+2]
 	cmp	rax,r9
 	je	copy_bool_array_2
 
@@ -1199,7 +1199,7 @@ copy_int32_or_real32_array_2:
 
 copy_int_or_real_array_2:
 	shl	rbx,3
-	lea	rdx,(-24)[rsi]
+	lea	rdx,[rsi-24]
 
 	sub	rdx,rbx 
 	mov	rax,qword ptr [rcx]
@@ -1211,13 +1211,13 @@ copy_int_or_real_array_2:
 	mov	rsi,rdx 
 	
 	mov	qword ptr [rdx],rax 
-	lea	rax,1[rdx]
+	lea	rax,[rdx+1]
 
 	add	rdx,8
 	mov	qword ptr [rcx],rax 
 
 	add	rcx,8
-	lea	rax,1[rbx]
+	lea	rax,[rbx+1]
 	att_jmp	cp_s_arg_lp2
 
 copy_bool_array_2:
@@ -1234,31 +1234,31 @@ copy_string_or_array_constant:
 	ret
 
 end_copy1:
-	mov	heap_end_after_gc[rip],rsi 
+	mov [rip+heap_end_after_gc],rsi 
 
-	lea	rcx,finalizer_list[rip]
-	lea	rdx,free_finalizer_list[rip]
-	mov	rbp,qword ptr finalizer_list[rip]
+	lea	rcx,[rip+finalizer_list]
+	lea	rdx,[rip+free_finalizer_list]
+	mov	rbp,qword ptr [rip+finalizer_list]
 
 determine_free_finalizers_after_copy:
 	mov	rax,qword ptr [rbp]
 	test	al,1
 	je	finalizer_not_used_after_copy
 
-	mov	rbp,qword ptr 8[rbp]
+	mov	rbp,qword ptr [rbp+8]
 	sub	rax,1
 	mov	qword ptr [rcx],rax 
-	lea	rcx,8[rax]
+	lea	rcx,[rax+8]
 	att_jmp	determine_free_finalizers_after_copy
 
 finalizer_not_used_after_copy:
-	lea	r9,__Nil-8[rip]
+	lea	r9,[rip+__Nil-8]
 	cmp	rbp,r9
 	je	end_finalizers_after_copy
 
 	mov	qword ptr [rdx],rbp 
-	lea	rdx,8[rbp]
-	mov	rbp,qword ptr 8[rbp]
+	lea	rdx,[rbp+8]
+	mov	rbp,qword ptr [rbp+8]
 	att_jmp	determine_free_finalizers_after_copy	
 
 end_finalizers_after_copy:
