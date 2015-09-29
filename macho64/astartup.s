@@ -654,7 +654,7 @@ _abc_main:
 
 	call	init_timer
 
-	mov	halt_sp[rip],rsp
+	mov	[rip+halt_sp],rsp
 
  .if PROFILE
 	call	init_profiler
@@ -694,7 +694,7 @@ init_error:
 	pop	rbx
 
  .if LINUX
-	mov	eax,dword ptr _return_code[rip]
+	mov	eax,dword ptr [rip+_return_code]
 	jne	return_code_set_1
 	mov	eax,-1
 return_code_set_1:
@@ -729,7 +729,7 @@ DLL_PROCESS_ATTACH:
 	push	r14
 	push	r15
  .endif
-	mov	qword ptr dll_initisialised[rip],1
+	mov	qword ptr [rip+dll_initisialised],1
 
 	att_call	init_clean
 	test	rax,rax
@@ -737,15 +737,15 @@ DLL_PROCESS_ATTACH:
 
 	att_call	init_timer
 
-	mov	halt_sp[rip],rsp 
+	mov	[rip+halt_sp],rsp 
 
  .if PROFILE
 	att_call	init_profiler
  .endif
 
-	mov	qword ptr saved_heap_p[rip],rdi
-	mov	qword ptr saved_heap_p+8[rip],r15
-	mov	saved_a_stack_p[rip],rsi
+	mov	qword ptr [rip+saved_heap_p],rdi
+	mov	qword ptr [rip+saved_heap_p+8],r15
+	mov	[rip+saved_a_stack_p],rsi
 
 	mov	rax,1
 	jmp	exit_dll_init
@@ -775,9 +775,9 @@ DLL_PROCESS_DETACH:
 	push	r15
  .endif
 	
-	mov	rdi,qword ptr saved_heap_p[rip]
-	mov	r15,qword ptr saved_heap_p+8[rip]
-	mov	rsi,saved_a_stack_p[rip]
+	mov	rdi,qword ptr [rip+saved_heap_p]
+	mov	r15,qword ptr [rip+saved_heap_p+8]
+	mov	rsi,[rip+saved_a_stack_p]
 
 	att_call	exit_clean
 
@@ -804,40 +804,40 @@ exit_dll_init:
 	ret
 
 init_clean:
-	lea	rax,128[rsp]
+	lea	rax,[rsp+128]
 	sub	rsp,32+8
 
-	sub	rax,qword ptr _ab_stack_size[rip]
-	mov	end_b_stack[rip],rax 
+	sub	rax,qword ptr [rip+_ab_stack_size]
+	mov	[rip+end_b_stack],rax 
 
-	mov	rax,qword ptr _flags[rip]
+	mov	rax,qword ptr [rip+_flags]
 	and	rax,1
-	mov	basic_only[rip],rax 
+	mov	[rip+basic_only],rax 
 
 /*	call	allow_prefetch_for_athlon */
 
-	mov	rax,qword ptr _heap_size[rip]
+	mov	rax,qword ptr [rip+_heap_size]
 	sub	rax,7
 	xor	rdx,rdx 
 	mov	rbx,65
 	div	rbx
-	mov	qword ptr heap_size_65[rip],rax 
+	mov	qword ptr [rip+heap_size_65],rax 
 
-	mov	rax,qword ptr _heap_size[rip]
+	mov	rax,qword ptr [rip+_heap_size]
 	sub	rax,7
 	xor	rdx,rdx 
 	mov	rbx,257
 	div	rbx
-	mov	heap_size_257[rip],rax
+	mov	[rip+heap_size_257],rax
 	add	rax,7
 	and	rax,-8
-	mov	qword ptr heap_copied_vector_size[rip],rax
-	mov	qword ptr heap_end_after_copy_gc[rip],0
+	mov	qword ptr [rip+heap_copied_vector_size],rax
+	mov	qword ptr [rip+heap_end_after_copy_gc],0
 
-	mov	rax,qword ptr _heap_size[rip]
+	mov	rax,qword ptr [rip+_heap_size]
 	add	rax,7
 	and	rax,-8
-	mov	qword ptr _heap_size[rip],rax 
+	mov	qword ptr [rip+_heap_size],rax 
 	add	rax,7
 
 	mov	rbp,rsp
@@ -854,16 +854,16 @@ init_clean:
 	test	rax,rax 
 	je	no_memory_2
 
-	mov	heap_mbp[rip],rax
-	lea	rdi,7[rax]
+	mov	[rip+heap_mbp],rax
+	lea	rdi,[rax+7]
 	and	rdi,-8
-	mov	heap_p[rip],rdi 
+	mov	[rip+heap_p],rdi 
 
 	mov	rbp,rsp
 	and	rsp,-16
  .if LINUX
 	mov	r14,rdi
-	mov	rdi,qword ptr _ab_stack_size[rip]
+	mov	rdi,qword ptr [rip+_ab_stack_size]
 	add	rdi,7
 	att_call	_malloc
 	mov	rdi,r14
@@ -877,85 +877,85 @@ init_clean:
 	test	rax,rax 
 	je	no_memory_3
 	
-	mov	stack_mbp[rip],rax 
+	mov	[rip+stack_mbp],rax 
 
-	add	rax,qword ptr _ab_stack_size[rip]
+	add	rax,qword ptr [rip+_ab_stack_size]
 	add	rax,7+4095
 	and	rax,-4096
-	mov	qword ptr a_stack_guard_page[rip],rax 
-	sub	rax,qword ptr _ab_stack_size[rip]
+	mov	qword ptr [rip+a_stack_guard_page],rax 
+	sub	rax,qword ptr [rip+_ab_stack_size]
 
 	add	rax,7
 	and	rax,-8
 
 	mov	rsi,rax 
-	mov	stack_p[rip],rax 
+	mov	[rip+stack_p],rax 
 
-	add	rax,qword ptr _ab_stack_size[rip]
+	add	rax,qword ptr [rip+_ab_stack_size]
 	sub	rax,64
-	mov	qword ptr end_a_stack[rip],rax 
+	mov	qword ptr [rip+end_a_stack],rax 
 
-	lea	rcx,small_integers[rip]
+	lea	rcx,[rip+small_integers]
 	xor	rax,rax 
-	lea	rbx,(dINT+2)[rip]
+	lea	rbx,[rip+dINT+2]
 
 make_small_integers_lp:
 	mov	[rcx],rbx 
-	mov	8[rcx],rax 
+	mov	[rcx+8],rax 
 	inc	rax 
 	add	rcx,16
 	cmp	rax,33
 	att_jne	make_small_integers_lp
 
-	lea	rcx,static_characters[rip]
+	lea	rcx,[rip+static_characters]
 	xor	rax,rax 
-	lea	rbx,(CHAR+2)[rip]
+	lea	rbx,[rip+CHAR+2]
 
 make_static_characters_lp:
 	mov	[rcx],rbx 
-	mov	8[rcx],rax 
+	mov	[rcx+8],rax 
 	inc	rax 
 	add	rcx,16
 	cmp	rax,256
 	att_jne	make_static_characters_lp
 
-	lea	rcx,(caf_list+8[rip])
-	mov	qword ptr caf_listp[rip],rcx 
+	lea	rcx,[rip+caf_list+8]
+	mov	qword ptr [rip+caf_listp],rcx 
 
-	lea	rcx,__Nil-8[rip]
-	mov	qword ptr finalizer_list[rip],rcx
-	mov	qword ptr free_finalizer_list[rip],rcx
+	lea	rcx,[rip+__Nil-8]
+	mov	qword ptr [rip+finalizer_list],rcx
+	mov	qword ptr [rip+free_finalizer_list],rcx
 
-	mov	heap_p1[rip],rdi
+	mov	[rip+heap_p1],rdi
 
-	mov	rbp,qword ptr heap_size_257[rip]
+	mov	rbp,qword ptr [rip+heap_size_257]
 	shl	rbp,4
 	lea	rax,[rdi+rbp*8]
-	mov	heap_copied_vector[rip],rax 
-	add	rax,heap_copied_vector_size[rip]
-	mov	heap_p2[rip],rax
+	mov	[rip+heap_copied_vector],rax 
+	add	rax,[rip+heap_copied_vector_size]
+	mov	[rip+heap_p2],rax
 
-	mov	byte ptr garbage_collect_flag[rip],0
+	mov	byte ptr [rip+garbage_collect_flag],0
 
-	test	byte ptr _flags[rip],64
+	test	byte ptr [rip+_flags],64
 	je	no_mark1
 
-	mov	rax,qword ptr heap_size_65[rip]
-	mov	qword ptr heap_vector[rip],rdi 
+	mov	rax,qword ptr [rip+heap_size_65]
+	mov	qword ptr [rip+heap_vector],rdi 
 	add	rdi,rax
 
 	add	rdi,7
 	and	rdi,-8
 
-	mov	qword ptr heap_p3[rip],rdi
+	mov	qword ptr [rip+heap_p3],rdi
 	lea	rbp,[rax*8]
-	mov	byte ptr garbage_collect_flag[rip],-1
+	mov	byte ptr [rip+garbage_collect_flag],-1
 
 no_mark1:
-	mov	rax,qword ptr _initial_heap_size[rip]
+	mov	rax,qword ptr [rip+_initial_heap_size]
 
 	mov	rbx,4000
-	test	byte ptr _flags[rip],64
+	test	byte ptr [rip+_flags],64
 	jne	no_mark9
 	add	rbx,rbx 
 no_mark9:
@@ -969,11 +969,11 @@ no_mark9:
 too_large_or_too_small:
 
 	lea	rax,[rdi+rbp*8]
-	mov	heap_end_after_gc[rip],rax 
+	mov	[rip+heap_end_after_gc],rax 
 
-	test	byte ptr _flags[rip],64
+	test	byte ptr [rip+_flags],64
 	att_je	no_mark2
-	mov	qword ptr bit_vector_size[rip],rbp
+	mov	qword ptr [rip+bit_vector_size],rbp
 no_mark2:
 
 	mov	r15,rbp
@@ -986,14 +986,14 @@ no_memory_2:
 	mov	rbp,rsp
 	and	rsp,-16
  .if LINUX
-	lea	rdi,out_of_memory_string_1[rip]
+	lea	rdi,[rip+out_of_memory_string_1]
  .else
 	lea	rcx,out_of_memory_string_1
  .endif
 	att_call	_ew_print_string
 	mov	rsp,rbp
 
-	mov	qword ptr _execution_aborted[rip],1
+	mov	qword ptr [rip+_execution_aborted],1
 
 	add	rsp,32
 	mov	rax,1
@@ -1004,16 +1004,16 @@ no_memory_3:
 	and	rsp,-16
 
  .if LINUX
-	lea	rdi,out_of_memory_string_1[rip]
+	lea	rdi,[rip+out_of_memory_string_1]
  .else
 	lea	ecx,out_of_memory_string_1
  .endif
 	att_call	_ew_print_string
 
-	mov	qword ptr _execution_aborted[rip],1
+	mov	qword ptr [rip+_execution_aborted],1
  
  .if LINUX
-	mov	rdi,heap_mbp[rip]
+	mov	rdi,[rip+heap_mbp]
 	att_call	_free
  .else
 	mov	rcx,heap_mbp
@@ -1029,7 +1029,7 @@ no_memory_3:
 exit_clean:
 	att_call	add_execute_time
 
-	mov	rax,qword ptr _flags[rip]
+	mov	rax,qword ptr [rip+_flags]
 	test	al,8
 	je	no_print_execution_time
 
@@ -1040,27 +1040,27 @@ exit_clean:
  .endif
 
  .if LINUX
-	lea	rdi,time_string_1[rip]
+	lea	rdi,[rip+time_string_1]
  .else
 	lea	rcx,time_string_1
  .endif
 	att_call	_ew_print_string
 	
-	mov	rax,execute_time[rip]
+	mov	rax,[rip+execute_time]
 	call	print_time
 	
  .if LINUX
-	lea	rdi,time_string_2[rip]
+	lea	rdi,[rip+time_string_2]
  .else
 	lea	rcx,time_string_2
  .endif
 	att_call	_ew_print_string
 
-	mov	rax,garbage_collect_time[rip]
+	mov	rax,[rip+garbage_collect_time]
  .if MEASURE_GC
  .else
-	add	rax,mark_compact_garbage_collect_time[rip]
-	add	rax,compact_garbage_collect_time[rip]
+	add	rax,[rip+mark_compact_garbage_collect_time]
+	add	rax,[rip+compact_garbage_collect_time]
  .endif
 	att_call	print_time
 
@@ -1089,18 +1089,18 @@ exit_clean:
  .endif
 
  .if LINUX
-	lea	rdi,time_string_4[rip]
+	lea	rdi,[rip+time_string_4]
  .else
 	lea	rcx,time_string_4
  .endif
 	att_call	_ew_print_string
 
-	mov	rax,execute_time[rip]
-	add	rax,garbage_collect_time[rip]
-	add	rax,IO_time[rip]
+	mov	rax,[rip+execute_time]
+	add	rax,[rip+garbage_collect_time]
+	add	rax,[rip+IO_time]
 
-	add	rax,mark_compact_garbage_collect_time[rip]
-	add	rax,compact_garbage_collect_time[rip]
+	add	rax,[rip+mark_compact_garbage_collect_time]
+	add	rax,[rip+compact_garbage_collect_time]
 
 	att_call	print_time
 
@@ -1128,9 +1128,9 @@ exit_clean:
 	call	_ew_print_char
 
   .if LINUX
-	mov rdi,total_compact_gc_bytes
+	mov	rdi,total_compact_gc_bytes
   .else
-	mov rcx,total_compact_gc_bytes
+	mov	rcx,total_compact_gc_bytes
   .endif
 	call	_ew_print_int
 
@@ -1254,10 +1254,10 @@ no_print_execution_time:
 	mov	rbp,rsp
 	and	rsp,-16
  .if LINUX
-	mov	rdi,stack_mbp[rip]
+	mov	rdi,[rip+stack_mbp]
 	att_call	_free
 
-	mov	rdi,heap_mbp[rip]
+	mov	rdi,[rip+heap_mbp]
 	att_call	_free
  .else
 	mov	rcx,stack_mbp
@@ -1279,7 +1279,7 @@ no_print_execution_time:
 	ret
 
 __driver:
-	mov	rbp,qword ptr _flags[rip]
+	mov	rbp,qword ptr [rip+_flags]
 	test	rbp,16
 	att_je	__print__graph
 	att_jmp	__eval__to__nf
@@ -1308,7 +1308,7 @@ print_time:
 	att_call	_ew_print_int
 	mov	rsp,rbp
 
-	lea	rcx,sprintf_time_buffer[rip]
+	lea	rcx,[rip+sprintf_time_buffer]
 
 	xor	rdx,rdx 
 	mov	rbx,10
@@ -1321,8 +1321,8 @@ print_time:
 	div	rbx 
 	add	rax,48
 	add	rdx,48
-	mov	byte ptr 1[rcx],al 
-	mov	byte ptr 2[rcx],dl 
+	mov	byte ptr [rcx+1],al 
+	mov	byte ptr [rcx+2],dl 
 
 	mov	rbp,rsp
 	and	rsp,-16
@@ -1340,7 +1340,7 @@ print_time:
 	ret
 
 print_sc:
-	mov	rbp,basic_only[rip]
+	mov	rbp,[rip+basic_only]
 	test	rbp,rbp 
 	jne	end_print
 
@@ -1378,10 +1378,10 @@ printD:	test	al,2
 	mov	r13,rsi
 	mov	r14,rdi
 
-	lea	rdi,4[rax]
+	lea	rdi,[rax+4]
 	mov	esi,0[rax]
  .else
-	lea	rcx,4[rax]
+	lea	rcx,[rax+4]
 	mov	edx,dword ptr [rax]
 	sub	rsp,32
  .endif
@@ -1394,8 +1394,8 @@ printD:	test	al,2
 	ret
 
 DtoAC_record:
-	movsxd	rbx,dword ptr (-6)[rax]
-	lea	rbp,(-6)[rax+rbx]
+	movsxd	rbx,dword ptr [rax-6]
+	lea	rbp,[rax+rbx-6]
 	jmp	DtoAC_string_a2
 
 DtoAC:	test	al,2
@@ -1406,13 +1406,13 @@ DtoAC:	test	al,2
 
 DtoAC_:
  .if NEW_DESCRIPTORS
-	cmp	word ptr (-2)[rax],256
+	cmp	word ptr [rax-2],256
 	att_jae	DtoAC_record
 
 	movzx	rbx,word ptr [rax]
-	lea	rbp,10[rax+rbx]
+	lea	rbp,[rax+rbx+10]
  .else
-	lea	rbp,(-2)[rax]
+	lea	rbp,[rax-2]
 	movsx	rbx,word ptr [rbp]
 	cmp	rbx,256
 	jae	DtoAC_record
@@ -1420,13 +1420,13 @@ DtoAC_:
 	shl	rbx,3
 	sub	rbp,rbx 
 
- 	movzx	rbx,word ptr (-2)[rbp]
-	lea	rbp,4[rbp+rbx*8]
+ 	movzx	rbx,word ptr [rbp-2]
+	lea	rbp,[rbp+rbx*8+4]
  .endif
 
 DtoAC_string_a2:
 	mov	eax,dword ptr [rbp]
-	lea	rcx,4[rbp]
+	lea	rcx,[rbp+4]
 	jmp	build_string
 
 print_symbol:
@@ -1434,23 +1434,23 @@ print_symbol:
 	jmp	print_symbol_2
 
 print_symbol_sc:
-	mov	rbx,basic_only[rip]
+	mov	rbx,[rip+basic_only]
 print_symbol_2:
 	mov	rax,[rcx]
 
-	lea	rbp,dINT+2[rip]
+	lea	rbp,[rip+dINT+2]
 	cmp	rax,rbp
 	je	print_int_node
 
-	lea	rbp,CHAR+2[rip]
+	lea	rbp,[rip+CHAR+2]
 	cmp	rax,rbp
 	je	print_char_denotation
 
-	lea	rbp,BOOL+2[rip]
+	lea	rbp,[rip+BOOL+2]
 	cmp	rax,rbp
 	je	print_bool
 
-	lea	rbp,REAL+2[rip]
+	lea	rbp,[rip+REAL+2]
 	cmp	rax,rbp
 	je	print_real_node
 	
@@ -1458,16 +1458,16 @@ print_symbol_2:
 	jne	end_print_symbol
 
 printD_:
-	cmp	word ptr (-2)[rax],256
+	cmp	word ptr [rax-2],256
 	jae	print_record
 
 	movzx	rbx,word ptr [rax]
-	lea	rbp,10[rax+rbx]
+	lea	rbp,[rax+rbx+10]
 	jmp	print_string_a2
 
 print_record:
-	movsxd	rbp,dword ptr (-6)[rax]
-	lea	rbp,-6[rax+rbp]
+	movsxd	rbp,dword ptr [rax-6]
+	lea	rbp,[rax+rbp-6]
 	att_jmp	print_string_a2
 
 end_print_symbol:
@@ -1479,10 +1479,10 @@ print_int_node:
  .if LINUX
 	mov	r13,rsi
 	mov	r14,rdi
-	mov	rdi,8[rcx]
+	mov	rdi,[rcx+8]
  .else
 	sub	rsp,32
-	mov	rcx,8[rcx]
+	mov	rcx,[rcx+8]
  .endif
 	att_call	_w_print_int
  .if LINUX
@@ -1523,7 +1523,7 @@ print_char_denotation:
  .else
 	sub	rsp,32
  .endif
-	mov	rbx,8[rcx]
+	mov	rbx,[rcx+8]
 
  .if LINUX
 	mov	rdi,0x27
@@ -1560,9 +1560,9 @@ print_char_node:
 	mov	r13,rsi
 	mov	r14,rdi
  
-	mov	rdi,8[rcx]
+	mov	rdi,[rcx+8]
 .else
-	mov	rcx,8[rcx]
+	mov	rcx,[rcx+8]
 	sub	rsp,32
  .endif
 	att_call	_w_print_char
@@ -1594,7 +1594,7 @@ print_char:
 	ret
 
 print_bool:
-	movsx	rcx,byte ptr 8[rcx]
+	movsx	rcx,byte ptr [rcx+8]
 	test	rcx,rcx 
 	je	print_false
 
@@ -1604,7 +1604,7 @@ print_true:
  .if LINUX
 	mov	r13,rsi
 	mov	r14,rdi
-	lea	rdi,true_c_string[rip]
+	lea	rdi,[rip+true_c_string]
  .else
 	lea	rcx,true_c_string
 	sub	rsp,32
@@ -1623,7 +1623,7 @@ print_false:
  .if LINUX
 	mov	r13,rsi
 	mov	r14,rdi
-	lea	rdi,false_c_string[rip]
+	lea	rdi,[rip+false_c_string]
  .else
 	lea	rcx,false_c_string
 	sub	rsp,32
@@ -1637,7 +1637,7 @@ print_false:
 	ret
 
 print_real_node:
-	movlpd	xmm0,qword ptr 8[rcx]
+	movlpd	xmm0,qword ptr [rcx+8]
 print_real:
 	mov	rbp,rsp
 	and	rsp,-16
@@ -1659,12 +1659,12 @@ print_string_a2:
  .if LINUX
 	mov	r13,rsi
 	mov	r14,rdi
-	lea	rdi,4[rbp]
+	lea	rdi,[rbp+4]
 	mov	esi,0[rbp]
 	mov	rbp,rsp
 	and	rsp,-16
  .else
-	lea	rcx,4[rbp]
+	lea	rcx,[rbp+4]
 	mov	edx,0[rbp]
 	mov	rbp,rsp
 	and	rsp,-16
@@ -1679,7 +1679,7 @@ print_string_a2:
 	ret
 
 print__chars__sc:
-	mov	rbp,basic_only[rip]
+	mov	rbp,[rip+basic_only]
 	test	rbp,rbp 
 	jne	no_print_chars
 
@@ -1689,11 +1689,11 @@ print__string__:
  .if LINUX
 	mov	r13,rsi
 	mov	r14,rdi
-	mov	rsi,8[rcx]
-	lea	rdi,16[rcx]
+	mov	rsi,[rcx+8]
+	lea	rdi,[rcx+16]
  .else
-	mov	rdx,8[rcx]
-	lea	rcx,16[rcx]
+	mov	rdx,[rcx+8]
+	lea	rcx,[rcx+16]
 	sub	rsp,32
  .endif
 	att_call	_w_print_text
@@ -1708,11 +1708,11 @@ no_print_chars:
 push_a_r_args:
 	push	rdi
 
-	mov	rdx,qword ptr 16[rcx]
+	mov	rdx,qword ptr [rcx+16]
 	sub	rdx,2
 	movzx	rdi,word ptr [rdx]
 	sub	rdi,256
-	movzx	rbx,word ptr 2[rdx]
+	movzx	rbx,word ptr [rdx+2]
 	add	rdx,4
 	push	rdx 
 		
@@ -1720,7 +1720,7 @@ push_a_r_args:
 	sub	rdx,rbx 
 
 	shl	rax,3
-	lea	rcx,24[rcx+rbx*8]
+	lea	rcx,[rcx+rbx*8+24]
 	dec	rdi 
 mul_array_size_lp:
 	add	rcx,rax 
@@ -1730,7 +1730,7 @@ mul_array_size_lp:
 	lea	rdi,[rcx+rdx*8]
 	jmp	push_a_elements
 push_a_elements_lp:
-	mov	rax,qword ptr (-8)[rcx]
+	mov	rax,qword ptr [rcx-8]
 	sub	rcx,8
 	mov	qword ptr [rsi],rax 
 	add	rsi,8
@@ -1745,7 +1745,7 @@ push_a_elements:
 	pop	rbp 
 	jmp	push_b_elements
 push_b_elements_lp:
-	push	(-8)[rcx]
+	push	[rcx-8]
 	sub	rcx,8
 push_b_elements:
 	sub	rdx,1
@@ -1761,11 +1761,11 @@ push_t_r_args:
 	sub	rdx,2
 	movzx	rax,word ptr [rdx]
 	sub	rax,256
-	movzx	rbx,word ptr 2[rdx]
+	movzx	rbx,word ptr [rdx+2]
 	add	rdx,4
 
 	mov	qword ptr [rsi],rdx
-	mov	qword ptr 8[rsi],rbx
+	mov	qword ptr [rsi+8],rbx
 
 	sub	rbx,rax
 	neg	rbx 
@@ -1773,8 +1773,8 @@ push_t_r_args:
 	lea	rdx,[rcx+rax*8]
 	cmp	rax,2
 	jbe	small_record
-	mov	rdx,qword ptr 8[rcx]
-	lea	rdx,(-8)[rdx+rax*8]
+	mov	rdx,qword ptr [rcx+8]
+	lea	rdx,[rdx+rax*8-8]
 small_record:
 	jmp	push_r_b_elements
 
@@ -1785,13 +1785,13 @@ push_r_b_elements_lp:
 	push	[rcx]
 	att_jmp	push_r_b_elements
 not_first_arg_b:
-	push	(-8)[rdx]
+	push	[rdx-8]
 	sub	rdx,8
 push_r_b_elements:
 	sub	rbx,1
 	att_jnc	push_r_b_elements_lp
 
-	mov	rbx,qword ptr 8[rsi]
+	mov	rbx,qword ptr [rsi+8]
 	push	rbp
 	push	[rsi]
 	jmp	push_r_a_elements
@@ -1805,7 +1805,7 @@ push_r_a_elements_lp:
 	add	rsi,8
 	att_jmp	push_r_a_elements
 not_first_arg_a:
-	mov	rbp,qword ptr (-8)[rdx]
+	mov	rbp,qword ptr [rdx-8]
 	sub	rdx,8
 	mov	qword ptr [rsi],rbp
 	add	rsi,8
@@ -1820,10 +1820,10 @@ BtoAC:
 	test	al,al 
 	je	BtoAC_false
 BtoAC_true:
-	lea	rcx,true_string[rip]
+	lea	rcx,[rip+true_string]
 	ret
 BtoAC_false:
-	lea	rcx,false_string[rip]
+	lea	rcx,[rip+false_string]
 	ret
 
 RtoAC:
@@ -1832,8 +1832,8 @@ RtoAC:
  .if LINUX
 	mov	r13,rsi
 	mov	r14,rdi
-	lea	rsi,printf_real_string[rip]
-	lea	rdi,sprintf_buffer[rip]
+	lea	rsi,[rip+printf_real_string]
+	lea	rdi,[rip+sprintf_buffer]
 	mov	rax,1
 	call	_sprintf
 	mov	rsi,r13
@@ -1847,11 +1847,11 @@ RtoAC:
 	jmp	return_sprintf_buffer
 
 ItoAC:
-	lea	rcx,sprintf_buffer[rip]
+	lea	rcx,[rip+sprintf_buffer]
 	call	int_to_string
 	
 	mov	rax,rcx
-	lea	rcx,sprintf_buffer[rip]
+	lea	rcx,[rip+sprintf_buffer]
 	sub	rax,rcx
 
 	jmp	sprintf_buffer_to_string
@@ -1882,7 +1882,7 @@ calculate_digits:
 	cmp	rax,10
 	jb	last_digit
 
-	mov	rdx,0x0cccccccccccccccd
+	movabs rdx,0x0cccccccccccccccd
 	mov	rbx,rax 
 
 	mul	rdx  
@@ -1927,20 +1927,20 @@ end_reverse_digits:
 	ret
 
 return_sprintf_buffer:
-	lea	rax,(sprintf_buffer-1)[rip]
+	lea	rax,[rip+sprintf_buffer-1]
 skip_characters:
 	inc	rax 
 	cmp	byte ptr [rax],0
 	att_jne	skip_characters
 
-	lea	rcx,sprintf_buffer[rip]
+	lea	rcx,[rip+sprintf_buffer]
 	sub	rax,rcx
 
 sprintf_buffer_to_string:
-	lea	rcx,sprintf_buffer[rip]
+	lea	rcx,[rip+sprintf_buffer]
 build_string:
 
-	lea	rbx,16+7[rax]
+	lea	rbx,[rax+16+7]
 	shr	rbx,3
 
 	sub	r15,rbx
@@ -1953,9 +1953,9 @@ build_string:
 D_to_S_no_gc:
 	sub	rbx,2
 	mov	rbp,rdi 
-	lea	r9,__STRING__+2[rip]
+	lea	r9,[rip+__STRING__+2]
 	mov	qword ptr [rdi],r9
-	mov	8[rdi],rax 
+	mov	[rdi+8],rax 
 	add	rdi,16
 	jmp	D_to_S_cp_str_2
 
@@ -1975,16 +1975,16 @@ eqD:	mov	rax,[rcx]
 	cmp	rax,[rdx]
 	jne	eqD_false
 
-	lea	rbp,dINT+2[rip]
+	lea	rbp,[rip+dINT+2]
 	cmp	rax,rbp
 	je	eqD_INT
-	lea	rbp,CHAR+2[rip]
+	lea	rbp,[rip+CHAR+2]
 	cmp	rax,rbp
 	je	eqD_CHAR
-	lea	rbp,BOOL+2[rip]
+	lea	rbp,[rip+BOOL+2]
 	cmp	rax,rbp
 	je	eqD_BOOL
-	lea	rbp,REAL+2[rip]
+	lea	rbp,[rip+REAL+2]
 	cmp	rax,rbp
 	je	eqD_REAL
 
@@ -1993,22 +1993,22 @@ eqD:	mov	rax,[rcx]
 
 eqD_CHAR:
 eqD_INT:
-	mov	rbx,8[rcx]
+	mov	rbx,[rcx+8]
 	xor	rax,rax 
-	cmp	rbx,8[rdx]
+	cmp	rbx,[rdx+8]
 	sete	al
 	ret
 
 eqD_BOOL:
-	mov	bl,byte ptr 8[rcx]
+	mov	bl,byte ptr [rcx+8]
 	xor	rax,rax 
-	cmp	bl,byte ptr 8[rdx]
+	cmp	bl,byte ptr [rdx+8]
 	sete	al 
 	ret
 
 eqD_REAL:
-	movlpd	xmm0,qword ptr 8[rcx]
-	comisd	xmm0,qword ptr 8[rdx]
+	movlpd	xmm0,qword ptr [rcx+8]
+	comisd	xmm0,qword ptr [rdx+8]
 	fnstsw	ax
 	and	ah,68
 	xor	ah,64
@@ -2036,20 +2036,20 @@ init_timer:
 	mov	rsi,r13
 	mov	rdi,r14
 	mov	eax,[rsp]
-	imul	eax,10
+	imul eax,eax,10
  .else
 	call	GetTickCount
  .endif
 	mov	rsp,rbp
 
-	mov	last_time[rip],rax 
+	mov	[rip+last_time],rax 
 	xor	rax ,rax 
-	mov	execute_time[rip],rax 
-	mov	garbage_collect_time[rip],rax 
-	mov	IO_time[rip],rax 
+	mov	[rip+execute_time],rax 
+	mov	[rip+garbage_collect_time],rax 
+	mov	[rip+IO_time],rax 
 
-	mov	mark_compact_garbage_collect_time[rip],rax 
-	mov	compact_garbage_collect_time[rip],rax 
+	mov	[rip+mark_compact_garbage_collect_time],rax 
+	mov	[rip+compact_garbage_collect_time],rax 
 
 	ret
 
@@ -2065,13 +2065,13 @@ get_time_diff:
 	mov	rsi,r13
 	mov	rdi,r14
 	mov	eax,[rsp]
-	imul	eax,10
+	imul eax,eax,10
  .else
 	call	GetTickCount
  .endif
 	mov	rsp,rbp
 
-	lea	rcx,last_time[rip]
+	lea	rcx,[rip+last_time]
 	mov	rdx,[rcx]
 	mov	[rcx],rax 
 	sub	rax,rdx
@@ -2079,7 +2079,7 @@ get_time_diff:
 	
 add_execute_time:
 	att_call	get_time_diff
-	lea	rcx,execute_time[rip]
+	lea	rcx,[rip+execute_time]
 
 add_time:
 	add	rax,[rcx]
@@ -2088,22 +2088,22 @@ add_time:
 
 add_garbage_collect_time:
 	att_call	get_time_diff
-	lea	rcx,garbage_collect_time[rip]
+	lea	rcx,[rip+garbage_collect_time]
 	att_jmp	add_time
 
 add_IO_time:
 	att_call	get_time_diff
-	lea	rcx,IO_time[rip]
+	lea	rcx,[rip+IO_time]
 	att_jmp	add_time
 
 add_mark_compact_garbage_collect_time:
 	att_call	get_time_diff
-	lea	rcx,mark_compact_garbage_collect_time[rip]
+	lea	rcx,[rip+mark_compact_garbage_collect_time]
 	att_jmp	add_time
 
 add_compact_garbage_collect_time:
 	att_call	get_time_diff
-	lea	rcx,compact_garbage_collect_time[rip]
+	lea	rcx,[rip+compact_garbage_collect_time]
 	att_jmp	add_time
 /* */
 /*	the garbage collector */
@@ -2111,17 +2111,17 @@ add_compact_garbage_collect_time:
 
 collect_3:
  .if PROFILE
-	lea	rbp,garbage_collector_name[rip]
+	lea	rbp,[rip+garbage_collector_name]
 	att_call	profile_s
  .endif
 	mov	[rsi],rcx 
-	mov	8[rsi],rdx 
-	mov	16[rsi],r8
+	mov	[rsi+8],rdx 
+	mov	[rsi+16],r8
 	add	rsi,24
 	call	collect_0_
-	mov	r8,(-8)[rsi]
-	mov	rdx,(-16)[rsi]
-	mov	rcx,(-24)[rsi]
+	mov	r8,[rsi-8]
+	mov	rdx,[rsi-16]
+	mov	rcx,[rsi-24]
 	sub	rsi,24
  .if PROFILE
 	jmp	profile_r
@@ -2131,15 +2131,15 @@ collect_3:
 
 collect_2:
  .if PROFILE
-	lea	rbp,garbage_collector_name[rip]
+	lea	rbp,[rip+garbage_collector_name]
 	att_call	profile_s
  .endif
 	mov	[rsi],rcx 
-	mov	8[rsi],rdx 
+	mov	[rsi+8],rdx 
 	add	rsi,16
 	att_call	collect_0_
-	mov	rdx,(-8)[rsi]
-	mov	rcx,(-16)[rsi]
+	mov	rdx,[rsi-8]
+	mov	rcx,[rsi-16]
 	sub	rsi,16
  .if PROFILE
 	att_jmp	profile_r
@@ -2149,13 +2149,13 @@ collect_2:
 
 collect_1:
  .if PROFILE
-	lea	rbp,garbage_collector_name[rip]
+	lea	rbp,[rip+garbage_collector_name]
 	att_call	profile_s
  .endif
 	mov	[rsi],rcx 
 	add	rsi,8
 	att_call	collect_0_
-	mov	rcx,(-8)[rsi]
+	mov	rcx,[rsi-8]
 	sub	rsi,8
  .if PROFILE
 	att_jmp	profile_r
@@ -2165,7 +2165,7 @@ collect_1:
 
 collect_0:
  .if PROFILE
-	lea	rbp,garbage_collector_name[rip]
+	lea	rbp,[rip+garbage_collector_name]
 	att_call	profile_s
  .endif
 	att_call	collect_0_
@@ -2181,17 +2181,17 @@ collect_0_:
 	push	rax
 	push	rbx
 
-	mov	rbx,qword ptr heap_end_after_gc[rip]
+	mov	rbx,qword ptr [rip+heap_end_after_gc]
 	sub	rbx,rdi
 
 	shr	rbx,3
 	sub	rbx,r15
-	mov	qword ptr n_allocated_words[rip],rbx
+	mov	qword ptr [rip+n_allocated_words],rbx
 
-	test	byte ptr _flags[rip],64
+	test	byte ptr [rip+_flags],64
 	je	no_mark3
 
-	mov	rbp,qword ptr bit_counter[rip]
+	mov	rbp,qword ptr [rip+bit_counter]
 	test	rbp,rbp 
 	je	no_scan
 
@@ -2199,7 +2199,7 @@ collect_0_:
 	mov	rsi,rbx
 
 	xor	rbx,rbx 
-	mov	rcx,qword ptr bit_vector_p[rip]
+	mov	rcx,qword ptr [rip+bit_vector_p]
 
 scan_bits:
 	cmp	ebx,dword ptr[rcx]
@@ -2212,7 +2212,7 @@ scan_bits:
 	jmp	end_scan
 
 zero_bits:
-	lea	rdx,4[rcx]
+	lea	rdx,[rcx+4]
 	add	rcx,4
 	sub	rbp,1
 	jne	skip_zero_bits_lp1
@@ -2229,7 +2229,7 @@ skip_zero_bits_lp1:
 
 	test	rax,rax 
 	att_je	end_bits
-	mov	dword ptr (-4)[rcx],ebx 
+	mov	dword ptr [rcx-4],ebx 
 	mov	rax,rcx 
 	sub	rax,rdx 
 	jmp	end_bits2
@@ -2238,24 +2238,24 @@ end_zero_bits:
 	mov	rax,rcx 
 	sub	rax,rdx 
 	shl	rax,3
-	add	qword ptr n_free_words_after_mark[rip],rax
-	mov	dword ptr (-4)[rcx],ebx
+	add	qword ptr [rip+n_free_words_after_mark],rax
+	mov	dword ptr [rcx-4],ebx
 
 	cmp	rax,rsi
 	att_jb	scan_bits
 
 found_free_memory:
-	mov	qword ptr bit_counter[rip],rbp 
-	mov	qword ptr bit_vector_p[rip],rcx 
+	mov	qword ptr [rip+bit_counter],rbp 
+	mov	qword ptr [rip+bit_vector_p],rcx 
 
-	lea	rbp,(-4)[rdx]
-	sub	rbp,qword ptr heap_vector[rip]
+	lea	rbp,[rdx-4]
+	sub	rbp,qword ptr [rip+heap_vector]
 	shl	rbp,6
-	mov	rdi,qword ptr heap_p3[rip]
+	mov	rdi,qword ptr [rip+heap_p3]
 	add	rdi,rbp 
 
 	lea	rbp,[rdi+rax*8]
-	mov	qword ptr heap_end_after_gc[rip],rbp 
+	mov	qword ptr [rip+heap_end_after_gc],rbp 
 
 	mov	r15,rax
 	sub	r15,rsi
@@ -2271,34 +2271,34 @@ end_bits:
 	add	rax,4
 end_bits2:
 	shl	rax,3
-	add	qword ptr n_free_words_after_mark[rip],rax 
+	add	qword ptr [rip+n_free_words_after_mark],rax 
 	cmp	rax,rsi 
 	att_jae	found_free_memory
 
 end_scan:
 	pop	rsi 
-	mov	qword ptr bit_counter[rip],rbp
+	mov	qword ptr [rip+bit_counter],rbp
 
 no_scan:
 
 no_mark3:
-	movsx	rax,byte ptr garbage_collect_flag[rip]
+	movsx	rax,byte ptr [rip+garbage_collect_flag]
 	test	rax,rax 
 	jle	collect
 
 	sub	rax,2
-	mov	byte ptr garbage_collect_flag[rip],al 
+	mov	byte ptr [rip+garbage_collect_flag],al 
 
-	mov	rbp,qword ptr extra_heap_size[rip]
+	mov	rbp,qword ptr [rip+extra_heap_size]
 	cmp	rbx,rbp 
 	att_ja	collect
 
-	mov	rdi,qword ptr extra_heap[rip]
+	mov	rdi,qword ptr [rip+extra_heap]
 
 	mov	r15,rbp
 
 	lea	rbp,[rdi+rbp*8]
-	mov	qword ptr heap_end_after_gc[rip],rbp 
+	mov	qword ptr [rip+heap_end_after_gc],rbp 
 
 	sub	r15,rbx
 
@@ -2312,10 +2312,10 @@ collect:
  .else
 	sub	rsp,88
  .endif
-	mov	32[rsp],r10
-	mov	24[rsp],r11
-	mov	16[rsp],r12
-	mov	8[rsp],r13
+	mov	[rsp+32],r10
+	mov	[rsp+24],r11
+	mov	[rsp+16],r12
+	mov	[rsp+8],r13
 	mov	[rsp],r14
 	movsd	40[rsp],xmm0
 	movsd	48[rsp],xmm1
@@ -2330,7 +2330,7 @@ collect:
 
 	att_call	add_execute_time
 
-	test	qword ptr _flags[rip],4
+	test	qword ptr [rip+_flags],4
 	je	no_print_stack_sizes
 
 	mov	rbp,rsp
@@ -2344,9 +2344,9 @@ collect:
 
  .if 0
   .if LINUX
-	mov	rdi,qword ptr 64[rsp]
+	mov	rdi,qword ptr [rsp+64]
   .else
-	mov	rcx,qword ptr 96[rsp]
+	mov	rcx,qword ptr [rsp+96]
   .endif
 	call	_ew_print_int
 
@@ -2359,7 +2359,7 @@ collect:
  .endif
 
  .if LINUX
-	lea	rdi,garbage_collect_string_1[rip]
+	lea	rdi,[rip+garbage_collect_string_1]
  .else
 	lea	rcx,garbage_collect_string_1
  .endif
@@ -2367,7 +2367,7 @@ collect:
 
  .if LINUX
 	mov	rdi,r13
-	sub	rdi,stack_p[rip]
+	sub	rdi,[rip+stack_p]
  .else
 	mov	rcx,rsi 
 	sub	rcx,stack_p
@@ -2375,14 +2375,14 @@ collect:
 	att_call	_ew_print_int
 
  .if LINUX
-	lea	rdi,garbage_collect_string_2[rip]
+	lea	rdi,[rip+garbage_collect_string_2]
  .else
 	lea	rcx,garbage_collect_string_2
  .endif
 	att_call	_ew_print_string
 
  .if LINUX
-	mov	rdi,halt_sp[rip]
+	mov	rdi,[rip+halt_sp]
 	sub	rdi,rsp 
  .else
 	mov	rcx,halt_sp
@@ -2391,7 +2391,7 @@ collect:
 	att_call	_ew_print_int
 
  .if LINUX
-	lea	rdi,garbage_collect_string_3[rip]
+	lea	rdi,[rip+garbage_collect_string_3]
  .else
 	lea	rcx,garbage_collect_string_3
  .endif
@@ -2404,46 +2404,46 @@ collect:
 	mov	rsp,rbp
 
 no_print_stack_sizes:
-	mov	rax,stack_p[rip]
-	add	rax,qword ptr _ab_stack_size[rip]
+	mov	rax,[rip+stack_p]
+	add	rax,qword ptr [rip+_ab_stack_size]
 	cmp	rsi,rax 
 	att_ja	stack_overflow
 
-	test	byte ptr _flags[rip],64
+	test	byte ptr [rip+_flags],64
 	jne	compacting_collector
 
-	cmp	byte ptr garbage_collect_flag[rip],0
+	cmp	byte ptr [rip+garbage_collect_flag],0
 	att_jne	compacting_collector
 
-	mov	rbp,heap_copied_vector[rip]
+	mov	rbp,[rip+heap_copied_vector]
 
-	cmp	qword ptr heap_end_after_copy_gc[rip],0
+	cmp	qword ptr [rip+heap_end_after_copy_gc],0
 	je	zero_all
 
 	mov	rax,rdi
-	sub	rax,qword ptr heap_p1[rip]
+	sub	rax,qword ptr [rip+heap_p1]
 	add	rax,127*8
 	shr	rax,9
 	call	zero_bit_vector
 
-	mov	rdx,qword ptr heap_end_after_copy_gc[rip]
-	sub	rdx,qword ptr heap_p1[rip]
+	mov	rdx,qword ptr [rip+heap_end_after_copy_gc]
+	sub	rdx,qword ptr [rip+heap_p1]
 	shr	rdx,7
 	and	rdx,-4
 
-	mov	rbp,qword ptr heap_copied_vector[rip]
-	mov	rax,qword ptr heap_copied_vector_size[rip]
+	mov	rbp,qword ptr [rip+heap_copied_vector]
+	mov	rax,qword ptr [rip+heap_copied_vector_size]
 	add	rbp,rdx 
 	sub	rax,rdx 
 	shr	rax,2
 
-	mov	qword ptr heap_end_after_copy_gc[rip],0
+	mov	qword ptr [rip+heap_end_after_copy_gc],0
 
 	att_call	zero_bit_vector
 	jmp	end_zero_bit_vector
 
 zero_all:
-	mov	rax,heap_copied_vector_size[rip]
+	mov	rax,[rip+heap_copied_vector_size]
 	shr	rax,2
 	att_call	zero_bit_vector
 
@@ -2451,15 +2451,15 @@ end_zero_bit_vector:
 
 	.include	"acopy.s"
 
-	mov	qword ptr heap2_begin_and_end[rip],rsi 
+	mov	qword ptr [rip+heap2_begin_and_end],rsi 
 
 	mov	r15,rsi
 	sub	r15,rdi
 
-	mov	rax,heap_size_257[rip]
+	mov	rax,[rip+heap_size_257]
 	shl	rax,7
 	sub	rax,r15
-	add	qword ptr total_gc_bytes[rip],rax
+	add	qword ptr [rip+total_gc_bytes],rax
 
 	shr	r15,3
 
@@ -2467,12 +2467,12 @@ end_zero_bit_vector:
 
 	att_call	add_garbage_collect_time
 
-	sub	r15,qword ptr n_allocated_words[rip]
+	sub	r15,qword ptr [rip+n_allocated_words]
 	jc	switch_to_mark_scan
 
 	lea	rax,[r15+r15*4]
 	shl	rax,6
-	mov	rbx,qword ptr _heap_size[rip]
+	mov	rbx,qword ptr [rip+_heap_size]
 	mov	rcx,rbx 
 	shl	rbx,2
 	add	rbx,rcx 
@@ -2482,82 +2482,82 @@ end_zero_bit_vector:
 	jnc	no_mark_scan
 
 switch_to_mark_scan:
-	mov	rax,qword ptr heap_size_65[rip]
+	mov	rax,qword ptr [rip+heap_size_65]
 	shl	rax,6
-	mov	rbx,qword ptr heap_p[rip]
+	mov	rbx,qword ptr [rip+heap_p]
 
-	mov	rcx,qword ptr heap_p1[rip]
-	cmp	rcx,qword ptr heap_p2[rip]
+	mov	rcx,qword ptr [rip+heap_p1]
+	cmp	rcx,qword ptr [rip+heap_p2]
 	jc	vector_at_begin
 	
 vector_at_end:
-	mov	qword ptr heap_p3[rip],rbx 
+	mov	qword ptr [rip+heap_p3],rbx 
 	add	rbx,rax 
-	mov	qword ptr heap_vector[rip],rbx 
+	mov	qword ptr [rip+heap_vector],rbx 
 	
-	mov	rax,qword ptr heap_p1[rip]
-	mov	qword ptr extra_heap[rip],rax 
+	mov	rax,qword ptr [rip+heap_p1]
+	mov	qword ptr [rip+extra_heap],rax 
 	sub	rbx,rax 
 	shr	rbx,3
-	mov	qword ptr extra_heap_size[rip],rbx
+	mov	qword ptr [rip+extra_heap_size],rbx
 	jmp	switch_to_mark_scan_2
 
 vector_at_begin:
-	mov	qword ptr heap_vector[rip],rbx
-	add	rbx,qword ptr _heap_size[rip]
+	mov	qword ptr [rip+heap_vector],rbx
+	add	rbx,qword ptr [rip+_heap_size]
 	sub	rbx,rax 
-	mov	qword ptr heap_p3[rip],rbx 
+	mov	qword ptr [rip+heap_p3],rbx 
 	
-	mov	qword ptr extra_heap[rip],rbx
-	mov	rcx,qword ptr heap_p2[rip]
+	mov	qword ptr [rip+extra_heap],rbx
+	mov	rcx,qword ptr [rip+heap_p2]
 	sub	rcx,rbx 
 	shr	rcx,3
-	mov	qword ptr extra_heap_size[rip],rcx 
+	mov	qword ptr [rip+extra_heap_size],rcx 
 
 switch_to_mark_scan_2:
-	mov	rax,heap_size_257[rip]
+	mov	rax,[rip+heap_size_257]
 	shl	rax,7-3
 	sub	rax,r15
 	shl	rax,3
 
-	mov	byte ptr garbage_collect_flag[rip],1
+	mov	byte ptr [rip+garbage_collect_flag],1
 
-	lea	rcx,heap_use_after_gc_string_1[rip]
+	lea	rcx,[rip+heap_use_after_gc_string_1]
 
 	test	r15,r15
 	jns	end_garbage_collect
 	
-	mov	byte ptr garbage_collect_flag[rip],-1
+	mov	byte ptr [rip+garbage_collect_flag],-1
 	
-	mov	rbx,qword ptr extra_heap_size[rip]
+	mov	rbx,qword ptr [rip+extra_heap_size]
 	mov	r15,rbx
-	sub	r15,qword ptr n_allocated_words[rip]
+	sub	r15,qword ptr [rip+n_allocated_words]
 	js	out_of_memory_4_3
 
-	mov	rdi,qword ptr extra_heap[rip]
+	mov	rdi,qword ptr [rip+extra_heap]
 	shl	rbx,3
 	add	rbx,rdi
-	mov	qword ptr heap_end_after_gc[rip],rbx
+	mov	qword ptr [rip+heap_end_after_gc],rbx
 
-	mov	qword ptr heap_end_write_heap[rip],rdi
+	mov	qword ptr [rip+heap_end_write_heap],rdi
 
-	mov	qword ptr d3_flag_write_heap[rip],1
+	mov	qword ptr [rip+d3_flag_write_heap],1
 	jmp	end_garbage_collect_
 
 no_mark_scan:
 /* exchange the semi_spaces */
-	mov	rax,heap_p1[rip]
-	mov	rbx,heap_p2[rip]
-	mov	heap_p2[rip],rax 
-	mov	heap_p1[rip],rbx 
+	mov	rax,[rip+heap_p1]
+	mov	rbx,[rip+heap_p2]
+	mov	[rip+heap_p2],rax 
+	mov	[rip+heap_p1],rbx 
 
-	mov	rax,heap_size_257[rip]
+	mov	rax,[rip+heap_size_257]
 	shl	rax,7-3
 	mov	rbx,rax
 	sub	rax,r15
 
 	mov	rcx,rax
-	imul	qword ptr _heap_size_multiple[rip]
+	imul	qword ptr [rip+_heap_size_multiple]
 	shrd	rax,rdx,9
 	shr	rdx,9
 	jne	no_small_heap1
@@ -2571,26 +2571,26 @@ not_too_small1:
 
 	sub	r15,rbx
 	shl	rbx,3
-	mov	rbp,qword ptr heap_end_after_gc[rip]
-	mov	qword ptr heap_end_after_copy_gc[rip],rbp 
+	mov	rbp,qword ptr [rip+heap_end_after_gc]
+	mov	qword ptr [rip+heap_end_after_copy_gc],rbp 
 	sub	rbp,rbx 
-	mov	qword ptr heap_end_after_gc[rip],rbp 
+	mov	qword ptr [rip+heap_end_after_gc],rbp 
 
 no_small_heap1:
 	mov	rax,rcx
 	shl	rax,3
 
-	lea	rcx,heap_use_after_gc_string_1[rip]
+	lea	rcx,[rip+heap_use_after_gc_string_1]
 
 end_garbage_collect:
 
-	mov	qword ptr heap_end_write_heap[rip],rdi 
-	mov	qword ptr d3_flag_write_heap[rip],0
+	mov	qword ptr [rip+heap_end_write_heap],rdi 
+	mov	qword ptr [rip+d3_flag_write_heap],0
 
 end_garbage_collect_:
 	push	rax
 
-	test	qword ptr _flags[rip],2
+	test	qword ptr [rip+_flags],2
 	je	no_heap_use_message
 
 	mov	rbp,rsp
@@ -2614,7 +2614,7 @@ end_garbage_collect_:
 	att_call	_ew_print_int
 
  .if LINUX
-	lea	rdi,heap_use_after_gc_string_2[rip]
+	lea	rdi,[rip+heap_use_after_gc_string_2]
  .else
 	lea	rcx,heap_use_after_gc_string_2
  .endif
@@ -2633,38 +2633,38 @@ no_heap_use_message:
 
 	pop	rax
 	 
-	test	byte ptr _flags[rip],32
+	test	byte ptr [rip+_flags],32
 	je	no_write_heap
 
-	cmp	rax,qword ptr _min_write_heap_size[rip]
+	cmp	rax,qword ptr [rip+_min_write_heap_size]
 	att_jb	no_write_heap
 
 	push	rcx 
-	push 	rdx 
+	push	rdx 
 	push	rbp 
 	push	rsi 
 	push	rdi 
 
 	sub	rsp,128
 
-	mov	rax,qword ptr d3_flag_write_heap[rip]
+	mov	rax,qword ptr [rip+d3_flag_write_heap]
 	test	rax,rax 
 	jne	copy_to_compact_with_alloc_in_extra_heap
 
-	movsx	rax,byte ptr garbage_collect_flag[rip]
+	movsx	rax,byte ptr [rip+garbage_collect_flag]
 	
-	mov	rcx,qword ptr heap2_begin_and_end[rip]
-	mov	rdx,qword ptr (heap2_begin_and_end+8)[rip]
+	mov	rcx,qword ptr [rip+heap2_begin_and_end]
+	mov	rdx,qword ptr [rip+heap2_begin_and_end+8]
 
-	lea	rbx,heap_p1[rip]
+	lea	rbx,[rip+heap_p1]
 	
 	test	rax,rax 
 	je	gc0
 	
-	lea	rbx,heap_p2[rip]
+	lea	rbx,[rip+heap_p2]
 	jg	gc1
 
-	lea	rbx,heap_p3[rip]
+	lea	rbx,[rip+heap_p3]
 	xor	rcx,rcx 
 	xor	rdx,rdx 
 
@@ -2675,36 +2675,36 @@ gc1:
 	mov	rax,rsp 
 	
 	mov	qword ptr [rax],rbx 
-	mov	qword ptr 8[rax],rdi 
+	mov	qword ptr [rax+8],rdi 
 	
-	mov	qword ptr 16[rax],rcx 
-	mov	qword ptr 24[rax],rdx 
+	mov	qword ptr [rax+16],rcx 
+	mov	qword ptr [rax+24],rdx 
 	
-	mov	rbx ,qword ptr stack_p[rip]
+	mov	rbx ,qword ptr [rip+stack_p]
 
-	mov	qword ptr 32[rax],rbx 
+	mov	qword ptr [rax+32],rbx 
 
-	mov	qword ptr 40[rax],rsi 
-	mov	qword ptr 48[rax],0
-	mov	qword ptr 56[rax],0
+	mov	qword ptr [rax+40],rsi 
+	mov	qword ptr [rax+48],0
+	mov	qword ptr [rax+56],0
 	
-	lea	rbp,small_integers[rip]
-	mov	qword ptr 64[rax],rbp
-	lea	rbp,static_characters[rip]
-	mov	qword ptr 72[rax],rbp
+	lea	rbp,[rip+small_integers]
+	mov	qword ptr [rax+64],rbp
+	lea	rbp,[rip+static_characters]
+	mov	qword ptr [rax+72],rbp
 
-	lea	rbp,dINT+2[rip]
-	mov	qword ptr 80[rax],rbp
-	lea	rbp,CHAR+2[rip]
-	mov	qword ptr 88[rax],rbp
-	lea	rbp,REAL+2[rip]
-	mov	qword ptr 96[rax],rbp
-	lea	rbp,BOOL+2[rip]
-	mov	qword ptr 104[rax],rbp
-	lea	rbp,__STRING__+2[rip]
-	mov	qword ptr 112[rax],rbp
-	lea	rbp,__ARRAY__+2[rip]
-	mov	qword ptr 120[rax],rbp
+	lea	rbp,[rip+dINT+2]
+	mov	qword ptr [rax+80],rbp
+	lea	rbp,[rip+CHAR+2]
+	mov	qword ptr [rax+88],rbp
+	lea	rbp,[rip+REAL+2]
+	mov	qword ptr [rax+96],rbp
+	lea	rbp,[rip+BOOL+2]
+	mov	qword ptr [rax+104],rbp
+	lea	rbp,[rip+__STRING__+2]
+	mov	qword ptr [rax+112],rbp
+	lea	rbp,[rip+__ARRAY__+2]
+	mov	qword ptr [rax+120],rbp
 
 	mov	rbp,rsp
 	and	rsp,-16
@@ -2729,10 +2729,10 @@ gc1:
 no_write_heap:
 
 restore_registers_after_gc_and_return:
-	mov	r10,32[rsp]
-	mov	r11,24[rsp]
-	mov	r12,16[rsp]
-	mov	r13,8[rsp]
+	mov	r10,[rsp+32]
+	mov	r11,[rsp+24]
+	mov	r12,[rsp+16]
+	mov	r13,[rsp+8]
 	mov	r14,[rsp]
 	movlpd	xmm0,40[rsp]
 	movlpd	xmm1,48[rsp]
@@ -2752,33 +2752,33 @@ restore_registers_after_gc_and_return:
 	ret
 
 call_finalizers:
-	mov	rax,qword ptr free_finalizer_list[rip]
+	mov	rax,qword ptr [rip+free_finalizer_list]
 
 call_finalizers_lp:
-	lea	r9,__Nil-8[rip]
+	lea	r9,[rip+__Nil-8]
 	cmp	rax,r9
 	je	end_call_finalizers
-	push	8[rax]
-	mov	rbx,qword ptr 16[rax]
-	push	8[rbx]
+	push	[rax+8]
+	mov	rbx,qword ptr [rax+16]
+	push	[rbx+8]
 	call	qword ptr [rbx]
 	add	rsp,8
 	pop	rax 
 	att_jmp	call_finalizers_lp
 end_call_finalizers:
 
-	lea	r9,__Nil-8[rip]
-	mov	qword ptr free_finalizer_list[rip],r9
+	lea	r9,[rip+__Nil-8]
+	mov	qword ptr [rip+free_finalizer_list],r9
 	ret
 
 copy_to_compact_with_alloc_in_extra_heap:
-	mov	rcx,qword ptr heap2_begin_and_end[rip]
-	mov	rdx,qword ptr (heap2_begin_and_end+8)[rip]
-	lea	rbx,heap_p2[rip]
+	mov	rcx,qword ptr [rip+heap2_begin_and_end]
+	mov	rdx,qword ptr [rip+heap2_begin_and_end+8]
+	lea	rbx,[rip+heap_p2]
 	att_jmp	gc1
 
 allow_prefetch_for_athlon:
-	test	qword ptr _flags[rip],4096
+	test	qword ptr [rip+_flags],4096
 	jne	no_prefetch_flag
 
 	xor	rax,rax
@@ -2787,18 +2787,18 @@ allow_prefetch_for_athlon:
 	jz	disable_prefetch_flag
 
  .if LINUX
-	cmp	rbx,'A+('u*0x100)+('t*0x10000)+('h*0x1000000)
+	cmp	rbx,0x68747541 # 'A+('u*0x100)+('t*0x10000)+('h*0x1000000)
 	att_jne	disable_prefetch_flag
-	cmp	rdx,'e+('n*0x100)+('t*0x10000)+('i*0x1000000)
+	cmp	rdx,0x69746e65 # 'e+('n*0x100)+('t*0x10000)+('i*0x1000000)
 	att_jne	disable_prefetch_flag
-	cmp	rcx,'c+('A*0x100)+('M*0x10000)+('D*0x1000000)
+	cmp	rcx,0x444d4163 # 'c+('A*0x100)+('M*0x10000)+('D*0x1000000)
 	att_jne	disable_prefetch_flag
  .else
-	cmp	rbx,'A'+('u' shl 8)+('t' shl 16)+('h' shl 24)
+	cmp	rbx,65 # 'A''+('u' shl 8)+(116 # 't'' shl 16)+(104 # 'h'' shl 24)
 	jne	disable_prefetch_flag
-	cmp	rdx,'e'+('n' shl 8)+('t' shl 16)+('i' shl 24)
+	cmp	rdx,101 # 'e''+('n' shl 8)+(116 # 't'' shl 16)+(105 # 'i'' shl 24)
 	jne	disable_prefetch_flag
-	cmp	rcx,'c'+('A' shl 8)+('M' shl 16)+('D' shl 24)
+	cmp	rcx,99 # 'c''+(65 # 'A'' shl 8)+('M' shl 16)+('D' shl 24)
 	jne	disable_prefetch_flag
  .endif
 
@@ -2811,7 +2811,7 @@ allow_prefetch_for_athlon:
 	ret
 
 disable_prefetch_flag:
-	and	qword ptr _flags[rip],-4097
+	and	qword ptr [rip+_flags],-4097
 keep_prefetch_flag:
 no_prefetch_flag:
 	ret
@@ -2822,7 +2822,7 @@ out_of_memory_4_1:
 out_of_memory_4:
 	att_call	add_garbage_collect_time
 	
-	lea	rbp,out_of_memory_string_4[rip]
+	lea	rbp,[rip+out_of_memory_string_4]
 	att_jmp	print_error
 
 zero_bit_vector:
@@ -2844,10 +2844,10 @@ zero_bits1_1:
 
 zero_bits1_4:
 	mov	dword ptr [rbp],edx 
-	mov	dword ptr 4[rbp],edx 
+	mov	dword ptr [rbp+4],edx 
 zero_bits1_2:
-	mov	dword ptr 8[rbp],edx 
-	mov	dword ptr 12[rbp],edx 
+	mov	dword ptr [rbp+8],edx 
+	mov	dword ptr [rbp+12],edx 
 	add	rbp,16
 zero_bits1_5:
 	sub	rax,1
@@ -2873,8 +2873,8 @@ reorder:
 
 reorder_lp:
 	mov	rbp,qword ptr [rcx]
-	mov	rsi,qword ptr (-8)[rdx]
-	mov	qword ptr (-8)[rdx],rbp 
+	mov	rsi,qword ptr [rdx-8]
+	mov	qword ptr [rdx-8],rbp 
 	sub	rdx,8
 	mov	qword ptr [rcx],rsi 
 	add	rcx,8
@@ -2882,12 +2882,12 @@ reorder_lp:
 	dec	rax
 	jne	next_b_in_element
 	mov	rax,qword ptr [rsp]
-	add	rcx,qword ptr 24[rsp]
+	add	rcx,qword ptr [rsp+24]
 next_b_in_element:
 	dec	rbx 
 	jne	next_a_in_element
-	mov	rbx,qword ptr 8[rsp]
-	sub	rdx,qword ptr 16[rsp]
+	mov	rbx,qword ptr [rsp+8]
+	sub	rdx,qword ptr [rsp+16]
 next_a_in_element:
 st_reorder_lp:
 	cmp	rdx,rcx 
@@ -2907,25 +2907,25 @@ st_reorder_lp:
 compacting_collector:
 /* zero all mark bits */
 
-	mov	rax,qword ptr heap_p3[rip]
+	mov	rax,qword ptr [rip+heap_p3]
 	neg	rax
-	mov	qword ptr neg_heap_p3[rip],rax 
+	mov	qword ptr [rip+neg_heap_p3],rax 
 
-	mov	qword ptr stack_top[rip],rsi
+	mov	qword ptr [rip+stack_top],rsi
 
-	mov	rdi,qword ptr heap_vector[rip]
+	mov	rdi,qword ptr [rip+heap_vector]
 
-	test	byte ptr _flags[rip],64
+	test	byte ptr [rip+_flags],64
 	je	no_mark4
 
-	cmp	qword ptr zero_bits_before_mark[rip],0
+	cmp	qword ptr [rip+zero_bits_before_mark],0
 	je	no_zero_bits
 
-	mov	qword ptr zero_bits_before_mark[rip],0
+	mov	qword ptr [rip+zero_bits_before_mark],0
 
 no_mark4:
 	mov	rbp,rdi 
-	mov	rax,qword ptr heap_size_65[rip]
+	mov	rax,qword ptr [rip+heap_size_65]
 	add	rax,3
 	shr	rax,2
 
@@ -2947,21 +2947,21 @@ zero_bits_1:
 
 zero_bits_4:
 	mov	dword ptr [rbp],ebx 
-	mov	dword ptr 4[rbp],ebx 
+	mov	dword ptr [rbp+4],ebx 
 zero_bits_2:
-	mov	dword ptr 8[rbp],ebx 
-	mov	dword ptr 12[rbp],ebx 
+	mov	dword ptr [rbp+8],ebx 
+	mov	dword ptr [rbp+12],ebx 
 	add	rbp,16
 zero_bits_5:
 	sub	rax,1
 	att_jnc	zero_bits_4
 
-	test	byte ptr _flags[rip],64
+	test	byte ptr [rip+_flags],64
 	je	no_mark5
 
 no_zero_bits:
-	mov	rax,qword ptr n_last_heap_free_bytes[rip]
-	mov	rbx,qword ptr n_free_words_after_mark[rip]
+	mov	rax,qword ptr [rip+n_last_heap_free_bytes]
+	mov	rbx,qword ptr [rip+n_free_words_after_mark]
 	shl	rbx,3
 
 	mov	rbp,rbx 
@@ -2972,13 +2972,13 @@ no_zero_bits:
 	cmp	rax,rbp 
 	jg	compact_gc
 
-	mov	rbx,qword ptr bit_vector_size[rip]
+	mov	rbx,qword ptr [rip+bit_vector_size]
 	shl	rbx,3
 
 	sub	rax,rbx 
 	neg	rax
 
-	imul	qword ptr _heap_size_multiple[rip]
+	imul	qword ptr [rip+_heap_size_multiple]
 	shrd	rax,rdx,7
 	shr	rdx,7
 	jne	no_smaller_heap
@@ -2991,7 +2991,7 @@ no_zero_bits:
 	
 	att_jmp	compact_gc
 no_smaller_heap:
-	test	qword ptr _flags[rip],4096
+	test	qword ptr [rip+_flags],4096
 	jne	pmark
 
 	.include	"amark.s"
@@ -2999,26 +2999,26 @@ no_smaller_heap:
 	.include	"amark_prefetch.s"
 
 compact_gc:
-	mov	qword ptr zero_bits_before_mark[rip],1
-	mov	qword ptr n_last_heap_free_bytes[rip],0
-	mov	qword ptr n_free_words_after_mark[rip],1000
+	mov	qword ptr [rip+zero_bits_before_mark],1
+	mov	qword ptr [rip+n_last_heap_free_bytes],0
+	mov	qword ptr [rip+n_free_words_after_mark],1000
 
 no_mark5:
 
 	.include	"acompact.s"
 
-	mov	rsi,qword ptr stack_top[rip]
+	mov	rsi,qword ptr [rip+stack_top]
 
-	mov	rbx,qword ptr heap_size_65[rip]
+	mov	rbx,qword ptr [rip+heap_size_65]
 	shl	rbx,6
-	add	rbx,qword ptr heap_p3[rip]
+	add	rbx,qword ptr [rip+heap_p3]
 
-	mov	qword ptr heap_end_after_gc[rip],rbx 
+	mov	qword ptr [rip+heap_end_after_gc],rbx 
 
 	sub	rbx,rdi
 	shr	rbx,3
 
-	sub	rbx,qword ptr n_allocated_words[rip]
+	sub	rbx,qword ptr [rip+n_allocated_words]
 	mov	r15,rbx
 	att_jc	out_of_memory_4_1
 
@@ -3026,21 +3026,21 @@ no_mark5:
 	shl	rax,2
 	add	rax,rbx
 	shl	rax,4
-	cmp	rax,qword ptr _heap_size[rip]
+	cmp	rax,qword ptr [rip+_heap_size]
 	att_jc	out_of_memory_4_2
 
- 	test	byte ptr _flags[rip],64
+ 	test	byte ptr [rip+_flags],64
 	je	no_mark_6
 
-	mov	rax,qword ptr neg_heap_p3[rip]
+	mov	rax,qword ptr [rip+neg_heap_p3]
 	add	rax,rdi 
-	mov	rbx,qword ptr n_allocated_words[rip]
+	mov	rbx,qword ptr [rip+n_allocated_words]
 	lea	rax,[rax+rbx*8]
 
-	mov	rbx,qword ptr heap_size_65[rip]
+	mov	rbx,qword ptr [rip+heap_size_65]
 	shl	rbx,6
 	
-	imul	qword ptr _heap_size_multiple[rip]
+	imul	qword ptr [rip+_heap_size_multiple]
 	shrd	rax,rdx,8
 	shr	rdx,8
 	jne	no_small_heap2
@@ -3055,7 +3055,7 @@ not_too_small2:
 	sub	rcx,rax 
 	att_jb	no_small_heap2
 	
-	sub	qword ptr heap_end_after_gc[rip],rcx 
+	sub	qword ptr [rip+heap_end_after_gc],rcx 
 	shr	rcx,3
 	sub	r15,rcx
 
@@ -3063,7 +3063,7 @@ not_too_small2:
 
 no_small_heap2:
 	shr	rbx,3
-	mov	qword ptr bit_vector_size[rip],rbx
+	mov	qword ptr [rip+bit_vector_size],rbx
 
 no_mark_6:
 	jmp	no_copy_garbage_collection
@@ -3072,16 +3072,16 @@ no_copy_garbage_collection:
 	att_call	add_compact_garbage_collect_time
 
 	mov	rax,rdi
-	sub	rax,qword ptr heap_p3[rip]
+	sub	rax,qword ptr [rip+heap_p3]
 
-	add	qword ptr total_compact_gc_bytes[rip],rax 
+	add	qword ptr [rip+total_compact_gc_bytes],rax 
 
 	mov	rax,rdi 
-	sub	rax,qword ptr heap_p3[rip]
-	mov	rbx,qword ptr n_allocated_words[rip]
+	sub	rax,qword ptr [rip+heap_p3]
+	mov	rbx,qword ptr [rip+n_allocated_words]
 	lea	rax,[rax+rbx*8]
 
-	lea	rcx,heap_use_after_compact_gc_string_1[rip]
+	lea	rcx,[rip+heap_use_after_compact_gc_string_1]
 	att_jmp	end_garbage_collect
 
 	.globl	clean_exception_handler_
@@ -3105,18 +3105,18 @@ no_stack_overflow_exception:
 	ret
 
 guard_page_or_access_violation_exception:
-	mov	rax,qword ptr 16[rax]
+	mov	rax,qword ptr [rax+16]
 	and	rax,-4096
-	cmp	qword ptr a_stack_guard_page[rip],rax
+	cmp	qword ptr [rip+a_stack_guard_page],rax
 	att_jne 	no_stack_overflow_exception
 	
-	cmp	qword ptr a_stack_guard_page[rip],0
+	cmp	qword ptr [rip+a_stack_guard_page],0
 	att_je  	no_stack_overflow_exception
 
 stack_overflow_exception:
-	mov	rax,qword ptr 8[rcx]
-	lea	rax,stack_overflow[rip]
-	mov	qword ptr (0x0F8)[rax],rax
+	mov	rax,qword ptr [rcx+8]
+	lea	rax,[rip+stack_overflow]
+	mov	qword ptr [rax+0x0F8],rax
 
 	mov	rax,-1
 	ret
@@ -3124,7 +3124,7 @@ stack_overflow_exception:
 stack_overflow:
 	att_call	add_execute_time
 
-	lea	rbp,stack_overflow_string[rip]
+	lea	rbp,[rip+stack_overflow_string]
 	att_jmp	print_error
 
 _IO_error:
@@ -3133,7 +3133,7 @@ _IO_error:
 
  .if LINUX
 	mov	rbx,rdi
-	lea	rdi,IO_error_string[rip]
+	lea	rdi,[rip+IO_error_string]
  .else
 	mov	rbx,rcx
 	sub	rsp,32
@@ -3149,7 +3149,7 @@ _IO_error:
 	att_call	_ew_print_string
 
  .if LINUX
-	lea	rdi,new_line_string[rip]
+	lea	rdi,[rip+new_line_string]
  .else
 	lea	rcx,new_line_string
  .endif
@@ -3171,34 +3171,34 @@ print_error:
 	mov	rsp,rbp
 
 halt:
-	mov	rsp,halt_sp[rip]
+	mov	rsp,[rip+halt_sp]
 
  .if PROFILE
 	call	write_profile_stack
  .endif
 
-	mov	qword ptr _execution_aborted[rip],1
+	mov	qword ptr [rip+_execution_aborted],1
 
-	cmp	qword ptr dll_initisialised[rip],0
+	cmp	qword ptr [rip+dll_initisialised],0
  .if LINUX
 	att_je	exit_
  .else
 	je	exit
  .endif
  .if LINUX
-	cmp	dword ptr _return_code[rip],0
+	cmp	dword ptr [rip+_return_code],0
  .else
 	cmp	qword ptr return_code,0
  .endif
 	jne	return_code_set
  .if LINUX
-	mov	dword ptr _return_code[rip],-1
+	mov	dword ptr [rip+_return_code],-1
  .else
 	mov	qword ptr return_code,-1
  .endif
 return_code_set:
  .if LINUX
-	mov	edi,dword ptr _return_code[rip]
+	mov	edi,dword ptr [rip+_return_code]
 	and	rsp,-16
 	att_call	_exit
  .else
@@ -3215,59 +3215,59 @@ eval_fill:
 	mov	rcx,rdx 
 	call	qword ptr [rdx]
 	mov	rdx,rcx 
-	mov	rcx,(-8)[rsi]
+	mov	rcx,[rsi-8]
 	sub	rsi,8
 	
 	mov	rbp,[rdx]
 	mov	[rcx],rbp 
-	mov	rbp,8[rdx]
-	mov	8[rcx],rbp 
-	mov	rbp,16[rdx]
-	mov	16[rcx],rbp 
+	mov	rbp,[rdx+8]
+	mov	[rcx+8],rbp 
+	mov	rbp,[rdx+16]
+	mov	[rcx+16],rbp 
 	ret
 
 	.align	2 
-	lea	rax,e__system__eaind[rip]
+	lea	rax,[rip+e__system__eaind]
 	jmp	rax
 	.byte	0,0,0
 	.long	0x80000000 /* e__system__dind */
 	.long	-2
 e__system__nind:
 __indirection:
-	mov	rdx,8[rcx]
+	mov	rdx,[rcx+8]
 	mov	rax,[rdx]
 	test	al,2
 
 	je	eval_fill2
 
 	mov	[rcx],rax 
-	mov	rbp,8[rdx]
-	mov	8[rcx],rbp 
-	mov	rbp,16[rdx]
-	mov	16[rcx],rbp 
+	mov	rbp,[rdx+8]
+	mov	[rcx+8],rbp 
+	mov	rbp,[rdx+16]
+	mov	[rcx+16],rbp 
 	ret
 
 eval_fill2:
-	lea	r9,__cycle__in__spine[rip]
+	lea	r9,[rip+__cycle__in__spine]
 	mov	qword ptr [rcx],r9
 	mov	qword ptr [rsi],rcx 
 
-	test	byte ptr _flags[rip],64
+	test	byte ptr [rip+_flags],64
 	att_je	__cycle__in__spine	
 
 	add	rsi,8
 	mov	rcx,rdx 
 	call	rax 
 	mov	rdx,rcx
-	mov	rcx,qword ptr (-8)[rsi]
+	mov	rcx,qword ptr [rsi-8]
 	sub	rsi,8
 	
 	mov	rbp,[rdx]
 	mov	[rcx],rbp
-	mov	rbp,8[rdx]
-	mov	8[rcx],rbp
-	mov	rbp,16[rdx]
-	mov	16[rcx],rbp 
+	mov	rbp,[rdx+8]
+	mov	[rcx+8],rbp
+	mov	rbp,[rdx+16]
+	mov	[rcx+16],rbp 
 	ret
 
  .if PROFILE
@@ -3275,9 +3275,9 @@ eval_fill2:
 	mov	rbp,rax
  .endif
 eval_upd_0:
-	lea	r8,__indirection[rip]
+	lea	r8,[rip+__indirection]
 	mov	qword ptr [rdx],r8
-	mov	8[rdx],rcx 
+	mov	[rdx+8],rcx 
 	jmp	rbp
 
  .if PROFILE
@@ -3285,10 +3285,10 @@ eval_upd_0:
 	mov	rbp,rax
  .endif
 eval_upd_1:
-	lea	r8,__indirection[rip]
+	lea	r8,[rip+__indirection]
 	mov	qword ptr [rdx],r8
-	mov	rax,8[rdx]
-	mov	8[rdx],rcx 
+	mov	rax,[rdx+8]
+	mov	[rdx+8],rcx 
 	mov	rdx,rax 
 	jmp	rbp
 
@@ -3297,11 +3297,11 @@ eval_upd_1:
 	mov	rbp,rax
  .endif
 eval_upd_2:
-	lea	r8,__indirection[rip]
+	lea	r8,[rip+__indirection]
 	mov	qword ptr [rdx],r8
-	mov	r8,8[rdx]
-	mov	8[rdx],rcx
-	mov	rdx,16[rdx]
+	mov	r8,[rdx+8]
+	mov	[rdx+8],rcx
+	mov	rdx,[rdx+16]
 	jmp	rbp 
 
  .if PROFILE
@@ -3309,14 +3309,14 @@ eval_upd_2:
 	mov	rbp,rax
  .endif
 eval_upd_3:
-	lea	r8,__indirection[rip]
+	lea	r8,[rip+__indirection]
 	mov	qword ptr [rdx],r8
-	mov	r8,8[rdx]
-	mov	8[rdx],rcx
+	mov	r8,[rdx+8]
+	mov	[rdx+8],rcx
 	mov	[rsi],rcx
-	mov	rcx,24[rdx]
+	mov	rcx,[rdx+24]
 	add	rsi,8
-	mov	rdx,16[rdx]
+	mov	rdx,[rdx+16]
 	jmp	rbp
 
  .if PROFILE
@@ -3324,16 +3324,16 @@ eval_upd_3:
 	mov	rbp,rax
  .endif
 eval_upd_4:
-	lea	r8,__indirection[rip]
+	lea	r8,[rip+__indirection]
 	mov	qword ptr [rdx],r8
-	mov	r8,8[rdx]
-	mov	8[rdx],rcx 
+	mov	r8,[rdx+8]
+	mov	[rdx+8],rcx 
 	mov	[rsi],rcx 
-	mov	rbx,32[rdx]
-	mov	8[rsi],rbx 
-	mov	rcx,24[rdx]
+	mov	rbx,[rdx+32]
+	mov	[rsi+8],rbx 
+	mov	rcx,[rdx+24]
 	add	rsi,16
-	mov	rdx,16[rdx]
+	mov	rdx,[rdx+16]
 	jmp	rbp
 
  .if PROFILE
@@ -3341,18 +3341,18 @@ eval_upd_4:
 	mov	rbp,rax
  .endif
 eval_upd_5:
-	lea	r8,__indirection[rip]
+	lea	r8,[rip+__indirection]
 	mov	qword ptr [rdx],r8
-	mov	r8,8[rdx]
+	mov	r8,[rdx+8]
 	mov	[rsi],rcx 
-	mov	8[rdx],rcx 
-	mov	rbx,40[rdx]
-	mov	8[rsi],rbx 
-	mov	rbx,32[rdx]
-	mov	16[rsi],rbx 
-	mov	rcx,24[rdx]
+	mov	[rdx+8],rcx 
+	mov	rbx,[rdx+40]
+	mov	[rsi+8],rbx 
+	mov	rbx,[rdx+32]
+	mov	[rsi+16],rbx 
+	mov	rcx,[rdx+24]
 	add	rsi,24
-	mov	rdx,16[rdx]
+	mov	rdx,[rdx+16]
 	jmp	rbp
 
  .if PROFILE
@@ -3360,20 +3360,20 @@ eval_upd_5:
 	mov	rbp,rax
  .endif
 eval_upd_6:
-	lea	r8,__indirection[rip]
+	lea	r8,[rip+__indirection]
 	mov	qword ptr [rdx],r8
-	mov	r8,8[rdx]
+	mov	r8,[rdx+8]
 	mov	[rsi],rcx 
-	mov	8[rdx],rcx 
-	mov	rbx,48[rdx]
-	mov	8[rsi],rbx
-	mov	rbx,40[rdx]
-	mov	16[rsi],rbx 
-	mov	rbx,32[rdx]
-	mov	24[rsi],rbx 
-	mov	rcx,24[rdx]
+	mov	[rdx+8],rcx 
+	mov	rbx,[rdx+48]
+	mov	[rsi+8],rbx
+	mov	rbx,[rdx+40]
+	mov	[rsi+16],rbx 
+	mov	rbx,[rdx+32]
+	mov	[rsi+24],rbx 
+	mov	rcx,[rdx+24]
 	add	rsi,32
-	mov	rdx,16[rdx]
+	mov	rdx,[rdx+16]
 	jmp	rbp 
 
  .if PROFILE
@@ -3384,30 +3384,30 @@ eval_upd_7:
 	mov	rax,0
 	mov	rbx,40
 eval_upd_n:
-	lea	r8,__indirection[rip]
+	lea	r8,[rip+__indirection]
 	mov	qword ptr [rdx],r8
-	mov	r8,8[rdx]
+	mov	r8,[rdx+8]
 	mov	[rsi],rcx 
-	mov	8[rdx],rcx 
+	mov	[rdx+8],rcx 
 	add	rdx,rbx 
-	mov	rbx,16[rdx ]
-	mov	8[rsi],rbx 
-	mov	rbx,8[rdx]
-	mov	16[rsi],rbx 
+	mov	rbx,[rdx +16]
+	mov	[rsi+8],rbx 
+	mov	rbx,[rdx+8]
+	mov	[rsi+16],rbx 
 	mov	rbx,[rdx]
-	mov	24[rsi],rbx 
+	mov	[rsi+24],rbx 
 	add	rsi,32
 
 eval_upd_n_lp:
-	mov	rbx,(-8)[rdx]
+	mov	rbx,[rdx-8]
 	sub	rdx,8
 	mov	[rsi],rbx 
 	add	rsi,8
 	sub	rax,1
 	att_jnc	eval_upd_n_lp
 
-	mov	rcx,(-8)[rdx]
-	mov	rdx,(-16)[rdx ]
+	mov	rcx,[rdx-8]
+	mov	rdx,[rdx -16]
 	jmp	rbp 
 
  .if PROFILE
@@ -3640,9 +3640,9 @@ eval_upd_32:
 /* */
 
 catAC:
-	mov	rax,8[rcx]
-	mov	rbx,8[rdx]
-	lea	rbp,16+7[rax+rbx]
+	mov	rax,[rcx+8]
+	mov	rbx,[rdx+8]
+	lea	rbp,[rax+rbx+16+7]
 	shr	rbp,3
 	sub	r15,rbp
 	jl	gc_3
@@ -3653,18 +3653,18 @@ gc_r_3:
 /* fill_node */
 
 	mov	r8,rdi
-	lea	rbp,__STRING__+2[rip]
+	lea	rbp,[rip+__STRING__+2]
 	mov	qword ptr [rdi],rbp
 
 /* store length */
 
 	lea	rbp,[rax+rbx]
-	mov	8[rdi],rbp 
+	mov	[rdi+8],rbp 
 	add	rdi,16
 
 /* copy string 1 */
 
-	lea	rbp,7[rbx]
+	lea	rbp,[rbx+7]
 	shr	rbp,3
 	add	rbx,rdi 
 
@@ -3724,11 +3724,11 @@ gc_3:	att_call	collect_2
 	att_jmp	gc_r_3
 
 empty_string:
-	lea	rcx,zero_length_string[rip]
+	lea	rcx,[rip+zero_length_string]
 	ret
 
 sliceAC:
-	mov	rbp,8[rcx]
+	mov	rbp,[rcx+8]
 	test	rbx,rbx 
 	jns	slice_string_1
 	xor	rbx,rbx 
@@ -3744,18 +3744,18 @@ slice_string_1:
 slice_string_2:
 	sub	rax,rbx 
 
-	lea	rbp,(16+7)[rax]
+	lea	rbp,[rax+16+7]
 	shr	rbp,3
 
 	sub	r15,rbp
 	jl	gc_4
 r_gc_4:
 	sub	rbp,2
-	lea	rdx,16[rcx+rbx]
+	lea	rdx,[rcx+rbx+16]
 
-	lea	rcx,__STRING__+2[rip]
+	lea	rcx,[rip+__STRING__+2]
 	mov	qword ptr [rdi],rcx
-	mov	8[rdi],rax 
+	mov	[rdi+8],rax 
 
 /* copy part of string */
 	mov	rcx,rbp 
@@ -3772,12 +3772,12 @@ r_gc_4:
 gc_4:
 	mov	rbp,rdx 
 	att_call	collect_1
-	lea	rbp,(16+7)[rax]
+	lea	rbp,[rax+16+7]
 	shr	rbp,3
 	att_jmp	r_gc_4
 
 updateAC:
-	mov	rbp,8[rcx]
+	mov	rbp,[rcx+8]
 	cmp	rbx,rbp 
 	jae	update_string_error
 
@@ -3787,17 +3787,17 @@ updateAC:
 	sub	r15,rbp
 	jl	gc_5
 r_gc_5:
-	mov	rbp,8[rcx]
+	mov	rbp,[rcx+8]
 	add	rbp,7
 	shr	rbp,3
 
 	mov	rdx,rcx 
 	mov	r8,rdi 
-	lea	rcx,__STRING__+2[rip]
+	lea	rcx,[rip+__STRING__+2]
 	mov	qword ptr [rdi],rcx
-	mov	rcx,8[rdx]
+	mov	rcx,[rdx+8]
 	add	rdx,16
-	mov	8[rdi],rcx 
+	mov	[rdi+8],rcx 
 	add	rdi,16
 
 	add	rbx,rdi
@@ -3816,16 +3816,16 @@ gc_5:	att_call	collect_1
 	att_jmp	r_gc_5
 
 update_string_error:
-	lea	rbp,high_index_string[rip]
+	lea	rbp,[rip+high_index_string]
 	test	rax,rax 
 	jns	update_string_error_2
-	lea	rbp,low_index_string[rip]
+	lea	rbp,[rip+low_index_string]
 update_string_error_2:
 	att_jmp	print_error
 
 eqAC:
-	mov	rax,8[rcx]
-	cmp	rax,8[rdx]
+	mov	rax,[rcx+8]
+	cmp	rax,[rdx+8]
 	jne	equal_string_ne
 	add	rcx,16
 	add	rdx,16
@@ -3871,8 +3871,8 @@ equal_string_ne:
 	ret
 
 cmpAC:
-	mov	rbx,8[rcx]
-	mov	rbp,8[rdx]
+	mov	rbx,[rcx+8]
+	mov	rbp,[rdx+8]
 	add	rcx,16
 	add	rdx,16
 	cmp	rbp,rbx 
@@ -3911,8 +3911,8 @@ cmp_string_w:
 	mov	bpl,byte ptr [rdx]
 	cmp	bpl,byte ptr [rcx]
 	jne	cmp_string_ne
-	mov	bpl,byte ptr 1[rdx]
-	cmp	bpl,byte ptr 1[rcx]
+	mov	bpl,byte ptr [rdx+1]
+	cmp	bpl,byte ptr [rcx+1]
 	att_jne	cmp_string_ne
 	add	rdx,2
 	add	rcx,2
@@ -3947,7 +3947,7 @@ string_to_string_node:
 	mov	rax,qword ptr [rcx]
 	add	rcx,8
 
-	lea	rbx,16+7[rax]
+	lea	rbx,[rax+16+7]
 	shr	rbx,3
 
 	sub	r15,rbx
@@ -3955,9 +3955,9 @@ string_to_string_node:
 
 string_to_string_node_r:
 	sub	rbx,2
-	lea	rbp,__STRING__+2[rip]
+	lea	rbp,[rip+__STRING__+2]
 	mov	qword ptr [rdi],rbp
-	mov	qword ptr 8[rdi],rax 
+	mov	qword ptr [rdi+8],rax 
 	mov	rbp,rdi
 	add	rdi,16
 	jmp	string_to_string_node_4
@@ -3982,19 +3982,19 @@ string_to_string_node_gc:
 
 
 int_array_to_node:
-	mov	rax,qword ptr -16[rcx]
-	lea	rbx,3[rax]
+	mov	rax,qword ptr [rcx-16]
+	lea	rbx,[rax+3]
 	sub	r15,rbx
 	jl	int_array_to_node_gc
 
 int_array_to_node_r:
-	lea	rbx,__ARRAY__+2[rip]
+	lea	rbx,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rbx
 	mov	rdx,rcx
-	mov	qword ptr 8[rdi],rax
+	mov	qword ptr [rdi+8],rax
 	mov	rcx,rdi
-	lea	rbx,dINT+2[rip]
-	mov	qword ptr 16[rdi],rbx
+	lea	rbx,[rip+dINT+2]
+	mov	qword ptr [rdi+16],rbx
 	add	rdi,24
 	jmp	int_or_real_array_to_node_4
 
@@ -4017,19 +4017,19 @@ int_array_to_node_gc:
 
 
 real_array_to_node:
-	mov	rax,qword ptr -16[rcx]
-	lea	rbx,3[rax]
+	mov	rax,qword ptr [rcx-16]
+	lea	rbx,[rax+3]
 	sub	r15,rbx
 	jl	real_array_to_node_gc
 
 real_array_to_node_r:
-	lea	rbx,__ARRAY__+2[rip]
+	lea	rbx,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rbx
 	mov	rdx,rcx
-	mov	qword ptr 8[rdi],rax
+	mov	qword ptr [rdi+8],rax
 	mov	rcx,rdi
-	lea	rbx,REAL+2[rip]
-	mov	qword ptr 16[rdi],rbx
+	lea	rbx,[rip+REAL+2]
+	mov	qword ptr [rdi+16],rbx
 	add	rdi,24
 	att_jmp	int_or_real_array_to_node_4
 
@@ -4145,11 +4145,11 @@ _create_arrayB:
 	att_call	collect_0
 no_collect_4574:
 	mov	rcx,rdi
-	lea	rdx,__ARRAY__+2[rip]
+	lea	rdx,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rdx
-	mov	qword ptr 8[rdi],rbx 
-	lea	rdx,BOOL+2[rip]
-	mov	qword ptr 16[rdi],rdx
+	mov	qword ptr [rdi+8],rbx 
+	lea	rdx,[rip+BOOL+2]
+	mov	qword ptr [rdi+16],rdx
 	lea	rdi,[rdi+rax*8]
 	ret
 
@@ -4162,25 +4162,25 @@ _create_arrayC:
 	att_call	collect_0
 no_collect_4573:
 	mov	rcx,rdi 
-	lea	rdx,__STRING__+2[rip]
+	lea	rdx,[rip+__STRING__+2]
 	mov	qword ptr [rdi],rdx
-	mov	qword ptr 8[rdi],rbx 
+	mov	qword ptr [rdi+8],rbx 
 	lea	rdi,[rdi+rax*8]
 	ret
 
 _create_arrayI:
-	lea	rbp,3[rax]
+	lea	rbp,[rax+3]
 	sub	r15,rbp
 	jge	no_collect_4572
 	att_call	collect_0
 no_collect_4572:
 	mov	rcx,rdi
-	lea	rdx,__ARRAY__+2[rip]
+	lea	rdx,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rdx
-	mov	qword ptr 8[rdi],rax
-	lea	rbp,dINT+2[rip]
-	mov	qword ptr 16[rdi],rbp
-	lea	rdi,24[rdi+rax*8]
+	mov	qword ptr [rdi+8],rax
+	lea	rbp,[rip+dINT+2]
+	mov	qword ptr [rdi+16],rbp
+	lea	rdi,[rdi+rax*8+24]
 	ret
 
 _create_arrayI32:
@@ -4192,27 +4192,27 @@ _create_arrayI32:
 	att_call	collect_0
 no_collect_3572:
 	mov	rcx,rdi
-	lea	rdx,__ARRAY__+2[rip]
+	lea	rdx,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rdx
-	mov	qword ptr 8[rdi],rbx
-	lea	rdx,INT32+2[rip]
-	mov	qword ptr 16[rdi],rdx
+	mov	qword ptr [rdi+8],rbx
+	lea	rdx,[rip+INT32+2]
+	mov	qword ptr [rdi+16],rdx
 	lea	rdi,[rdi+rax*8]
 	ret
 
 _create_arrayR:
-	lea	rbp,3[rax]
+	lea	rbp,[rax+3]
 	sub	r15,rbp
 	jge	no_collect_4580
 	att_call	collect_0
 no_collect_4580:
 	mov	rcx,rdi
-	lea	rdx,__ARRAY__+2[rip]
+	lea	rdx,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rdx
-	mov	qword ptr 8[rdi],rax
-	lea	rdx,REAL+2[rip]
-	mov	qword ptr 16[rdi],rdx
-	lea	rdi,24[rdi+rax*8]
+	mov	qword ptr [rdi+8],rax
+	lea	rdx,[rip+REAL+2]
+	mov	qword ptr [rdi+16],rdx
+	lea	rdi,[rdi+rax*8+24]
 	ret
 
 _create_arrayR32:
@@ -4224,11 +4224,11 @@ _create_arrayR32:
 	att_call	collect_0
 no_collect_3580:
 	mov	rcx,rdi
-	lea	rdx,__ARRAY__+2[rip]
+	lea	rdx,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rdx
-	mov	qword ptr 8[rdi],rax
-	lea	rdx,REAL32+2[rip]
-	mov	qword ptr 16[rdi],rdx
+	mov	qword ptr [rdi+8],rax
+	lea	rdx,[rip+REAL32+2]
+	mov	qword ptr [rdi+16],rdx
 	lea	rdi,[rdi+rax*8]
 	ret
 
@@ -4243,12 +4243,12 @@ _create_r_array:
 	jge	no_collect_4586
 	att_call	collect_1
 no_collect_4586:
-	lea	rdx,__ARRAY__+2[rip]
+	lea	rdx,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rdx
 	mov	rdx,rcx
-	mov	qword ptr 8[rdi],rax
+	mov	qword ptr [rdi+8],rax
 	mov	rcx,rdi 
-	mov	qword ptr 16[rdi],rbx
+	mov	qword ptr [rdi+16],rbx
 	add	rdi,24
 
 	test	r11,r11
@@ -4282,7 +4282,7 @@ _create_r_array_2:
 	jmp	_st_fillr2_array
 _fillr2_array:
 	mov	qword ptr [rdi],rdx
-	mov	qword ptr 8[rdi],rdx
+	mov	qword ptr [rdi+8],rdx
 	add	rdi,r10 
 _st_fillr2_array:
 	sub	rax,1
@@ -4294,8 +4294,8 @@ _create_r_array_3:
 	jmp	_st_fillr3_array
 _fillr3_array:
 	mov	qword ptr [rdi],rdx
-	mov	qword ptr 8[rdi],rdx
-	mov	qword ptr 16[rdi],rdx
+	mov	qword ptr [rdi+8],rdx
+	mov	qword ptr [rdi+16],rdx
 	add	rdi,r10 
 _st_fillr3_array:
 	sub	rax,1
@@ -4307,9 +4307,9 @@ _create_r_array_4:
 	jmp	_st_fillr4_array
 _fillr4_array:
 	mov	qword ptr [rdi],rdx
-	mov	qword ptr 8[rdi],rdx
-	mov	qword ptr 16[rdi],rdx
-	mov	qword ptr 24[rdi],rdx
+	mov	qword ptr [rdi+8],rdx
+	mov	qword ptr [rdi+16],rdx
+	mov	qword ptr [rdi+24],rdx
 	add	rdi,r10 
 _st_fillr4_array:
 	sub	rax,1
@@ -4325,9 +4325,9 @@ _create_r_array_5:
 
 _fillr5_array:
 	mov	qword ptr [rdi],rdx
-	mov	qword ptr 8[rdi],rdx
-	mov	qword ptr 16[rdi],rdx
-	mov	qword ptr 24[rdi],rdx
+	mov	qword ptr [rdi+8],rdx
+	mov	qword ptr [rdi+16],rdx
+	mov	qword ptr [rdi+24],rdx
 	add	rdi,32
 
 	mov	rbx,r11
@@ -4363,11 +4363,11 @@ no_collect_4575:
 	shl	rbp,32
 	or	rax,rbp
 	mov	rcx,rdi
-	lea	rdx,__ARRAY__+2[rip]
+	lea	rdx,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rdx
-	mov	qword ptr 8[rdi],r10
-	lea	rdx,BOOL+2[rip]
-	mov	qword ptr 16[rdi],rdx
+	mov	qword ptr [rdi+8],r10
+	lea	rdx,[rip+BOOL+2]
+	mov	qword ptr [rdi+16],rdx
 	add	rdi,24
 	jmp	create_arrayBCI
 
@@ -4390,9 +4390,9 @@ no_collect_4578:
 	shl	rbp,32
 	or	rax,rbp
 	mov	rcx,rdi 
-	lea	rdx,__STRING__+2[rip]
+	lea	rdx,[rip+__STRING__+2]
 	mov	qword ptr [rdi],rdx
-	mov	qword ptr 8[rdi],r10
+	mov	qword ptr [rdi+8],r10
 	add	rdi,16
 	att_jmp	create_arrayBCI
 
@@ -4405,11 +4405,11 @@ create_arrayI32:
 	att_call	collect_0
 no_collect_3577:
 	mov	rcx,rdi 
-	lea	rdx,__ARRAY__+2[rip]
+	lea	rdx,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rdx
-	mov	qword ptr 8[rdi],r10
-	lea	rdx,INT32+2[rip]
-	mov	qword ptr 16[rdi],rdx
+	mov	qword ptr [rdi+8],r10
+	lea	rdx,[rip+INT32+2]
+	mov	qword ptr [rdi+16],rdx
 	add	rdi,24
 
 	sub	rbx,3
@@ -4420,17 +4420,17 @@ no_collect_3577:
 	att_jmp	create_arrayBCI
 
 create_arrayI:
-	lea	rbp,3[rbx]
+	lea	rbp,[rbx+3]
 	sub	r15,rbp
 	jge	no_collect_4577
 	att_call	collect_0
 no_collect_4577:
 	mov	rcx,rdi 
-	lea	rbp,__ARRAY__+2[rip]
+	lea	rbp,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rbp
-	mov	qword ptr 8[rdi],rbx 
-	lea	rbp,dINT+2[rip]
-	mov	qword ptr 16[rdi],rbp
+	mov	qword ptr [rdi+8],rbx 
+	lea	rbp,[rip+dINT+2]
+	mov	qword ptr [rdi+16],rbp
 	add	rdi,24
 create_arrayBCI:
 	mov	rdx,rbx
@@ -4444,7 +4444,7 @@ create_arrayBCI:
 
 filli_array:
 	mov	qword ptr [rdi],rax 
-	mov	qword ptr 8[rdi],rax 
+	mov	qword ptr [rdi+8],rax 
 	add	rdi,16
 st_filli_array:
 	sub	rbx,1
@@ -4454,21 +4454,21 @@ st_filli_array:
 
 create_arrayR32:
 	cvtsd2ss	xmm0,xmm0
-	movss	dword ptr (-8)[rsp],xmm0
+	movss	dword ptr [rsp-8],xmm0
 	mov	r10,rax
 	add	rax,6+1
 	shr	rax,1
-	mov	ebx,dword ptr (-8)[rsp]
+	mov	ebx,dword ptr [rsp-8]
 	sub	r15,rax
 	jge	no_collect_3579
 	att_call	collect_0
 no_collect_3579:
 	mov	rcx,rdi 
-	lea	rdx,__ARRAY__+2[rip]
+	lea	rdx,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rdx
-	mov	qword ptr 8[rdi],r10
-	lea	rdx,REAL32+2[rip]
-	mov	qword ptr 16[rdi],rdx
+	mov	qword ptr [rdi+8],r10
+	lea	rdx,[rip+REAL32+2]
+	mov	qword ptr [rdi+16],rdx
 	add	rdi,24
 
 	sub	rax,3
@@ -4479,21 +4479,21 @@ no_collect_3579:
 	jmp	st_fillr_array
 
 create_arrayR:
-	movsd	qword ptr (-8)[rsp],xmm0
-	lea	rbp,3[rax]
+	movsd	qword ptr [rsp-8],xmm0
+	lea	rbp,[rax+3]
 
-	mov	rbx,qword ptr (-8)[rsp]
+	mov	rbx,qword ptr [rsp-8]
 
 	sub	r15,rbp
 	jge	no_collect_4579
 	att_call	collect_0
 no_collect_4579:
 	mov	rcx,rdi 
-	lea	rdx,__ARRAY__+2[rip]
+	lea	rdx,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rdx
-	mov	qword ptr 8[rdi],rax
-	lea	rdx,REAL+2[rip]
-	mov	qword ptr 16[rdi],rdx
+	mov	qword ptr [rdi+8],rax
+	lea	rdx,[rip+REAL+2]
+	mov	qword ptr [rdi+16],rdx
 	add	rdi,24
 	att_jmp	st_fillr_array
 fillr_array:
@@ -4506,17 +4506,17 @@ st_fillr_array:
 	ret
 
 create_array:
-	lea	rbp,3[rax]
+	lea	rbp,[rax+3]
 	sub	r15,rbp
 	jge	no_collect_4576
 	att_call	collect_1
 no_collect_4576:
 	mov	rbx,rcx 
 	mov	rcx,rdi
-	lea	rdx,__ARRAY__+2[rip]
+	lea	rdx,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rdx
-	mov	qword ptr 8[rdi],rax 
-	mov	qword ptr 16[rdi],0
+	mov	qword ptr [rdi+8],rax 
+	mov	qword ptr [rdi+16],0
 	add	rdi,24
 
 	jmp	fillr1_array
@@ -4537,26 +4537,26 @@ create_R_array:
 	jmp	create_R_array_5
 
 create_R_array_1:
-	lea	rbp,3[rax]
+	lea	rbp,[rax+3]
 	sub	r15,rbp
 	jge	no_collect_4581
 	att_call	collect_0
 no_collect_4581:
 	mov	rcx,rdi
-	lea	rdx,__ARRAY__+2[rip]
+	lea	rdx,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rdx
-	mov	qword ptr 8[rdi],rax 
-	mov	qword ptr 16[rdi],rbx 
+	mov	qword ptr [rdi+8],rax 
+	mov	qword ptr [rdi+16],rbx 
 	add	rdi,24
 
 	test	r11,r11
 	je	r_array_1_b
 
-	mov	rbx,qword ptr (-8)[rsi]
+	mov	rbx,qword ptr [rsi-8]
 	att_jmp	fillr1_array
 
 r_array_1_b:
-	mov	rbx,qword ptr 8[rsp]
+	mov	rbx,qword ptr [rsp+8]
 
 fillr1_array:
 	mov	rdx,rax 
@@ -4570,7 +4570,7 @@ fillr1_array:
 
 fillr1_array_lp:
 	mov	qword ptr [rdi],rbx 
-	mov	qword ptr 8[rdi],rbx 
+	mov	qword ptr [rdi+8],rbx 
 	add	rdi,16
 st_fillr1_array_1:
 	sub	rax,1
@@ -4579,37 +4579,37 @@ st_fillr1_array_1:
 	ret
 
 create_R_array_2:
-	lea	rbp,3[rax*2]
+	lea	rbp,[rax*2+3]
 	sub	r15,rbp
 	jge	no_collect_4582
 	att_call	collect_0
 no_collect_4582:
 	mov	rcx,rdi 
-	lea	rdx,__ARRAY__+2[rip]
+	lea	rdx,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rdx
-	mov	qword ptr 8[rdi],rax 
-	mov	qword ptr 16[rdi],rbx 
+	mov	qword ptr [rdi+8],rax 
+	mov	qword ptr [rdi+16],rbx 
 	add	rdi,24
 
 	sub	r11,1
 	jc	r_array_2_bb
 	je	r_array_2_ab
 r_array_2_aa:
-	mov	rbx,qword ptr (-8)[rsi]
-	mov	rbp,qword ptr (-16)[rsi]
+	mov	rbx,qword ptr [rsi-8]
+	mov	rbp,qword ptr [rsi-16]
 	jmp	st_fillr2_array
 r_array_2_ab:
-	mov	rbx,qword ptr (-8)[rsi]
-	mov	rbp,qword ptr 8[rsp]
+	mov	rbx,qword ptr [rsi-8]
+	mov	rbp,qword ptr [rsp+8]
 	att_jmp	st_fillr2_array
 r_array_2_bb:
-	mov	rbx,qword ptr 8[rsp]
-	mov	rbp,qword ptr 16[rsp]
+	mov	rbx,qword ptr [rsp+8]
+	mov	rbp,qword ptr [rsp+16]
 	att_jmp	st_fillr2_array
 
 fillr2_array_1:
 	mov	qword ptr [rdi],rbx 
-	mov	qword ptr 8[rdi],rbp 
+	mov	qword ptr [rdi+8],rbp 
 	add	rdi,16
 st_fillr2_array:
 	sub	rax,1
@@ -4618,16 +4618,16 @@ st_fillr2_array:
 	ret
 
 create_R_array_3:
-	lea	rbp,3[rax+rax*2]
+	lea	rbp,[rax+rax*2+3]
 	sub	r15,rbp
 	jge	no_collect_4583
 	att_call	collect_0
 no_collect_4583:
 	mov	rcx,rdi
-	lea	rdx,__ARRAY__+2[rip]
+	lea	rdx,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rdx
-	mov	qword ptr 8[rdi],rax 
-	mov	qword ptr 16[rdi],rbx 
+	mov	qword ptr [rdi+8],rax 
+	mov	qword ptr [rdi+16],rbx 
 	add	rdi,24
 
 	pop	rdx 
@@ -4636,7 +4636,7 @@ no_collect_4583:
 	test	r11,r11 
 	je	r_array_3
 	
-	lea	r13,0[r11*8]
+	lea	r13,[r11*8+0]
 	mov	rbp,rsi
 	sub	rbp,r13
 
@@ -4650,8 +4650,8 @@ copy_a_to_b_lp3:
 
 r_array_3:
 	mov	rbx,qword ptr [rsp]
-	mov	r13,qword ptr 8[rsp]
-	mov	rbp,qword ptr 16[rsp]
+	mov	r13,qword ptr [rsp+8]
+	mov	rbp,qword ptr [rsp+16]
 	
 	mov	rsp,r12
 	push	rdx
@@ -4660,8 +4660,8 @@ r_array_3:
 
 fillr3_array_1:
 	mov	qword ptr [rdi],rbx 
-	mov	qword ptr 8[rdi],r13
-	mov	qword ptr 16[rdi],rbp 
+	mov	qword ptr [rdi+8],r13
+	mov	qword ptr [rdi+16],rbp 
 	add	rdi,24
 st_fillr3_array:
 	sub	rax,1
@@ -4670,16 +4670,16 @@ st_fillr3_array:
 	ret
 
 create_R_array_4:
-	lea	rbp,3[rax*4]
+	lea	rbp,[rax*4+3]
 	sub	r15,rbp
 	jge	no_collect_4584
 	att_call	collect_0
 no_collect_4584:
 	mov	rcx,rdi 
-	lea	rdx,__ARRAY__+2[rip]
+	lea	rdx,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rdx
-	mov	qword ptr 8[rdi],rax 
-	mov	qword ptr 16[rdi],rbx 
+	mov	qword ptr [rdi+8],rax 
+	mov	qword ptr [rdi+16],rbx 
 	add	rdi,24
 
 	pop	rdx 
@@ -4688,7 +4688,7 @@ no_collect_4584:
 	test	r11,r11 
 	je	r_array_4
 
-	lea	r13,0[r11*8]
+	lea	r13,[r11*8+0]
 	mov	rbp,rsi
 	sub	rbp,r13
 	sub	r11,1
@@ -4701,9 +4701,9 @@ copy_a_to_b_lp4:
 
 r_array_4:
 	mov	rbx,qword ptr [rsp]
-	mov	r13,qword ptr 8[rsp]
-	mov	r14,qword ptr 16[rsp]
-	mov	rbp,qword ptr 24[rsp]
+	mov	r13,qword ptr [rsp+8]
+	mov	r14,qword ptr [rsp+16]
+	mov	rbp,qword ptr [rsp+24]
 	
 	mov	rsp,r12
 	push	rdx
@@ -4712,9 +4712,9 @@ r_array_4:
 
 fillr4_array:
 	mov	qword ptr [rdi],rbx 
-	mov	qword ptr 8[rdi],r13 
-	mov	qword ptr 16[rdi],r14 
-	mov	qword ptr 24[rdi],rbp 
+	mov	qword ptr [rdi+8],r13 
+	mov	qword ptr [rdi+16],r14 
+	mov	qword ptr [rdi+24],rbp 
 	add	rdi,32
 st_fillr4_array:
 	sub	rax,1
@@ -4723,7 +4723,7 @@ st_fillr4_array:
 	ret
 
 create_R_array_5:
-	lea	r12,4[r10]
+	lea	r12,[r10+4]
 	mov	rbp,rax
 	imul	rbp,r12
 	add	rbp,3
@@ -4731,10 +4731,10 @@ create_R_array_5:
 	jge	no_collect_4585
 	att_call	collect_0
 no_collect_4585:
-	lea	rcx,__ARRAY__+2[rip]
+	lea	rcx,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rcx
-	mov	qword ptr 8[rdi],rax
-	mov	qword ptr 16[rdi],rbx
+	mov	qword ptr [rdi+8],rax
+	mov	qword ptr [rdi+16],rbx
 	mov	rcx,rdi
 	add	rdi,24
 
@@ -4744,7 +4744,7 @@ no_collect_4585:
 	test	r11,r11 
 	je	r_array_5
 
-	lea	r13,0[r11*8]
+	lea	r13,[r11*8+0]
 	mov	rbp,rsi
 	sub	rbp,r13
 	sub	r11,1
@@ -4757,9 +4757,9 @@ copy_a_to_b_lp5:
 
 r_array_5:
 	mov	r13,qword ptr [rsp]
-	mov	r14,qword ptr 8[rsp]
-	mov	r8,qword ptr 16[rsp]
-	mov	r9,qword ptr 24[rsp]
+	mov	r14,qword ptr [rsp+8]
+	mov	r8,qword ptr [rsp+16]
+	mov	r9,qword ptr [rsp+24]
 	add	rsp,32
 
 	sub	r10,1
@@ -4767,13 +4767,13 @@ r_array_5:
 
 fillr5_array_1:
 	mov	qword ptr [rdi],r13 
-	mov	qword ptr 8[rdi],r14
+	mov	qword ptr [rdi+8],r14
 
 	mov	r11,rsp
 	mov	rbx,r10 
 
-	mov	qword ptr 16[rdi],r8
-	mov	qword ptr 24[rdi],r9
+	mov	qword ptr [rdi+16],r8
+	mov	qword ptr [rdi+24],r9
 	add	rdi,32
 
 copy_elem_lp5:
@@ -4795,21 +4795,21 @@ st_fillr5_array:
 yet_args_needed:
 /* for more than 4 arguments */
 	mov	r10,[rdx]
-	movzx	rax,word ptr (-2)[r10]
+	movzx	rax,word ptr [r10-2]
 	add	rax,3
 	sub	r15,rax
 	jl	gc_1
 gc_r_1:	sub	rax,3+1+4
-	mov	rbx,8[rdx]
+	mov	rbx,[rdx+8]
 	add	r10,8
-	mov	rdx,16[rdx]
+	mov	rdx,[rdx+16]
 	mov	rbp,rdi
 	mov	r8,[rdx]
 	mov	[rdi],r8 
-	mov	r8,8[rdx]
-	mov	8[rdi],r8 
-	mov	r8,16[rdx]
-	mov	16[rdi],r8 
+	mov	r8,[rdx+8]
+	mov	[rdi+8],r8 
+	mov	r8,[rdx+16]
+	mov	[rdi+16],r8 
 	add	rdx,24
 	add	rdi,24
 
@@ -4821,10 +4821,10 @@ cp_a:	mov	r8,[rdx]
 	jge	cp_a
 
 	mov	[rdi],rcx 
-	mov	8[rdi],r10 
-	lea	rcx,8[rdi]
-	mov	16[rdi],rbx 
-	mov	24[rdi],rbp 
+	mov	[rdi+8],r10 
+	lea	rcx,[rdi+8]
+	mov	[rdi+16],rbx 
+	mov	[rdi+24],rbp 
 	add	rdi,32
 	ret
 
@@ -4836,7 +4836,7 @@ yet_args_needed_0:
 	sub	r15,2
 	jl	gc_20
 gc_r_20:
-	mov	8[rdi],rcx 
+	mov	[rdi+8],rcx 
 	mov	rax,[rdx]
 	mov	rcx,rdi
 	add	rax,8
@@ -4852,13 +4852,13 @@ yet_args_needed_1:
 	sub	r15,3
 	jl	gc_21
 gc_r_21:
-	mov	16[rdi],rcx 
+	mov	[rdi+16],rcx 
 	mov	rax,[rdx]
 	mov	rcx,rdi
 	add	rax,8
 	mov	[rdi],rax 
-	mov	rbx,8[rdx]
-	mov	8[rdi],rbx 
+	mov	rbx,[rdx+8]
+	mov	[rdi+8],rbx 
 	add	rdi,24
 	ret
 
@@ -4871,15 +4871,15 @@ yet_args_needed_2:
 	jl	gc_22
 gc_r_22:
 	mov	rax,[rdx]
-	mov	8[rdi],rcx 
+	mov	[rdi+8],rcx 
 	add	rax,8
-	mov	rbp,8[rdx]
-	mov	16[rdi],rax 
-	lea	rcx,16[rdi]
-	mov	24[rdi],rbp 
-	mov	rbp,16[rdx]
+	mov	rbp,[rdx+8]
+	mov	[rdi+16],rax 
+	lea	rcx,[rdi+16]
+	mov	[rdi+24],rbp 
+	mov	rbp,[rdx+16]
 	mov	[rdi],rbp 
-	mov	32[rdi],rdi 
+	mov	[rdi+32],rdi 
 	add	rdi,40
 	ret
 
@@ -4892,18 +4892,18 @@ yet_args_needed_3:
 	jl	gc_23
 gc_r_23:
 	mov	rax,[rdx]
-	mov	16[rdi],rcx 
+	mov	[rdi+16],rcx 
 	add	rax,8
-	mov	rbp,8[rdx]
-	mov	24[rdi],rax 
-	mov	rdx,16[rdx]
-	mov	32[rdi],rbp 
+	mov	rbp,[rdx+8]
+	mov	[rdi+24],rax 
+	mov	rdx,[rdx+16]
+	mov	[rdi+32],rbp 
 	mov	rbp,[rdx]
-	mov	40[rdi],rdi 
+	mov	[rdi+40],rdi 
 	mov	[rdi],rbp 
-	mov	rbp,8[rdx]
-	lea	rcx,24[rdi]
-	mov	8[rdi],rbp 
+	mov	rbp,[rdx+8]
+	lea	rcx,[rdi+24]
+	mov	[rdi+8],rbp 
 	add	rdi,48
 	ret
 
@@ -4916,20 +4916,20 @@ yet_args_needed_4:
 	jl	gc_24
 gc_r_24:
 	mov	rax,[rdx]
-	mov	24[rdi],rcx 
+	mov	[rdi+24],rcx 
 	add	rax,8
-	mov	rbp,8[rdx]
-	mov	32[rdi],rax 
-	mov	rdx,16[rdx]
-	mov	40[rdi],rbp 
+	mov	rbp,[rdx+8]
+	mov	[rdi+32],rax 
+	mov	rdx,[rdx+16]
+	mov	[rdi+40],rbp 
 	mov	rbp,[rdx]
-	mov	48[rdi],rdi 
+	mov	[rdi+48],rdi 
 	mov	[rdi],rbp 
-	mov	rbp,8[rdx]
-	lea	rcx,32[rdi]
-	mov	8[rdi],rbp 
-	mov	rbp,16[rdx ]
-	mov	16[rdi],rbp 
+	mov	rbp,[rdx+8]
+	lea	rcx,[rdi+32]
+	mov	[rdi+8],rbp 
+	mov	rbp,[rdx +16]
+	mov	[rdi+16],rbp 
 	add	rdi,56
 	ret
 
@@ -4945,7 +4945,7 @@ repl_args_b:
 	dec	rax 
 	je	repl_args_b_4
 
-	mov	rdx,16[rcx]
+	mov	rdx,[rcx+16]
 	sub	rbx,2
 	jne	repl_args_b_2
 
@@ -4957,7 +4957,7 @@ repl_args_b_2:
 	lea	rdx,[rdx+rax*8]
 
 repl_args_b_3:
-	mov	rbp,(-8)[rdx]
+	mov	rbp,[rdx-8]
 	sub	rdx,8
 	mov	[rsi],rbp 
 	add	rsi,8
@@ -4965,7 +4965,7 @@ repl_args_b_3:
 	att_jne	repl_args_b_3
 
 repl_args_b_4:
-	mov	rbp,8[rcx]
+	mov	rbp,[rcx+8]
 	mov	[rsi],rbp 
 	add	rsi,8
 repl_args_b_1:
@@ -4978,7 +4978,7 @@ push_arg_b:
 	cmp	rbx,rax 
 	att_je	push_arg_b_1
 push_arg_b_2:
-	mov	rcx,16[rcx]
+	mov	rcx,[rcx+16]
 	sub	rbx,2
 push_arg_b_1:
 	mov	rcx,[rcx+rbx*8]
@@ -4987,26 +4987,26 @@ push_arg_b_1:
 del_args:
 	mov	rbx,[rcx]
 	sub	rbx,rax 
-	movsx	rax,word ptr (-2)[rbx]
+	movsx	rax,word ptr [rbx-2]
 	sub	rax,2
 	jge	del_args_2
 
 	mov	[rdx],rbx 
-	mov	rbp,8[rcx]
-	mov	8[rdx],rbp 
-	mov	rbp,16[rcx]
-	mov	16[rdx],rbp 
+	mov	rbp,[rcx+8]
+	mov	[rdx+8],rbp 
+	mov	rbp,[rcx+16]
+	mov	[rdx+16],rbp 
 	ret
 
 del_args_2:
 	jne	del_args_3
 
 	mov	[rdx],rbx 
-	mov	rbp,8[rcx]
-	mov	8[rdx],rbp 
-	mov	rbp,16[rcx]
+	mov	rbp,[rcx+8]
+	mov	[rdx+8],rbp 
+	mov	rbp,[rcx+16]
 	mov	rbp,[rbp]
-	mov	16[rdx],rbp 
+	mov	[rdx+16],rbp 
 	ret
 
 del_args_3:
@@ -5014,10 +5014,10 @@ del_args_3:
 	jl	del_args_gc
 del_args_r_gc:
 	mov	[rdx],rbx 
-	mov	16[rdx],rdi 
-	mov	rbp,8[rcx]
-	mov	rcx,16[rcx]
-	mov	8[rdx],rbp 
+	mov	[rdx+16],rdi 
+	mov	rbp,[rcx+8]
+	mov	rcx,[rcx+16]
+	mov	[rdx+8],rbp 
 
 del_args_copy_args:
 	mov	rbp,[rcx]
@@ -5094,13 +5094,13 @@ _c_entier:
 	
 entier_real:
 	cvttsd2si rax,xmm0
-	ucomisd	xmm0,qword ptr real_0_0[rip]
+	ucomisd xmm0,qword ptr [rip+real_0_0]
 	jb	entier_real_m
 	ret
 
 entier_real_m:
-	movsd	qword ptr (-8)[rsp],xmm0
-	mov	rcx,qword ptr (-8)[rsp]
+	movsd	qword ptr [rsp-8],xmm0
+	mov	rcx,qword ptr [rsp-8]
 	mov	rbx,rcx
 	shr rcx,52
 	cmp rcx,0x0bff
@@ -5124,7 +5124,7 @@ r_to_i_real:
 
 getheapend:
 	lea	rbx,[rdi+r15*8]
-	mov	rax,heap_end_after_gc[rip]
+	mov	rax,[rip+heap_end_after_gc]
 	ret
 
 	.include	"areals.s"
