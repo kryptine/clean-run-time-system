@@ -7130,6 +7130,55 @@ real_abs_40_bits:
 real_abs_39_bits:
 	.quad	0x7fffffffffffc000
 
+	.align	4
+round_c:
+	.quad		0x3ff+52
+	.quad		0x3ff+52
+m_round_c:
+	.quad		0x0bff+52
+	.quad		0x0bff+52
+round_even_c:
+	.quad		0x3ff+53
+	.quad		0x3ff+53
+m_round_even_c:
+	.quad		0x0bff+53
+	.quad		0x0bff+53
+mask_all_one:
+	.quad		-1
+	.quad		-1
+mask_all_one_except_last:
+	.quad		-2
+	.quad		-2
+mask_all_one_except_second_last:
+	.quad		-3
+	.quad		-3
+qw_1023:
+	.quad		0x3ff
+	.quad		0x3ff
+qw_1022:
+	.quad		0x3fe
+	.quad		0x3fe
+qw_1021:
+	.quad		0x3fd
+	.quad		0x3fd
+qw_1077:
+	.quad		0x3ff+54
+	.quad		0x3ff+54
+qw_1078:
+	.quad		0x3ff+55
+	.quad		0x3ff+55
+qw_55:
+	.quad		55
+	.quad		55
+mask_sign:
+	.quad		0x08000000000000000
+	.quad		0x08000000000000000
+mask_all_except_sign:
+	.quad		0x07fffffffffffffff
+	.quad		0x07fffffffffffffff
+
+	#offsets
+
 real_0_0:
 	.double	0.0
 real_0_25:
@@ -7278,6 +7327,8 @@ log2_4_d_3_42_l:
 
 mask_significand:
 	.quad	0x0000fffffffffffff
+
+	.quad	0 # to align next double
 
 real_1_66:
 	.double	1.66
@@ -7606,53 +7657,6 @@ d1ln2_26:
 	.double	1.4426950216293334961
 d1ln2_26_l:
 	.double	1.9259629911266174689E-8
-
-	.align	4
-round_c:
-	.quad		0x3ff+52
-	.quad		0x3ff+52
-m_round_c:
-	.quad		0x0bff+52
-	.quad		0x0bff+52
-round_even_c:
-	.quad		0x3ff+53
-	.quad		0x3ff+53
-m_round_even_c:
-	.quad		0x0bff+53
-	.quad		0x0bff+53
-mask_all_one:
-	.quad		-1
-	.quad		-1
-mask_all_one_except_last:
-	.quad		-2
-	.quad		-2
-mask_all_one_except_second_last:
-	.quad		-3
-	.quad		-3
-qw_1023:
-	.quad		0x3ff
-	.quad		0x3ff
-qw_1022:
-	.quad		0x3fe
-	.quad		0x3fe
-qw_1021:
-	.quad		0x3fd
-	.quad		0x3fd
-qw_1077:
-	.quad		0x3ff+54
-	.quad		0x3ff+54
-qw_1078:
-	.quad		0x3ff+55
-	.quad		0x3ff+55
-qw_55:
-	.quad		55
-	.quad		55
-mask_sign:
-	.quad		0x08000000000000000
-	.quad		0x08000000000000000
-mask_all_except_sign:
-	.quad		0x07fffffffffffffff
-	.quad		0x07fffffffffffffff
 
 real_0_43540000008249979402:
 	.double	0.43540000008249979402
@@ -8018,7 +8022,7 @@ asin2_q_2:
 asin2_q_3:
 	.double	-22.702479601946876642
 
-// 0.55 ..
+# 0.55 ..
 #asin2_p_0:
 #	.double	29.355358314463529723
 #asin2_p_1:
