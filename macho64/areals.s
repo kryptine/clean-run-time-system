@@ -11,6 +11,9 @@
 
 	.globl	sin_real
 
+	.include "areals_offsets.s"
+	.include "areals_offsets2.s"
+
 sin_real:
 	ucomisd	xmm0,qword ptr [real_pi_d_4+rip]
 	jbe		sin_real_1					# x<=pi/4 | NAN
@@ -286,8 +289,8 @@ sin_real_0_6:
 	movsd	xmm1,xmm0				# x
 	mulsd	xmm0,xmm0				# x2
 
-	movlpd	xmm7,qword ptr [sin_p1_3-sin_p1_c+rcx]
-	movlpd	xmm8,qword ptr [sin_p1_2-sin_p1_c+rcx]
+	movlpd	xmm7,qword ptr [sin_p1_3_offset_min_sin_p1_c_offset+rcx]
+	movlpd	xmm8,qword ptr [sin_p1_2_offset_min_sin_p1_c_offset+rcx]
 
 	movsd	xmm2,xmm0				# x2
 	mulsd	xmm0,xmm0				# x4
@@ -295,7 +298,7 @@ sin_real_0_6:
 	mulsd	xmm7,xmm2				# p3
 	mulsd	xmm8,xmm2				# p2
 
-	movlpd	xmm9,qword ptr [sin_p1_5-sin_p1_c+rcx]
+	movlpd	xmm9,qword ptr [sin_p1_5_offset_min_sin_p1_c_offset+rcx]
 
 	mulsd	xmm2,xmm0				# x6
 
@@ -303,31 +306,31 @@ sin_real_0_6:
 	mulsd	xmm0,xmm0				# x8
 	
 	mulsd	xmm9,xmm4				# p5
-	mulsd	xmm4,qword ptr [sin_p1_4-sin_p1_c+rcx] # p4
+	mulsd	xmm4,qword ptr [sin_p1_4_offset_min_sin_p1_c_offset+rcx] # p4
 
-	movlpd	xmm11,qword ptr [sin_p1_7-sin_p1_c+rcx]
-	movlpd	xmm12,qword ptr [sin_p1_9-sin_p1_c+rcx]
+	movlpd	xmm11,qword ptr [sin_p1_7_offset_min_sin_p1_c_offset+rcx]
+	movlpd	xmm12,qword ptr [sin_p1_9_offset_min_sin_p1_c_offset+rcx]
 
 	mulsd	xmm11,xmm2				# p7
-	mulsd	xmm2,qword ptr [sin_p1_6-sin_p1_c+rcx] # p6
+	mulsd	xmm2,qword ptr [sin_p1_6_offset_min_sin_p1_c_offset+rcx] # p6
 
 	mulsd	xmm12,xmm0				# p9
-	mulsd	xmm0,qword ptr [sin_p1_8-sin_p1_c+rcx] # p8
+	mulsd	xmm0,qword ptr [sin_p1_8_offset_min_sin_p1_c_offset+rcx] # p8
 		
 	addsd	xmm11,xmm12				# p9+p7
 	addsd	xmm0,xmm2				# p8+p6
 
 	movlpd	xmm2,qword ptr [real_26_bits+rip]
 	movsd	xmm3,xmm1				# x
-	movlpd	xmm6,qword ptr [sin_p1_1l-sin_p1_c+rcx]
-	movlpd	xmm5,qword ptr [sin_p1_1h-sin_p1_c+rcx]
+	movlpd	xmm6,qword ptr [sin_p1_1l_offset_min_sin_p1_c_offset+rcx]
+	movlpd	xmm5,qword ptr [sin_p1_1h_offset_min_sin_p1_c_offset+rcx]
 
 	addsd	xmm9,xmm11				# p9+p7+p5
 	addsd	xmm0,xmm4				# p8+p6+p4
 
 	andpd	xmm2,xmm1				# x_h
 	mulsd	xmm6,xmm1				# x*c1l
-	movlpd	xmm13,qword ptr [sin_p1_0h-sin_p1_c+rcx]
+	movlpd	xmm13,qword ptr [sin_p1_0h_offset_min_sin_p1_c_offset+rcx]
 
 	addsd	xmm7,xmm9				# p9+p7+p5+p3
 	addsd	xmm0,xmm8				# p8+p6+p4+p2
@@ -345,7 +348,7 @@ sin_real_0_6:
 	subsd	xmm14,xmm13				# c0h-(x_h*c1h+c0h)
 	mulsd	xmm3,xmm5				# x_l*c1h
 
-#	addsd	xmm0,qword ptr [sin_p1_0l-sin_p1_c+rcx]
+#	addsd	xmm0,qword ptr [sin_p1_0l_offset_min_sin_p1_c_offset+rcx]
 	
 	addsd	xmm14,xmm2				# (c0h-(x_h*c1h+c0h))+x_h*c1h
 	addsd	xmm3,xmm6				# x_l*c1h+x*c1l
@@ -502,8 +505,8 @@ sin_real_p_pm_0_6:
 	subsd	xmm12,xmm15
 	mulsd	xmm15,xmm15				# x1*x1
 
-	movlpd	xmm7,qword ptr [sin_p1_3-sin_p1_c+rcx]
-	movlpd	xmm8,qword ptr [sin_p1_2-sin_p1_c+rcx]
+	movlpd	xmm7,qword ptr [sin_p1_3_offset_min_sin_p1_c_offset+rcx]
+	movlpd	xmm8,qword ptr [sin_p1_2_offset_min_sin_p1_c_offset+rcx]
 
 	movsd	xmm2,xmm0				# x2
 	mulsd	xmm0,xmm0				# x4
@@ -515,7 +518,7 @@ sin_real_p_pm_0_6:
 sin_real_pm_0_6:
 	mulsd	xmm15,qword ptr [real_0_5+rip] # 0.5*x1*x1
 
-	movlpd	xmm9,qword ptr [sin_p1_5-sin_p1_c+rcx]
+	movlpd	xmm9,qword ptr [sin_p1_5_offset_min_sin_p1_c_offset+rcx]
 
 	mulsd	xmm2,xmm0				# x6
 
@@ -523,18 +526,18 @@ sin_real_pm_0_6:
 	mulsd	xmm0,xmm0				# x8
 	
 	mulsd	xmm9,xmm4				# p5
-	mulsd	xmm4,qword ptr [sin_p1_4-sin_p1_c+rcx] # p4
+	mulsd	xmm4,qword ptr [sin_p1_4_offset_min_sin_p1_c_offset+rcx] # p4
 
 	mulsd	xmm15,xmm12				# x_l*0.5*x1*x1
 
-	movlpd	xmm11,qword ptr [sin_p1_7-sin_p1_c+rcx]
-	movlpd	xmm10,qword ptr [sin_p1_9-sin_p1_c+rcx]
+	movlpd	xmm11,qword ptr [sin_p1_7_offset_min_sin_p1_c_offset+rcx]
+	movlpd	xmm10,qword ptr [sin_p1_9_offset_min_sin_p1_c_offset+rcx]
 
 	mulsd	xmm11,xmm2				# p7
-	mulsd	xmm2,qword ptr [sin_p1_6-sin_p1_c+rcx] # p6
+	mulsd	xmm2,qword ptr [sin_p1_6_offset_min_sin_p1_c_offset+rcx] # p6
 
 	mulsd	xmm10,xmm0				# p9
-	mulsd	xmm0,qword ptr [sin_p1_8-sin_p1_c+rcx] # p8
+	mulsd	xmm0,qword ptr [sin_p1_8_offset_min_sin_p1_c_offset+rcx] # p8
 
 	addsd	xmm11,xmm10				# p9+p7
 	addsd	xmm0,xmm2				# p8+p6
@@ -543,15 +546,15 @@ sin_real_pm_0_6:
 
 	movlpd	xmm2,qword ptr [real_26_bits+rip]
 	movsd	xmm3,xmm1				# x
-	movlpd	xmm6,qword ptr [sin_p1_1l-sin_p1_c+rcx]
-	movlpd	xmm5,qword ptr [sin_p1_1h-sin_p1_c+rcx]
+	movlpd	xmm6,qword ptr [sin_p1_1l_offset_min_sin_p1_c_offset+rcx]
+	movlpd	xmm5,qword ptr [sin_p1_1h_offset_min_sin_p1_c_offset+rcx]
 
 	addsd	xmm9,xmm11				# p9+p7+p5
 	addsd	xmm0,xmm4				# p8+p6+p4
 
 	andpd	xmm2,xmm1				# x_h
 	mulsd	xmm6,xmm1				# x*c1l
-	movlpd	xmm13,qword ptr [sin_p1_0h-sin_p1_c+rcx]
+	movlpd	xmm13,qword ptr [sin_p1_0h_offset_min_sin_p1_c_offset+rcx]
 
 	addsd	xmm7,xmm9				# p9+p7+p5+p3
 	addsd	xmm0,xmm8				# p8+p6+p4+p2
@@ -569,7 +572,7 @@ sin_real_pm_0_6:
 	subsd	xmm14,xmm13				# c0h-(x_h*c1h+c0h)
 	mulsd	xmm3,xmm5				# x_l*c1h
 
-#	addsd	xmm0,qword ptr [sin_p1_0l-sin_p1_c+rcx]
+#	addsd	xmm0,qword ptr [sin_p1_0l_offset_min_sin_p1_c_offset+rcx]
 	addsd	xmm0,xmm12
 	
 	addsd	xmm14,xmm2				# (c0h-(x_h*c1h+c0h))+x_h*c1h
@@ -731,8 +734,8 @@ sin_real_m_pm_0_6:
 	subsd	xmm12,xmm15
 	mulsd	xmm15,xmm15				# x1*x1
 
-	movlpd	xmm7,qword ptr [sin_p1_3-sin_p1_c+rcx]
-	movlpd	xmm8,qword ptr [sin_p1_2-sin_p1_c+rcx]
+	movlpd	xmm7,qword ptr [sin_p1_3_offset_min_sin_p1_c_offset+rcx]
+	movlpd	xmm8,qword ptr [sin_p1_2_offset_min_sin_p1_c_offset+rcx]
 
 	movsd	xmm2,xmm0				# x2
 	mulsd	xmm0,xmm0				# x4
@@ -2896,19 +2899,19 @@ asin_real:
 	movsd	xmm1,xmm0				# x
 	mulsd	xmm0,xmm0				# x2
 
-	movlpd	xmm6,qword ptr [asin_q_4-asin_c+rcx]
-	movlpd	xmm7,qword ptr [asin_q_3-asin_c+rcx]
+	movlpd	xmm6,qword ptr [asin_q_4_offset_min_asin_c_offset+rcx]
+	movlpd	xmm7,qword ptr [asin_q_3_offset_min_asin_c_offset+rcx]
 
 	movsd	xmm2,xmm0				# x2
 	mulsd	xmm0,xmm0				# x4
 
-	movlpd	xmm8,qword ptr [asin_q_2-asin_c+rcx]
-	movlpd	xmm9,qword ptr [asin_q_1-asin_c+rcx]
+	movlpd	xmm8,qword ptr [asin_q_2_offset_min_asin_c_offset+rcx]
+	movlpd	xmm9,qword ptr [asin_q_1_offset_min_asin_c_offset+rcx]
 
 	movsd	xmm4,xmm0				# x4
 	mulsd	xmm0,xmm0				# x8
 
-	movlpd	xmm10,qword ptr [asin_p_1-asin_c+rcx]
+	movlpd	xmm10,qword ptr [asin_p_1_offset_min_asin_c_offset+rcx]
 
 	movsd	xmm3,xmm2				# x2
 	mulsd	xmm3,xmm4				# x6
@@ -2917,15 +2920,15 @@ asin_real:
 	movsd	xmm5,xmm0				# x8
 	mulsd	xmm0,xmm2				# x10
 
-	mulsd	xmm5,qword ptr [asin_p_4-asin_c+rcx] # p8
+	mulsd	xmm5,qword ptr [asin_p_4_offset_min_asin_c_offset+rcx] # p8
 
 	mulsd	xmm7,xmm3				# q6
-	mulsd	xmm3,qword ptr [asin_p_3-asin_c+rcx] # p6
+	mulsd	xmm3,qword ptr [asin_p_3_offset_min_asin_c_offset+rcx] # p6
 	
 	addsd	xmm0,xmm6				# x10+q8
 
 	mulsd	xmm8,xmm4				# q4
-	mulsd	xmm4,qword ptr [asin_p_2-asin_c+rcx] # p4
+	mulsd	xmm4,qword ptr [asin_p_2_offset_min_asin_c_offset+rcx] # p4
 
 	addsd	xmm0,xmm7				# x10+q8+q6
 	addsd	xmm3,xmm5				# p8+p6
@@ -2939,8 +2942,8 @@ asin_real:
 	addsd	xmm0,xmm9				# x10+q8+q6+q4+q2
 	addsd	xmm3,xmm10				# p8+p6+p4+p2
 
-	addsd	xmm0,qword ptr [asin_q_0-asin_c+rcx] # x10+q8+q6+q4+q2+q0
-	addsd	xmm3,qword ptr [asin_p_0-asin_c+rcx] # p8+p6+p4+p2+p0
+	addsd	xmm0,qword ptr [asin_q_0_offset_min_asin_c_offset+rcx] # x10+q8+q6+q4+q2+q0
+	addsd	xmm3,qword ptr [asin_p_0_offset_min_asin_c_offset+rcx] # p8+p6+p4+p2+p0
 
 	divsd	xmm3,xmm0				# p/q
 
@@ -2970,31 +2973,31 @@ asin_real_2:
 
 	mulsd	xmm11,xmm0					# 2x
 
-	movlpd	xmm7,qword ptr [asin2_q_3-asin_c+rcx]
+	movlpd	xmm7,qword ptr [asin2_q_3_offset_min_asin_c_offset+rcx]
 
 	movsd	xmm2,xmm1					# x2
 	mulsd	xmm1,xmm1					# x4
 
 	sqrtsd	xmm12,xmm11					# sqrt 2x
 
-	movlpd	xmm5,qword ptr [asin2_p_3-asin_c+rcx]
-	movlpd	xmm8,qword ptr [asin2_q_2-asin_c+rcx]
+	movlpd	xmm5,qword ptr [asin2_p_3_offset_min_asin_c_offset+rcx]
+	movlpd	xmm8,qword ptr [asin2_q_2_offset_min_asin_c_offset+rcx]
 
 	movsd	xmm4,xmm1					# x4
 
-	movlpd	xmm9,qword ptr [asin2_q_1-asin_c+rcx]
-	movlpd	xmm10,qword ptr [asin2_p_1-asin_c+rcx]
+	movlpd	xmm9,qword ptr [asin2_q_1_offset_min_asin_c_offset+rcx]
+	movlpd	xmm10,qword ptr [asin2_p_1_offset_min_asin_c_offset+rcx]
 
 	movsd	xmm3,xmm2					# x2
 	mulsd	xmm3,xmm0					# x3
 
-	mulsd	xmm4,qword ptr [asin2_p_4-asin_c+rcx] # p4
+	mulsd	xmm4,qword ptr [asin2_p_4_offset_min_asin_c_offset+rcx] # p4
 
 	mulsd	xmm7,xmm3					# q3
 	mulsd	xmm5,xmm3					# p3
 	
 	mulsd	xmm8,xmm2					# q2
-	mulsd	xmm2,qword ptr [asin2_p_2-asin_c+rcx] # p2
+	mulsd	xmm2,qword ptr [asin2_p_2_offset_min_asin_c_offset+rcx] # p2
 
 	addsd	xmm1,xmm7					# x4+q3
 	addsd	xmm4,xmm5					# p4+p3
@@ -3010,8 +3013,8 @@ asin_real_2:
 
 	movlpd	xmm13,qword ptr [real_21_bits+rip]
 
-	addsd	xmm1,qword ptr [asin2_q_0-asin_c+rcx] # x5+q4+q3+q2+q1+q0
-	addsd	xmm4,qword ptr [asin2_p_0-asin_c+rcx] # p4+p3+p2+p1+p0
+	addsd	xmm1,qword ptr [asin2_q_0_offset_min_asin_c_offset+rcx] # x5+q4+q3+q2+q1+q0
+	addsd	xmm4,qword ptr [asin2_p_0_offset_min_asin_c_offset+rcx] # p4+p3+p2+p1+p0
 
 	andpd	xmm13,xmm12					# s21
 
@@ -3056,31 +3059,31 @@ asin_real_3:
 
 	mulsd	xmm11,xmm1					# 2x
 
-	movlpd	xmm7,qword ptr [asin2_q_3-asin_c+rcx]
+	movlpd	xmm7,qword ptr [asin2_q_3_offset_min_asin_c_offset+rcx]
 
 	movsd	xmm2,xmm0					# x2
 	mulsd	xmm0,xmm0					# x4
 
 	sqrtsd	xmm12,xmm11					# sqrt 2x
 
-	movlpd	xmm5,qword ptr [asin2_p_3-asin_c+rcx]
-	movlpd	xmm8,qword ptr [asin2_q_2-asin_c+rcx]
+	movlpd	xmm5,qword ptr [asin2_p_3_offset_min_asin_c_offset+rcx]
+	movlpd	xmm8,qword ptr [asin2_q_2_offset_min_asin_c_offset+rcx]
 
 	movsd	xmm4,xmm0					# x4
 
-	movlpd	xmm9,qword ptr [asin2_q_1-asin_c+rcx]
-	movlpd	xmm10,qword ptr [asin2_p_1-asin_c+rcx]
+	movlpd	xmm9,qword ptr [asin2_q_1_offset_min_asin_c_offset+rcx]
+	movlpd	xmm10,qword ptr [asin2_p_1_offset_min_asin_c_offset+rcx]
 
 	movsd	xmm3,xmm2					# x2
 	mulsd	xmm3,xmm1					# x3
 
-	mulsd	xmm4,qword ptr [asin2_p_4-asin_c+rcx] # p4
+	mulsd	xmm4,qword ptr [asin2_p_4_offset_min_asin_c_offset+rcx] # p4
 
 	mulsd	xmm7,xmm3					# q3
 	mulsd	xmm5,xmm3					# p3
 	
 	mulsd	xmm8,xmm2					# q2
-	mulsd	xmm2,qword ptr [asin2_p_2-asin_c+rcx] # p2
+	mulsd	xmm2,qword ptr [asin2_p_2_offset_min_asin_c_offset+rcx] # p2
 
 	addsd	xmm0,xmm7					# x4+q3
 	addsd	xmm4,xmm5					# p4+p3
@@ -3096,8 +3099,8 @@ asin_real_3:
 
 	movlpd	xmm13,qword ptr [real_21_bits+rip]
 
-	addsd	xmm0,qword ptr [asin2_q_0-asin_c+rcx] # x5+q4+q3+q2+q1+q0
-	addsd	xmm4,qword ptr [asin2_p_0-asin_c+rcx] # p4+p3+p2+p1+p0
+	addsd	xmm0,qword ptr [asin2_q_0_offset_min_asin_c_offset+rcx] # x5+q4+q3+q2+q1+q0
+	addsd	xmm4,qword ptr [asin2_p_0_offset_min_asin_c_offset+rcx] # p4+p3+p2+p1+p0
 
 	andpd	xmm13,xmm12					# s21
 
@@ -3151,8 +3154,8 @@ asin_real_pm_0_54:
 	movsd	xmm1,xmm0				# x
 	mulsd	xmm0,xmm0				# x2
 
-	movlpd	xmm7,qword ptr [asin_p1_4-asin_p1_c+rcx]
-	movlpd	xmm8,qword ptr [asin_p1_3-asin_p1_c+rcx]
+	movlpd	xmm7,qword ptr [asin_p1_4_offset_min_asin_p1_c_offset+rcx]
+	movlpd	xmm8,qword ptr [asin_p1_3_offset_min_asin_p1_c_offset+rcx]
 
 	movsd	xmm2,xmm0				# x2
 	mulsd	xmm0,xmm0				# x4
@@ -3160,8 +3163,8 @@ asin_real_pm_0_54:
 	mulsd	xmm7,xmm2				# p4
 	mulsd	xmm8,xmm2				# p3
 
-	movlpd	xmm9,qword ptr [asin_p1_6-asin_p1_c+rcx]
-	movlpd	xmm10,qword ptr [asin_p1_5-asin_p1_c+rcx]
+	movlpd	xmm9,qword ptr [asin_p1_6_offset_min_asin_p1_c_offset+rcx]
+	movlpd	xmm10,qword ptr [asin_p1_5_offset_min_asin_p1_c_offset+rcx]
 
 	movsd	xmm3,xmm2				# x2
 	mulsd	xmm2,xmm0				# x6
@@ -3172,33 +3175,33 @@ asin_real_pm_0_54:
 	mulsd	xmm9,xmm4				# p6
 	mulsd	xmm10,xmm4				# p5
 
-	movlpd	xmm11,qword ptr [asin_p1_8-asin_p1_c+rcx]
-	movlpd	xmm12,qword ptr [asin_p1_10-asin_p1_c+rcx]
+	movlpd	xmm11,qword ptr [asin_p1_8_offset_min_asin_p1_c_offset+rcx]
+	movlpd	xmm12,qword ptr [asin_p1_10_offset_min_asin_p1_c_offset+rcx]
 
 	mulsd	xmm4,xmm2				# x10
 
-	movlpd	xmm13,qword ptr [asin_p1_12-asin_p1_c+rcx]
-	movlpd	xmm14,qword ptr [asin_p1_14-asin_p1_c+rcx]
+	movlpd	xmm13,qword ptr [asin_p1_12_offset_min_asin_p1_c_offset+rcx]
+	movlpd	xmm14,qword ptr [asin_p1_14_offset_min_asin_p1_c_offset+rcx]
 
 	movsd	xmm6,xmm2				# x6
 	mulsd	xmm2,xmm2				# x12
 
 	mulsd	xmm11,xmm6				# p8
-	mulsd	xmm6,qword ptr [asin_p1_7-asin_p1_c+rcx] # p7
+	mulsd	xmm6,qword ptr [asin_p1_7_offset_min_asin_p1_c_offset+rcx] # p7
 
 	mulsd	xmm12,xmm0				# p10
-	mulsd	xmm0,qword ptr [asin_p1_9-asin_p1_c+rcx] # p9
+	mulsd	xmm0,qword ptr [asin_p1_9_offset_min_asin_p1_c_offset+rcx] # p9
 
 	mulsd	xmm13,xmm4				# p12
-	mulsd	xmm4,qword ptr [asin_p1_11-asin_p1_c+rcx] # p11
+	mulsd	xmm4,qword ptr [asin_p1_11_offset_min_asin_p1_c_offset+rcx] # p11
 
 	mulsd	xmm14,xmm2				# p14
-	mulsd	xmm2,qword ptr [asin_p1_13-asin_p1_c+rcx] # p13
+	mulsd	xmm2,qword ptr [asin_p1_13_offset_min_asin_p1_c_offset+rcx] # p13
 
 	addsd	xmm13,xmm14				# p14+p12
 	addsd	xmm2,xmm4				# p13+p11
 
-	movlpd	xmm15,qword ptr [asin_p1_2-asin_p1_c+rcx]
+	movlpd	xmm15,qword ptr [asin_p1_2_offset_min_asin_p1_c_offset+rcx]
 	
 	addsd	xmm12,xmm13				# p14+p12+p10
 	addsd	xmm0,xmm2				# p13+p11+p9
@@ -3210,15 +3213,15 @@ asin_real_pm_0_54:
 
 	movlpd	xmm2,qword ptr [real_26_bits+rip]
 	movsd	xmm4,xmm1				# x
-	movlpd	xmm6,qword ptr [asin_p1_1l-asin_p1_c+rcx]
-	movlpd	xmm5,qword ptr [asin_p1_1h-asin_p1_c+rcx]
+	movlpd	xmm6,qword ptr [asin_p1_1l_offset_min_asin_p1_c_offset+rcx]
+	movlpd	xmm5,qword ptr [asin_p1_1h_offset_min_asin_p1_c_offset+rcx]
 
 	addsd	xmm9,xmm11				# p14+p12+p10+p8+p6
 	addsd	xmm0,xmm10				# p13+p11+p9+p7+p5
 
 	andpd	xmm2,xmm1				# x_h
 	mulsd	xmm6,xmm1				# x*c1l
-	movlpd	xmm13,qword ptr [asin_p1_0h-asin_p1_c+rcx]
+	movlpd	xmm13,qword ptr [asin_p1_0h_offset_min_asin_p1_c_offset+rcx]
 
 	addsd	xmm7,xmm9				# p14+p12+p10+p8+p6+p4
 	addsd	xmm0,xmm8				# p13+p11+p9+p7+p5+p3
@@ -3238,7 +3241,7 @@ asin_real_pm_0_54:
 	mulsd	xmm4,xmm5				# x_l*c1h
 
 	addsd	xmm0,xmm15				# p14+p13+..+p3+p2
-#	addsd	xmm0,qword ptr [asin_p1_0l-asin_p1_c+rcx]
+#	addsd	xmm0,qword ptr [asin_p1_0l_offset_min_asin_p1_c_offset+rcx]
 	
 	addsd	xmm14,xmm2				# (c0h-(x_h*c1h+c0h))+x_h*c1h
 	addsd	xmm4,xmm6				# x_l*c1h+x*c1l
@@ -3682,7 +3685,7 @@ atan_real_1pn:
 	movsd	xmm4,xmm0				# y
 	mulsd	xmm0,xmm0				# y2
 
-	movlpd	xmm5,qword ptr [atan_n_0_5_8_1-atan_n_0_5_8_c+rcx]
+	movlpd	xmm5,qword ptr [atan_n_0_5_8_1_offset_min_atan_n_0_5_8_c_offset+rcx]
 
 	movsd	xmm6,xmm0				# y2
 	mulsd	xmm0,xmm0				# y4
@@ -3694,14 +3697,14 @@ atan_real_1pn:
 
 	mulsd	xmm6,xmm0				# y6
 
-	movlpd	xmm9,qword ptr [atan_n_0_5_8_2-atan_n_0_5_8_c+rcx]
+	movlpd	xmm9,qword ptr [atan_n_0_5_8_2_offset_min_atan_n_0_5_8_c_offset+rcx]
 
 	movsd	xmm10,xmm0				# y4
 	mulsd	xmm0,xmm0				# y8
 
 	mulsd	xmm9,xmm10				# p4
 
-	movlpd	xmm12,qword ptr [atan_n_0_5_8_4-atan_n_0_5_8_c+rcx]
+	movlpd	xmm12,qword ptr [atan_n_0_5_8_4_offset_min_atan_n_0_5_8_c_offset+rcx]
 
 	mulsd	xmm10,xmm6				# y10
 
@@ -3713,13 +3716,13 @@ atan_real_1pn:
 
 	andpd	xmm8,xmm4				# y_h
 
-	mulsd	xmm7,qword ptr [atan_n_0_5_8_3-atan_n_0_5_8_c+rcx] # p6
-	mulsd	xmm10,qword ptr [atan_n_0_5_8_5-atan_n_0_5_8_c+rcx] # p10
-	mulsd	xmm6,qword ptr [atan_n_0_5_8_6-atan_n_0_5_8_c+rcx] # p12
-	mulsd	xmm0,qword ptr [atan_n_0_5_8_7-atan_n_0_5_8_c+rcx] # p14
+	mulsd	xmm7,qword ptr [atan_n_0_5_8_3_offset_min_atan_n_0_5_8_c_offset+rcx] # p6
+	mulsd	xmm10,qword ptr [atan_n_0_5_8_5_offset_min_atan_n_0_5_8_c_offset+rcx] # p10
+	mulsd	xmm6,qword ptr [atan_n_0_5_8_6_offset_min_atan_n_0_5_8_c_offset+rcx] # p12
+	mulsd	xmm0,qword ptr [atan_n_0_5_8_7_offset_min_atan_n_0_5_8_c_offset+rcx] # p14
 
 	movlpd	xmm13,qword ptr [real_0_25+rip]
-	movlpd	xmm1,qword ptr [atan_0_5_real_0_5-atan_0_5_52+rdx]
+	movlpd	xmm1,qword ptr [atan_0_5_real_0_5_offset_min_atan_0_5_52_offset+rdx]
 	mulsd	xmm13,xmm8				# 0.25*y_h
 	mulsd	xmm1,xmm8				# 0.5*y_h
 	subsd	xmm3,xmm8				# (0.5-x)-y_h
@@ -3756,16 +3759,16 @@ atan_real_1pn:
 	andpd	xmm7,xmm8				# (y_h+c)_h
 	andpd	xmm12,xmm8
 
-	addsd	xmm0,qword ptr [atan_n_0_5_8_0-atan_n_0_5_8_c+rcx] # p14+p12+p10+p8+p6+p4+p2+p0
+	addsd	xmm0,qword ptr [atan_n_0_5_8_0_offset_min_atan_n_0_5_8_c_offset+rcx] # p14+p12+p10+p8+p6+p4+p2+p0
 
 	subsd	xmm11,xmm7				# y_h-(y_h+c)_h
 	addsd	xmm3,xmm11				# (y_h-(y_h+c)_h)+c
 
 	mulsd	xmm0,xmm14				# y3*p/q
 
-	movlpd	xmm2,qword ptr [atan_0_5_52_l-atan_0_5_52+rdx]
+	movlpd	xmm2,qword ptr [atan_0_5_52_l_offset_min_atan_0_5_52_offset+rdx]
 	subsd	xmm2,xmm0				# atan_0_5_52_l-y3*p/q
-	movlpd	xmm0,qword ptr [atan_0_5_52-atan_0_5_52+rdx]
+	movlpd	xmm0,qword ptr [atan_0_5_52_offset_min_atan_0_5_52_offset+rdx]
 
 	ucomisd	xmm12,qword ptr [real_2_p_m_13+rip]
 	jb		atan_real_1_s
@@ -3809,7 +3812,7 @@ atan_real_2n_:
 	movsd	xmm4,xmm0				# y
 	mulsd	xmm0,xmm0				# y2
 	
-	movlpd	xmm5,qword ptr [atan_n_8_1-atan_n_8_c+rcx]
+	movlpd	xmm5,qword ptr [atan_n_8_1_offset_min_atan_n_8_c_offset+rcx]
 
 	movsd	xmm6,xmm0				# y2
 	mulsd	xmm0,xmm0				# y4
@@ -3821,14 +3824,14 @@ atan_real_2n_:
 
 	mulsd	xmm6,xmm0				# y6
 
-	movlpd	xmm9,qword ptr [atan_n_8_2-atan_n_8_c+rcx]
+	movlpd	xmm9,qword ptr [atan_n_8_2_offset_min_atan_n_8_c_offset+rcx]
 
 	movsd	xmm10,xmm0				# y4
 	mulsd	xmm0,xmm0				# y8
 
 	mulsd	xmm9,xmm10				# p4
 
-	movlpd	xmm12,qword ptr [atan_n_8_4-atan_n_8_c+rcx]
+	movlpd	xmm12,qword ptr [atan_n_8_4_offset_min_atan_n_8_c_offset+rcx]
 
 	mulsd	xmm10,xmm6				# y10
 
@@ -3840,10 +3843,10 @@ atan_real_2n_:
 
 	andpd	xmm8,xmm4				# y_h
 
-	mulsd	xmm7,qword ptr [atan_n_8_3-atan_n_8_c+rcx] # p6
-	mulsd	xmm10,qword ptr [atan_n_8_5-atan_n_8_c+rcx] # p10
-	mulsd	xmm6,qword ptr [atan_n_8_6-atan_n_8_c+rcx] # p12
-	mulsd	xmm0,qword ptr [atan_n_8_7-atan_n_8_c+rcx] # p14
+	mulsd	xmm7,qword ptr [atan_n_8_3_offset_min_atan_n_8_c_offset+rcx] # p6
+	mulsd	xmm10,qword ptr [atan_n_8_5_offset_min_atan_n_8_c_offset+rcx] # p10
+	mulsd	xmm6,qword ptr [atan_n_8_6_offset_min_atan_n_8_c_offset+rcx] # p12
+	mulsd	xmm0,qword ptr [atan_n_8_7_offset_min_atan_n_8_c_offset+rcx] # p14
 
 	movlpd	xmm13,qword ptr [real_2_0+rip]
 	mulsd	xmm13,xmm8				# 2*y_h
@@ -3890,7 +3893,7 @@ atan_real_2p_:
 	movsd	xmm4,xmm0				# y
 	mulsd	xmm0,xmm0				# y2
 	
-	movlpd	xmm5,qword ptr [atan_n_8_1-atan_n_8_c+rcx]
+	movlpd	xmm5,qword ptr [atan_n_8_1_offset_min_atan_n_8_c_offset+rcx]
 
 	movsd	xmm6,xmm0				# y2
 	mulsd	xmm0,xmm0				# y4
@@ -3902,14 +3905,14 @@ atan_real_2p_:
 
 	mulsd	xmm6,xmm0				# y6
 
-	movlpd	xmm9,qword ptr [atan_n_8_2-atan_n_8_c+rcx]
+	movlpd	xmm9,qword ptr [atan_n_8_2_offset_min_atan_n_8_c_offset+rcx]
 
 	movsd	xmm10,xmm0				# y4
 	mulsd	xmm0,xmm0				# y8
 
 	mulsd	xmm9,xmm10				# p4
 
-	movlpd	xmm12,qword ptr [atan_n_8_4-atan_n_8_c+rcx]
+	movlpd	xmm12,qword ptr [atan_n_8_4_offset_min_atan_n_8_c_offset+rcx]
 
 	mulsd	xmm10,xmm6				# y10
 
@@ -3921,10 +3924,10 @@ atan_real_2p_:
 
 	andpd	xmm8,xmm4				# y_h
 
-	mulsd	xmm7,qword ptr [atan_n_8_3-atan_n_8_c+rcx] # p6
-	mulsd	xmm10,qword ptr [atan_n_8_5-atan_n_8_c+rcx] # p10
-	mulsd	xmm6,qword ptr [atan_n_8_6-atan_n_8_c+rcx] # p12
-	mulsd	xmm0,qword ptr [atan_n_8_7-atan_n_8_c+rcx] # p14
+	mulsd	xmm7,qword ptr [atan_n_8_3_offset_min_atan_n_8_c_offset+rcx] # p6
+	mulsd	xmm10,qword ptr [atan_n_8_5_offset_min_atan_n_8_c_offset+rcx] # p10
+	mulsd	xmm6,qword ptr [atan_n_8_6_offset_min_atan_n_8_c_offset+rcx] # p12
+	mulsd	xmm0,qword ptr [atan_n_8_7_offset_min_atan_n_8_c_offset+rcx] # p14
 
 	movlpd	xmm13,qword ptr [real_2_0+rip]
 	mulsd	xmm13,xmm8				# 2*y_h
@@ -3957,23 +3960,23 @@ atan_real_2pn_:
 
 	addsd	xmm0,xmm5				# p14+p12+p10+p8+p6+p4+p2
 
-	movlpd	xmm7,qword ptr [atan_n_8_real_40_bits-atan_n_8_c+rcx]
-	movlpd	xmm12,qword ptr [atan_n_8_real_abs_40_bits-atan_n_8_c+rcx]
+	movlpd	xmm7,qword ptr [atan_n_8_real_40_bits_offset_min_atan_n_8_c_offset+rcx]
+	movlpd	xmm12,qword ptr [atan_n_8_real_abs_40_bits_offset_min_atan_n_8_c_offset+rcx]
 	andpd	xmm7,xmm8				# (y_h+c)_h
 	andpd	xmm12,xmm8
 
-	addsd	xmm0,qword ptr [atan_n_8_0-atan_n_8_c+rcx] # p14+p12+p10+p8+p6+p4+p2+p0
+	addsd	xmm0,qword ptr [atan_n_8_0_offset_min_atan_n_8_c_offset+rcx] # p14+p12+p10+p8+p6+p4+p2+p0
 
 	subsd	xmm11,xmm7				# y_h-(y_h+c)_h
 	addsd	xmm3,xmm11				# (y_h-(y_h+c)_h)+c
 	
 	mulsd	xmm0,xmm14				# y3*p/q
 
-	movlpd	xmm2,qword ptr [atan_1_53_l-atan_1_53+rdx]
+	movlpd	xmm2,qword ptr [atan_1_53_l_offset_min_atan_1_53_offset+rdx]
 	subsd	xmm2,xmm0				# pi_d_4_l-y3*p/q
-	movlpd	xmm0,qword ptr [atan_1_53-atan_1_53+rdx]
+	movlpd	xmm0,qword ptr [atan_1_53_offset_min_atan_1_53_offset+rdx]
 
-	ucomisd	xmm12,qword ptr [atan_n_8_real_2_p_m_12-atan_n_8_c+rcx]
+	ucomisd	xmm12,qword ptr [atan_n_8_real_2_p_m_12_offset_min_atan_n_8_c_offset+rcx]
 	jb		atan_real_2_s
 
 	subsd	xmm0,xmm7				# pi_d_4-(y_h+c)_h
@@ -4043,7 +4046,7 @@ atan_real_3pn:
 	movsd	xmm4,xmm0				# y
 	mulsd	xmm0,xmm0				# y2
 
-	movlpd	xmm5,qword ptr [atan_n_2_8_1-atan_n_2_8_c+rcx]
+	movlpd	xmm5,qword ptr [atan_n_2_8_1_offset_min_atan_n_2_8_c_offset+rcx]
 
 	movsd	xmm6,xmm0				# y2
 	mulsd	xmm0,xmm0				# y4
@@ -4055,14 +4058,14 @@ atan_real_3pn:
 
 	mulsd	xmm6,xmm0				# y6
 
-	movlpd	xmm9,qword ptr [atan_n_2_8_2-atan_n_2_8_c+rcx]
+	movlpd	xmm9,qword ptr [atan_n_2_8_2_offset_min_atan_n_2_8_c_offset+rcx]
 
 	movsd	xmm10,xmm0				# y4
 	mulsd	xmm0,xmm0				# y8
 
 	mulsd	xmm9,xmm10				# p4
 
-	movlpd	xmm12,qword ptr [atan_n_2_8_4-atan_n_2_8_c+rcx]
+	movlpd	xmm12,qword ptr [atan_n_2_8_4_offset_min_atan_n_2_8_c_offset+rcx]
 
 	mulsd	xmm10,xmm6				# y10
 
@@ -4074,13 +4077,13 @@ atan_real_3pn:
 
 	andpd	xmm8,xmm4				# y_h
 
-	mulsd	xmm7,qword ptr [atan_n_2_8_3-atan_n_2_8_c+rcx] # p6
-	mulsd	xmm10,qword ptr [atan_n_2_8_5-atan_n_2_8_c+rcx] # p10
-	mulsd	xmm6,qword ptr [atan_n_2_8_6-atan_n_2_8_c+rcx] # p12
-	mulsd	xmm0,qword ptr [atan_n_2_8_7-atan_n_2_8_c+rcx] # p14
+	mulsd	xmm7,qword ptr [atan_n_2_8_3_offset_min_atan_n_2_8_c_offset+rcx] # p6
+	mulsd	xmm10,qword ptr [atan_n_2_8_5_offset_min_atan_n_2_8_c_offset+rcx] # p10
+	mulsd	xmm6,qword ptr [atan_n_2_8_6_offset_min_atan_n_2_8_c_offset+rcx] # p12
+	mulsd	xmm0,qword ptr [atan_n_2_8_7_offset_min_atan_n_2_8_c_offset+rcx] # p14
 
 	movlpd	xmm13,qword ptr [real_4_0+rip]
-	movlpd	xmm1,qword ptr [atan_2_0_real_2_0-atan_2_0+rdx]
+	movlpd	xmm1,qword ptr [atan_2_0_real_2_0_offset_min_atan_2_0_offset+rdx]
 	mulsd	xmm13,xmm8				# 4*y_h
 	mulsd	xmm1,xmm8				# 2*y_h
 
@@ -4117,16 +4120,16 @@ atan_real_3pn:
 	andpd	xmm7,xmm8
 	andpd	xmm12,xmm8				# (y_h+c)_h
 
-	addsd	xmm0,qword ptr [atan_n_2_8_0-atan_n_2_8_c+rcx] # p14+p12+p10+p8+p6+p4+p2+p0
+	addsd	xmm0,qword ptr [atan_n_2_8_0_offset_min_atan_n_2_8_c_offset+rcx] # p14+p12+p10+p8+p6+p4+p2+p0
 
 	subsd	xmm11,xmm7				# y_h-(y_h+c)_h
 	addsd	xmm3,xmm11				# (y_h-(y_h+c)_h)+c
 	
 	mulsd	xmm0,xmm14				# y3*p/q
 
-	movlpd	xmm2,qword ptr [atan_2_0_l-atan_2_0+rdx]
+	movlpd	xmm2,qword ptr [atan_2_0_l_offset_min_atan_2_0_offset+rdx]
 	subsd	xmm2,xmm0				# atan_2_0_l-y3*p/q
-	movlpd	xmm0,qword ptr [atan_2_0-atan_2_0+rdx]
+	movlpd	xmm0,qword ptr [atan_2_0_offset_min_atan_2_0_offset+rdx]
 
 	ucomisd	xmm12,qword ptr [real_2_p_m_11+rip]
 	jb		atan_real_3_s
@@ -4168,8 +4171,8 @@ atan_real_4pn:
 
 	lea		rcx,[atan4_p_c+rip]
 
-	movlpd	xmm4,qword ptr [atan4_q_4-atan4_p_c+rcx]
-	movlpd	xmm3,qword ptr [atan4_p_3-atan4_p_c+rcx]
+	movlpd	xmm4,qword ptr [atan4_q_4_offset_min_atan4_p_c_offset+rcx]
+	movlpd	xmm3,qword ptr [atan4_p_3_offset_min_atan4_p_c_offset+rcx]
 
 	movsd	xmm5,xmm0				# x2
 	mulsd	xmm0,xmm0				# x4
@@ -4177,8 +4180,8 @@ atan_real_4pn:
 	mulsd	xmm4,xmm5				# q2
 	mulsd	xmm3,xmm5				# p2
 
-	movlpd	xmm9,qword ptr [atan4_q_3-atan4_p_c+rcx]
-	movlpd	xmm8,qword ptr [atan4_p_2-atan4_p_c+rcx]
+	movlpd	xmm9,qword ptr [atan4_q_3_offset_min_atan4_p_c_offset+rcx]
+	movlpd	xmm8,qword ptr [atan4_p_2_offset_min_atan4_p_c_offset+rcx]
 
 	movsd	xmm6,xmm0				# x4
 	mulsd	xmm0,xmm5				# x6
@@ -4186,11 +4189,11 @@ atan_real_4pn:
 	mulsd	xmm9,xmm6				# q4
 	mulsd	xmm8,xmm6				# p4
 
-	movlpd	xmm11,qword ptr [atan4_q_2-atan4_p_c+rcx]
-	movlpd	xmm10,qword ptr [atan4_p_1-atan4_p_c+rcx]
+	movlpd	xmm11,qword ptr [atan4_q_2_offset_min_atan4_p_c_offset+rcx]
+	movlpd	xmm10,qword ptr [atan4_p_1_offset_min_atan4_p_c_offset+rcx]
 
 	addsd	xmm4,qword ptr [real_1_0+rip]	# 1+q2
-	addsd	xmm3,qword ptr [atan4_p_4-atan4_p_c+rcx] # p0+p2
+	addsd	xmm3,qword ptr [atan4_p_4_offset_min_atan4_p_c_offset+rcx] # p0+p2
 	
 	movsd	xmm7,xmm6				# x4
 	mulsd	xmm6,xmm6				# x8
@@ -4203,8 +4206,8 @@ atan_real_4pn:
 
 	mulsd	xmm0,xmm7				# x10
 
-	movlpd	xmm9,qword ptr [atan4_q_1-atan4_p_c+rcx]
-	movlpd	xmm8,qword ptr [atan4_p_0-atan4_p_c+rcx]
+	movlpd	xmm9,qword ptr [atan4_q_1_offset_min_atan4_p_c_offset+rcx]
+	movlpd	xmm8,qword ptr [atan4_p_0_offset_min_atan4_p_c_offset+rcx]
 
 	addsd	xmm4,xmm11				# 1+q2+q4+q6
 	addsd	xmm3,xmm10				# p0+p2+p4+p6
@@ -4212,7 +4215,7 @@ atan_real_4pn:
 	mulsd	xmm9,xmm6				# q8
 	mulsd	xmm8,xmm6				# p8
 
-	mulsd	xmm0,qword ptr [atan4_q_0-atan4_p_c+rcx]# q10
+	mulsd	xmm0,qword ptr [atan4_q_0_offset_min_atan4_p_c_offset+rcx]# q10
 
 	movlpd	xmm5,qword ptr [real_26_bits+rip]
 	movsd	xmm6,xmm1				# x
@@ -4238,8 +4241,8 @@ atan_real_4pn:
 
 	divsd	xmm3,xmm4				# p/q
 
-	movlpd	xmm1,qword ptr [real_pi_d_2_l-real_pi_d_2+rdx]
-	movlpd	xmm0,qword ptr [real_pi_d_2-real_pi_d_2+rdx]
+	movlpd	xmm1,qword ptr [real_pi_d_2_l_offset_min_real_pi_d_2_offset+rdx]
+	movlpd	xmm0,qword ptr [real_pi_d_2_offset_min_real_pi_d_2_offset+rdx]
 
 	mulsd	xmm3,xmm2				# (p/q)*(1/x)
 
@@ -4379,8 +4382,8 @@ exp_real:
 
 	cmovb	rcx,rdx
 
-	movlpd	xmm6,qword ptr [exp_p0_2-exp_p0_c+rcx]
-	movlpd	xmm7,qword ptr [exp_p0_4-exp_p0_c+rcx]
+	movlpd	xmm6,qword ptr [exp_p0_2_offset_min_exp_p0_c_offset+rcx]
+	movlpd	xmm7,qword ptr [exp_p0_4_offset_min_exp_p0_c_offset+rcx]
 
 	movsd	xmm2,xmm0				# x2
 	mulsd	xmm0,xmm0				# x4
@@ -4390,7 +4393,7 @@ exp_real:
 	movsd	xmm3,xmm1				# x
 	mulsd	xmm1,xmm2				# x3
 
-	movlpd	xmm8,qword ptr [exp_p0_3-exp_p0_c+rcx]
+	movlpd	xmm8,qword ptr [exp_p0_3_offset_min_exp_p0_c_offset+rcx]
 	mulsd	xmm7,xmm0				# p4
 	
 	mulsd	xmm8,xmm1				# p3
@@ -4405,11 +4408,11 @@ exp_real:
 	mulsd	xmm1,xmm4				# x7
 	mulsd	xmm4,xmm2				# x9
 
-	mulsd	xmm0,qword ptr [exp_p0_8-exp_p0_c+rcx] # p8
-	mulsd	xmm2,qword ptr [exp_p0_5-exp_p0_c+rcx]	# p5
-	mulsd	xmm5,qword ptr [exp_p0_6-exp_p0_c+rcx]	# p6
-	mulsd	xmm1,qword ptr [exp_p0_7-exp_p0_c+rcx]	# p7
-	mulsd	xmm4,qword ptr [exp_p0_9-exp_p0_c+rcx]	# p9
+	mulsd	xmm0,qword ptr [exp_p0_8_offset_min_exp_p0_c_offset+rcx] # p8
+	mulsd	xmm2,qword ptr [exp_p0_5_offset_min_exp_p0_c_offset+rcx]	# p5
+	mulsd	xmm5,qword ptr [exp_p0_6_offset_min_exp_p0_c_offset+rcx]	# p6
+	mulsd	xmm1,qword ptr [exp_p0_7_offset_min_exp_p0_c_offset+rcx]	# p7
+	mulsd	xmm4,qword ptr [exp_p0_9_offset_min_exp_p0_c_offset+rcx]	# p9
 
 	addsd	xmm0,xmm4				# p9+p8
 
@@ -4454,8 +4457,8 @@ exp_real_np1:
 	movsd	xmm1,xmm0				# x
 	mulsd	xmm0,xmm0				# x2
 
-	movlpd	xmm6,qword ptr [exp_p1_2-exp_p1_c+rcx]
-	movlpd	xmm7,qword ptr [exp_p1_4-exp_p1_c+rcx]
+	movlpd	xmm6,qword ptr [exp_p1_2_offset_min_exp_p1_c_offset+rcx]
+	movlpd	xmm7,qword ptr [exp_p1_4_offset_min_exp_p1_c_offset+rcx]
 
 	movsd	xmm2,xmm0				# x2
 	mulsd	xmm0,xmm0				# x4
@@ -4465,7 +4468,7 @@ exp_real_np1:
 	movsd	xmm3,xmm1				# x
 	mulsd	xmm1,xmm2				# x3
 
-	movlpd	xmm8,qword ptr [exp_p1_3-exp_p1_c+rcx]
+	movlpd	xmm8,qword ptr [exp_p1_3_offset_min_exp_p1_c_offset+rcx]
 	mulsd	xmm7,xmm0				# p4
 	
 	mulsd	xmm8,xmm1				# p3
@@ -4480,11 +4483,11 @@ exp_real_np1:
 	mulsd	xmm1,xmm4				# x7
 	mulsd	xmm4,xmm2				# x9
 
-	mulsd	xmm0,qword ptr [exp_p1_8-exp_p1_c+rcx] # p8
-	mulsd	xmm2,qword ptr [exp_p1_5-exp_p1_c+rcx]	# p5
-	mulsd	xmm5,qword ptr [exp_p1_6-exp_p1_c+rcx]	# p6
-	mulsd	xmm1,qword ptr [exp_p1_7-exp_p1_c+rcx]	# p7
-	mulsd	xmm4,qword ptr [exp_p1_9-exp_p1_c+rcx]	# p9
+	mulsd	xmm0,qword ptr [exp_p1_8_offset_min_exp_p1_c_offset+rcx] # p8
+	mulsd	xmm2,qword ptr [exp_p1_5_offset_min_exp_p1_c_offset+rcx]	# p5
+	mulsd	xmm5,qword ptr [exp_p1_6_offset_min_exp_p1_c_offset+rcx]	# p6
+	mulsd	xmm1,qword ptr [exp_p1_7_offset_min_exp_p1_c_offset+rcx]	# p7
+	mulsd	xmm4,qword ptr [exp_p1_9_offset_min_exp_p1_c_offset+rcx]	# p9
 
 	addsd	xmm0,xmm4				# p9+p8
 
@@ -4494,19 +4497,19 @@ exp_real_np1:
 
 	movsd	xmm11,xmm3				# x
 	andpd	xmm9,xmm3				# x_h
-	mulsd	xmm3,qword ptr [exp_p1_1_l-exp_p1_c+rcx] # x*c1_l
+	mulsd	xmm3,qword ptr [exp_p1_1_l_offset_min_exp_p1_c_offset+rcx] # x*c1_l
 
 	addsd	xmm0,xmm5				# p9+p8+p7+p6
 
 	subsd	xmm11,xmm9				# x_l
-	mulsd	xmm9,qword ptr [exp_p1_1_h-exp_p1_c+rcx] # x_h*c1_h
+	mulsd	xmm9,qword ptr [exp_p1_1_h_offset_min_exp_p1_c_offset+rcx] # x_h*c1_h
 
 	addsd	xmm0,xmm2				# p9+p8+p7+p6+p5
 	
-	movlpd	xmm10,qword ptr [exp_p1_0-exp_p1_c+rcx]
-	mulsd	xmm11,qword ptr [exp_p1_1_h-exp_p1_c+rcx] # x_l*c1_h
+	movlpd	xmm10,qword ptr [exp_p1_0_offset_min_exp_p1_c_offset+rcx]
+	mulsd	xmm11,qword ptr [exp_p1_1_h_offset_min_exp_p1_c_offset+rcx] # x_l*c1_h
 	addsd	xmm10,xmm9				# x_h*c1_h+c0
-	movlpd	xmm12,qword ptr [exp_p1_0-exp_p1_c+rcx]
+	movlpd	xmm12,qword ptr [exp_p1_0_offset_min_exp_p1_c_offset+rcx]
 
 	addsd	xmm0,xmm7				# p9+p8+p7+p6+p5+p4
 
@@ -4521,7 +4524,7 @@ exp_real_np1:
 
 	addsd	xmm3,xmm12				# (c0-(x_h*c1_h+c0))+x_h*c1_h+x*c1_l+x_l*c1_h
 
-	addsd	xmm0,qword ptr [exp_p1_0_l-exp_p1_c+rcx]
+	addsd	xmm0,qword ptr [exp_p1_0_l_offset_min_exp_p1_c_offset+rcx]
 
 	addsd	xmm0,xmm3
 	addsd	xmm0,xmm10
@@ -4559,8 +4562,8 @@ exp_real_:
 
 	cmovb	rcx,rdx
 
-	movlpd	xmm6,qword ptr [exp_p0_2-exp_p0_c+rcx]
-	movlpd	xmm7,qword ptr [exp_p0_4-exp_p0_c+rcx]
+	movlpd	xmm6,qword ptr [exp_p0_2_offset_min_exp_p0_c_offset+rcx]
+	movlpd	xmm7,qword ptr [exp_p0_4_offset_min_exp_p0_c_offset+rcx]
 
 	movsd	xmm2,xmm0				# x2
 	mulsd	xmm0,xmm0				# x4
@@ -4570,7 +4573,7 @@ exp_real_:
 	movsd	xmm3,xmm1				# x
 	mulsd	xmm1,xmm2				# x3
 
-	movlpd	xmm8,qword ptr [exp_p0_3-exp_p0_c+rcx]
+	movlpd	xmm8,qword ptr [exp_p0_3_offset_min_exp_p0_c_offset+rcx]
 	mulsd	xmm7,xmm0				# p4
 	
 	mulsd	xmm8,xmm1				# p3
@@ -4585,11 +4588,11 @@ exp_real_:
 	mulsd	xmm1,xmm4				# x7
 	mulsd	xmm4,xmm2				# x9
 
-	mulsd	xmm0,qword ptr [exp_p0_8-exp_p0_c+rcx] # p8
-	mulsd	xmm2,qword ptr [exp_p0_5-exp_p0_c+rcx]	# p5
-	mulsd	xmm5,qword ptr [exp_p0_6-exp_p0_c+rcx]	# p6
-	mulsd	xmm1,qword ptr [exp_p0_7-exp_p0_c+rcx]	# p7
-	mulsd	xmm4,qword ptr [exp_p0_9-exp_p0_c+rcx]	# p9
+	mulsd	xmm0,qword ptr [exp_p0_8_offset_min_exp_p0_c_offset+rcx] # p8
+	mulsd	xmm2,qword ptr [exp_p0_5_offset_min_exp_p0_c_offset+rcx]	# p5
+	mulsd	xmm5,qword ptr [exp_p0_6_offset_min_exp_p0_c_offset+rcx]	# p6
+	mulsd	xmm1,qword ptr [exp_p0_7_offset_min_exp_p0_c_offset+rcx]	# p7
+	mulsd	xmm4,qword ptr [exp_p0_9_offset_min_exp_p0_c_offset+rcx]	# p9
 
 	addsd	xmm0,xmm4				# p9+p8
 
@@ -4641,8 +4644,8 @@ exp_real_np1_:
 	movsd	xmm1,xmm0				# x
 	mulsd	xmm0,xmm0				# x2
 
-	movlpd	xmm6,qword ptr [exp_p1_2-exp_p1_c+rcx]
-	movlpd	xmm7,qword ptr [exp_p1_4-exp_p1_c+rcx]
+	movlpd	xmm6,qword ptr [exp_p1_2_offset_min_exp_p1_c_offset+rcx]
+	movlpd	xmm7,qword ptr [exp_p1_4_offset_min_exp_p1_c_offset+rcx]
 
 	movsd	xmm2,xmm0				# x2
 	mulsd	xmm0,xmm0				# x4
@@ -4652,7 +4655,7 @@ exp_real_np1_:
 	movsd	xmm3,xmm1				# x
 	mulsd	xmm1,xmm2				# x3
 
-	movlpd	xmm8,qword ptr [exp_p1_3-exp_p1_c+rcx]
+	movlpd	xmm8,qword ptr [exp_p1_3_offset_min_exp_p1_c_offset+rcx]
 	mulsd	xmm7,xmm0				# p4
 	
 	mulsd	xmm8,xmm1				# p3
@@ -4667,11 +4670,11 @@ exp_real_np1_:
 	mulsd	xmm1,xmm4				# x7
 	mulsd	xmm4,xmm2				# x9
 
-	mulsd	xmm0,qword ptr [exp_p1_8-exp_p1_c+rcx] # p8
-	mulsd	xmm2,qword ptr [exp_p1_5-exp_p1_c+rcx]	# p5
-	mulsd	xmm5,qword ptr [exp_p1_6-exp_p1_c+rcx]	# p6
-	mulsd	xmm1,qword ptr [exp_p1_7-exp_p1_c+rcx]	# p7
-	mulsd	xmm4,qword ptr [exp_p1_9-exp_p1_c+rcx]	# p9
+	mulsd	xmm0,qword ptr [exp_p1_8_offset_min_exp_p1_c_offset+rcx] # p8
+	mulsd	xmm2,qword ptr [exp_p1_5_offset_min_exp_p1_c_offset+rcx]	# p5
+	mulsd	xmm5,qword ptr [exp_p1_6_offset_min_exp_p1_c_offset+rcx]	# p6
+	mulsd	xmm1,qword ptr [exp_p1_7_offset_min_exp_p1_c_offset+rcx]	# p7
+	mulsd	xmm4,qword ptr [exp_p1_9_offset_min_exp_p1_c_offset+rcx]	# p9
 
 	movlpd	xmm9,qword ptr [real_26_bits+rip]
 
@@ -4679,7 +4682,7 @@ exp_real_np1_:
 
 	movsd	xmm11,xmm13				# xh
 	andpd	xmm9,xmm3				# x_h
-	mulsd	xmm3,qword ptr [exp_p1_1_l-exp_p1_c+rcx] # x*c1_l
+	mulsd	xmm3,qword ptr [exp_p1_1_l_offset_min_exp_p1_c_offset+rcx] # x*c1_l
 
 	addsd	xmm0,xmm1				# p9+p8+p7
 
@@ -4689,14 +4692,14 @@ exp_real_np1_:
 
 	subsd	xmm11,xmm14				# x_l=(xh-x_h)-nxl
 
-	mulsd	xmm9,qword ptr [exp_p1_1_h-exp_p1_c+rcx] # x_h*c1_h
+	mulsd	xmm9,qword ptr [exp_p1_1_h_offset_min_exp_p1_c_offset+rcx] # x_h*c1_h
 
 	addsd	xmm0,xmm2				# p9+p8+p7+p6+p5
 	
-	movlpd	xmm10,qword ptr [exp_p1_0-exp_p1_c+rcx]
-	mulsd	xmm11,qword ptr [exp_p1_1_h-exp_p1_c+rcx] # x_l*c1_h
+	movlpd	xmm10,qword ptr [exp_p1_0_offset_min_exp_p1_c_offset+rcx]
+	mulsd	xmm11,qword ptr [exp_p1_1_h_offset_min_exp_p1_c_offset+rcx] # x_l*c1_h
 	addsd	xmm10,xmm9				# x_h*c1_h+c0
-	movlpd	xmm12,qword ptr [exp_p1_0-exp_p1_c+rcx]
+	movlpd	xmm12,qword ptr [exp_p1_0_offset_min_exp_p1_c_offset+rcx]
 
 	addsd	xmm0,xmm7				# p9+p8+p7+p6+p5+p4
 
@@ -4711,7 +4714,7 @@ exp_real_np1_:
 
 	addsd	xmm3,xmm12				# (c0-(x_h*c1_h+c0))+x_h*c1_h+x*c1_l+x_l*c1_h
 
-	addsd	xmm0,qword ptr [exp_p1_0_l-exp_p1_c+rcx]
+	addsd	xmm0,qword ptr [exp_p1_0_l_offset_min_exp_p1_c_offset+rcx]
 
 	addsd	xmm0,xmm3
 	addsd	xmm0,xmm10
@@ -4973,22 +4976,22 @@ ln_real_a_7_d_6:
 	movsd	xmm1,xmm0				# x
 	mulsd	xmm0,xmm0				# x2
 
-	movlpd	xmm3,qword ptr [ln_b_q_1-ln_b_c+rcx]
-	movlpd	xmm2,qword ptr [ln_b_p_1-ln_b_c+rcx]
+	movlpd	xmm3,qword ptr [ln_b_q_1_offset_min_ln_b_c_offset+rcx]
+	movlpd	xmm2,qword ptr [ln_b_p_1_offset_min_ln_b_c_offset+rcx]
 
 	mulsd	xmm3,xmm1				# q1
 	mulsd	xmm2,xmm1				# p1
 	movsd	xmm7,xmm1				# x
-	movlpd	xmm5,qword ptr [ln_b_q_2-ln_b_c+rcx]
-	movlpd	xmm4,qword ptr [ln_b_p_2-ln_b_c+rcx]
+	movlpd	xmm5,qword ptr [ln_b_q_2_offset_min_ln_b_c_offset+rcx]
+	movlpd	xmm4,qword ptr [ln_b_p_2_offset_min_ln_b_c_offset+rcx]
 	movsd	xmm6,xmm0				# x2
 	mulsd	xmm0,xmm0				# x4
 
 	movsd	xmm11,xmm1				# x
 	mulsd	xmm7,xmm6				# x3
 
-	movlpd	xmm9,qword ptr [ln_b_q_3-ln_b_c+rcx]
-	movlpd	xmm8,qword ptr [ln_b_p_3-ln_b_c+rcx]
+	movlpd	xmm9,qword ptr [ln_b_q_3_offset_min_ln_b_c_offset+rcx]
+	movlpd	xmm8,qword ptr [ln_b_p_3_offset_min_ln_b_c_offset+rcx]
 
 	mulsd	xmm11,xmm0				# x5
 
@@ -4996,7 +4999,7 @@ ln_real_a_7_d_6:
 	mulsd	xmm4,xmm6				# p2
 
 	movlpd	xmm6,qword ptr [real_17_bits+rip]
-	movlpd	xmm10,qword ptr [ln_b_q_4-ln_b_c+rcx]
+	movlpd	xmm10,qword ptr [ln_b_q_4_offset_min_ln_b_c_offset+rcx]
 
 	mulsd	xmm9,xmm7				# q3
 	mulsd	xmm8,xmm7				# p3
@@ -5004,7 +5007,7 @@ ln_real_a_7_d_6:
 	andpd	xmm6,xmm1				# x_17_h
 
 	mulsd	xmm10,xmm0				# q4
-	mulsd	xmm0,qword ptr [ln_b_p_4-ln_b_c+rcx] # p4
+	mulsd	xmm0,qword ptr [ln_b_p_4_offset_min_ln_b_c_offset+rcx] # p4
 
 	addsd	xmm10,xmm11				# q4+x5
 
@@ -5027,8 +5030,8 @@ ln_real_a_7_d_6:
 	mulsd	xmm4,xmm6				# 0.5*x_17_h*x_17_h
 	addsd	xmm6,xmm1				# x+x_17_h
 
-	addsd	xmm0,qword ptr [ln_b_p_0-ln_b_c+rcx] # p0+p1+p2+p3+p4
-	addsd	xmm3,qword ptr [ln_b_q_0-ln_b_c+rcx] # q0+q1+q2+q3+q4+x5
+	addsd	xmm0,qword ptr [ln_b_p_0_offset_min_ln_b_c_offset+rcx] # p0+p1+p2+p3+p4
+	addsd	xmm3,qword ptr [ln_b_q_0_offset_min_ln_b_c_offset+rcx] # q0+q1+q2+q3+q4+x5
 
 	subsd	xmm1,xmm4				# x-0.5*x_17_h*x_17_h
 	mulsd	xmm6,xmm8				# 0.5*x_17_l*(x+x_17_h)
@@ -5183,37 +5186,37 @@ ln_real_g_7_d_6:
 	movsd	xmm1,xmm2				# x
 	mulsd	xmm2,xmm2				# x2
 
-	movlpd	xmm4,qword ptr [ln_b_q_1-ln_b_c+rcx]
-	movlpd	xmm3,qword ptr [ln_b_p_1-ln_b_c+rcx]
+	movlpd	xmm4,qword ptr [ln_b_q_1_offset_min_ln_b_c_offset+rcx]
+	movlpd	xmm3,qword ptr [ln_b_p_1_offset_min_ln_b_c_offset+rcx]
 	mulsd	xmm4,xmm1				# q1
 	mulsd	xmm3,xmm1				# p1
 	movsd	xmm8,xmm1				# x
 
 	cvtdq2pd xmm0,xmm0
 
-	movlpd	xmm6,qword ptr [ln_b_q_2-ln_b_c+rcx]
-	movlpd	xmm5,qword ptr [ln_b_p_2-ln_b_c+rcx]
+	movlpd	xmm6,qword ptr [ln_b_q_2_offset_min_ln_b_c_offset+rcx]
+	movlpd	xmm5,qword ptr [ln_b_p_2_offset_min_ln_b_c_offset+rcx]
 	movsd	xmm7,xmm2				# x2
 	mulsd	xmm2,xmm2				# x4
 
 	movsd	xmm12,xmm1				# x
 	mulsd	xmm8,xmm7				# x3
 
-	movlpd	xmm10,qword ptr [ln_b_q_3-ln_b_c+rcx]
-	movlpd	xmm9,qword ptr [ln_b_p_3-ln_b_c+rcx]
+	movlpd	xmm10,qword ptr [ln_b_q_3_offset_min_ln_b_c_offset+rcx]
+	movlpd	xmm9,qword ptr [ln_b_p_3_offset_min_ln_b_c_offset+rcx]
 
 	mulsd	xmm12,xmm2				# x5
 
 	mulsd	xmm6,xmm7				# q2
 	mulsd	xmm5,xmm7				# p2
 
-	movlpd	xmm11,qword ptr [ln_b_p_4-ln_b_c+rcx]
+	movlpd	xmm11,qword ptr [ln_b_p_4_offset_min_ln_b_c_offset+rcx]
 
 	mulsd	xmm10,xmm8				# q3
 	mulsd	xmm9,xmm8				# p3
 	
 	mulsd	xmm11,xmm2				# p4
-	mulsd	xmm2,qword ptr [ln_b_q_4-ln_b_c+rcx] # q4
+	mulsd	xmm2,qword ptr [ln_b_q_4_offset_min_ln_b_c_offset+rcx] # q4
 	
 	addsd	xmm2,xmm12				# q4+x5
 
@@ -5240,8 +5243,8 @@ ln_real_g_7_d_6:
 	mulsd	xmm6,xmm0
 	mulsd	xmm0,qword ptr [real_ln2_42+rip]
 	
-	addsd	xmm2,qword ptr [ln_b_q_0-ln_b_c+rcx] # q0+q1+q2+q3+q4+x5
-	addsd	xmm3,qword ptr [ln_b_p_0-ln_b_c+rcx] # p0+p1+p2+p3+p4
+	addsd	xmm2,qword ptr [ln_b_q_0_offset_min_ln_b_c_offset+rcx] # q0+q1+q2+q3+q4+x5
+	addsd	xmm3,qword ptr [ln_b_p_0_offset_min_ln_b_c_offset+rcx] # p0+p1+p2+p3+p4
 
 	mulsd	xmm14,qword ptr [real_0_5+rip] # 0.5*x_17_l
 	mulsd	xmm13,xmm7				# 0.5*x_17_h*x_17_h
@@ -5708,25 +5711,25 @@ log10_real_a_7_d_6:
 	movsd	xmm1,xmm0				# x
 	mulsd	xmm0,xmm0				# x2
 
-	movlpd	xmm2,qword ptr [log10_b_p_1-log10_b_c+rcx]
-	movlpd	xmm3,qword ptr [log10_b_q_1-log10_b_c+rcx]
+	movlpd	xmm2,qword ptr [log10_b_p_1_offset_min_log10_b_c_offset+rcx]
+	movlpd	xmm3,qword ptr [log10_b_q_1_offset_min_log10_b_c_offset+rcx]
 	mulsd	xmm2,xmm1				# p1
 	mulsd	xmm3,xmm1				# q1
 	movsd	xmm7,xmm1				# x
 
-	movlpd	xmm4,qword ptr [log10_b_p_2-log10_b_c+rcx]
-	movlpd	xmm5,qword ptr [log10_b_q_2-log10_b_c+rcx]
+	movlpd	xmm4,qword ptr [log10_b_p_2_offset_min_log10_b_c_offset+rcx]
+	movlpd	xmm5,qword ptr [log10_b_q_2_offset_min_log10_b_c_offset+rcx]
 	mulsd	xmm7,xmm0				# x3
 	movsd	xmm6,xmm0				# x2
 	mulsd	xmm0,xmm0				# x4
 
-	movlpd	xmm8,qword ptr [log10_b_p_3-log10_b_c+rcx]
-	movlpd	xmm9,qword ptr [log10_b_q_3-log10_b_c+rcx]
+	movlpd	xmm8,qword ptr [log10_b_p_3_offset_min_log10_b_c_offset+rcx]
+	movlpd	xmm9,qword ptr [log10_b_q_3_offset_min_log10_b_c_offset+rcx]
 
 	mulsd	xmm4,xmm6				# p2
 	mulsd	xmm5,xmm6				# q2
 
-	movlpd	xmm10,qword ptr [log10_b_p_4-log10_b_c+rcx]
+	movlpd	xmm10,qword ptr [log10_b_p_4_offset_min_log10_b_c_offset+rcx]
 
 	mulsd	xmm8,xmm7				# p3
 	mulsd	xmm9,xmm7				# q3
@@ -5735,7 +5738,7 @@ log10_real_a_7_d_6:
 	mulsd	xmm7,xmm6				# x5
 	
 	mulsd	xmm10,xmm0				# p4
-	mulsd	xmm0,qword ptr [log10_b_q_4-log10_b_c+rcx] # q4
+	mulsd	xmm0,qword ptr [log10_b_q_4_offset_min_log10_b_c_offset+rcx] # q4
 
 	addsd	xmm0,xmm7				# q4+x5
 
@@ -5753,8 +5756,8 @@ log10_real_a_7_d_6:
 	movlpd	xmm4,qword ptr [real_26_bits+rip]
 	movsd	xmm0,xmm1				# x
 
-	addsd	xmm9,qword ptr [log10_b_q_0-log10_b_c+rcx] # q0+q1+q2+q3+q4+x5
-	addsd	xmm2,qword ptr [log10_b_p_0-log10_b_c+rcx] # p0+p1+p2+p3+p4
+	addsd	xmm9,qword ptr [log10_b_q_0_offset_min_log10_b_c_offset+rcx] # q0+q1+q2+q3+q4+x5
+	addsd	xmm2,qword ptr [log10_b_p_0_offset_min_log10_b_c_offset+rcx] # p0+p1+p2+p3+p4
 
 	subsd	xmm1,xmm6				# x-0.5x2
 
@@ -5913,27 +5916,27 @@ log10_real_g_7_d_6:
 	movsd	xmm1,xmm2				# x
 	mulsd	xmm2,xmm2				# x2
 
-	movlpd	xmm3,qword ptr [log10_b_p_1-log10_b_c+rcx]
-	movlpd	xmm4,qword ptr [log10_b_q_1-log10_b_c+rcx]
+	movlpd	xmm3,qword ptr [log10_b_p_1_offset_min_log10_b_c_offset+rcx]
+	movlpd	xmm4,qword ptr [log10_b_q_1_offset_min_log10_b_c_offset+rcx]
 	mulsd	xmm3,xmm1				# p1
 	mulsd	xmm4,xmm1				# q1
 	movsd	xmm8,xmm1				# x
 
 	cvtdq2pd xmm0,xmm0
 
-	movlpd	xmm5,qword ptr [log10_b_p_2-log10_b_c+rcx]
-	movlpd	xmm6,qword ptr [log10_b_q_2-log10_b_c+rcx]
+	movlpd	xmm5,qword ptr [log10_b_p_2_offset_min_log10_b_c_offset+rcx]
+	movlpd	xmm6,qword ptr [log10_b_q_2_offset_min_log10_b_c_offset+rcx]
 	mulsd	xmm8,xmm2				# x3
 	movsd	xmm7,xmm2				# x2
 	mulsd	xmm2,xmm2				# x4
 
-	movlpd	xmm9,qword ptr [log10_b_p_3-log10_b_c+rcx]
-	movlpd	xmm10,qword ptr [log10_b_q_3-log10_b_c+rcx]
+	movlpd	xmm9,qword ptr [log10_b_p_3_offset_min_log10_b_c_offset+rcx]
+	movlpd	xmm10,qword ptr [log10_b_q_3_offset_min_log10_b_c_offset+rcx]
 
 	mulsd	xmm5,xmm7				# p2
 	mulsd	xmm6,xmm7				# q2
 
-	movlpd	xmm11,qword ptr [log10_b_p_4-log10_b_c+rcx]
+	movlpd	xmm11,qword ptr [log10_b_p_4_offset_min_log10_b_c_offset+rcx]
 
 	mulsd	xmm9,xmm8				# p3
 	mulsd	xmm10,xmm8				# q3
@@ -5942,7 +5945,7 @@ log10_real_g_7_d_6:
 	mulsd	xmm8,xmm7				# x5
 
 	mulsd	xmm11,xmm2				# p4
-	mulsd	xmm2,qword ptr [log10_b_q_4-log10_b_c+rcx] # q4
+	mulsd	xmm2,qword ptr [log10_b_q_4_offset_min_log10_b_c_offset+rcx] # q4
 	
 	addsd	xmm2,xmm8				# q4+x5
 	
@@ -5965,8 +5968,8 @@ log10_real_g_7_d_6:
 	mulsd	xmm6,xmm0
 	mulsd	xmm0,qword ptr [real_log2_10_42+rip]
 
-	addsd	xmm10,qword ptr [log10_b_q_0-log10_b_c+rcx] # q0+q1+q2+q3+q4+x5
-	addsd	xmm3,qword ptr [log10_b_p_0-log10_b_c+rcx] # p0+p1+p2+p3+p4
+	addsd	xmm10,qword ptr [log10_b_q_0_offset_min_log10_b_c_offset+rcx] # q0+q1+q2+q3+q4+x5
+	addsd	xmm3,qword ptr [log10_b_p_0_offset_min_log10_b_c_offset+rcx] # p0+p1+p2+p3+p4
 
 	subsd	xmm1,xmm7				# x-0.5x2
 
@@ -6214,24 +6217,24 @@ pow_real_between_0_83_and_7_d_6:
 	movsd	xmm5,xmm1				# x
 	mulsd	xmm1,xmm1				# x2
 
-	movlpd	xmm2,qword ptr [log2_b_p_1-log2_b_c+rcx]
-	movlpd	xmm4,qword ptr [log2_b_q_1-log2_b_c+rcx]
+	movlpd	xmm2,qword ptr [log2_b_p_1_offset_min_log2_b_c_offset+rcx]
+	movlpd	xmm4,qword ptr [log2_b_q_1_offset_min_log2_b_c_offset+rcx]
 	mulsd	xmm2,xmm5				# p1
 	mulsd	xmm4,xmm5				# q1
 	movsd	xmm8,xmm5				# x
-	movlpd	xmm3,qword ptr [log2_b_p_2-log2_b_c+rcx]
-	movlpd	xmm6,qword ptr [log2_b_q_2-log2_b_c+rcx]
+	movlpd	xmm3,qword ptr [log2_b_p_2_offset_min_log2_b_c_offset+rcx]
+	movlpd	xmm6,qword ptr [log2_b_q_2_offset_min_log2_b_c_offset+rcx]
 	mulsd	xmm8,xmm1				# x3
 	movsd	xmm7,xmm1				# x2
 	mulsd	xmm1,xmm1				# x4
 
-	movlpd	xmm9,qword ptr [log2_b_p_3-log2_b_c+rcx]
-	movlpd	xmm10,qword ptr [log2_b_q_3-log2_b_c+rcx]
+	movlpd	xmm9,qword ptr [log2_b_p_3_offset_min_log2_b_c_offset+rcx]
+	movlpd	xmm10,qword ptr [log2_b_q_3_offset_min_log2_b_c_offset+rcx]
 
 	mulsd	xmm3,xmm7				# p2
 	mulsd	xmm6,xmm7				# q2
 
-	movlpd	xmm11,qword ptr [log2_b_p_4-log2_b_c+rcx]
+	movlpd	xmm11,qword ptr [log2_b_p_4_offset_min_log2_b_c_offset+rcx]
 
 	mulsd	xmm9,xmm8				# p3
 	mulsd	xmm10,xmm8				# q3
@@ -6251,8 +6254,8 @@ pow_real_between_0_83_and_7_d_6:
 	movlpd	xmm3,qword ptr [real_26_bits+rip]
 	movsd	xmm1,xmm5				# x
 
-	addsd	xmm10,qword ptr [log2_b_q_0-log2_b_c+rcx] # q0+q1+q2+q3+x4
-	addsd	xmm2,qword ptr [log2_b_p_0-log2_b_c+rcx] # p0+p1+p2+p3+p4
+	addsd	xmm10,qword ptr [log2_b_q_0_offset_min_log2_b_c_offset+rcx] # q0+q1+q2+q3+x4
+	addsd	xmm2,qword ptr [log2_b_p_0_offset_min_log2_b_c_offset+rcx] # p0+p1+p2+p3+p4
 
 	subsd	xmm5,xmm7				# x-0.5x2
 
@@ -6306,24 +6309,24 @@ pow_real_a_7_d_6:
 	movsd	xmm5,xmm1				# x
 	mulsd	xmm1,xmm1				# x2
 
-	movlpd	xmm2,qword ptr [log2_b_p_1-log2_b_c+rcx]
-	movlpd	xmm4,qword ptr [log2_b_q_1-log2_b_c+rcx]
+	movlpd	xmm2,qword ptr [log2_b_p_1_offset_min_log2_b_c_offset+rcx]
+	movlpd	xmm4,qword ptr [log2_b_q_1_offset_min_log2_b_c_offset+rcx]
 	mulsd	xmm2,xmm5				# p1
 	mulsd	xmm4,xmm5				# q1
 	movsd	xmm8,xmm5				# x
-	movlpd	xmm3,qword ptr [log2_b_p_2-log2_b_c+rcx]
-	movlpd	xmm6,qword ptr [log2_b_q_2-log2_b_c+rcx]
+	movlpd	xmm3,qword ptr [log2_b_p_2_offset_min_log2_b_c_offset+rcx]
+	movlpd	xmm6,qword ptr [log2_b_q_2_offset_min_log2_b_c_offset+rcx]
 	mulsd	xmm8,xmm1				# x3
 	movsd	xmm7,xmm1				# x2
 	mulsd	xmm1,xmm1				# x4
 
-	movlpd	xmm9,qword ptr [log2_b_p_3-log2_b_c+rcx]
-	movlpd	xmm10,qword ptr [log2_b_q_3-log2_b_c+rcx]
+	movlpd	xmm9,qword ptr [log2_b_p_3_offset_min_log2_b_c_offset+rcx]
+	movlpd	xmm10,qword ptr [log2_b_q_3_offset_min_log2_b_c_offset+rcx]
 
 	mulsd	xmm3,xmm7				# p2
 	mulsd	xmm6,xmm7				# q2
 
-	movlpd	xmm11,qword ptr [log2_b_p_4-log2_b_c+rcx]
+	movlpd	xmm11,qword ptr [log2_b_p_4_offset_min_log2_b_c_offset+rcx]
 
 	mulsd	xmm9,xmm8				# p3
 	mulsd	xmm10,xmm8				# q3
@@ -6343,8 +6346,8 @@ pow_real_a_7_d_6:
 	movlpd	xmm3,qword ptr [real_26_bits+rip]
 	movsd	xmm1,xmm5				# x
 
-	addsd	xmm10,qword ptr [log2_b_q_0-log2_b_c+rcx] # q0+q1+q2+q3+x4
-	addsd	xmm2,qword ptr [log2_b_p_0-log2_b_c+rcx] # p0+p1+p2+p3+p4
+	addsd	xmm10,qword ptr [log2_b_q_0_offset_min_log2_b_c_offset+rcx] # q0+q1+q2+q3+x4
+	addsd	xmm2,qword ptr [log2_b_p_0_offset_min_log2_b_c_offset+rcx] # p0+p1+p2+p3+p4
 
 	subsd	xmm5,xmm7				# x-0.5x2
 
@@ -6779,27 +6782,27 @@ pow_real_g_7_d_6:
 	movsd	xmm6,xmm3				# x
 	mulsd	xmm3,xmm3				# x2
 
-	movlpd	xmm2,qword ptr [log2_b_p_1-log2_b_c+rcx]
-	movlpd	xmm5,qword ptr [log2_b_q_1-log2_b_c+rcx]
+	movlpd	xmm2,qword ptr [log2_b_p_1_offset_min_log2_b_c_offset+rcx]
+	movlpd	xmm5,qword ptr [log2_b_q_1_offset_min_log2_b_c_offset+rcx]
 	mulsd	xmm2,xmm6				# p1
 	mulsd	xmm5,xmm6				# q1
 	movsd	xmm9,xmm6				# x
 
 	cvtdq2pd xmm4,xmm1
 
-	movlpd	xmm1,qword ptr [log2_b_p_2-log2_b_c+rcx]
-	movlpd	xmm7,qword ptr [log2_b_q_2-log2_b_c+rcx]
+	movlpd	xmm1,qword ptr [log2_b_p_2_offset_min_log2_b_c_offset+rcx]
+	movlpd	xmm7,qword ptr [log2_b_q_2_offset_min_log2_b_c_offset+rcx]
 	mulsd	xmm9,xmm3				# x3
 	movsd	xmm8,xmm3				# x2
 	mulsd	xmm3,xmm3				# x4
 
-	movlpd	xmm10,qword ptr [log2_b_p_3-log2_b_c+rcx]
-	movlpd	xmm11,qword ptr [log2_b_q_3-log2_b_c+rcx]
+	movlpd	xmm10,qword ptr [log2_b_p_3_offset_min_log2_b_c_offset+rcx]
+	movlpd	xmm11,qword ptr [log2_b_q_3_offset_min_log2_b_c_offset+rcx]
 
 	mulsd	xmm1,xmm8				# p2
 	mulsd	xmm7,xmm8				# q2
 
-	movlpd	xmm12,qword ptr [log2_b_p_4-log2_b_c+rcx]
+	movlpd	xmm12,qword ptr [log2_b_p_4_offset_min_log2_b_c_offset+rcx]
 
 	mulsd	xmm10,xmm9				# p3
 	mulsd	xmm11,xmm9				# q3
@@ -6819,8 +6822,8 @@ pow_real_g_7_d_6:
 	movlpd	xmm3,qword ptr [real_26_bits+rip]
 	movsd	xmm1,xmm6				# x
 
-	addsd	xmm11,qword ptr [log2_b_q_0-log2_b_c+rcx] # q0+q1+q2+q3+x4
-	addsd	xmm2,qword ptr [log2_b_p_0-log2_b_c+rcx] # p0+p1+p2+p3+p4
+	addsd	xmm11,qword ptr [log2_b_q_0_offset_min_log2_b_c_offset+rcx] # q0+q1+q2+q3+x4
+	addsd	xmm2,qword ptr [log2_b_p_0_offset_min_log2_b_c_offset+rcx] # p0+p1+p2+p3+p4
 
 	subsd	xmm6,xmm8				# x-0.5x2
 
@@ -6909,8 +6912,8 @@ exp2_l_:
 
 	cmovb	rcx,rdx
 exp2_:
-	movlpd	xmm13,qword ptr [exp2_p0_2-exp2_p0_c+rcx]
-	movlpd	xmm14,qword ptr [exp2_p0_4-exp2_p0_c+rcx]
+	movlpd	xmm13,qword ptr [exp2_p0_2_offset_min_exp2_p0_c_offset+rcx]
+	movlpd	xmm14,qword ptr [exp2_p0_4_offset_min_exp2_p0_c_offset+rcx]
 
 	movsd	xmm2,xmm0				# x2
 	mulsd	xmm0,xmm0				# x4
@@ -6920,7 +6923,7 @@ exp2_:
 	movsd	xmm3,xmm1				# x
 	mulsd	xmm1,xmm2				# x3
 
-	movlpd	xmm15,qword ptr [exp2_p0_3-exp2_p0_c+rcx]
+	movlpd	xmm15,qword ptr [exp2_p0_3_offset_min_exp2_p0_c_offset+rcx]
 	mulsd	xmm14,xmm0				# p4
 	
 	mulsd	xmm15,xmm1				# p3
@@ -6935,33 +6938,33 @@ exp2_:
 	mulsd	xmm1,xmm4				# x7
 	mulsd	xmm4,xmm2				# x9
 
-	mulsd	xmm0,qword ptr [exp2_p0_8-exp2_p0_c+rcx] # p8
-	mulsd	xmm2,qword ptr [exp2_p0_5-exp2_p0_c+rcx] # p5
-	mulsd	xmm5,qword ptr [exp2_p0_6-exp2_p0_c+rcx] # p6
-	mulsd	xmm1,qword ptr [exp2_p0_7-exp2_p0_c+rcx] # p7
-	mulsd	xmm4,qword ptr [exp2_p0_9-exp2_p0_c+rcx] # p9
+	mulsd	xmm0,qword ptr [exp2_p0_8_offset_min_exp2_p0_c_offset+rcx] # p8
+	mulsd	xmm2,qword ptr [exp2_p0_5_offset_min_exp2_p0_c_offset+rcx] # p5
+	mulsd	xmm5,qword ptr [exp2_p0_6_offset_min_exp2_p0_c_offset+rcx] # p6
+	mulsd	xmm1,qword ptr [exp2_p0_7_offset_min_exp2_p0_c_offset+rcx] # p7
+	mulsd	xmm4,qword ptr [exp2_p0_9_offset_min_exp2_p0_c_offset+rcx] # p9
 
 	addsd	xmm0,xmm4				# p9+p8
 
 	movlpd	xmm9,qword ptr [real_26_bits+rip]
 	andpd	xmm9,xmm6				# xh_h
-	mulsd	xmm3,qword ptr [exp2_p0_1l-exp2_p0_c+rcx] # x*c1l
+	mulsd	xmm3,qword ptr [exp2_p0_1l_offset_min_exp2_p0_c_offset+rcx] # x*c1l
 
 	addsd	xmm0,xmm1				# p9+p8+p7
 
 	subsd	xmm6,xmm9				# xh_l
-	mulsd	xmm9,qword ptr [exp2_p0_1h-exp2_p0_c+rcx] # p1h=xh_h*c1h
+	mulsd	xmm9,qword ptr [exp2_p0_1h_offset_min_exp2_p0_c_offset+rcx] # p1h=xh_h*c1h
 
 	addsd	xmm0,xmm5				# p9+p8+p7+p6
 
-	movlpd	xmm1,qword ptr [exp2_p0_0h-exp2_p0_c+rcx]
+	movlpd	xmm1,qword ptr [exp2_p0_0h_offset_min_exp2_p0_c_offset+rcx]
 	addsd	xmm6,xmm7				# xh_l+x_l
 	movsd	xmm4,xmm9				# p1h
 	addsd	xmm9,xmm1				# p1h+c0h
 
 	addsd	xmm0,xmm2				# p9+p8+p7+p6+p5
 
-	mulsd	xmm6,qword ptr [exp2_p0_1h-exp2_p0_c+rcx] # (xh_l+x_l)*c1h
+	mulsd	xmm6,qword ptr [exp2_p0_1h_offset_min_exp2_p0_c_offset+rcx] # (xh_l+x_l)*c1h
 	subsd	xmm1,xmm9				# c0h-(p1h+c0h)
 
 	addsd	xmm0,xmm14				# p9+p8+p7+p6+p5+p4
@@ -6975,7 +6978,7 @@ exp2_:
 
 	addsd	xmm0,xmm13				# p9+p8+p7+p6+p5+p4+p3+p2
 
-	addsd	xmm0,qword ptr [exp2_p0_0l-exp2_p0_c+rcx]
+	addsd	xmm0,qword ptr [exp2_p0_0l_offset_min_exp2_p0_c_offset+rcx]
 	
 	addsd	xmm0,xmm1
 	addsd	xmm0,xmm9
