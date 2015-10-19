@@ -2007,8 +2007,8 @@ eqD_BOOL:
 	ret
 
 eqD_REAL:
-	movlpd	xmm0,qword ptr [rcx+8]
-	comisd	xmm0,qword ptr [rdx+8]
+	movlpd	xmm0,[rcx+8]
+	comisd	xmm0,[rdx+8]
 	fnstsw	ax
 	and	ah,68
 	xor	ah,64
@@ -2794,11 +2794,11 @@ allow_prefetch_for_athlon:
 	cmp	rcx,0x444d4163 # 'c+('A*0x100)+('M*0x10000)+('D*0x1000000)
 	att_jne	disable_prefetch_flag
  .else
-	cmp	rbx,65 # 'A''+('u' shl 8)+(116 # 't'' shl 16)+(104 # 'h'' shl 24)
+	cmp	rbx,'A'+('u' shl 8)+('t' shl 16)+('h' shl 24)
 	jne	disable_prefetch_flag
-	cmp	rdx,101 # 'e''+('n' shl 8)+(116 # 't'' shl 16)+(105 # 'i'' shl 24)
+	cmp	rdx,'e'+('n' shl 8)+('t' shl 16)+('i' shl 24)
 	jne	disable_prefetch_flag
-	cmp	rcx,99 # 'c''+(65 # 'A'' shl 8)+('M' shl 16)+('D' shl 24)
+	cmp	rcx,'c'+('A' shl 8)+('M' shl 16)+('D' shl 24)
 	jne	disable_prefetch_flag
  .endif
 
@@ -5094,7 +5094,7 @@ _c_entier:
 	
 entier_real:
 	cvttsd2si rax,xmm0
-	ucomisd xmm0,qword ptr [rip+real_0_0]
+	ucomisd xmm0,[rip+real_0_0]
 	jb	entier_real_m
 	ret
 
