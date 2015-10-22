@@ -26,7 +26,8 @@ rmark_array_using_reversal:
 	cmp	r6,r3
 	bhi	rmark_no_undo_reverse_2
 	str	r6,[r9]
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,18
+	otoa	r12,__ARRAY___o_2,18
 	str	r12,[r6]
 rmark_no_undo_reverse_2:
 	mov	r9,#1
@@ -43,10 +44,8 @@ rmarkr_hnf_2:
 
 rmarkr_node:
 	sub	r4,r6,r11
-.ifdef SHARE_CHAR_INT
 	cmp	r4,r2
 	bhs	rmarkr_next_node_after_static
-.endif
 
 	lsr	r3,r4,#7
 	lsr	r4,r4,#2
@@ -124,8 +123,8 @@ rmarkr_shared_argument_part:
 	b	rmarkr_hnf_1
 
 rmarkr_record:
-	ldr	r12,=258
-	subs	r8,r8,r12
+	mov	r12,#258/2
+	subs	r8,r8,r12,lsl #1
 	beq	rmarkr_record_2
 	blo	rmarkr_record_1
 
@@ -290,7 +289,6 @@ rmarkr_indirection_node:
 	add	r12,r6,#-4
 	sub	r3,r12,r11
 
-.ifdef NO_BIT_INSTRUCTIONS
 	and	r4,r3,#31*4
 	lsr	r3,r3,#7
 	lsr	r12,r4,#2
@@ -299,10 +297,7 @@ rmarkr_indirection_node:
 	ldr	r12,[r10,r3,lsl #2]
 	bic	r12,r12,r4
 	str	r12,[r10,r3,lsl #2]
-.else
-	lsr	r3,r3,#2
-?	btr	d1,(a4)
-.endif
+
 	ldr	r6,[r6]
 	b	rmarkr_node
 
@@ -356,18 +351,26 @@ rmarkr_large_tuple_or_record:
 
 	str	r6,[sp,#-4]!
 
+.ifdef PIC
+	add	r12,r4,#-8+4
+.endif
 	ldr	r4,[r4,#-8]
 
 	and	r6,r3,#31*4
 	lsr	r3,r3,#7
-	lsr	r12,r6,#2
-	mov	r6,#1
-	lsl	r6,r6,r12
+	lsr	r6,r6,#2
+.ifdef PIC
+	ldrh	r4,[r12,r4]
+.endif
+	mov	r12,#1
+	lsl	r6,r12,r6
 	ldr	r12,[r10,r3,lsl #2]
 	bic	r12,r12,r6
 	str	r12,[r10,r3,lsl #2]
 
+.ifndef PIC
 	ldrh	r4,[r4,#4]
+.endif
 	cmp	r4,#8
 	blt	rmarkr_tuple_or_record_selector_node_2
 	ldr	r7,[r7,#8]
@@ -375,7 +378,8 @@ rmarkr_large_tuple_or_record:
 	add	r12,r4,#-12
 	ldr	r6,[r7,r12]
 	ldr	r7,[sp],#4
-	ldr	r12,=__indirection
+	lao	r12,__indirection,20
+	otoa	r12,__indirection,20
 	str	r12,[r7,#-4]
 	str	r6,[r7]
 	b	rmarkr_node
@@ -383,7 +387,8 @@ rmarkr_large_tuple_or_record:
 rmarkr_tuple_selector_node_2:
 	ldr	r6,[r7]
 	ldr	r7,[sp],#4
-	ldr	r12,=__indirection
+	lao	r12,__indirection,21
+	otoa	r12,__indirection,21
 	str	r12,[r7,#-4]
 	str	r6,[r7]
 	b	rmarkr_node
@@ -406,8 +411,8 @@ rmarkr_record_selector_node_1:
 	beq	rmarkr_hnf_1
 
 	ldrh	r12,[r3,#-2]
-	ldr	r3,=258
-	cmp	r12,r3
+	mov	r3,#258/2
+	cmp	r12,r3,lsl #1
 	bls	rmarkr_small_tuple_or_record
 
 	ldr	r3,[r7,#8]
@@ -429,27 +434,35 @@ rmarkr_small_tuple_or_record:
 	sub	r3,r12,r11
 
 	str	r6,[sp,#-4]!
-
+.ifdef PIC
+	add	r12,r4,#-8+4
+.endif
 	ldr	r4,[r4,#-8]
 
 	and	r6,r3,#31*4
 	lsr	r3,r3,#7
-	lsr	r12,r6,#2
-	mov	r6,#1
-	lsl	r6,r6,r12
+	lsr	r6,r6,#2
+.ifdef PIC
+	ldrh	r4,[r12,r4]
+.endif
+	mov	r12,#1
+	lsl	r6,r12,r6
 	ldr	r12,[r10,r3,lsl #2]
 	bic	r12,r12,r6
 	str	r12,[r10,r3,lsl #2]
 
+.ifndef PIC
 	ldrh	r4,[r4,#4]
+.endif
 	cmp	r4,#8
 	ble	rmarkr_tuple_or_record_selector_node_2
 	ldr	r7,[r7,#8]
-	subs	r4,r4,#12
+	sub	r4,r4,#12
 rmarkr_tuple_or_record_selector_node_2:
 	ldr	r6,[r7,r4]
 	ldr	r7,[sp],#4
-	ldr	r12,=__indirection
+	lao	r12,__indirection,22
+	otoa	r12,__indirection,22
 	str	r12,[r7,#-4]
 	str	r6,[r7]
 	b	rmarkr_node
@@ -470,8 +483,8 @@ rmarkr_strict_record_selector_node_1:
 	beq	rmarkr_hnf_1
 
 	ldrh	r12,[r3,#-2]
-	ldr	r3,=258
-	cmp	r12,r3
+	mov	r3,#258/2
+	cmp	r12,r3,lsl #1
 	bls	rmarkr_select_from_small_record
 
 	ldr	r3,[r7,#8]
@@ -489,10 +502,19 @@ rmarkr_strict_record_selector_node_1:
 	bne	rmarkr_hnf_1
 
 rmarkr_select_from_small_record:
+.ifdef PIC
+	ldr	r12,[r4,#-8]
+	add	r4,r4,#-8+4
+.else
 	ldr	r4,[r4,#-8]
-	subs	r6,r6,#4
+.endif
+	sub	r6,r6,#4
 
+.ifdef PIC
+	ldrh	r3,[r4,r12]!
+.else
 	ldrh	r3,[r4,#4]
+.endif
 	cmp	r3,#8
 	ble	rmarkr_strict_record_selector_node_2
 	ldr	r12,[r7,#8]
@@ -504,7 +526,11 @@ rmarkr_strict_record_selector_node_2:
 rmarkr_strict_record_selector_node_3:
 	str	r3,[r6,#4]
 
+.ifdef PIC
+	ldrh	r3,[r4,#6-4]
+.else
 	ldrh	r3,[r4,#6]
+.endif
 	tst	r3,r3
 	beq	rmarkr_strict_record_selector_node_5
 	cmp	r3,#8
@@ -516,7 +542,11 @@ rmarkr_strict_record_selector_node_4:
 	str	r3,[r6,#8]
 rmarkr_strict_record_selector_node_5:
 
+.ifdef PIC
+	ldr	r4,[r4,#-4-4]
+.else
 	ldr	r4,[r4,#-4]
+.endif
 	str	r4,[r6]
 	b	rmarkr_next_node
 
@@ -598,19 +628,20 @@ rmarkr_closure_with_unboxed_arguments:
 	b	rmarkr_next_node
 
 rmarkr_hnf_0:
-.ifdef SHARE_CHAR_INT
-	ldr	r12,=INT+2
+	laol	r12,INT+2,INT_o_2,12
+	otoa	r12,INT_o_2,12
 	cmp	r4,r12
 	beq	rmarkr_int_3
 
-	ldr	r12,=CHAR+2
+	laol	r12,CHAR+2,CHAR_o_2,7
+	otoa	r12,CHAR_o_2,7
 	cmp	r4,r12
  	beq	rmarkr_char_3
 
 	blo	rmarkr_no_normal_hnf_0
 
 	sub	r3,r6,r11
-.ifdef NO_BIT_INSTRUCTIONS
+
 	and	r6,r3,#31*4
 	lsr	r3,r3,#7
 	lsr	r12,r6,#2
@@ -619,10 +650,7 @@ rmarkr_hnf_0:
 	ldr	r12,[r10,r3,lsl #2]
 	bic	r12,r12,r6
 	str	r12,[r10,r3,lsl #2]
-.else
-	lsr	r3,r3,#2
-?	btr	d1,(a4)
-.endif
+
 	add	r6,r4,#ZERO_ARITY_DESCRIPTOR_OFFSET-2
 	b	rmarkr_next_node_after_static
 
@@ -633,7 +661,6 @@ rmarkr_int_3:
 
 	sub	r3,r6,r11
 
-.ifdef NO_BIT_INSTRUCTIONS
 	and	r6,r3,#31*4
 	lsr	r3,r3,#7
 	lsr	r12,r6,#2
@@ -642,11 +669,9 @@ rmarkr_int_3:
 	ldr	r12,[r10,r3,lsl #2]
 	bic	r12,r12,r6
 	str	r12,[r10,r3,lsl #2]
-.else
-	lsr	r3,r3,#2
-?	btr	d1,(a4)
-.endif
-	ldr	r12,=small_integers
+
+	lao	r12,small_integers,4
+	otoa	r12,small_integers,4
 	add	r6,r12,r8,lsl #3
 	b	rmarkr_next_node_after_static
 
@@ -654,7 +679,6 @@ rmarkr_char_3:
 	ldrb	r4,[r6,#4]
 	sub	r3,r6,r11
 
-.ifdef NO_BIT_INSTRUCTIONS
 	and	r8,r3,#31*4
 	lsr	r3,r3,#7
 	lsr	r12,r8,#2
@@ -663,19 +687,15 @@ rmarkr_char_3:
 	ldr	r12,[r10,r3,lsl #2]
 	bic	r12,r12,r8
 	str	r12,[r10,r3,lsl #2]
-.else
-	lsr	r3,r3,#2
-?	btr	d1,(a4)
-.endif
 
-	ldr	r12,=static_characters
+	lao	r12,static_characters,4
+	otoa	r12,static_characters,4
 	add	r6,r12,r4,lsl #3
 	b	rmarkr_next_node_after_static
 
 rmarkr_no_normal_hnf_0:
-.endif
-
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,19
+	otoa	r12,__ARRAY___o_2,19
 	cmp	r4,r12
 	bne	rmarkr_next_node
 
@@ -900,7 +920,6 @@ rmarkr_skip_pointer_list1:
 	ldr	r7,[sp],#4
 	b	rmarkr_c_argument_part_cycle1
 
-.ifdef SHARE_CHAR_INT
 rmarkr_next_node_after_static:
 	tst	r9,#3
 	bne	rmarkr_parent_after_static
@@ -976,7 +995,6 @@ rmarkr_skip_pointer_list2:
 	str	r4,[r7]
 	ldr	r7,[sp],#4
 	b	rmarkr_c_argument_part_cycle2
-.endif
 
 end_rmarkr_after_static:
 	ldr	r9,[sp]
@@ -1012,4 +1030,15 @@ rmarkr_next_stack_node:
 
 	b	rmark_next_node_
 
+.ifdef PIC
+	ltol	__ARRAY__+2,__ARRAY___o_2,18
+	lto	__indirection,20
+	lto	__indirection,21
+	lto	__indirection,22
+	ltol	INT+2,INT_o_2,12
+	ltol	CHAR+2,CHAR_o_2,7
+	lto	small_integers,4
+	lto	static_characters,4
+	ltol	__ARRAY__+2,__ARRAY___o_2,19
+.endif
 	.ltorg

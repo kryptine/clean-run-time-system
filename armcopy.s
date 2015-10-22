@@ -4,31 +4,34 @@ COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP = 1
 
 	str	r9,[sp,#-4]!
 
-	ldr	r12,=heap_p2
-	ldr	r10,[r12]
+	lao	r12,heap_p2,9
+	ldo	r10,r12,heap_p2,9
 
-	ldr	r12,=heap_size_129
-	ldr	r4,[r12]
+	lao	r12,heap_size_129,4
+	ldo	r4,r12,heap_size_129,4
 	lsl	r4,r4,#6
 
-	ldr	r12,=semi_space_size
-	str	r4,[r12]
+	lao	r12,semi_space_size,0
+	sto	r4,r12,semi_space_size,0
+
 	add	r9,r10,r4
 
 @ r0 = INT+2
-	ldr	r0,=INT+2
 @ r1 = CHAR+2
-	ldr	r1,=CHAR+2
+	laol	r0,INT+2,INT_o_2,6
+	laol	r1,CHAR+2,CHAR_o_2,2
+	otoa	r0,INT_o_2,6
+	otoa	r1,CHAR_o_2,2
 
 .if WRITE_HEAP
-	ldr	r12,=heap2_begin_and_end
-	str	r9,[r12,#4]
+	laol	r12,heap2_begin_and_end+4,heap2_begin_and_end_o_4,0
+	sto	r9,r12,heap2_begin_and_end_o_4,0
 .endif
 
 	sub	sp,sp,#16
 
-	ldr	r12,=caf_list
-	ldr	r4,[r12]
+	lao	r12,caf_list,0
+	ldo	r4,r12,caf_list,0
 	tst	r4,r4
 	beq	end_copy_cafs
 
@@ -47,8 +50,8 @@ copy_cafs_lp:
 
 end_copy_cafs:
 	ldr	r3,[sp,#16]
-	ldr	r12,=stack_p
-	ldr	r8,[r12]
+	lao	r12,stack_p,4
+	ldo	r8,r12,stack_p,4
 	sub	r3,r3,r8
 	lsr	r3,r3,#2
 
@@ -57,19 +60,21 @@ end_copy_cafs:
 	mov	r2,#-2
 	bl	copy_lp2
 end_copy0:
-	ldr	r12,=heap_p2
-	ldr	r8,[r12]
+	lao	r12,heap_p2,10
+	ldo	r8,r12,heap_p2,10
 
 	bl	copy_lp1
 
 	add	sp,sp,#16
 
-	ldr	r12,=heap_end_after_gc
-	str	r9,[r12]
+	lao	r12,heap_end_after_gc,10
+	sto	r9,r12,heap_end_after_gc,10
 
 .ifdef FINALIZERS
-	ldr	r6,=finalizer_list
-	ldr	r7,=free_finalizer_list
+	lao	r6,finalizer_list,1
+	lao	r7,free_finalizer_list,3
+	otoa	r6,finalizer_list,1
+	otoa	r7,free_finalizer_list,3
 	ldr	r8,[r6]
 
 determine_free_finalizers_after_copy:
@@ -84,7 +89,8 @@ determine_free_finalizers_after_copy:
 	b	determine_free_finalizers_after_copy
 
 finalizer_not_used_after_copy:
-	ldr	r12,=__Nil-4
+	laol	r12,__Nil-4,__Nil_o_m4,3
+	otoa	r12,__Nil_o_m4,3
 	cmp	r8,r12
 	beq	end_finalizers_after_copy
 
@@ -100,7 +106,27 @@ end_finalizers_after_copy:
 
 	b	skip_copy_gc
 
+.ifdef PIC
+	lto	heap_p2,9
+	lto	heap_size_129,4
+	lto	semi_space_size,0
+	ltol	INT+2,INT_o_2,6
+	ltol	CHAR+2,CHAR_o_2,2
+ .if WRITE_HEAP
+	ltol	heap2_begin_and_end+4,heap2_begin_and_end_o_4,0
+ .endif
+	lto	caf_list,0
+	lto	stack_p,4
+	lto	heap_p2,10
+	lto	heap_end_after_gc,10
+ .ifdef FINALIZERS
+	lto	finalizer_list,1
+	lto	free_finalizer_list,3
+	ltol	__Nil-4,__Nil_o_m4,3
+ .endif
+.endif
 	.ltorg
+
 
 @
 @	Copy nodes to the other semi-space
@@ -224,9 +250,11 @@ copy_int_2:
 	cmp	r4,#33
 	bhs	no_small_int_or_char_2
 
-	ldr	r12,=small_integers
-	add	r4,r12,r4,lsl #3
+	lao	r12,small_integers,1
 	subs	r3,r3,#1
+	otoa	r12,small_integers,1
+
+	add	r4,r12,r4,lsl #3
 
 	str	r4,[r5]
 	bne	copy_lp2
@@ -237,9 +265,11 @@ copy_int_2:
 copy_char_2:
 	and	r4,r4,#255
 
-	ldr	r12,=static_characters
-	add	r4,r12,r4,lsl #3
+	lao	r12,static_characters,1
 	subs	r3,r3,#1
+	otoa	r12,static_characters,1
+
+	add	r4,r12,r4,lsl #3
 
 	str	r4,[r5]
 	bne	copy_lp2
@@ -273,7 +303,8 @@ copy_normal_hnf_0_2:
 	b	copy_lp1
 
 copy_real_file_or_string_2:
-	ldr	r12,=__STRING__+2
+	laol	r12,__STRING__+2,__STRING___o_2,7
+	otoa	r12,__STRING___o_2,7
 	cmp	r6,r12
 	bls	copy_string_or_array_2
 
@@ -423,12 +454,12 @@ copy_record_node2_3_ab:
 	str	r4,[sp,#-4]!
 	add	r4,r10,#1
 
-	ldr	r12,=heap_p1
+	lao	r12,heap_p1,9
 
 	str	r4,[r7]
 	ldr	r4,[r7,#8]
 
-	ldr	r12,[r12]
+	ldo	r12,r12,heap_p1,9
 
 	str	r6,[r10]
 	ldr	r7,[r7,#4]
@@ -436,7 +467,7 @@ copy_record_node2_3_ab:
 	mov	r6,r4
 	sub	r4,r4,r12
 
-	ldr	r12,=heap_copied_vector
+	lao	r12,heap_copied_vector,4
 
 	str	r7,[r10,#4]
 
@@ -445,7 +476,7 @@ copy_record_node2_3_ab:
 
 	and	r4,r4,#31
 
-	ldr	r12,[r12]
+	ldo	r12,r12,heap_copied_vector,4
 	and	r7,r7,#-4
 
 	str	r10,[r5]
@@ -481,12 +512,12 @@ copy_record_node2_3_b:
 	str	r4,[sp,#-4]!
 	add	r4,r9,#-12+1
 
-	ldr	r12,=heap_p1
+	lao	r12,heap_p1,10
 
 	str	r4,[r7]
 	ldr	r4,[r7,#8]
 
-	ldr	r12,[r12]
+	ldo	r12,r12,heap_p1,10
 
 	str	r6,[r9,#-12]
 	ldr	r7,[r7,#4]
@@ -494,7 +525,7 @@ copy_record_node2_3_b:
 	mov	r6,r4
 	sub	r4,r4,r12
 
-	ldr	r12,=heap_copied_vector
+	lao	r12,heap_copied_vector,5
 
 	str	r7,[r9,#-8]
 
@@ -504,7 +535,7 @@ copy_record_node2_3_b:
 
 	and	r4,r4,#31
 
-	ldr	r12,[r12]
+	ldo	r12,r12,heap_copied_vector,5
 	and	r7,r7,#-4
 
 	str	r9,[r5]
@@ -684,10 +715,17 @@ copy_selector_2:
 	tst	r12,#1
 	bne	copy_arity_1_node2__
 
+.ifdef PIC
+	add	r11,r6,#-8+4
+.endif
 	ldr	r6,[r6,#-8]
-
+	lao	r12,__indirection,8
+.ifdef PIC
+	ldrh	r6,[r11,r6]
+.else
 	ldrh	r6,[r6,#4]
-	ldr	r12,=__indirection
+.endif
+	otoa	r12,__indirection,8
 	str	r12,[r7]
 
 	cmp	r6,#8
@@ -716,11 +754,19 @@ copy_selector_2_2:
 	b	continue_after_selector_2
 
 copy_selector_2_:
+.ifdef PIC
+	add	r11,r6,#-8+4
+.endif
 	ldr	r6,[r6,#-8]
 	ldr	r3,[sp],#4
 
+	lao	r12,__indirection,9
+.ifdef PIC
+	ldrh	r6,[r11,r6]
+.else
 	ldrh	r6,[r6,#4]
-	ldr	r12,=__indirection
+.endif
+	otoa	r12,__indirection,9
 	str	r12,[r7]
 
 	ldr	r6,[r4,r6]
@@ -746,23 +792,23 @@ copy_record_selector_2:
 	cmp	r12,#2
 	bhs	copy_selector_2__
 
-	ldr	r12,=heap_p1
+	lao	r12,heap_p1,11
 
 	ldr	r4,[r7,#4]
 	str	r7,[sp,#-4]!
 
-	ldr	r12,[r12]
+	ldo	r12,r12,heap_p1,11
 
 	ldr	r4,[r4,#8]
 
 	sub	r4,r4,r12
 
-	ldr	r12,=heap_copied_vector
+	lao	r12,heap_copied_vector,6
 
 	lsr	r7,r4,#6
 	lsr	r4,r4,#3
 
-	ldr	r12,[r12]
+	ldo	r12,r12,heap_copied_vector,6
 
 	and	r7,r7,#-4
 	and	r4,r4,#31
@@ -784,12 +830,20 @@ copy_selector_2__:
 	tst	r12,#1
 	bne	copy_arity_1_node2_
 copy_record_selector_2_:
+.ifdef PIC
+	add	r11,r6,#-8+4
+.endif
 	ldr	r4,[r6,#-8]
+	lao	r12,__indirection,10
 	ldr	r6,[r7,#4]
-	ldr	r12,=__indirection
+	otoa	r12,__indirection,10
 	str	r12,[r7]
 
+.ifdef PIC
+	ldrh	r4,[r11,r4]
+.else
 	ldrh	r4,[r4,#4]
+.endif
 	cmp	r4,#8
 	ble	copy_record_selector_3
 	ldr	r6,[r6,#8]
@@ -824,23 +878,23 @@ copy_strict_record_selector_2:
 	b	copy_strict_record_selector_2_
 
 copy_strict_record_selector_2_b:
-	ldr	r12,=heap_p1
+	lao	r12,heap_p1,12
 
  	ldr	r4,[r7,#4]
 	str	r7,[sp,#-4]!
 
-	ldr	r12,[r12]
+	ldo	r12,r12,heap_p1,12
 
 	ldr	r4,[r4,#8]
 
 	sub	r4,r4,r12
 
-	ldr	r12,=heap_copied_vector
+	lao	r12,heap_copied_vector,7
 
 	lsr	r7,r4,#6
 	lsr	r4,r4,#3
 
-	ldr	r12,[r12]
+	ldo	r12,r12,heap_copied_vector,7
 
 	and	r7,r7,#-4
 	and	r4,r4,#31
@@ -857,12 +911,19 @@ copy_strict_record_selector_2_b:
 	bne	copy_arity_1_node2_
 
 copy_strict_record_selector_2_:
+.ifdef PIC
+	add	r11,r6,#-8+4
+.endif
 	ldr	r4,[r6,#-8]
 
 	str	r3,[sp,#-4]!
 	ldr	r6,[r7,#4]
 
+.ifdef PIC
+	ldrh	r3,[r4,r11]!
+.else
 	ldrh	r3,[r4,#4]
+.endif
 	cmp	r3,#8
 	ble	copy_strict_record_selector_3
 	ldr	r12,[r6,#8]
@@ -874,7 +935,11 @@ copy_strict_record_selector_3:
 copy_strict_record_selector_4:
 	str	r3,[r7,#4]
 
+.ifdef PIC
+	ldrh	r3,[r4,#6-4]
+.else
 	ldrh	r3,[r4,#6]
+.endif
 	tst	r3,r3
 	beq	copy_strict_record_selector_6
 	cmp	r3,#8
@@ -886,7 +951,11 @@ copy_strict_record_selector_5:
 	str	r3,[r7,#8]
 copy_strict_record_selector_6:
 
+.ifdef PIC
+	ldr	r6,[r4,#-4-4]
+.else
 	ldr	r6,[r4,#-4]
+.endif
 	str	r6,[r7]
 	ldr	r3,[sp],#4
 	tst	r6,#2
@@ -910,7 +979,8 @@ copy_arity_0_node2_:
 copy_string_or_array_2:
 .ifdef DLL
 	beq	copy_string_2
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,15
+	otoa	r12,__ARRAY___o_2,15
 	cmp	r6,r12
 	blo	copy_normal_hnf_0_2
 	mov	r6,r7
@@ -921,12 +991,12 @@ copy_string_2:
 	mov	r6,r7
 	bne	copy_array_2
 .endif
-	ldr	r12,=heap_p1
-	ldr	r12,[r12]
+	lao	r12,heap_p1,13
+	ldo	r12,r12,heap_p1,13
 	sub	r7,r7,r12
 	
-	ldr	r12,=semi_space_size
-	ldr	r12,[r12]
+	lao	r12,semi_space_size,1
+	ldo	r12,r12,semi_space_size,1
 	cmp	r7,r12
 	bhs	copy_string_or_array_constant
 
@@ -965,12 +1035,12 @@ cp_s_arg_lp2:
 	b	copy_lp1
 
 copy_array_2:
-	ldr	r12,=heap_p1
-	ldr	r12,[r12]
+	lao	r12,heap_p1,14
+	ldo	r12,r12,heap_p1,14
 	sub	r7,r7,r12
 	
-	ldr	r12,=semi_space_size
-	ldr	r12,[r12]
+	lao	r12,semi_space_size,2
+	ldo	r12,r12,semi_space_size,2
 	cmp	r7,r12
 	bhs	copy_string_or_array_constant
 
@@ -1016,7 +1086,8 @@ copy_strict_basic_array_2:
 	cmp	r4,r0 @ INT+2
 	beq	copy_int_array_2
 
-	ldr	r12,=BOOL+2
+	laol	r12,BOOL+2,BOOL_o_2,4
+	otoa	r12,BOOL_o_2,4
 	cmp	r4,r12
 	beq	copy_bool_array_2
 
@@ -1229,6 +1300,31 @@ copy_array_21_lp_ab_next:
 	bne	copy_array_21_lp_ab
 
 	b	copy_lp1
+
+.ifdef PIC
+	lto	small_integers,1
+	lto	static_characters,1
+	ltol	__STRING__+2,__STRING___o_2,7
+	lto	heap_p1,9
+	lto	heap_copied_vector,4
+	lto	heap_p1,10
+	lto	heap_copied_vector,5
+	lto	__indirection,8
+	lto	__indirection,9
+	lto	heap_p1,11
+	lto	heap_copied_vector,6
+	lto	__indirection,10
+	lto	heap_p1,12
+	lto	heap_copied_vector,7
+ .ifdef DLL
+ 	ltol	__ARRAY__+2,__ARRAY___o_2,15
+ .endif
+	lto	heap_p1,13
+	lto	semi_space_size,1
+	lto	heap_p1,14
+	lto	semi_space_size,2
+	ltol	BOOL+2,BOOL_o_2,4
+.endif
 
 	.ltorg
 

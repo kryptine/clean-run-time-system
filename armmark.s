@@ -6,14 +6,14 @@ ZERO_ARITY_DESCRIPTOR_OFFSET = -4
 #undef COMPARE_HEAP_AFTER_MARK
 #undef DEBUG_MARK_COLLECT
 
-	ldr	r12,=heap_size_33
-	ldr	r4,[r12]
+	lao	r12,heap_size_33,6
+	ldo	r4,r12,heap_size_33,6
 	mov	r3,#0
 
 @ heap_p3 in r0
 
-	ldr	r12,=heap_p3
-	ldr	r0,[r12]
+	lao	r12,heap_p3,9
+	ldo	r0,r12,heap_p3,9
 
 @ n_marked_words in r2
 
@@ -21,21 +21,21 @@ ZERO_ARITY_DESCRIPTOR_OFFSET = -4
 
 	lsl	r1,r4,#5
 @ heap_size_32_33 in r1
-	ldr	r12,=heap_size_32_33
-	str	r1,[r12]
+	lao	r12,heap_size_32_33,0
+	sto	r1,r12,heap_size_32_33,0
 
-	ldr	r12,=lazy_array_list
-	str	r3,[r12]
+	lao	r12,lazy_array_list,0
+	sto	r3,r12,lazy_array_list,0
 
 	add	r9,sp,#-2000
 
-	ldr	r12,=caf_list
-	ldr	r4,[r12]
+	lao	r12,caf_list,1
+	ldo	r4,r12,caf_list,1
 
-	ldr	r12,=end_stack
+	lao	r12,end_stack,0
 @ end_stack in r11
 	mov	r11,r9
-	str	r9,[r12]
+	sto	r9,r12,end_stack,0
 
 	tst	r4,r4
 	beq	_end_mark_cafs
@@ -48,8 +48,8 @@ _mark_cafs_lp:
 	add	r8,r4,#4
 	add	r12,r4,#4
 	add	r4,r12,r3,lsl #2
-	ldr	r12,=end_vector
-	str	r4,[r12]
+	lao	r12,end_vector,0
+	sto	r4,r12,end_vector,0
 
 	str	pc,[sp,#-4]!
 	bl	_mark_stack_nodes
@@ -59,25 +59,26 @@ _mark_cafs_lp:
 	bne	_mark_cafs_lp
 
 _end_mark_cafs:
-	ldr	r12,=stack_top
-	ldr	r9,[r12]
-	ldr	r12,=stack_p
-	ldr	r8,[r12]
+	lao	r12,stack_top,2
+	ldo	r9,r12,stack_top,2
+	lao	r12,stack_p,5
+	ldo	r8,r12,stack_p,5
 
-	ldr	r12,=end_vector	
-	str	r9,[r12]	
+	lao	r12,end_vector,1
+	sto	r9,r12,end_vector,1
 	str	pc,[sp,#-4]!
 	bl	_mark_stack_nodes
 
-	ldr	r12,=lazy_array_list
-	ldr	r6,[r12]
+	lao	r12,lazy_array_list,1
+	ldo	r6,r12,lazy_array_list,1
 
 	cmp	r6,#0
 	beq	end_restore_arrays
 
 restore_arrays:
 	ldr	r3,[r6]
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,16
+	otoa	r12,__ARRAY___o_2,16
 	str	r12,[r6]
 
 	cmp	r3,#1
@@ -172,14 +173,17 @@ restore_array_size_1:
 end_restore_arrays:
 
 .ifdef FINALIZERS
-	ldr	r12,=heap_vector
-	ldr	r10,[r12]
-	ldr	r6,=finalizer_list
-	ldr	r7,=free_finalizer_list
+	lao	r12,heap_vector,7
+	ldo	r10,r12,heap_vector,7
+	lao	r6,finalizer_list,2
+	lao	r7,free_finalizer_list,4
+	otoa	r6,finalizer_list,2
+	otoa	r7,free_finalizer_list,4
 
 	ldr	r8,[r6]
 determine_free_finalizers_after_mark:
-	ldr	r12,=__Nil-4
+	laol	r12,__Nil-4,__Nil_o_m4,4
+	otoa	r12,__Nil_o_m4,4
 	cmp	r8,r12
 	beq	end_finalizers_after_mark
 
@@ -218,17 +222,17 @@ end_finalizers_after_mark:
 	ldr	r2,[sp],#4
 
 .ifdef ADJUST_HEAP_SIZE
-	ldr	r12,=bit_vector_size
-	ldr	r4,[r12]
+	lao	r12,bit_vector_size,3
+	ldo	r4,r12,bit_vector_size,3
 .else
-	ldr	r12,=heap_size_33
-	ldr	r4,[r12]
+	lao	r12,heap_size_33,7
+	ldo	r4,r12,heap_size_33,7
 	lsl	r4,r4,#3
 .endif
 
 .ifdef ADJUST_HEAP_SIZE
-	ldr	r12,=n_allocated_words
-	ldr	r10,[r12]
+	lao	r12,n_allocated_words,7
+	ldo	r10,r12,n_allocated_words,7
 	add	r10,r10,r2
 	lsl	r10,r10,#2
 
@@ -237,8 +241,8 @@ end_finalizers_after_mark:
 	str	r7,[sp,#-4]!
 	str	r4,[sp,#-4]!
 
-	ldr	r12,=heap_size_multiple
-	ldr	r12,[r12]
+	lao	r12,heap_size_multiple,3
+	ldo	r12,r12,heap_size_multiple,3
 	umull	r4,r7,r12,r10
 	lsr	r4,r4,#8
 	orr	r4,r4,r7,lsl #32-8
@@ -252,30 +256,30 @@ end_finalizers_after_mark:
 
 	beq	not_largest_heap
 
-	ldr	r12,=heap_size_33
-	ldr	r3,[r12]
+	lao	r12,heap_size_33,8
+	ldo	r3,r12,heap_size_33,8
 	lsl	r3,r3,#5
 
 not_largest_heap:
 	cmp	r3,r9
 	bls	no_larger_heap
 
-	ldr	r12,=heap_size_33
-	ldr	r9,[r12]
+	lao	r12,heap_size_33,9
+	ldo	r9,r12,heap_size_33,9
 	lsl	r9,r9,#5
 	cmp	r3,r9
 	bls	not_larger_then_heap
 	mov	r3,r9
 not_larger_then_heap:
 	lsr	r4,r3,#2
-	ldr	r12,=bit_vector_size
-	str	r4,[r12]
+	lao	r12,bit_vector_size,4
+	sto	r4,r12,bit_vector_size,4
 no_larger_heap:
 .endif
 	mov	r8,r4
 
-	ldr	r12,=heap_vector
-	ldr	r10,[r12]
+	lao	r12,heap_vector,8
+	ldo	r10,r12,heap_vector,8
 
 	lsr	r8,r8,#5
 
@@ -288,24 +292,26 @@ no_larger_heap:
 no_extra_word:
 	sub	r4,r4,r2
 	lsl	r4,r4,#2
-	ldr	r12,=n_last_heap_free_bytes
-	str	r4,[r12]
+	lao	r12,n_last_heap_free_bytes,2
+	sto	r4,r12,n_last_heap_free_bytes,2
 
-	ldr	r12,=flags
-	ldr	r12,[r12]
+	lao	r12,flags,15
+	ldo	r12,r12,flags,15
 	tst	r12,#2
 	beq	_no_heap_use_message2
 
 	str	r2,[sp,#-4]!
 
-	ldr	r0,=marked_gc_string_1
+	lao	r0,marked_gc_string_1,0
+	otoa	r0,marked_gc_string_1,0
 	bl	ew_print_string
 
 	ldr	r2,[sp]
 	lsl	r0,r2,#2
 	bl	ew_print_int
 
-	ldr	r0,=heap_use_after_gc_string_2
+	lao	r0,heap_use_after_gc_string_2,1
+	otoa	r0,heap_use_after_gc_string_2,1
 	bl	ew_print_string
 
 	ldr	r2,[sp],#4
@@ -317,8 +323,8 @@ _no_heap_use_message2:
 	bl	call_finalizers
 .endif
 
-	ldr	r12,=n_allocated_words
-	ldr	r9,[r12]
+	lao	r12,n_allocated_words,8
+	ldo	r9,r12,n_allocated_words,8
 	mov	r3,#0
 
 @ n_free_words_after_mark in r2
@@ -333,8 +339,8 @@ _scan_bits:
 	subs	r8,r8,#1
 	bne	_scan_bits
 
-	ldr	r12,=n_free_words_after_mark
-	str	r2,[r12]
+	lao	r12,n_free_words_after_mark,5
+	sto	r2,r12,n_free_words_after_mark,5
 	b	_end_scan
 
 _zero_bits:
@@ -343,8 +349,8 @@ _zero_bits:
 	subs	r8,r8,#1
 	bne	_skip_zero_bits_lp1
 
-	ldr	r12,=n_free_words_after_mark
-	str	r2,[r12]
+	lao	r12,n_free_words_after_mark,6
+	sto	r2,r12,n_free_words_after_mark,6
 	b	_end_bits
 
 _skip_zero_bits_lp:
@@ -355,8 +361,8 @@ _skip_zero_bits_lp1:
 	subs	r8,r8,#1
 	bne	_skip_zero_bits_lp
 
-	ldr	r12,=n_free_words_after_mark
-	str	r2,[r12]
+	lao	r12,n_free_words_after_mark,7
+	sto	r2,r12,n_free_words_after_mark,7
 
 	cmp	r4,#0
 	beq	_end_bits
@@ -376,28 +382,28 @@ _end_zero_bits:
 
 @ n_free_words_after_mark updated
 _found_free_memory:
-	ldr	r12,=n_free_words_after_mark
-	str	r2,[r12]
-	ldr	r12,=bit_counter
-	str	r8,[r12]
-	ldr	r12,=bit_vector_p
-	str	r6,[r12]
+	lao	r12,n_free_words_after_mark,8
+	sto	r2,r12,n_free_words_after_mark,8
+	lao	r12,bit_counter,3
+	sto	r8,r12,bit_counter,3
+	lao	r12,bit_vector_p,2
+	sto	r6,r12,bit_vector_p,2
 
 	sub	r5,r4,r9
 
 	add	r3,r7,#-4
 	sub	r3,r3,r10
 	lsl	r3,r3,#5
-	ldr	r12,=heap_p3
-	ldr	r10,[r12]
+	lao	r12,heap_p3,10
+	ldo	r10,r12,heap_p3,10
 	add	r10,r10,r3
 
-	ldr	r12,=stack_top
-	ldr	r9,[r12]
+	lao	r12,stack_top,3
+	ldo	r9,r12,stack_top,3
 
 	add	r3,r10,r4,lsl #2
-	ldr	r12,=heap_end_after_gc
-	str	r3,[r12]
+	lao	r12,heap_end_after_gc,11
+	sto	r3,r12,heap_end_after_gc,11
 
 	ldmia	sp!,{r0-r4,pc}
 
@@ -412,15 +418,64 @@ _end_bits2:
 	cmp	r4,r9
 	bhs	_found_free_memory
 
-	ldr	r12,=n_free_words_after_mark
-	str	r2,[r12]
+	lao	r12,n_free_words_after_mark,9
+	sto	r2,r12,n_free_words_after_mark,9
 
 @ n_free_words_after_mark updated
 _end_scan:
-	ldr	r12,=bit_counter
-	str	r8,[r12]
+	lao	r12,bit_counter,4
+	sto	r8,r12,bit_counter,4
 	b	compact_gc
 
+.ifdef PIC
+	lto	heap_size_33,6
+	lto	heap_p3,9
+	lto	heap_size_32_33,0
+	lto	lazy_array_list,0
+	lto	caf_list,1
+	lto	end_stack,0
+	lto	end_vector,0
+	lto	stack_top,2
+	lto	stack_p,5
+	lto	end_vector,1
+	lto	lazy_array_list,1
+	ltol	__ARRAY__+2,__ARRAY___o_2,16
+.ifdef FINALIZERS
+	lto	heap_vector,7
+	lto	finalizer_list,2
+	lto	free_finalizer_list,4
+	ltol	__Nil-4,__Nil_o_m4,4
+.endif
+.ifdef ADJUST_HEAP_SIZE
+	lto	bit_vector_size,3
+.else
+	lto	heap_size_33,7
+.endif
+.ifdef ADJUST_HEAP_SIZE
+	lto	n_allocated_words,7
+	lto	heap_size_multiple,3
+	lto	heap_size_33,8
+	lto	heap_size_33,9
+	lto	bit_vector_size,4
+.endif
+	lto	heap_vector,8
+	lto	n_last_heap_free_bytes,2
+	lto	flags,15
+	lto	marked_gc_string_1,0
+	lto	heap_use_after_gc_string_2,1
+	lto	n_allocated_words,8
+	lto	n_free_words_after_mark,5
+	lto	n_free_words_after_mark,6
+	lto	n_free_words_after_mark,7
+	lto	n_free_words_after_mark,8
+	lto	bit_counter,3
+	lto	bit_vector_p,2
+	lto	heap_p3,10
+	lto	stack_top,3
+	lto	heap_end_after_gc,11
+	lto	n_free_words_after_mark,9
+	lto	bit_counter,4
+.endif
 	.ltorg
 
 @ a2: pointer to stack element
@@ -428,8 +483,8 @@ _end_scan:
 @ d0,d1,a0,a1,a3: free
 
 _mark_stack_nodes:
-	ldr	r12,=end_vector
-	ldr	r12,[r12]
+	lao	r12,end_vector,2
+	ldo	r12,r12,end_vector,2
 	cmp	r8,r12
 	beq	_end_mark_nodes
 _mark_stack_nodes_:
@@ -653,12 +708,20 @@ _large_tuple_or_record:
 	tst	r8,r12
 	bne	_mark_node3
 
+	lao	r8,__indirection,11
+.ifdef PIC
+	add	r12,r4,#-8+4
+.endif
 	ldr	r4,[r4,#-8]
-	ldr	r12,=__indirection
-	str	r12,[r6,#-4]
+	otoa	r8,__indirection,11
+	str	r8,[r6,#-4]
 	mov	r8,r6
 
+.ifdef PIC
+	ldrh	r4,[r12,r4]
+.else
 	ldrh	r4,[r4,#4]
+.endif
 	cmp	r4,#8
 	blt	_mark_tuple_selector_node_1
 	ldr	r7,[r7,#8]
@@ -674,12 +737,20 @@ _mark_tuple_selector_node_2:
 	b	_mark_node
 
 _small_tuple_or_record:
+	lao	r8,__indirection,12
+.ifdef PIC
+	add	r12,r4,#-8+4
+.endif
 	ldr	r4,[r4,#-8]
-	ldr	r12,=__indirection
-	str	r12,[r6,#-4]
+	otoa	r8,__indirection,12
+	str	r8,[r6,#-4]
 	mov	r8,r6
 
+.ifdef PIC
+	ldrh	r4,[r12,r4]
+.else
 	ldrh	r4,[r4,#4]
+.endif
 _mark_tuple_selector_node_1:
 	ldr	r6,[r7,r4]
 	str	r6,[r8]
@@ -697,8 +768,8 @@ _mark_record_selector_node_1:
 	beq	_mark_node3
 
 	ldrh	r12,[r8,#-2]
-	ldr	r3,=258
-	cmp	r12,r3
+	mov	r3,#258/2
+	cmp	r12,r3,lsl #1
 	bls	_small_tuple_or_record
 
 	ldr	r8,[r7,#8]
@@ -713,12 +784,20 @@ _mark_record_selector_node_1:
 	tst	r8,r12
 	bne	_mark_node3
 
+	lao	r8,__indirection,13
+.ifdef PIC
+	add	r12,r4,#-8+4
+.endif
 	ldr	r4,[r4,#-8]
-	ldr	r12,=__indirection
-	str	r12,[r6,#-4]
+	otoa	r8,__indirection,13
+	str	r8,[r6,#-4]
 	mov	r8,r6
 
+.ifdef PIC
+	ldrh	r4,[r12,r4]
+.else
 	ldrh	r4,[r4,#4]
+.endif
 	cmp	r4,#8
 	ble	_mark_record_selector_node_2
 	ldr	r7,[r7,#8]
@@ -739,8 +818,8 @@ _mark_strict_record_selector_node_1:
 	beq	_mark_node3
 
 	ldrh	r12,[r8,#-2]
-	ldr	r3,=258
-	cmp	r12,r3
+	mov	r3,#258/2
+	cmp	r12,r3,lsl #1
 	bls	_select_from_small_record
 
 	ldr	r8,[r7,#8]
@@ -756,11 +835,20 @@ _mark_strict_record_selector_node_1:
 	bne	_mark_node3
 
 _select_from_small_record:
+.ifdef PIC
+	ldr	r12,[r4,#-8]
+	add	r4,r4,#-8+4
+.else
 	ldr	r4,[r4,#-8]
+.endif
 
 	sub	r6,r6,#4
 
+.ifdef PIC
+	ldrh	r3,[r4,r12]!
+.else
 	ldrh	r3,[r4,#4]
+.endif
 	cmp	r3,#8
 	ble	_mark_strict_record_selector_node_2
 	ldr	r12,[r7,#8]
@@ -771,8 +859,11 @@ _mark_strict_record_selector_node_2:
 	ldr	r3,[r7,r3]
 _mark_strict_record_selector_node_3:
 	str	r3,[r6,#4]
-
+.ifdef PIC
+	ldrh	r3,[r4,#6-4]
+.else
 	ldrh	r3,[r4,#6]
+.endif
 	tst	r3,r3
 	beq	_mark_strict_record_selector_node_5
 	cmp	r3,#8
@@ -784,7 +875,11 @@ _mark_strict_record_selector_node_4:
 	str	r3,[r6,#8]
 _mark_strict_record_selector_node_5:
 
+.ifdef PIC
+	ldr	r4,[r4,#-4-4]
+.else
 	ldr	r4,[r4,#-4]
+.endif
 	str	r4,[r6]
 	b	_mark_next_node
 
@@ -798,9 +893,9 @@ _mark_next_node:
 	tst	r6,r6
 	bne	_mark_node
 
+	lao	r12,end_vector,3
 	ldr	r8,[sp],#4
-	ldr	r12,=end_vector
-	ldr	r12,[r12]
+	ldo	r12,r12,end_vector,3
 	cmp	r8,r12
 	bne	_mark_stack_nodes_
 
@@ -883,7 +978,8 @@ _mark_closure_with_one_boxed_argument:
 	b	_mark_node
 
 _mark_hnf_0:
-	ldr	r12,=INT+2
+	laol	r12,INT+2,INT_o_2,7
+	otoa	r12,INT_o_2,7
 	cmp	r4,r12
 	blo	_mark_real_file_or_string
 
@@ -891,7 +987,8 @@ _mark_hnf_0:
 	orr	r12,r12,r9
 	str	r12,[r10,r3,lsl #2]
 
-	ldr	r12,=CHAR+2
+	laol	r12,CHAR+2,CHAR_o_2,3
+	otoa	r12,CHAR_o_2,3
 	cmp	r4,r12
 	bhi	_mark_normal_hnf_0
 
@@ -912,7 +1009,8 @@ _mark_normal_hnf_0:
 	b	_mark_next_node
 
 _mark_real_file_or_string:
-	ldr	r12,=__STRING__+2
+	laol	r12,__STRING__+2,__STRING___o_2,8
+	otoa	r12,__STRING___o_2,8
 	cmp	r4,r12
 	bls	_mark_string_or_array
 
@@ -932,8 +1030,8 @@ _mark_real_or_file:
 	b	_mark_next_node
 
 _mark_record:
-	ldr	r12,=258
-	subs	r8,r8,r12
+	mov	r12,#258/2
+	subs	r8,r8,r12,lsl #1
 	beq	_mark_record_2
 	blt	_mark_record_1
 
@@ -1107,8 +1205,8 @@ _end_set_ab_array_bits:
 	str	r7,[sp,#-4]!
 	add	r8,r6,#12
 
-	ldr	r12,=end_vector
-	ldr	r12,[r12]
+	lao	r12,end_vector,4
+	ldo	r12,r12,end_vector,4
 	str	r12,[sp,#-4]!
 	b	_mark_ab_array_begin
 
@@ -1118,8 +1216,8 @@ _mark_ab_array:
 	str	r8,[sp,#-4]!
 	add	r4,r8,r3
 
-	ldr	r12,=end_vector
-	str	r4,[r12]
+	lao	r12,end_vector,5
+	sto	r4,r12,end_vector,5
 	str	pc,[sp,#-4]!
 	bl	_mark_stack_nodes
 
@@ -1132,8 +1230,8 @@ _mark_ab_array_begin:
 	bcs	_mark_ab_array
 
 	ldr	r6,[sp]
-	ldr	r12,=end_vector
-	str	r6,[r12]
+	lao	r12,end_vector,6
+	sto	r6,r12,end_vector,6
 	add	sp,sp,#12
 	b	_mark_next_node
 
@@ -1180,20 +1278,20 @@ _end_set_a_array_bits:
 	ldr	r4,[sp],#4
 	add	r8,r6,#12
 
-	ldr	r12,=end_vector
-	ldr	r12,[r12]
+	lao	r12,end_vector,7
+	ldo	r12,r12,end_vector,7
 	str	r12,[sp,#-4]!
 	add	r12,r6,#12
 	add	r4,r12,r4,lsl #2
 
-	ldr	r12,=end_vector
-	str	r4,[r12]
+	lao	r12,end_vector,8
+	sto	r4,r12,end_vector,8
 	str	pc,[sp,#-4]!
 	bl	_mark_stack_nodes
 
 	ldr	r6,[sp],#4
-	ldr	r12,=end_vector
-	str	r6,[r12]
+	lao	r12,end_vector,9
+	sto	r6,r12,end_vector,9
 	b	_mark_next_node
 
 _mark_lazy_array:
@@ -1239,20 +1337,20 @@ _end_set_lazy_array_bits:
 	ldr	r4,[r6,#4]
 	add	r8,r6,#12
 
-	ldr	r12,=end_vector
-	ldr	r12,[r12]
+	lao	r12,end_vector,10
+	ldo	r12,r12,end_vector,10
 	str	r12,[sp,#-4]!
 	add	r12,r6,#12
 	add	r4,r12,r4,lsl #2
 
-	ldr	r12,=end_vector
-	str	r4,[r12]
+	lao	r12,end_vector,11
+	sto	r4,r12,end_vector,11
 	str	pc,[sp,#-4]!
 	bl	_mark_stack_nodes
 
 	ldr	r6,[sp],#4
-	ldr	r12,=end_vector
-	str	r6,[r12]
+	lao	r12,end_vector,12
+	sto	r6,r12,end_vector,12
 	b	_mark_next_node
 
 _mark_array_using_reversal:
@@ -1263,10 +1361,12 @@ _mark_array_using_reversal:
 
 _mark_strict_basic_array:
 	ldr	r4,[r6,#4]
-	ldr	r12,=INT+2
+	laol	r12,INT+2,INT_o_2,8
+	otoa	r12,INT_o_2,8
 	cmp	r8,r12
 	beq	_mark_strict_int_array
-	ldr	r12,=BOOL+2
+	laol	r12,BOOL+2,BOOL_o_2,5
+	otoa	r12,BOOL_o_2,5
 	cmp	r8,r12
 	beq	_mark_strict_bool_array
 _mark_strict_real_array:
@@ -1333,6 +1433,27 @@ __end_mark_using_reversal:
 	b	_mark_next_node
 .endif
 
+.ifdef PIC
+	lto	end_vector,2
+	lto	__indirection,11
+	lto	__indirection,12
+	lto	__indirection,13
+	lto	end_vector,3
+	ltol	INT+2,INT_o_2,7
+	ltol	CHAR+2,CHAR_o_2,3
+	ltol	__STRING__+2,__STRING___o_2,8
+	lto	end_vector,4
+	lto	end_vector,5
+	lto	end_vector,6
+	lto	end_vector,7
+	lto	end_vector,8
+	lto	end_vector,9
+	lto	end_vector,10
+	lto	end_vector,11
+	lto	end_vector,12
+	ltol	INT+2,INT_o_2,8
+	ltol	BOOL+2,BOOL_o_2,5
+.endif
 	.ltorg
 
 __mark_using_reversal:
@@ -1512,15 +1633,25 @@ __large_tuple_or_record:
 	tst	r8,r12
 	bne	__mark_no_selector_2
 
+.ifdef PIC
+	ldr	r12,[r4,#-8]
+	add	r4,r4,#-8+4
+.else
 	ldr	r4,[r4,#-8]
+.endif
+	lao	r8,__indirection,14
 	ldr	r7,[r6]
-	ldr	r12,=__indirection
-	str	r12,[r6,#-4]
+	otoa	r8,__indirection,14
+	str	r8,[r6,#-4]
 	mov	r8,r6
 
 	ldr	r3,[sp],#4
 
+.ifdef PIC
+	ldrh	r4,[r4,r12]
+.else
 	ldrh	r4,[r4,#4]
+.endif
 	cmp	r4,#8
 	blt	__mark_tuple_selector_node_1
 	ldr	r7,[r7,#8]
@@ -1536,15 +1667,25 @@ __mark_tuple_selector_node_2:
 	b	__mark_node
 
 __small_tuple_or_record:
+.ifdef PIC
+	ldr	r12,[r4,#-8]
+	add	r4,r4,#-8+4
+.else
 	ldr	r4,[r4,#-8]
+.endif
+	lao	r8,__indirection,15
 	ldr	r7,[r6]
-	ldr	r12,=__indirection
-	str	r12,[r6,#-4]
+	otoa	r8,__indirection,15
+	str	r8,[r6,#-4]
 	mov	r8,r6
 
 	ldr	r3,[sp],#4
 
+.ifdef PIC
+	ldrh	r4,[r4,r12]
+.else
 	ldrh	r4,[r4,#4]
+.endif
 __mark_tuple_selector_node_1:
 	ldr	r6,[r7,r4]
 	str	r6,[r8]
@@ -1570,8 +1711,8 @@ __mark_record_selector_node_1:
 	beq	__mark_no_selector_2
 
 	ldrh	r12,[r3,#-2]
-	ldr	r3,=258
-	cmp	r12,r3
+	mov	r3,#258/2
+	cmp	r12,r3,lsl #1
 	bls	__small_record
 
 	ldr	r8,[r8,#8]
@@ -1587,15 +1728,25 @@ __mark_record_selector_node_1:
 	bne	__mark_no_selector_2
 
 __small_record:
+.ifdef PIC
+	ldr	r12,[r4,#-8]
+	add	r4,r4,#-8+4
+.else
 	ldr	r4,[r4,#-8]
+.endif
+	lao	r8,__indirection,16
 	ldr	r7,[r6]
-	ldr	r12,=__indirection
-	str	r12,[r6,#-4]
+	otoa	r8,__indirection,16
+	str	r8,[r6,#-4]
 	mov	r8,r6
 
 	ldr	r3,[sp],#4
 
+.ifdef PIC
+	ldrh	r4,[r4,r12]
+.else
 	ldrh	r4,[r4,#4]
+.endif
 	cmp	r4,#8
 	ble	__mark_record_selector_node_2
 	ldr	r7,[r7,#8]
@@ -1624,8 +1775,8 @@ __mark_strict_record_selector_node_1:
 	beq	__mark_no_selector_2
 
 	ldrh	r12,[r3,#-2]
-	ldr	r3,=258
-	cmp	r12,r3
+	mov	r3,#258/2
+	cmp	r12,r3,lsl #1
 	ble	__select_from_small_record
 
 	ldr	r8,[r8,#8]
@@ -1641,12 +1792,21 @@ __mark_strict_record_selector_node_1:
 	bne	__mark_no_selector_2
 
 __select_from_small_record:
+.ifdef PIC
 	ldr	r4,[r4,#-8]
+	add	r12,r4,#-8+4
+.else
+	ldr	r4,[r4,#-8]
+.endif
 	ldr	r7,[r6]
 	ldr	r3,[sp],#4
 	sub	r6,r6,#4
 
+.ifdef PIC
+	ldrh	r3,[r4,r12]!
+.else
 	ldrh	r3,[r4,#4]
+.endif
 	cmp	r3,#8
 	ble	__mark_strict_record_selector_node_2
 	ldr	r12,[r7,#8]
@@ -1658,7 +1818,11 @@ __mark_strict_record_selector_node_2:
 __mark_strict_record_selector_node_3:
 	str	r3,[r6,#4]
 
+.ifdef PIC
+	ldrh	r3,[r4,#6-4]
+.else
 	ldrh	r3,[r4,#6]
+.endif
 	tst	r3,r3
 	beq	__mark_strict_record_selector_node_5
 	cmp	r3,#8
@@ -1670,7 +1834,11 @@ __mark_strict_record_selector_node_4:
 	str	r3,[r6,#8]
 __mark_strict_record_selector_node_5:
 
+.ifdef PIC
+	ldr	r4,[r4,#-4-4]
+.else
 	ldr	r4,[r4,#-4]
+.endif
 	str	r4,[r6]
 	b	__mark_node
 
@@ -1843,7 +2011,8 @@ __mark_closure_1_with_unboxed_argument:
 	b	__mark_real_or_file
 
 __mark_hnf_0:
-	ldr	r12,=INT+2
+	laol	r12,INT+2,INT_o_2,9
+	otoa	r12,INT_o_2,9
 	cmp	r4,r12
 	bne	__no_int_3
 
@@ -1868,19 +2037,22 @@ __mark_bool_or_small_string:
 	b	__mark_next_node
 
 ____small_int:
-	ldr	r6,=small_integers
+	lao	r6,small_integers,2
+	otoa	r6,small_integers,2
 	add	r6,r6,r8,lsl #3
 	b	__mark_next_node
 
 __no_int_3:
 	blo	__mark_real_file_or_string
 
- 	ldr	r12,=CHAR+2
+	laol	r12,CHAR+2,CHAR_o_2,4
+	otoa	r12,CHAR_o_2,4
  	cmp	r4,r12
  	bne	__no_char_3
 
 	ldrb	r8,[r6,#4]
-	ldr	r6,=static_characters
+	lao	r6,static_characters,2
+	otoa	r6,static_characters,2
 	add	r6,r6,r8,lsl #3
 	b	__mark_next_node
 
@@ -1891,7 +2063,8 @@ __no_char_3:
 	b	__mark_next_node
 
 __mark_real_file_or_string:
-	ldr	r12,=__STRING__+2
+	laol	r12,__STRING__+2,__STRING___o_2,9
+	otoa	r12,__STRING___o_2,9
 	cmp	r4,r12
 	bls	__mark_string_or_array
 
@@ -1915,8 +2088,8 @@ __mark_real_or_file:
 	b	__mark_next_node
 
 __mark__record:
-	ldr	r12,=258
-	subs	r8,r8,r12
+	mov	r12,#258/2
+	subs	r8,r8,r12,lsl #1
 	beq	__mark_record_2
 	blt	__mark_record_1
 
@@ -2157,15 +2330,15 @@ __skip_mark_lazy_array_bits:
 
 	ldr	r8,[r7,#-4]
 	sub	r7,r7,#4
-	ldr	r12,=lazy_array_list
-	ldr	r3,[r12]
+	lao	r12,lazy_array_list,2
+	ldo	r3,r12,lazy_array_list,2
 	add	r8,r8,#2
 	str	r3,[r7]
 	str	r8,[r6,#-4]
 	str	r4,[r6,#-8]
 	sub	r6,r6,#8
-	ldr	r12,=lazy_array_list
-	str	r6,[r12]
+	lao	r12,lazy_array_list,3
+	sto	r6,r12,lazy_array_list,3
 
 	ldr	r6,[r7,#-4]
 	str	r9,[r7,#-4]
@@ -2178,13 +2351,13 @@ __mark_array_length_0_1:
 
 	ldr	r3,[r6,#12]
 	ldr	r8,[r6,#8]
-	ldr	r12,=lazy_array_list
-	ldr	r7,[r12]
+	lao	r12,lazy_array_list,4
+	ldo	r7,r12,lazy_array_list,4
 	str	r8,[r6,#12]	
 	str	r7,[r6,#8]
 	str	r4,[r6]
-	ldr	r12,=lazy_array_list	
-	str	r6,[r12]	
+	lao	r12,lazy_array_list,5	
+	sto	r6,r12,lazy_array_list,5
 	str	r3,[r6,#4]
 	add	r6,r6,#4
 
@@ -2203,10 +2376,12 @@ __mark_b_record_array:
 
 __mark_strict_basic_array:
 	ldr	r4,[r6,#4]
-	ldr	r12,=INT+2
+	laol	r12,INT+2,INT_o_2,10
+	otoa	r12,INT_o_2,10
 	cmp	r8,r12
 	beq	__mark__strict__int__array
-	ldr	r12,=BOOL+2
+	laol	r12,BOOL+2,BOOL_o_2,6
+	otoa	r12,BOOL_o_2,6
 	cmp	r8,r12
 	beq	__mark__strict__bool__array
 __mark__strict__real__array:
@@ -2262,4 +2437,23 @@ __last__string__bits:
 	str	r12,[r10,r3,lsl #2]
 	b	__mark_next_node
 
+.ifdef PIC
+	lto	__indirection,14
+	lto	__indirection,15
+	lto	__indirection,16
+	lto	small_integers,2
+	lto	static_characters,2
+	lto	lazy_array_list,2
+	lto	lazy_array_list,3
+	lto	lazy_array_list,4
+	lto	lazy_array_list,5
+.endif
+
+.ifdef PIC
+	ltol	INT+2,INT_o_2,9
+	ltol	CHAR+2,CHAR_o_2,4
+	ltol	__STRING__+2,__STRING___o_2,9
+	ltol	INT+2,INT_o_2,10
+	ltol	BOOL+2,BOOL_o_2,6
+.endif
 	.ltorg

@@ -10,8 +10,8 @@ rmark_stack_nodes1:
 rmark_next_stack_node:
 	add	r9,r9,#4
 rmark_stack_nodes:
-	ldr	r12,=end_vector
-	ldr	r12,[r12]
+	lao	r12,end_vector,16
+	ldo	r12,r12,end_vector,16
 	cmp	r9,r12
 	beq	end_rmark_nodes
 
@@ -39,8 +39,8 @@ rmark_more_stack_nodes:
 	bl	rmark_stack_node
 
 	add	r9,r9,#4
-	ldr	r12,=end_vector
-	ldr	r12,[r12]
+	lao	r12,end_vector,17
+	ldo	r12,r12,end_vector,17
 	cmp	r9,r12
 	bne	rmark_more_stack_nodes
 	ldr	pc,[sp],#4
@@ -193,8 +193,8 @@ rmark_shared_argument_part:
 	b	rmark_hnf_1
 
 rmark_record:
-	ldr	r12,=258
-	subs	r8,r8,r12
+	mov	r12,#258/2
+	subs	r8,r8,r12,lsl #1
 	beq	rmark_record_2
 	blo	rmark_record_1
 
@@ -429,18 +429,26 @@ rmark_large_tuple_or_record:
 
 	str	r6,[sp,#-4]!
 
+.ifdef PIC
+	add	r12,r4,#-8+4
+.endif
 	ldr	r4,[r4,#-8]
 
 	and	r6,r3,#31*4
 	lsr	r3,r3,#7
 	lsr	r6,r6,#2
+.ifdef PIC
+	ldrh	r4,[r12,r4]
+.endif
 	mov	r12,#1
 	lsl	r6,r12,r6
 	ldr	r12,[r10,r3,lsl #2]
 	bic	r12,r12,r6
 	str	r12,[r10,r3,lsl #2]
 
+.ifndef PIC
 	ldrh	r4,[r4,#4]
+.endif
 	mov	r3,r1
 
 	cmp	r4,#8
@@ -451,7 +459,8 @@ rmark_large_tuple_or_record:
 	ldr	r6,[r7,r6]
 	ldr	r7,[sp],#4
 	str	r6,[r9]
-	ldr	r12,=__indirection
+	lao	r12,__indirection,17
+	otoa	r12,__indirection,17
 	str	r12,[r7,#-4]
 	str	r6,[r7]
 	b	rmark_node_d1
@@ -460,7 +469,8 @@ rmark_tuple_selector_node_2:
 	ldr	r6,[r7]
 	ldr	r7,[sp],#4
 	str	r6,[r9]
-	ldr	r12,=__indirection
+	lao	r12,__indirection,18
+	otoa	r12,__indirection,18
 	str	r12,[r7,#-4]
 	str	r6,[r7]
 	b	rmark_node_d1
@@ -481,8 +491,8 @@ rmark_record_selector_node_1:
 	beq	rmark_hnf_1
 
 	ldrh	r12,[r3,#-2]
-	ldr	r3,=258
-	cmp	r12,r3
+	mov	r3,#258/2
+	cmp	r12,r3,lsl #1
 	bls	rmark_small_tuple_or_record
 
 	ldr	r3,[r7,#8]
@@ -503,18 +513,26 @@ rmark_small_tuple_or_record:
 
 	str	r6,[sp,#-4]!
 
+.ifdef PIC
+	add	r12,r4,#-8+4
+.endif
 	ldr	r4,[r4,#-8]
 
 	and	r6,r3,#31*4
 	lsr	r3,r3,#7
 	lsr	r6,r6,#2
+.ifdef PIC
+	ldrh	r4,[r12,r4]
+.endif
 	mov	r12,#1
 	lsl	r6,r12,r6
 	ldr	r12,[r10,r3,lsl #2]
 	bic	r12,r12,r6
 	str	r12,[r10,r3,lsl #2]
 
+.ifndef PIC
 	ldrh	r4,[r4,#4]
+.endif
 	mov	r3,r1
 
 	cmp	r4,#8
@@ -525,7 +543,8 @@ rmark_tuple_or_record_selector_node_2:
 	ldr	r6,[r7,r4]
 	ldr	r7,[sp],#4
 	str	r6,[r9]
-	ldr	r12,=__indirection
+	lao	r12,__indirection,19
+	otoa	r12,__indirection,19
 	str	r12,[r7,#-4]
 	str	r6,[r7]
 	b	rmark_node_d1
@@ -544,8 +563,8 @@ rmark_strict_record_selector_node_1:
 	beq	rmark_hnf_1
 
 	ldrh	r12,[r3,#-2]
-	ldr	r3,=258
-	cmp	r12,r3
+	mov	r3,#258/2
+	cmp	r12,r3,lsl #1
 	bls	rmark_select_from_small_record
 
 	ldr	r3,[r7,#8]
@@ -562,12 +581,19 @@ rmark_strict_record_selector_node_1:
 
 rmark_select_from_small_record:
 	ldr	r3,[r4,#-8]
+.ifdef PIC
+	add	r12,r4,#-8+4
+.endif
 	subs	r6,r6,#4
 
 	cmp	r6,r1
 	bhi	rmark_selector_pointer_not_reversed
 
+.ifdef PIC
+	ldrh	r4,[r3,r12]!
+.else
 	ldrh	r4,[r3,#4]
+.endif
 	cmp	r4,#8
 	ble	rmark_strict_record_selector_node_2
 	ldr	r12,[r7,#8]
@@ -579,27 +605,38 @@ rmark_strict_record_selector_node_2:
 rmark_strict_record_selector_node_3:
 	str	r4,[r6,#4]
 
+.ifdef PIC
+	ldrh	r4,[r3,#6-4]
+.else
 	ldrh	r4,[r3,#6]
+.endif
 	tst	r4,r4
 	beq	rmark_strict_record_selector_node_5
 	cmp	r4,#8
 	ble	rmark_strict_record_selector_node_4
 	ldr	r7,[r7,#8]
-	subs	r4,r4,#12
+	sub	r4,r4,#12
 rmark_strict_record_selector_node_4:
 	ldr	r4,[r7,r4]
 	str	r4,[r6,#8]
 rmark_strict_record_selector_node_5:
 
+.ifdef PIC
+	ldr	r4,[r3,#-4-4]
+.else
 	ldr	r4,[r3,#-4]
-
+.endif
 	add	r9,r9,#1
 	str	r9,[r6]
 	str	r4,[r9,#-1]
 	b	rmark_next_node
 
 rmark_selector_pointer_not_reversed:
+.ifdef PIC
+	ldrh	r4,[r3,r12]!
+.else
 	ldrh	r4,[r3,#4]
+.endif
 	cmp	r4,#8
 	ble	rmark_strict_record_selector_node_6
 	ldr	r12,[r7,#8]
@@ -611,7 +648,11 @@ rmark_strict_record_selector_node_6:
 rmark_strict_record_selector_node_7:
 	str	r4,[r6,#4]
 
+.ifdef PIC
+	ldrh	r4,[r3,#6-4]
+.else
 	ldrh	r4,[r3,#6]
+.endif
 	tst	r4,r4
 	beq	rmark_strict_record_selector_node_9
 	cmp	r4,#8
@@ -623,7 +664,11 @@ rmark_strict_record_selector_node_8:
 	str	r4,[r6,#8]
 rmark_strict_record_selector_node_9:
 
+.ifdef PIC
+	ldr	r4,[r3,#-4-4]
+.else
 	ldr	r4,[r3,#-4]
+.endif
 	str	r4,[r6]
 	b	rmark_next_node
 
@@ -695,11 +740,13 @@ rmark_closure_with_unboxed_arguments:
 	b	rmark_next_node
 
 rmark_hnf_0:
-	ldr	r12,=INT+2
+	laol	r12,INT+2,INT_o_2,11
+	otoa	r12,INT_o_2,11
 	cmp	r4,r12
 	beq	rmark_int_3
 
-	ldr	r12,=CHAR+2
+	laol	r12,CHAR+2,CHAR_o_2,6
+	otoa	r12,CHAR_o_2,6
 	cmp	r4,r12
  	beq	rmark_char_3
 
@@ -728,7 +775,8 @@ rmark_int_3:
 	cmp	r8,#33
 	bcs	rmark_next_node
 
-	ldr	r12,=small_integers
+	lao	r12,small_integers,3
+	otoa	r12,small_integers,3
 	add	r7,r12,r8,lsl #3
 	str	r7,[r9]
 	sub	r8,r6,r11
@@ -750,7 +798,8 @@ rmark_int_3:
 rmark_char_3:
 	ldrb	r7,[r6,#4]
 
-	ldr	r12,=static_characters
+	lao	r12,static_characters,3
+	otoa	r12,static_characters,3
 	add	r7,r12,r7,lsl #3
 	sub	r8,r6,r11
 
@@ -771,7 +820,8 @@ rmark_char_3:
 	b	rmark_next_node
 
 rmark_no_normal_hnf_0:
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,17
+	otoa	r12,__ARRAY___o_2,17
 	cmp	r4,r12
 	bne	rmark_next_node
 
@@ -944,4 +994,16 @@ rmark_array_length_0_1:
 	add	r6,r6,#4
 	b	rmark_hnf_1
 
+.ifdef PIC
+	lto	end_vector,16
+	lto	end_vector,17
+	lto	__indirection,17
+	lto	__indirection,18
+	lto	__indirection,19
+	ltol	INT+2,INT_o_2,11
+	ltol	CHAR+2,CHAR_o_2,6
+	lto	small_integers,3
+	lto	static_characters,3
+	ltol	__ARRAY__+2,__ARRAY___o_2,17
+.endif
 	.ltorg

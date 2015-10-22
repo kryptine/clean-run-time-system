@@ -14,6 +14,8 @@
 
 	.fpu vfp3
 
+	.include "armmacros.s"
+
 USE_CLIB = 1
 
 SHARE_CHAR_INT = 1
@@ -442,8 +444,8 @@ abc_main:
 
 .ifdef DLL
 	ldr	r4,[sp,#28]
-	ldr	r12,=start_address
-	str	r4,[r12]
+	lao	r12,start_address,0
+	sto	r4,r12,start_address,0
 .endif
 	str	pc,[sp,#-4]!
 	bl	init_clean
@@ -453,8 +455,8 @@ abc_main:
 	str	pc,[sp,#-4]!
 	bl	init_timer
 
-	ldr	r12,=halt_sp
-	str	sp,[r12]
+	lao	r12,halt_sp,0
+	sto	sp,r12,halt_sp,0
 
 .ifdef PROFILE
 	str	pc,[sp,#-4]!
@@ -462,8 +464,8 @@ abc_main:
 .endif
 
 .ifdef DLL
-	ldr	r12,=start_address
-	ldr	r4,[r12]
+	lao	r12,start_address,1
+	ldo	r4,r12,start_address,1
 	str	pc,[sp,#-4]!
 	blx	r4
 .else
@@ -482,9 +484,9 @@ init_error:
 clean_init:
 	stmdb	sp!,{r4-r11}
 
-	ldr	r12,=dll_initisialised
+	lao	r12,dll_initisialised,0
 	mov	r0,#1
-	str	r0,[r12]
+	sto	r0,r12,dll_initisialised,0
 
 	str	pc,[sp,#-4]!
 	bl	init_clean
@@ -494,18 +496,18 @@ clean_init:
 	str	pc,[sp,#-4]!
 	bl	init_timer
 
-	ldr	r12,=halt_sp
-	str	sp,[r12]
+	lao	r12,halt_sp,1
+	sto	sp,r12,halt_sp,1
 
  .ifdef PROFILE
 	str	pc,[sp,#-4]!
 	bl	init_profiler
  .endif
 
-	ldr	r12,=saved_heap_p
-	str	r10,[r12]
-	ldr	r12,=saved_a_stack_p
-	str	r9,[r12]
+	lao	r12,saved_heap_p,0
+	sto	r10,r12,saved_heap_p,0
+	lao	r12,saved_a_stack_p,0
+	sto	r9,r12,saved_a_stack_p,0
 
 	mov	r4,#1
 	b	exit_dll_init
@@ -518,10 +520,10 @@ init_dll_error:
 clean_fini:
 	stmdb	sp!,{r4-r11}
 
-	ldr	r12,=saved_heap_p
-	ldr	r10,[r12]
-	ldr	r12,=saved_a_stack_p
-	ldr	r9,[r12]
+	lao	r12,saved_heap_p,1
+	ldo	r10,r12,saved_heap_p,1
+	lao	r12,saved_a_stack_p,1
+	ldo	r9,r12,saved_a_stack_p,1
 
 	str	pc,[sp,#-4]!
 	bl	exit_clean
@@ -531,20 +533,20 @@ exit_dll_init:
 
 init_clean:
 	add	r4,sp,#128
-	ldr	r12,=ab_stack_size
-	ldr	r12,[r12]
+	lao	r12,ab_stack_size,0
+	ldo	r12,r12,ab_stack_size,0
 	sub	r4,r4,r12
-	ldr	r12,=end_b_stack
-	str	r4,[r12]
+	lao	r12,end_b_stack,0
+	sto	r4,r12,end_b_stack,0
 
-	ldr	r12,=flags
-	ldr	r4,[r12]
+	lao	r12,flags,0
+	ldo	r4,r12,flags,0
 	and	r4,r4,#1
-	ldr	r12,=basic_only
-	str	r4,[r12]
+	lao	r12,basic_only,0
+	sto	r4,r12,basic_only,0
 
-	ldr	r12,=heap_size
-	ldr	r4,[r12]
+	lao	r12,heap_size,0
+	ldo	r4,r12,heap_size,0
 .if PREFETCH2
 	subs	r4,r4,#63
 .else
@@ -554,31 +556,34 @@ init_clean:
 	ldr	r12,=1041204193
 	umull	r11,r4,r12,r4
 	lsr	r4,r4,#3
-	ldr	r12,=heap_size_33
-	str	r4,[r12]
+	lao	r12,heap_size_33,0
+	sto	r4,r12,heap_size_33,0
 
-	ldr	r12,=heap_size
-	ldr	r4,[r12]
+	lao	r12,heap_size,1
+	ldo	r4,r12,heap_size,1
 	subs	r4,r4,#3
 @	divide by 129
 	ldr	r12,=266354561
 	umull	r11,r4,r12,r4
 	lsr	r4,r4,#3
-	ldr	r12,=heap_size_129
-	str	r4,[r12]
+	lao	r12,heap_size_129,0
+	sto	r4,r12,heap_size_129,0
 	add	r4,r4,#3
 	and	r4,r4,#-4
-	ldr	r12,=heap_copied_vector_size
-	str	r4,[r12]
-	ldr	r12,=heap_end_after_copy_gc
+	lao	r12,heap_copied_vector_size,0
+	sto	r4,r12,heap_copied_vector_size,0
+	lao	r12,heap_end_after_copy_gc,0
 	mov	r11,#0
-	str	r11,[r12]
+	sto	r11,r12,heap_end_after_copy_gc,0
 
-	ldr	r12,=heap_size
-	ldr	r4,[r12]
+	lao	r12,heap_size,2
+	ldo	r4,r12,heap_size,2
 	add	r4,r4,#7
 	and	r4,r4,#-8
-	str	r4,[r12]
+.ifdef PIC
+	lao	r12,heap_size,3
+.endif
+	sto	r4,r12,heap_size,3
 	add	r4,r4,#7
 
 	mov	r0,r4
@@ -587,15 +592,15 @@ init_clean:
 	movs	r4,r0
 	beq	no_memory_2
 
-	ldr	r12,=heap_mbp
-	str	r4,[r12]
+	lao	r12,heap_mbp,0
+	sto	r4,r12,heap_mbp,0
 	add	r10,r4,#3
 	and	r10,r10,#-4
-	ldr	r12,=heap_p
-	str	r10,[r12]
+	lao	r12,heap_p,0
+	sto	r10,r12,heap_p,0
 
-	ldr	r8,=ab_stack_size
-	ldr	r8,[r8]
+	lao	r8,ab_stack_size,1
+	ldo	r8,r8,ab_stack_size,1
 	add	r8,r8,#3
 
 	mov	r0,r8
@@ -608,40 +613,42 @@ init_clean:
 	movs	r4,r0
 	beq	no_memory_3
 
-	ldr	r12,=stack_mbp
-	str	r4,[r12]
+	lao	r12,stack_mbp,0
+	sto	r4,r12,stack_mbp,0
 .if STACK_OVERFLOW_EXCEPTION_HANDLER
-	ldr	r12,=ab_stack_size
-	ldr	r12,[r12]
+	lao	r12,ab_stack_size,2
+	ldo	r12,r12,ab_stack_size,2
 	add	r4,r4,r12
-	ldr	r12,=a_stack_guard_page
+	lao	r12,a_stack_guard_page,0
 	add	r4,r4,#4096
 	add	r4,r4,#(3+4095)-4096
 	bic	r4,r4,#255
 	bic	r4,r4,#4095-255
-	str	r4,[r12]
-	ldr	r12,=ab_stack_size
-	ldr	r12,[r12]
+	sto	r4,r12,a_stack_guard_page,0
+	lao	r12,ab_stack_size,3
+	ldo	r12,r12,ab_stack_size,3
 	sub	r4,r4,r12
 .endif
 	add	r4,r4,#3
 	and	r4,r4,#-4
 
 	mov	r9,r4
-	ldr	r12,=stack_p
-	str	r4,[r12]
+	lao	r12,stack_p,0
+	sto	r4,r12,stack_p,0
 
-	ldr	r12,=ab_stack_size
-	ldr	r12,[r12]
+	lao	r12,ab_stack_size,4
+	ldo	r12,r12,ab_stack_size,4
 	add	r4,r4,r12
 	subs	r4,r4,#64
-	ldr	r12,=end_a_stack
-	str	r4,[r12]
+	lao	r12,end_a_stack,0
+	sto	r4,r12,end_a_stack,0
 
 .if SHARE_CHAR_INT
-	ldr	r6,=small_integers
+	lao	r6,small_integers,0
+	otoa	r6,small_integers,0
 	mov	r4,#0
-	ldr	r3,=INT+2
+	laol	r3,INT+2,INT_o_2,0
+	otoa	r3,INT_o_2,0
 
 make_small_integers_lp:
 	str	r3,[r6]
@@ -651,9 +658,11 @@ make_small_integers_lp:
 	cmp	r4,#33
 	bne	make_small_integers_lp
 
-	ldr	r6,=static_characters
+	lao	r6,static_characters,0
+	otoa	r6,static_characters,0
 	mov	r4,#0
-	ldr	r3,=CHAR+2
+	laol	r3,CHAR+2,CHAR_O_2,0
+	otoa	r3,CHAR_O_2,0
 
 make_static_characters_lp:
 	str	r3,[r6]
@@ -664,49 +673,51 @@ make_static_characters_lp:
 	bne	make_static_characters_lp
 .endif
 
-	ldr	r6,=caf_list+4
-	ldr	r12,=caf_listp
-	str	r6,[r12]
+	laol	r6,caf_list+4,caf_list_o_4,0
+	otoa	r6,caf_list_o_4,0
+	lao	r12,caf_listp,0
+	sto	r6,r12,caf_listp,0
 
 .if FINALIZERS
-	ldr	r12,=finalizer_list
-	ldr	r11,=__Nil-4
-	str	r11,[r12]
-	ldr	r12,=free_finalizer_list
-	str	r11,[r12]
+	lao	r12,finalizer_list,0
+	laol	r11,__Nil-4,__Nil_o_m4,0
+	otoa	r11,__Nil_o_m4,0
+	sto	r11,r12,finalizer_list,0
+	lao	r12,free_finalizer_list,0
+	sto	r11,r12,free_finalizer_list,0
 .endif
 
-	ldr	r12,=heap_p1
-	str	r10,[r12]
+	lao	r12,heap_p1,0
+	sto	r10,r12,heap_p1,0
 
-	ldr	r12,=heap_size_129
-	ldr	r8,[r12]
+	lao	r12,heap_size_129,1
+	ldo	r8,r12,heap_size_129,1
 	lsl	r8,r8,#4
 	add	r4,r10,r8,lsl #2
-	ldr	r12,=heap_copied_vector
-	str	r4,[r12]
-	ldr	r12,=heap_copied_vector_size
-	ldr	r12,[r12]
+	lao	r12,heap_copied_vector,0
+	sto	r4,r12,heap_copied_vector,0
+	lao	r12,heap_copied_vector_size,1
+	ldo	r12,r12,heap_copied_vector_size,1
 	add	r4,r12
-	ldr	r12,=heap_p2
-	str	r4,[r12]
+	lao	r12,heap_p2,0
+	sto	r4,r12,heap_p2,0
 
-	ldr	r12,=garbage_collect_flag
+	lao	r12,garbage_collect_flag,0
 	mov	r11,#0
-	strb	r11,[r12]
+	stob	r11,r12,garbage_collect_flag,0
 
  .if MARK_AND_COPY_GC
- 	ldr	r12,=flags
- 	ldrb	r12,[r12]
+ 	lao	r12,flags,1
+ 	ldo	r12,r12,flags,1
  	tst	r12,#64
 	beq	no_mark1
  .endif
 
  .if MARK_GC || COMPACT_GC_ONLY
-	ldr	r12,=heap_size_33
-	ldr	r4,[r12]
-	ldr	r12,=heap_vector
-	str	r10,[r12]
+	lao	r12,heap_size_33,1
+	ldo	r4,r12,heap_size_33,1
+	lao	r12,heap_vector,0
+	sto	r10,r12,heap_vector,0
 	add	r10,r10,r4
   .if PREFETCH2
 	add	r10,r10,#63
@@ -715,12 +726,12 @@ make_static_characters_lp:
 	add	r10,r10,#3
 	and	r10,r10,#-4
   .endif
-	ldr	r12,=heap_p3
-	str	r10,[r12]
+	lao	r12,heap_p3,0
+	sto	r10,r12,heap_p3,0
 	lsl	r8,r4,#3
-	ldr	r12,=garbage_collect_flag
+	lao	r12,garbage_collect_flag,1
 	mov	r11,#-1
-	strb	r11,[r12]
+	stob	r11,r12,garbage_collect_flag,1
  .endif
 
  .if MARK_AND_COPY_GC
@@ -728,12 +739,12 @@ no_mark1:
  .endif
 
  .if ADJUST_HEAP_SIZE
- 	ldr	r4,=initial_heap_size
- 	ldr	r4,[r4]
+ 	lao	r4,initial_heap_size,0
+ 	ldo	r4,r4,initial_heap_size,0
   .if MARK_AND_COPY_GC
 	mov	r3,#MINIMUM_HEAP_SIZE_2
-	ldr	r12,=flags
-	ldrb	r12,[r12]
+	lao	r12,flags,2
+	ldo	r12,r12,flags,2
 	tst	r12,#64
 	bne	no_mark9
 	add	r3,r3,r3
@@ -756,21 +767,21 @@ too_large_or_too_small:
  .endif
 
 	add	r4,r10,r8,lsl #2
-	ldr	r12,=heap_end_after_gc
-	str	r4,[r12]
+	lao	r12,heap_end_after_gc,0
+	sto	r4,r12,heap_end_after_gc,0
 
 	mov	r5,r8
 
  .if MARK_AND_COPY_GC
- 	ldr	r12,=flags
- 	ldrb	r12,[r12]
+ 	lao	r12,flags,3
+ 	ldo	r12,r12,flags,3
  	tst	r12,#64
 	beq	no_mark2
  .endif
 
  .if MARK_GC && ADJUST_HEAP_SIZE
-	ldr	r12,=bit_vector_size
-	str	r8,[r12]
+	lao	r12,bit_vector_size,0
+	sto	r8,r12,bit_vector_size,0
  .endif
 
  .if MARK_AND_COPY_GC
@@ -781,7 +792,8 @@ no_mark2:
 	ldr	pc,[sp],#4
 
 no_memory_2:
-	ldr	r0,=out_of_memory_string_1
+	lao	r0,out_of_memory_string_1,0
+	otoa	r0,out_of_memory_string_1,0
 	bl	ew_print_string
 .ifdef _WINDOWS_
 ?	movl	$1,@execution_aborted
@@ -790,14 +802,15 @@ no_memory_2:
 	ldr	pc,[sp],#4
 
 no_memory_3:
-	ldr	r0,=out_of_memory_string_1
+	lao	r0,out_of_memory_string_1,1
+	otoa	r0,out_of_memory_string_1,1
 	bl	ew_print_string
 .ifdef _WINDOWS_
 ?	movl	$1,@execution_aborted
 .endif
 
-	ldr	r0,=heap_mbp
-	ldr	r0,[r0]
+	lao	r0,heap_mbp,1
+	ldo	r0,r0,heap_mbp,1
 	bl	free
 
 	mov	r0,#1
@@ -807,39 +820,42 @@ exit_clean:
 	str	pc,[sp,#-4]!
 	bl	add_execute_time
 
-	ldr	r4,=flags
-	ldr	r4,[r4]
+	lao	r4,flags,4
+	ldo	r4,r4,flags,4
 	tst	r4,#8
 	beq	no_print_execution_time
 
-	ldr	r0,=time_string_1
+	lao	r0,time_string_1,0
+	otoa	r0,time_string_1,0
 	bl	ew_print_string
 
-	ldr	r12,=execute_time
-	ldr	r4,[r12]
+	lao	r12,execute_time,0
+	ldo	r4,r12,execute_time,0
 
 	str	pc,[sp,#-4]!
 	bl	print_time
 
-	ldr	r0,=time_string_2
+	lao	r0,time_string_2,0
+	otoa	r0,time_string_2,0
 	bl	ew_print_string
 
-	ldr	r12,=garbage_collect_time
-	ldr	r4,[r12]
+	lao	r12,garbage_collect_time,0
+	ldo	r4,r12,garbage_collect_time,0
 
 	str	pc,[sp,#-4]!
 	bl	print_time
 
-	ldr	r0,=time_string_4
+	lao	r0,time_string_4,0
+	otoa	r0,time_string_4,0
 	bl	ew_print_string
 
-	ldr	r12,=execute_time
-	ldr	r4,[r12]
-	ldr	r12,=garbage_collect_time
-	ldr	r12,[r12]
+	lao	r12,execute_time,1
+	ldo	r4,r12,execute_time,1
+	lao	r12,garbage_collect_time,1
+	ldo	r12,r12,garbage_collect_time,1
 	add	r4,r12
-	ldr	r12,=IO_time
-	ldr	r12,[r12]
+	lao	r12,IO_time,0
+	ldo	r12,r12,IO_time,0
 	add	r4,r12
 
 	str	pc,[sp,#-4]!
@@ -849,12 +865,12 @@ exit_clean:
 	bl	ew_print_char
 
 no_print_execution_time:
-	ldr	r0,=stack_mbp
-	ldr	r0,[r0]
+	lao	r0,stack_mbp,1
+	ldo	r0,r0,stack_mbp,1
 	bl	free
 
-	ldr	r0,=heap_mbp
-	ldr	r0,[r0]
+	lao	r0,heap_mbp,2
+	ldo	r0,r0,heap_mbp,2
 	bl	free
 
 .ifdef PROFILE
@@ -865,12 +881,105 @@ no_print_execution_time:
 	ldr	pc,[sp],#4
 
 __driver:
-	ldr	r8,=flags
-	ldr	r8,[r8]
+	lao	r8,flags,5
+	ldo	r8,r8,flags,5
 	tst	r8,#16
 	beq	__print__graph
 	b	__eval__to__nf
 
+.ifdef PIC
+ .ifdef DLL
+	lto	start_address,0
+ .endif
+	lto	halt_sp,0
+ .ifdef DLL
+	lto	start_address,1
+ .endif
+	lto	dll_initisialised,0
+	lto	halt_sp,1
+	lto	saved_heap_p,0
+	lto	saved_a_stack_p,0
+	lto	saved_heap_p,1
+	lto	saved_a_stack_p,1
+	lto	ab_stack_size,0
+	lto	end_b_stack,0
+	lto	flags,0
+	lto	basic_only,0
+	lto	heap_size,0
+	lto	heap_size_33,0
+	lto	heap_size,1
+	lto	heap_size_129,0
+	lto	heap_copied_vector_size,0
+	lto	heap_end_after_copy_gc,0
+	lto	heap_size,2
+	lto	heap_size,3
+	lto	heap_mbp,0
+	lto	heap_p,0
+	lto	ab_stack_size,1
+	lto	stack_mbp,0
+ .if STACK_OVERFLOW_EXCEPTION_HANDLER
+	lto	ab_stack_size,2
+	lto	a_stack_guard_page,0
+	lto	ab_stack_size,3
+ .endif
+	lto	stack_p,0
+	lto	ab_stack_size,4
+	lto	end_a_stack,0
+	lto	small_integers,0
+	ltol	INT+2,INT_o_2,0
+	lto	static_characters,0
+	ltol	CHAR+2,CHAR_O_2,0
+	ltol	caf_list+4,caf_list_o_4,0
+	lto	caf_listp,0
+ .if FINALIZERS
+	lto	finalizer_list,0
+	ltol	__Nil-4,__Nil_o_m4,0
+	lto	free_finalizer_list,0
+ .endif
+ 	lto	heap_p1,0
+	lto	heap_size_129,1
+	lto	heap_copied_vector,0
+	lto	heap_copied_vector_size,1
+	lto	heap_p2,0
+	lto	garbage_collect_flag,0
+ .if MARK_AND_COPY_GC
+	lto	flags,1
+ .endif
+ .if MARK_GC || COMPACT_GC_ONLY
+	lto	heap_size_33,1
+	lto	heap_vector,0
+	lto	heap_p3,0
+ 	lto	garbage_collect_flag,1
+ .endif
+ .if ADJUST_HEAP_SIZE
+ 	lto	initial_heap_size,0
+  .if MARK_AND_COPY_GC
+	lto	flags,2
+  .endif
+ .endif
+ 	lto	heap_end_after_gc,0
+ .if MARK_AND_COPY_GC
+	lto	flags,3
+ .endif
+ .if MARK_GC && ADJUST_HEAP_SIZE
+	lto	bit_vector_size,0
+ .endif
+	lto	out_of_memory_string_1,0
+	lto	out_of_memory_string_1,1
+	lto	heap_mbp,1
+	lto	flags,4
+	lto	time_string_1,0
+	lto	execute_time,0
+	lto	time_string_2,0
+	lto	garbage_collect_time,0
+	lto	time_string_4,0
+	lto	execute_time,1
+	lto	garbage_collect_time,1
+	lto	IO_time,0
+	lto	stack_mbp,1
+	lto	heap_mbp,2
+	lto	flags,5
+.endif
 	.ltorg
 
 print_time:
@@ -891,17 +1000,21 @@ print_time:
 .if USE_CLIB
 	mov	r3,r4
 	mov	r2,r6
-	ldr	r1,=sprintf_time_string
-	ldr	r0,=sprintf_time_buffer
+	lao	r1,sprintf_time_string,0
+	lao	r0,sprintf_time_buffer,0
+	otoa	r1,sprintf_time_string,0
+	otoa	r0,sprintf_time_buffer,0
 	bl	sprintf
 
-	ldr	r0,=sprintf_time_buffer
+	lao	r0,sprintf_time_buffer,1
+	otoa	r0,sprintf_time_buffer,1
 	bl	ew_print_string
 .else
 	mov	r0,r6
 	bl	ew_print_int
 
-	ldr	r6,=sprintf_time_buffer
+	lao	r6,sprintf_time_buffer,0
+	otoa	r6,sprintf_time_buffer,0
 
 	eor	r7,r7,r7
 	mov	r3,#10
@@ -929,8 +1042,8 @@ print_time:
 	ldr	pc,[sp],#4
 
 print_sc:
-	ldr	r12,=basic_only
-	ldr	r8,[r12]
+	lao	r12,basic_only,1
+	ldo	r8,r12,basic_only,1
 	cmp	r8,#0
 	bne	end_print
 
@@ -954,6 +1067,10 @@ printD:	tst	r4,#2
 
 DtoAC_record:
 	ldr	r8,[r4,#-6]
+.ifdef PIC
+	add	r12,r4,#-6
+	add	r8,r8,r12
+.endif
 	b	DtoAC_string_a2
 
 DtoAC:	tst	r4,#2
@@ -981,24 +1098,28 @@ print_symbol:
 	b	print_symbol_2
 
 print_symbol_sc:
-	ldr	r12,=basic_only
-	ldr	r3,[r12]
+	lao	r12,basic_only,2
+	ldo	r3,r12,basic_only,2
 print_symbol_2:
 	ldr	r4,[r6]
 
-	ldr	r12,=INT+2
+	laol	r12,INT+2,INT_o_2,1
+	otoa	r12,INT_o_2,1
 	cmp	r4,r12
 	beq	print_int_node
 
-	ldr	r12,=CHAR+2
+	laol	r12,CHAR+2,CHAR_o_2,0
+	otoa	r12,CHAR_o_2,0
 	cmp	r4,r12
 	beq	print_char_denotation
 
-	ldr	r12,=BOOL+2
+	laol	r12,BOOL+2,BOOL_o_2,0
+	otoa	r12,BOOL_o_2,0
 	cmp	r4,r12
 	beq	print_bool
 
-	ldr	r12,=REAL+2
+	laol	r12,REAL+2,REAL_o_2,0
+	otoa	r12,REAL_o_2,0
 	cmp	r4,r12
 	beq	print_real_node
 
@@ -1017,6 +1138,10 @@ printD_:
 
 print_record:
 	ldr	r8,[r4,#-6]
+.ifdef PIC
+	add	r12,r4,#-6
+	add	r8,r8,r12
+.endif
 	b	print_string_a2
 
 end_print_symbol:
@@ -1067,12 +1192,14 @@ print_bool:
 	beq	print_false
 
 print_true:
-	ldr	r0,=true_c_string
+	lao	r0,true_c_string,0
+	otoa	r0,true_c_string,0
 	bl	w_print_string
 	ldr	pc,[sp],#4
 
 print_false:
-	ldr	r0,=false_c_string
+	lao	r0,false_c_string,0
+	otoa	r0,false_c_string,0
 	bl	w_print_string
 	ldr	pc,[sp],#4
 
@@ -1094,8 +1221,8 @@ print_string_a2:
 	ldr	pc,[sp],#4
 
 print__chars__sc:
-	ldr	r12,=basic_only
-	ldr	r8,[r12]
+	lao	r12,basic_only,3
+	ldo	r8,r12,basic_only,3
 	cmp	r8,#0
 	bne	no_print_chars
 
@@ -1219,31 +1346,38 @@ BtoAC:
 	tst	r4,r4
 	beq	BtoAC_false
 BtoAC_true:
-	ldr	r6,=true_string
+	lao	r6,true_string,0
+	otoa	r6,true_string,0
 	ldr	pc,[sp],#4
 BtoAC_false:
-	ldr	r6,=false_string
+	lao	r6,false_string,0
+	otoa	r6,false_string,0
 	ldr	pc,[sp],#4
 
 RtoAC:
 .if USE_CLIB
 	vmov	r2,r3,d0
-	ldr	r1,=printf_real_string
-	ldr	r0,=sprintf_buffer	
+	lao	r1,printf_real_string,0
+	lao	r0,sprintf_buffer,0
+	otoa	r1,printf_real_string,0
+	otoa	r0,sprintf_buffer,0
 	bl	sprintf
 .else
-	ldr	r0,=sprintf_buffer	
+	lao	r0,sprintf_buffer,1
+	otoa	r0,sprintf_buffer,1
 	bl	convert_real_to_string
 .endif
 	b	return_sprintf_buffer
 
 ItoAC:
 .if MY_ITOS
-	ldr	r6,=sprintf_buffer
+	lao	r6,sprintf_buffer,2
+	otoa	r6,sprintf_buffer,2
 	str	pc,[sp,#-4]!
 	bl	int_to_string
 
-	ldr	r12,=sprintf_buffer
+	lao	r12,sprintf_buffer,3
+	otoa	r12,sprintf_buffer,3
 	sub	r4,r6,r12
 	b	sprintf_buffer_to_string
 
@@ -1295,30 +1429,36 @@ reverse_digits:
 	ldr	pc,[sp],#4
 .else
 	mov	r2,r4
-	ldr	r1,=printf_int_string
-	ldr	r0,=sprintf_buffer
+	lao	r1,printf_int_string,0
+	lao	r0,sprintf_buffer,4
+	otoa	r1,printf_int_string,0
+	otoa	r0,sprintf_buffer,4
 	bl	sprintf
 .endif
 
 return_sprintf_buffer:
 .if USE_CLIB
-	ldr	r0,=sprintf_buffer
+	lao	r0,sprintf_buffer,5
+	otoa	r0,sprintf_buffer,5
 	bl	strlen
 	mov	r4,r0
 .else
-	ldr	r4,=sprintf_buffer-1
+	laol	r4,sprintf_buffer-1,sprintf_buffer_o_m1,0
+	otoa	r4,sprintf_buffer_o_m1,0
 skip_characters:
 	ldrb	r12,[r4,#1]!
 	tst	r12,r12
 	bne	skip_characters
 
-	ldr	r12,=sprintf_buffer
+	lao	r12,sprintf_buffer,6
+	otoa	r12,sprintf_buffer,6
 	sub	r4,r4,r12
 .endif
 
 .if MY_ITOS
 sprintf_buffer_to_string:
-	ldr	r6,=sprintf_buffer
+	lao	r6,sprintf_buffer,7
+	otoa	r6,sprintf_buffer,7
 build_string:
 .endif
 	add	r3,r4,#3
@@ -1335,7 +1475,8 @@ build_string:
 D_to_S_no_gc:
 	subs	r3,r3,#2
 	mov	r8,r10
-	ldr	r12,=__STRING__+2
+	laol	r12,__STRING__+2,__STRING___o_2,0
+	otoa	r12,__STRING___o_2,0
 	str	r4,[r10,#4]
 	str	r12,[r10],#8
 	b	D_to_S_cp_str_2
@@ -1355,16 +1496,20 @@ eqD:	ldr	r4,[r6]
 	cmp	r4,r12
 	bne	eqD_false
 
-	ldr	r12,=INT+2
+	laol	r12,INT+2,INT_o_2,2
+	otoa	r12,INT_o_2,2
 	cmp	r4,r12
 	beq	eqD_INT
-	ldr	r12,=CHAR+2
+	laol	r12,CHAR+2,CHAR_o_2,1
+	otoa	r12,CHAR_o_2,1
 	cmp	r4,r12
 	beq	eqD_CHAR
-	ldr	r12,=BOOL+2
+	laol	r12,BOOL+2,BOOL_o_2,1
+	otoa	r12,BOOL_o_2,1
 	cmp	r4,r12
 	beq	eqD_BOOL
-	ldr	r12,=REAL+2
+	laol	r12,REAL+2,REAL_o_2,1
+	otoa	r12,REAL_o_2,1
 	cmp	r4,r12
 	beq	eqD_REAL
 
@@ -1413,15 +1558,15 @@ init_timer:
 	add	r4,r4,r4,lsl #2
 	add	sp,sp,#20
 
-	ldr	r12,=last_time
-	str	r4,[r12]
+	lao	r12,last_time,0
+	sto	r4,r12,last_time,0
 	eor	r4,r4,r4
-	ldr	r12,=execute_time
-	str	r4,[r12]
-	ldr	r12,=garbage_collect_time
-	str	r4,[r12]
-	ldr	r12,=IO_time
-	str	r4,[r12]
+	lao	r12,execute_time,2
+	sto	r4,r12,execute_time,2
+	lao	r12,garbage_collect_time,2
+	sto	r4,r12,garbage_collect_time,2
+	lao	r12,IO_time,1
+	sto	r4,r12,IO_time,1
 
 	ldr	pc,[sp],#4
 
@@ -1434,7 +1579,8 @@ get_time_diff:
 	add	r4,r4,r4,lsl #2
 	add	sp,sp,#20
 
-	ldr	r6,=last_time
+	lao	r6,last_time,1
+	otoa	r6,last_time,1
 	ldr	r7,[r6]
 	str	r4,[r6]
 	subs	r4,r4,r7
@@ -1443,7 +1589,8 @@ get_time_diff:
 add_execute_time:
 	str	pc,[sp,#-4]!
 	bl	get_time_diff
-	ldr	r6,=execute_time
+	lao	r6,execute_time,3
+	otoa	r6,execute_time,3
 
 add_time:
 	ldr	r12,[r6]
@@ -1454,16 +1601,111 @@ add_time:
 add_garbage_collect_time:
 	str	pc,[sp,#-4]!
 	bl	get_time_diff
-	ldr	r6,=garbage_collect_time
+	lao	r6,garbage_collect_time,3
+	otoa	r6,garbage_collect_time,3
 	b	add_time
 
 add_IO_time:
 	str	pc,[sp,#-4]!
 	bl	get_time_diff
-	ldr	r6,=IO_time
+	lao	r6,IO_time,2
+	otoa	r6,IO_time,2
 	b	add_time
 
+.ifdef PIC
+	lto	sprintf_time_string,0
+	lto	sprintf_time_buffer,0
+ .if USE_CLIB
+	lto	sprintf_time_buffer,1
+ .endif
+	lto	basic_only,1
+	lto	basic_only,2
+	ltol	INT+2,INT_o_2,1
+	ltol	CHAR+2,CHAR_o_2,0
+	ltol	BOOL+2,BOOL_o_2,0
+	ltol	REAL+2,REAL_o_2,0
+	lto	true_c_string,0
+	lto	false_c_string,0
+	lto	basic_only,3
+	lto	true_string,0
+	lto	false_string,0
+ .if USE_CLIB
+	lto	printf_real_string,0
+	lto	sprintf_buffer,0
+ .else
+	lto	sprintf_buffer,1
+ .endif
+ .if MY_ITOS
+	lto	sprintf_buffer,2
+	lto	sprintf_buffer,3
+ .else
+	lto	printf_int_string,0
+	lto	sprintf_buffer,4
+ .endif
+ .if USE_CLIB
+	lto	sprintf_buffer,5
+ .else
+	ltol	sprintf_buffer-1,sprintf_buffer_o_m1,0
+	lto	sprintf_buffer,6
+ .endif
+ .if MY_ITOS
+	lto	sprintf_buffer,7
+ .endif
+	ltol	__STRING__+2,__STRING___o_2,0
+	ltol	INT+2,INT_o_2,2
+	ltol	CHAR+2,CHAR_o_2,1
+	ltol	BOOL+2,BOOL_o_2,1
+	ltol	REAL+2,REAL_o_2,1
+	lto	last_time,0
+	lto	execute_time,2
+	lto	garbage_collect_time,2
+	lto	IO_time,1
+	lto	last_time,1
+	lto	execute_time,3
+	lto	garbage_collect_time,3
+	lto	IO_time,2
+.endif
 	.ltorg
+.ifdef PIC
+ .ifdef PROFILE
+	lto	garbage_collector_name,0
+	lto	garbage_collector_name,1
+	lto	garbage_collector_name,2
+	lto	garbage_collector_name,3
+ .endif
+	lto	heap_end_after_gc,1
+	lto	n_allocated_words,0
+ .if MARK_AND_COPY_GC
+	lto	flags,6
+ .endif
+ .if MARK_GC
+	lto	bit_counter,0
+	lto	n_allocated_words,1
+	lto	bit_vector_p,0
+	lto	n_free_words_after_mark,0
+	lto	bit_counter,1
+	lto	bit_vector_p,1
+	lto	n_free_words_after_mark,1
+	lto	heap_vector,1
+	lto	heap_p3,1
+	lto	heap_end_after_gc,2
+	lto	bit_counter,2
+	lto	n_free_words_after_mark,2
+ .endif
+	lto	garbage_collect_flag,2
+	lto	garbage_collect_flag,3
+	lto	extra_heap_size,0
+	lto	extra_heap,0
+	lto	heap_end_after_gc,3
+	lto	flags,7
+	lto	garbage_collect_string_1,0
+	lto	stack_p,1
+	lto	garbage_collect_string_2,0
+	lto	halt_sp,2
+	lto	garbage_collect_string_3,0
+	lto	stack_p,2
+	lto	ab_stack_size,5
+.endif
 
 @
 @	the garbage collector
@@ -1472,7 +1714,8 @@ add_IO_time:
 collect_3:
 	str	lr,[sp,#-4]!
 .ifdef PROFILE
-	ldr	r8,=garbage_collector_name
+	lao	r8,garbage_collector_name,0
+	otoa	r8,garbage_collector_name,0
 	str	pc,[sp,#-4]!
 	bl	profile_s
 .endif
@@ -1493,7 +1736,8 @@ collect_3:
 collect_2:
 	str	lr,[sp,#-4]!
 .ifdef PROFILE
-	ldr	r8,=garbage_collector_name
+	lao	r8,garbage_collector_name,1
+	otoa	r8,garbage_collector_name,1
 	str	pc,[sp,#-4]!
 	bl	profile_s
 .endif
@@ -1512,7 +1756,8 @@ collect_2:
 collect_1:
 	str	lr,[sp,#-4]!
 .ifdef PROFILE
-	ldr	r8,=garbage_collector_name
+	lao	r8,garbage_collector_name,2
+	otoa	r8,garbage_collector_name,2
 	str	pc,[sp,#-4]!
 	bl	profile_s
 .endif
@@ -1528,7 +1773,8 @@ collect_1:
 .ifdef PROFILE
 collect_0:
 	str	lr,[sp,#-4]!
-	ldr	r8,=garbage_collector_name
+	lao	r8,garbage_collector_name,3
+	otoa	r8,garbage_collector_name,3
 	str	pc,[sp,#-4]!
 	bl	profile_s
 	bl	collect_0_
@@ -1541,36 +1787,36 @@ collect_0:
 collect_0_:
 	stmdb	sp!,{r0-r4,lr}
 
-	ldr	r12,=heap_end_after_gc
-	ldr	r12,[r12]
+	lao	r12,heap_end_after_gc,1
+	ldo	r12,r12,heap_end_after_gc,1
 	sub	r8,r12,r10
 	lsr	r8,r8,#2
 	sub	r8,r8,r5
-	ldr	r12,=n_allocated_words
-	str	r8,[r12]
+	lao	r12,n_allocated_words,0
+	sto	r8,r12,n_allocated_words,0
 
 .if MARK_AND_COPY_GC
-	ldr	r12,=flags
-	ldrb	r12,[r12]
+	lao	r12,flags,6
+	ldo	r12,r12,flags,6
 	tst	r12,#64
 	beq	no_mark3
 .endif
 
 .if MARK_GC
-	ldr	r12,=bit_counter
-	ldr	r8,[r12]
+	lao	r12,bit_counter,0
+	ldo	r8,r12,bit_counter,0
 	cmp	r8,#0
 	beq	no_scan
 
 	mov	r3,#0
 	str	r9,[sp,#-4]!
 
-	ldr	r12,=n_allocated_words
-	ldr	r9,[r12]
-	ldr	r12,=bit_vector_p
-	ldr	r6,[r12]
-	ldr	r12,=n_free_words_after_mark
-	ldr	r2,[r12]
+	lao	r12,n_allocated_words,1
+	ldo	r9,r12,n_allocated_words,1
+	lao	r12,bit_vector_p,0
+	ldo	r6,r12,bit_vector_p,0
+	lao	r12,n_free_words_after_mark,0
+	ldo	r2,r12,n_free_words_after_mark,0
 
 scan_bits:
 	ldr	r12,[r6]
@@ -1613,27 +1859,27 @@ end_zero_bits:
 	blo	scan_bits
 
 found_free_memory:
-	ldr	r12,=bit_counter
-	str	r8,[r12]
-	ldr	r12,=bit_vector_p
-	str	r6,[r12]
-	ldr	r12,=n_free_words_after_mark
-	str	r2,[r12]
+	lao	r12,bit_counter,1
+	sto	r8,r12,bit_counter,1
+	lao	r12,bit_vector_p,1
+	sto	r6,r12,bit_vector_p,1
+	lao	r12,n_free_words_after_mark,1
+	sto	r2,r12,n_free_words_after_mark,1
 
 	sub	r5,r4,r9
 
 	add	r8,r7,#-4
-	ldr	r12,=heap_vector
-	ldr	r12,[r12]
+	lao	r12,heap_vector,1
+	ldo	r12,r12,heap_vector,1
 	subs	r8,r8,r12
 	lsl	r8,r8,#5
-	ldr	r12,=heap_p3
-	ldr	r10,[r12]
+	lao	r12,heap_p3,1
+	ldo	r10,r12,heap_p3,1
 	add	r10,r10,r8
 
 	add	r8,r10,r4,lsl #2
-	ldr	r12,=heap_end_after_gc
-	str	r8,[r12]
+	lao	r12,heap_end_after_gc,2
+	sto	r8,r12,heap_end_after_gc,2
 
 	ldr	r9,[sp],#4
 
@@ -1650,10 +1896,10 @@ end_bits2:
 
 end_scan:
 	ldr	r9,[sp],#4
-	ldr	r12,=bit_counter
-	str	r8,[r12]
-	ldr	r12,=n_free_words_after_mark
-	str	r2,[r12]
+	lao	r12,bit_counter,2
+	sto	r8,r12,bit_counter,2
+	lao	r12,n_free_words_after_mark,2
+	sto	r2,r12,n_free_words_after_mark,2
 
 no_scan:
 .endif
@@ -1664,26 +1910,29 @@ no_scan:
 no_mark3:
 .endif
 
-	ldr	r12,=garbage_collect_flag
-	ldrsb	r4,[r12]
+	lao	r12,garbage_collect_flag,2
+	ldosb	r4,r12,garbage_collect_flag,2
 	cmp	r4,#0
 	ble	collect
 
+.ifdef PIC
+	lao	r12,garbage_collect_flag,3
+.endif
 	sub	r4,r4,#2
-	strb	r4,[r12]
+	stob	r4,r12,garbage_collect_flag,3
 
-	ldr	r12,=extra_heap_size
-	ldr	r3,[r12]
+	lao	r12,extra_heap_size,0
+	ldo	r3,r12,extra_heap_size,0
 	cmp	r8,r3
 	bhi	collect
 
 	sub	r5,r3,r8
 
-	ldr	r12,=extra_heap
-	ldr	r10,[r12]
+	lao	r12,extra_heap,0
+	ldo	r10,r12,extra_heap,0
 	add	r3,r10,r3,lsl #2
-	ldr	r12,=heap_end_after_gc
-	str	r3,[r12]
+	lao	r12,heap_end_after_gc,3
+	sto	r3,r12,heap_end_after_gc,3
 
 	ldmia	sp!,{r0-r4,pc}
 
@@ -1691,43 +1940,46 @@ collect:
 	str	pc,[sp,#-4]!
 	bl	add_execute_time
 
-	ldr	r12,=flags
-	ldr	r12,[r12]
+	lao	r12,flags,7
+	ldo	r12,r12,flags,7
 	tst	r12,#4
 	beq	no_print_stack_sizes
 
-	ldr	r0,=garbage_collect_string_1
+	lao	r0,garbage_collect_string_1,0
+	otoa	r0,garbage_collect_string_1,0
 	bl	ew_print_string
 
 	mov	r4,r9
-	ldr	r12,=stack_p
-	ldr	r12,[r12]
+	lao	r12,stack_p,1
+	ldo	r12,r12,stack_p,1
 	sub	r0,r4,r12
 	bl	ew_print_int
 
-	ldr	r0,=garbage_collect_string_2
+	lao	r0,garbage_collect_string_2,0
+	otoa	r0,garbage_collect_string_2,0
 	bl	ew_print_string
 
-	ldr	r12,=halt_sp
-	ldr	r4,[r12]
+	lao	r12,halt_sp,2
+	ldo	r4,r12,halt_sp,2
 	sub	r0,r4,sp
 	bl	ew_print_int
 
-	ldr	r0,=garbage_collect_string_3
+	lao	r0,garbage_collect_string_3,0
+	otoa	r0,garbage_collect_string_3,0
 	bl	ew_print_string
 
 no_print_stack_sizes:
-	ldr	r12,=stack_p
-	ldr	r4,[r12]
-	ldr	r12,=ab_stack_size
-	ldr	r12,[r12]
+	lao	r12,stack_p,2
+	ldo	r4,r12,stack_p,2
+	lao	r12,ab_stack_size,5
+	ldo	r12,r12,ab_stack_size,5
 	add	r4,r4,r12
 	cmp	r9,r4
 	bhi	stack_overflow
 
 .if MARK_AND_COPY_GC
-	ldr	r12,=flags
-	ldr	r12,[r12]
+	lao	r12,flags,8
+	ldo	r12,r12,flags,8
 	tst	r12,#64
 	bne	compacting_collector
 .else
@@ -1737,55 +1989,55 @@ no_print_stack_sizes:
 .endif
 
 .if MARK_AND_COPY_GC || !MARK_GC
-	ldr	r12,=garbage_collect_flag
-	ldrb	r12,[r12]
+	lao	r12,garbage_collect_flag,4
+	ldosb	r12,r12,garbage_collect_flag,4
 	cmp	r12,#0
 	bne	compacting_collector
 
-	ldr	r12,=heap_copied_vector
-	ldr	r8,[r12]
+	lao	r12,heap_copied_vector,1
+	ldo	r8,r12,heap_copied_vector,1
 
-	ldr	r12,=heap_end_after_copy_gc
-	ldr	r12,[r12]
+	lao	r12,heap_end_after_copy_gc,1
+	ldo	r12,r12,heap_end_after_copy_gc,1
 	cmp	r12,#0
 	beq	zero_all
 
 	mov	r4,r10
-	ldr	r12,=heap_p1
-	ldr	r12,[r12]
+	lao	r12,heap_p1,1
+	ldo	r12,r12,heap_p1,1
 	subs	r4,r4,r12
 	add	r4,r4,#63*4
 	lsr	r4,r4,#8
 	str	pc,[sp,#-4]!
 	bl	zero_bit_vector
 
-	ldr	r12,=heap_end_after_copy_gc
-	ldr	r7,[r12]
-	ldr	r12,=heap_p1
-	ldr	r12,[r12]
+	lao	r12,heap_end_after_copy_gc,2
+	ldo	r7,r12,heap_end_after_copy_gc,2
+	lao	r12,heap_p1,2
+	ldo	r12,r12,heap_p1,2
 	subs	r7,r7,r12
 	lsr	r7,r7,#6
 	and	r7,r7,#-4
 
-	ldr	r12,=heap_copied_vector
-	ldr	r8,[r12]
-	ldr	r12,=heap_copied_vector_size
-	ldr	r4,[r12]
+	lao	r12,heap_copied_vector,2
+	ldo	r8,r12,heap_copied_vector,2
+	lao	r12,heap_copied_vector_size,2
+	ldo	r4,r12,heap_copied_vector_size,2
 	add	r8,r8,r7
 	subs	r4,r4,r7
 	lsr	r4,r4,#2
 
-	ldr	r12,=heap_end_after_copy_gc
+	lao	r12,heap_end_after_copy_gc,3
 	mov	r14,#0
-	str	r14,[r12]
+	sto	r14,r12,heap_end_after_copy_gc,3
 
 	str	pc,[sp,#-4]!
 	bl	zero_bit_vector
 	b	end_zero_bit_vector
 
 zero_all:
-	ldr	r12,=heap_copied_vector_size
-	ldr	r4,[r12]
+	lao	r12,heap_copied_vector_size,3
+	ldo	r4,r12,heap_copied_vector_size,3
 	lsr	r4,r4,#2
 	str	pc,[sp,#-4]!
 	bl	zero_bit_vector
@@ -1795,8 +2047,8 @@ end_zero_bit_vector:
 	.include "armcopy.s"
 
 .if WRITE_HEAP
-	ldr	r12,=heap2_begin_and_end
-	str	r9,[r12]
+	lao	r12,heap2_begin_and_end,0
+	sto	r9,r12,heap2_begin_and_end,0
 .endif
 
 	sub	r8,r9,r10
@@ -1807,16 +2059,16 @@ end_zero_bit_vector:
 	str	pc,[sp,#-4]!
 	bl	add_garbage_collect_time
 
-	ldr	r12,=n_allocated_words
-	ldr	r12,[r12]
+	lao	r12,n_allocated_words,2
+	ldo	r12,r12,n_allocated_words,2
 	subs	r8,r8,r12
 	mov	r5,r8
 	bls	switch_to_mark_scan
 
 	add	r4,r8,r8,lsl #2
 	lsl	r4,r4,#5
-	ldr	r3,=heap_size
-	ldr	r3,[r3]
+	lao	r3,heap_size,4
+	ldo	r3,r3,heap_size,4
 	mov	r6,r3
 	lsl	r3,r3,#2
 	add	r3,r3,r6
@@ -1827,65 +2079,65 @@ end_zero_bit_vector:
 @	b	no_mark_scan
 
 switch_to_mark_scan:
-	ldr	r12,=heap_size_33
-	ldr	r4,[r12]
+	lao	r12,heap_size_33,2
+	ldo	r4,r12,heap_size_33,2
 	lsl	r4,r4,#5
-	ldr	r12,=heap_p
-	ldr	r3,[r12]
+	lao	r12,heap_p,1
+	ldo	r3,r12,heap_p,1
 
-	ldr	r12,=heap_p1
-	ldr	r6,[r12]
-	ldr	r12,=heap_p2
-	ldr	r12,[r12]
+	lao	r12,heap_p1,3
+	ldo	r6,r12,heap_p1,3
+	lao	r12,heap_p2,1
+	ldo	r12,r12,heap_p2,1
 	cmp	r6,r12
 	bcc	vector_at_begin
 
 vector_at_end:
-	ldr	r12,=heap_p3
-	str	r3,[r12]
+	lao	r12,heap_p3,2
+	sto	r3,r12,heap_p3,2
 	add	r3,r3,r4
-	ldr	r12,=heap_vector
-	str	r3,[r12]
+	lao	r12,heap_vector,2
+	sto	r3,r12,heap_vector,2
 
-	ldr	r12,=heap_p1
-	ldr	r4,[r12]
-	ldr	r12,=extra_heap
-	str	r4,[r12]
+	lao	r12,heap_p1,4
+	ldo	r4,r12,heap_p1,4
+	lao	r12,extra_heap,1
+	sto	r4,r12,extra_heap,1
 	subs	r3,r3,r4
 	lsr	r3,r3,#2
-	ldr	r12,=extra_heap_size
-	str	r3,[r12]
+	lao	r12,extra_heap_size,1
+	sto	r3,r12,extra_heap_size,1
 	b	switch_to_mark_scan_2
 
 vector_at_begin:
-	ldr	r12,=heap_vector
-	str	r3,[r12]
-	ldr	r12,=heap_size
-	ldr	r12,[r12]
+	lao	r12,heap_vector,3
+	sto	r3,r12,heap_vector,3
+	lao	r12,heap_size,5
+	ldo	r12,r12,heap_size,5
 	add	r3,r3,r12
 	subs	r3,r3,r4
-	ldr	r12,=heap_p3
-	str	r3,[r12]
+	lao	r12,heap_p3,3
+	sto	r3,r12,heap_p3,3
 
-	ldr	r12,=extra_heap
-	str	r3,[r12]
-	ldr	r12,=heap_p2
-	ldr	r6,[r12]
+	lao	r12,extra_heap,2
+	sto	r3,r12,extra_heap,2
+	lao	r12,heap_p2,2
+	ldo	r6,r12,heap_p2,2
 	subs	r6,r6,r3
 	lsr	r6,r6,#2
-	ldr	r12,=extra_heap_size
-	str	r6,[r12]
+	lao	r12,extra_heap_size,2
+	sto	r6,r12,extra_heap_size,2
 
 switch_to_mark_scan_2:
-	ldr	r4,=heap_size
-	ldr	r4,[r4]
+	lao	r4,heap_size,6
+	ldo	r4,r4,heap_size,6
 	lsr	r4,r4,#3
 	sub	r4,r4,r8
 	lsl	r4,r4,#2
 
-	ldr	r12,=garbage_collect_flag
+	lao	r12,garbage_collect_flag,5
 	mov	r11,#1
-	strb	r11,[r12]
+	stob	r11,r12,garbage_collect_flag,5
 
 	cmp	r8,#0
 	bpl	end_garbage_collect
@@ -1893,48 +2145,48 @@ switch_to_mark_scan_2:
 	mov	r11,#-1
 	strb	r11,[r12]
 
-	ldr	r12,=extra_heap_size
-	ldr	r3,[r12]
+	lao	r12,extra_heap_size,3
+	ldo	r3,r12,extra_heap_size,3
 	mov	r4,r3
-	ldr	r12,=n_allocated_words
-	ldr	r12,[r12]
+	lao	r12,n_allocated_words,3
+	ldo	r12,r12,n_allocated_words,3
 	subs	r4,r4,r12
 	bmi	out_of_memory_4
 
-	ldr	r12,=extra_heap
-	ldr	r10,[r12]
+	lao	r12,extra_heap,3
+	ldo	r10,r12,extra_heap,3
 	lsl	r3,r3,#2
 	add	r3,r3,r10
-	ldr	r12,=heap_end_after_gc
-	str	r3,[r12]
+	lao	r12,heap_end_after_gc,4
+	sto	r3,r12,heap_end_after_gc,4
 .if WRITE_HEAP
-	ldr	r12,=heap_end_write_heap
-	str	r10,[r12]
-	ldr	r12,=d3_flag_write_heap
+	lao	r12,heap_end_write_heap,0
+	sto	r10,r12,heap_end_write_heap,0
+	lao	r12,d3_flag_write_heap,0
 	mov	r11,#1
-	str	r11,[r12]
+	sto	r11,r12,d3_flag_write_heap,0
 	b	end_garbage_collect_
 .else
 	b	end_garbage_collect
 .endif
 no_mark_scan:
 @ exchange the semi_spaces
-	ldr	r12,=heap_p1
-	ldr	r4,[r12]
-	ldr	r12,=heap_p2
-	ldr	r3,[r12]
-	ldr	r12,=heap_p2
-	str	r4,[r12]
-	ldr	r12,=heap_p1
-	str	r3,[r12]
+	lao	r12,heap_p1,5
+	ldo	r4,r12,heap_p1,5
+	lao	r12,heap_p2,3
+	ldo	r3,r12,heap_p2,3
+	lao	r12,heap_p2,4
+	sto	r4,r12,heap_p2,4
+	lao	r12,heap_p1,6
+	sto	r3,r12,heap_p1,6
 
-	ldr	r12,=heap_size_129
-	ldr	r4,[r12]
+	lao	r12,heap_size_129,2
+	ldo	r4,r12,heap_size_129,2
 	lsl	r4,r4,#6-2
 
  .ifdef MUNMAP
-	ldr	r12,=heap_p2
-	ldr	r3,[r12]
+	lao	r12,heap_p2,5
+	ldo	r3,r12,heap_p2,5
 	add	r6,r3,r4,lsl #2
 	add	r3,r3,#4095
 	and	r3,r3,#-4096
@@ -1960,8 +2212,8 @@ no_pages:
 
  .if ADJUST_HEAP_SIZE
 	mov	r6,r4
-	ldr	r12,=heap_size_multiple
-	ldr	r12,[r12]
+	lao	r12,heap_size_multiple,0
+	ldo	r12,r12,heap_size_multiple,0
 	umull	r4,r7,r12,r4
 	lsr	r4,r4,#9
 	orr	r4,r4,r7,lsl #32-9
@@ -1977,13 +2229,13 @@ not_too_small1:
 
 	sub	r5,r5,r3
 	lsl	r3,r3,#2
-	ldr	r12,=heap_end_after_gc
-	ldr	r8,[r12]
-	ldr	r12,=heap_end_after_copy_gc
-	str	r8,[r12]
+	lao	r12,heap_end_after_gc,5
+	ldo	r8,r12,heap_end_after_gc,5
+	lao	r12,heap_end_after_copy_gc,4
+	sto	r8,r12,heap_end_after_copy_gc,4
 	sub	r8,r8,r3
-	ldr	r12,=heap_end_after_gc
-	str	r8,[r12]
+	lao	r12,heap_end_after_gc,6
+	sto	r8,r12,heap_end_after_gc,6
 
 no_small_heap1:
 	mov	r4,r6
@@ -1994,30 +2246,32 @@ no_small_heap1:
 
 end_garbage_collect:
 .if WRITE_HEAP
-	ldr	r12,=heap_end_write_heap
-	str	r10,[r12]
-	ldr	r12,=d3_flag_write_heap
+	lao	r12,heap_end_write_heap,1
+	sto	r10,r12,heap_end_write_heap,1
+	lao	r12,d3_flag_write_heap,1
 	mov	r11,#0
-	str	r11,[r12]
+	sto	r11,r12,d3_flag_write_heap,1
 end_garbage_collect_:
 .endif
 
 	str	r4,[sp,#-4]!
 
-	ldr	r12,=flags
-	ldr	r12,[r12]
+	lao	r12,flags,9
+	ldo	r12,r12,flags,9
 	tst	r12,#2
 	beq	no_heap_use_message
 
 	str	r4,[sp,#-4]!
 
-	ldr	r0,=heap_use_after_gc_string_1
+	lao	r0,heap_use_after_gc_string_1,0
+	otoa	r0,heap_use_after_gc_string_1,0
 	bl	ew_print_string
 
 	ldr	r0,[sp],#4
 	bl	ew_print_int
 
-	ldr	r0,=heap_use_after_gc_string_2
+	lao	r0,heap_use_after_gc_string_2,0
+	otoa	r0,heap_use_after_gc_string_2,0
 	bl	ew_print_string
 
 no_heap_use_message:
@@ -2031,13 +2285,13 @@ no_heap_use_message:
 
 .if WRITE_HEAP
 	@ Check whether memory profiling is on or off
-	ldr	r12,=flags
-	ldrb	r12,[r12]
+	lao	r12,flags,10
+	ldo	r12,r12,flags,10
 	tst	r12,#32
 	beq	no_write_heap
 
-	ldr	r12,=min_write_heap_size
-	ldr	r12,[r12]
+	lao	r12,min_write_heap_size,0
+	ldo	r12,r12,min_write_heap_size,0
 	cmp	r4,r12
 	blo	no_write_heap
 
@@ -2049,28 +2303,31 @@ no_heap_use_message:
 
 	subs	sp,sp,#64
 
-	ldr	r12,=d3_flag_write_heap
-	ldr	r4,[r12]
+	lao	r12,d3_flag_write_heap,2
+	ldo	r4,r12,d3_flag_write_heap,2
 	tst	r4,r4
 	bne	copy_to_compact_with_alloc_in_extra_heap	
 
-	ldr	r4,=garbage_collect_flag
-	ldrsb	r4,[r4]
+	lao	r4,garbage_collect_flag,6
+	ldosb	r4,r4,garbage_collect_flag,6
 
-	ldr	r12,=heap2_begin_and_end
-	ldr	r6,[r12]
-	ldr	r12,=heap2_begin_and_end+4
-	ldr	r7,[r12]
+	lao	r12,heap2_begin_and_end,1
+	ldo	r6,r12,heap2_begin_and_end,1
+	laol	r12,heap2_begin_and_end+4,heap2_begin_and_end_o_4,0
+	ldo	r7,r12,heap2_begin_and_end_o_4,0
 
-	ldr	r3,=heap_p1
+	lao	r3,heap_p1,7
+	otoa	r3,heap_p1,7
 
 	tst	r4,r4
 	beq	gc0
 
-	ldr	r3,=heap_p2
+	lao	r3,heap_p2,6
+	otoa	r3,heap_p2,6
 	bgt	gc1
 
-	ldr	r3,=heap_p3
+	lao	r3,heap_p3,4
+	otoa	r3,heap_p3,4
 	mov	r6,#0
 	mov	r7,#0
 
@@ -2088,8 +2345,8 @@ gc1:
 ?	movl	a0,8(d0)			// heap2_begin
 ?	movl	a1,12(d0)			// heap2_end
 
-	ldr	r12,=stack_p
-	ldr	r3,[r12]
+	lao	r12,stack_p,3
+	ldo	r3,r12,stack_p,3
 ?	movl	d1,16(d0)			// stack_begin
 
 ?	movl	a3,20(d0)			// stack_end
@@ -2122,15 +2379,130 @@ no_write_heap:
 
 	ldmia	sp!,{r0-r4,pc}
 
+.ifdef PIC
+ .if MARK_AND_COPY_GC
+	lto	flags,8
+ .endif
+ .if MARK_AND_COPY_GC || !MARK_GC
+	lto	garbage_collect_flag,4
+	lto	heap_copied_vector,1
+	lto	heap_end_after_copy_gc,1
+	lto	heap_p1,1
+	lto	heap_end_after_copy_gc,2
+	lto	heap_p1,2
+	lto	heap_copied_vector,2
+	lto	heap_copied_vector_size,2
+	lto	heap_end_after_copy_gc,3
+	lto	heap_copied_vector_size,3
+ .endif
+ .if WRITE_HEAP
+	lto	heap2_begin_and_end,0
+ .endif
+	lto	n_allocated_words,2
+	lto	heap_size,4
+	lto	heap_size_33,2
+	lto	heap_p,1
+	lto	heap_p1,3
+	lto	heap_p2,1
+	lto	heap_p3,2
+	lto	heap_vector,2
+	lto	heap_p1,4
+	lto	extra_heap,1
+	lto	extra_heap_size,1
+	lto	heap_vector,3
+	lto	heap_size,5
+	lto	heap_p3,3
+	lto	extra_heap,2
+	lto	heap_p2,2
+	lto	extra_heap_size,2
+	lto	heap_size,6
+	lto	garbage_collect_flag,5
+	lto	extra_heap_size,3
+	lto	n_allocated_words,3
+	lto	extra_heap,3
+	lto	heap_end_after_gc,4
+ .if WRITE_HEAP
+	lto	heap_end_write_heap,0
+	lto	d3_flag_write_heap,0
+ .endif
+	lto	heap_p1,5
+	lto	heap_p2,3
+	lto	heap_p2,4
+	lto	heap_p1,6
+	lto	heap_size_129,2
+ .ifdef MUNMAP
+	lto	heap_p2,5
+ .endif
+ .if ADJUST_HEAP_SIZE
+	lto	heap_size_multiple,0
+	lto	heap_end_after_gc,5
+	lto	heap_end_after_copy_gc,4
+	lto	heap_end_after_gc,6
+ .endif
+ .if WRITE_HEAP
+	lto	heap_end_write_heap,1
+	lto	d3_flag_write_heap,1
+ .endif
+	lto	flags,9
+	lto	heap_use_after_gc_string_1,0
+	lto	heap_use_after_gc_string_2,0
+ .if WRITE_HEAP
+	lto	flags,10
+	lto	min_write_heap_size,0
+	lto	d3_flag_write_heap,2
+	lto	garbage_collect_flag,6
+	lto	heap2_begin_and_end,1
+	ltol	heap2_begin_and_end+4,heap2_begin_and_end_o_4,0
+	lto	heap_p1,7
+	lto	heap_p2,6
+	lto	heap_p3,4
+	lto	stack_p,3
+ .endif
+.endif
 	.ltorg
+.ifdef PIC
+ .if FINALIZERS
+	lto	free_finalizer_list,1
+	ltol	__Nil-4,__Nil_o_m4,1
+	lto	free_finalizer_list,2
+	ltol	__Nil-4,__Nil_o_m4,2
+ .endif
+ .if WRITE_HEAP
+	lto	heap2_begin_and_end,2
+	ltol	heap2_begin_and_end+4,heap2_begin_and_end_o_4,1
+	lto	heap_p2,7
+ .endif
+	lto	out_of_memory_string_4,0
+	lto	stack_top,0
+	lto	heap_vector,4
+ .if MARK_GC
+  .if MARK_AND_COPY_GC
+	lto	flags,11
+  .endif
+	lto	zero_bits_before_mark,0
+ .endif
+	lto	heap_size_33,3
+ .if MARK_GC
+  .if MARK_AND_COPY_GC
+ 	lto	flags,12
+   .endif
+	lto	n_last_heap_free_bytes,0
+	lto	n_free_words_after_mark,3
+  .endif
+ .if ADJUST_HEAP_SIZE
+	lto	bit_vector_size,1
+	lto	heap_size_multiple,1
+ .endif
+.endif
 
 .if FINALIZERS
 call_finalizers:
-	ldr	r12,=free_finalizer_list
-	ldr	r4,[r12]
+	lao	r12,free_finalizer_list,1
+	ldo	r4,r12,free_finalizer_list,1
 
 call_finalizers_lp:
-	ldr	r12,=__Nil-4
+	laol	r12,__Nil-4,__Nil_o_m4,1
+	otoa	r12,__Nil_o_m4,1
 	cmp	r4,r12
 	beq	end_call_finalizers
 	ldr	r12,[r4,#4]
@@ -2144,19 +2516,21 @@ call_finalizers_lp:
 	ldr	r4,[sp],#4
 	b	call_finalizers_lp
 end_call_finalizers:
-	ldr	r12,=free_finalizer_list
-	ldr	r11,=__Nil-4
-	str	r11,[r12]
+	lao	r12,free_finalizer_list,2
+	laol	r11,__Nil-4,__Nil_o_m4,2
+	otoa	r11,__Nil_o_m4,2
+	sto	r11,r12,free_finalizer_list,2
 	ldr	pc,[sp],#4
 .endif
 
 .if WRITE_HEAP
 copy_to_compact_with_alloc_in_extra_heap:
-	ldr	r12,=heap2_begin_and_end
-	ldr	r6,[r12]
-	ldr	r12,=heap2_begin_and_end+4
-	ldr	r7,[r12]
-	ldr	r3,=heap_p2
+	lao	r12,heap2_begin_and_end,2
+	ldo	r6,r12,heap2_begin_and_end,2
+	laol	r12,heap2_begin_and_end+4,heap2_begin_and_end_o_4,1
+	ldo	r7,r12,heap2_begin_and_end_o_4,1
+	lao	r3,heap_p2,7
+	otoa	r3,heap_p2,7
 	b	gc1
 .endif
 
@@ -2164,7 +2538,8 @@ out_of_memory_4:
 	str	pc,[sp,#-4]!
 	bl	add_garbage_collect_time
 
-	ldr	r8,=out_of_memory_string_4
+	lao	r8,out_of_memory_string_4,0
+	otoa	r8,out_of_memory_string_4,0
 	b	print_error
 
 zero_bit_vector:
@@ -2251,20 +2626,21 @@ st_reorder_lp:
 compacting_collector:
 @ zero all mark bits
 
-	ldr	r12,=stack_top
-	str	r9,[r12]
+	lao	r12,stack_top,0
+	sto	r9,r12,stack_top,0
 
-	ldr	r12,=heap_vector
-	ldr	r10,[r12]
+	lao	r12,heap_vector,4
+	ldo	r10,r12,heap_vector,4
 
 .if MARK_GC
  .if MARK_AND_COPY_GC
- 	ldr	r12,=flags
- 	ldrb	r12,[r12]
+ 	lao	r12,flags,11
+ 	ldo	r12,r12,flags,11
 	tst	r12,#64
 	beq	no_mark4
  .endif
- 	ldr	r12,=zero_bits_before_mark
+ 	lao	r12,zero_bits_before_mark,0
+ 	otoa	r12,zero_bits_before_mark,0
  	ldr	r11,[r12]
  	cmp	r11,#0
 	beq	no_zero_bits
@@ -2278,8 +2654,8 @@ no_mark4:
 .endif
 
 	mov	r8,r10
-	ldr	r12,=heap_size_33
-	ldr	r4,[r12]
+	lao	r12,heap_size_33,3
+	ldo	r4,r12,heap_size_33,3
 	add	r4,r4,#3
 	lsr	r4,r4,#2
 
@@ -2311,16 +2687,16 @@ zero_bits_5:
 
 .if MARK_GC
  .if MARK_AND_COPY_GC
- 	ldr	r12,=flags
- 	ldrb	r12,[r12]
+ 	lao	r12,flags,12
+ 	ldo	r12,r12,flags,12
  	tst	r12,#64
 	beq	no_mark5
  .endif
 no_zero_bits:
-	ldr	r12,=n_last_heap_free_bytes
-	ldr	r4,[r12]
-	ldr	r12,=n_free_words_after_mark
-	ldr	r3,[r12]
+	lao	r12,n_last_heap_free_bytes,0
+	ldo	r4,r12,n_last_heap_free_bytes,0
+	lao	r12,n_free_words_after_mark,3
+	ldo	r3,r12,n_free_words_after_mark,3
 
 .if 1
 	lsr	r4,r4,#2
@@ -2335,14 +2711,14 @@ no_zero_bits:
 	bgt	compact_gc
 
  .if ADJUST_HEAP_SIZE
-	ldr	r12,=bit_vector_size
-	ldr	r3,[r12]
+	lao	r12,bit_vector_size,1
+	ldo	r3,r12,bit_vector_size,1
 	lsl	r3,r3,#2
 
 	sub	r4,r3,r4
 
-	ldr	r12,=heap_size_multiple
-	ldr	r12,[r12]
+	lao	r12,heap_size_multiple,1
+	ldo	r12,r12,heap_size_multiple,1
 	umull	r4,r7,r12,r4
 	lsr	r4,r4,#7
 	orr	r4,r4,r7,lsl #32-7
@@ -2361,16 +2737,22 @@ no_smaller_heap:
 
 	.include "armmark.s"
 
+.ifdef PIC
+	lto	zero_bits_before_mark,1
+	lto	n_last_heap_free_bytes,1
+	lto	n_free_words_after_mark,4
+.endif
+
 compact_gc:
-	ldr	r12,=zero_bits_before_mark
+	lao	r12,zero_bits_before_mark,1
 	mov	r11,#1
-	str	r11,[r12]
-	ldr	r12,=n_last_heap_free_bytes
+	sto	r11,r12,zero_bits_before_mark,1
+	lao	r12,n_last_heap_free_bytes,1
 	mov	r11,#0
-	str	r11,[r12]
-	ldr	r12,=n_free_words_after_mark
+	sto	r11,r12,n_last_heap_free_bytes,1
+	lao	r12,n_free_words_after_mark,4
 	mov	r11,#1000
-	str	r11,[r12]
+	sto	r11,r12,n_free_words_after_mark,4
  .if MARK_AND_COPY_GC
 no_mark5:
  .endif
@@ -2378,24 +2760,24 @@ no_mark5:
 
 	.include "armcompact.s"
 
-	ldr	r12,=stack_top
-	ldr	r9,[r12]
+	lao	r12,stack_top,1
+	ldo	r9,r12,stack_top,1
 
-	ldr	r12,=heap_size_33
-	ldr	r3,[r12]
+	lao	r12,heap_size_33,4
+	ldo	r3,r12,heap_size_33,4
 	lsl	r3,r3,#5
-	ldr	r12,=heap_p3
-	ldr	r12,[r12]
+	lao	r12,heap_p3,5
+	ldo	r12,r12,heap_p3,5
 	add	r3,r3,r12
 
-	ldr	r12,=heap_end_after_gc
-	str	r3,[r12]
+	lao	r12,heap_end_after_gc,7
+	sto	r3,r12,heap_end_after_gc,7
 
 	subs	r3,r3,r10
 	lsr	r3,r3,#2
 
-	ldr	r12,=n_allocated_words
-	ldr	r12,[r12]
+	lao	r12,n_allocated_words,4
+	ldo	r12,r12,n_allocated_words,4
 	subs	r3,r3,r12
 	mov	r5,r3
 	bcc	out_of_memory_4
@@ -2405,8 +2787,8 @@ no_mark5:
 	bhs	not_out_of_memory
 	add	r4,r3,r3,lsl #2
 	lsl	r4,r4,#3
-	ldr	r12,=heap_size
-	ldr	r12,[r12]
+	lao	r12,heap_size,7
+	ldo	r12,r12,heap_size,7
 	cmp	r4,r12
 	bcc	out_of_memory_4
 not_out_of_memory:
@@ -2414,25 +2796,25 @@ not_out_of_memory:
 .if MARK_GC || COMPACT_GC_ONLY
  .if MARK_GC && ADJUST_HEAP_SIZE
   .if MARK_AND_COPY_GC
-  	ldr	r12,=flags
-  	ldrb	r12,[r12]
+  	lao	r12,flags,13
+  	ldo	r12,r12,flags,13
   	tst	r12,#64
 	beq	no_mark_6
   .endif
 
-	ldr	r12,=heap_p3
-	ldr	r4,[r12]
+	lao	r12,heap_p3,6
+	ldo	r4,r12,heap_p3,6
 	sub	r4,r10,r4
-	ldr	r12,=n_allocated_words
-	ldr	r3,[r12]
+	lao	r12,n_allocated_words,5
+	ldo	r3,r12,n_allocated_words,5
 	add	r4,r4,r3,lsl #2
 
-	ldr	r12,=heap_size_33
-	ldr	r3,[r12]
+	lao	r12,heap_size_33,5
+	ldo	r3,r12,heap_size_33,5
 	lsl	r3,r3,#5
 
-	ldr	r12,=heap_size_multiple
-	ldr	r12,[r12]
+	lao	r12,heap_size_multiple,2
+	ldo	r12,r12,heap_size_multiple,2
 	umull	r4,r7,r12,r4
 	lsr	r4,r4,#8
 	orr	r4,r4,r7,lsl #32-8
@@ -2449,7 +2831,8 @@ not_too_small2:
 	subs	r6,r6,r4
 	blo	no_small_heap2
 
-	ldr	r12,=heap_end_after_gc
+	lao	r12,heap_end_after_gc,8
+	otoa	r12,heap_end_after_gc,8
 	ldr	r11,[r12]
 	sub	r11,r11,r6
 	str	r11,[r12]
@@ -2460,8 +2843,8 @@ not_too_small2:
 
 no_small_heap2:
 	lsr	r3,r3,#2
-	ldr	r12,=bit_vector_size
-	str	r3,[r12]
+	lao	r12,bit_vector_size,2
+	sto	r3,r12,bit_vector_size,2
 
   .if MARK_AND_COPY_GC
 no_mark_6:
@@ -2471,57 +2854,57 @@ no_mark_6:
 .else
 @ to do prevent overflow
 	lsl	r4,r4,#2
-	ldr	r12,=heap_size
-	ldr	r12,[r12]
+	lao	r12,heap_size,8
+	ldo	r12,r12,heap_size,8
 	lsl	r6,r12,#5
 	sub	r6,r6,r12
 	cmp	r4,r6
 	ble	no_copy_garbage_collection
 
-	ldr	r12,=heap_p
-	ldr	r4,[r12]
-	ldr	r12,=heap_p1
-	str	r4,[r12]
+	lao	r12,heap_p,2
+	ldo	r4,r12,heap_p,2
+	lao	r12,heap_p1,8
+	sto	r4,r12,heap_p1,8
 
-	ldr	r12,=heap_size_129
-	ldr	r3,[r12]
+	lao	r12,heap_size_129,3
+	lto	r3,r12,heap_size_129,3
 	lsl	r3,r3,#6
 	add	r4,r4,r3
-	ldr	r12,=heap_copied_vector
-	str	r4,[r12]
-	ldr	r12,=heap_end_after_gc
-	str	r4,[r12]
-	ldr	r12,=heap_copied_vector_size
-	ldr	r3,[r12]
+	lao	r12,heap_copied_vector,3
+	sto	r4,r12,heap_copied_vector,3
+	lao	r12,heap_end_after_gc,9
+	sto	r4,r12,heap_end_after_gc,9
+	lao	r12,heap_copied_vector_size,4
+	ldo	r3,r12,heap_copied_vector_size,4
 	add	r3,r3,r4
-	ldr	r12,=heap_p2
-	str	r3,[r12]
+	lao	r12,heap_p2,8
+	sto	r3,r12,heap_p2,8
 
-	ldr	r12,=heap_p3
-	ldr	r4,[r12]
-	ldr	r12,=heap_vector
-	ldr	r12,[r12]
+	lao	r12,heap_p3,7
+	ldo	r4,r12,heap_p3,7
+	lao	r12,heap_vector,5
+	ldo	r12,r12,heap_vector,5
 	cmp	r4,r12
 	ble	vector_at_end_2
 
-	ldr	r12,=heap_vector
-	ldr	r3,[r12]
-	ldr	r12,=extra_heap
-	str	r3,[r12]
+	lao	r12,heap_vector,6
+	ldo	r3,r12,heap_vector,6
+	lao	r12,extra_heap,4
+	sto	r3,r12,extra_heap,4
 	subs	r4,r4,r3
 	lsr	r4,r4,#2
-	ldr	r12,=extra_heap_size
-	str	r4,[r12]
+	lao	r12,extra_heap_size,4
+	sto	r4,r12,extra_heap_size,4
 
-	ldr	r12,=garbage_collect_flag
+	lao	r12,garbage_collect_flag,7
 	mov	r11,#2
-	strb	r11,[r12]
+	stob	r11,r12,garbage_collect_flag,7
 	b	no_copy_garbage_collection
 
 vector_at_end_2:
-	ldr	r12,=garbage_collect_flag
+	lao	r12,garbage_collect_flag,8
 	mov	r11,#0
-	strb	r11,[r12]
+	stob	r11,r12,garbage_collect_flag,8
 .endif
 
 no_copy_garbage_collection:
@@ -2529,11 +2912,11 @@ no_copy_garbage_collection:
 	bl	add_garbage_collect_time
 
 	mov	r4,r10
-	ldr	r12,=heap_p3
-	ldr	r12,[r12]
+	lao	r12,heap_p3,8
+	ldo	r12,r12,heap_p3,8
 	subs	r4,r4,r12
-	ldr	r12,=n_allocated_words
-	ldr	r3,[r12]
+	lao	r12,n_allocated_words,6
+	ldo	r3,r12,n_allocated_words,6
 	add	r4,r4,r3,lsl #2
 	b	end_garbage_collect
 
@@ -2541,19 +2924,22 @@ stack_overflow:
 	str	pc,[sp,#-4]!
 	bl	add_execute_time
 
-	ldr	r8,=stack_overflow_string
+	lao	r8,stack_overflow_string,0
+	otoa	r8,stack_overflow_string,0
 	b	print_error
 
 IO_error:
 	str	r0,[sp]
 
-	ldr	r0,=IO_error_string
+	lao	r0,IO_error_string,0
+	otoa	r0,IO_error_string,0
 	bl	ew_print_string
 
 	ldr	r0,[sp],#4
 	bl	ew_print_string
 
-	ldr	r0,=new_line_string
+	lao	r0,new_line_string,0
+	otoa	r0,new_line_string,0
 	bl	ew_print_string
 
 	b	halt
@@ -2563,8 +2949,8 @@ print_error:
 	bl	ew_print_string
 
 halt:
-	ldr	r12,=halt_sp
-	ldr	sp,[r12]
+	lao	r12,halt_sp,3
+	ldo	sp,r12,halt_sp,3
 
 .ifdef PROFILE
 	str	pc,[sp,#-4]!
@@ -2573,6 +2959,49 @@ halt:
 
 	b	exit
 
+.ifdef PIC
+	lto	stack_top,1
+	lto	heap_size_33,4
+	lto	heap_p3,5
+	lto	heap_end_after_gc,7
+	lto	n_allocated_words,4
+	lto	heap_size,7
+ .if MARK_GC || COMPACT_GC_ONLY
+  .if MARK_GC && ADJUST_HEAP_SIZE
+   .if MARK_AND_COPY_GC
+  	lto	flags,13
+   .endif
+	lto	heap_p3,6
+	lto	n_allocated_words,5
+	lto	heap_size_33,5
+	lto	heap_size_multiple,2
+	lto	heap_end_after_gc,8
+	lto	bit_vector_size,2
+  .endif
+ .else
+	lto	heap_size,8
+	lto	heap_p,2
+	lto	heap_p1,8
+	lto	heap_size_129,3
+	lto	heap_copied_vector,3
+	lto	heap_end_after_gc,9
+	lto	heap_copied_vector_size,4
+	lto	heap_p2,8
+	lto	heap_p3,7
+	lto	heap_vector,5
+	lto	heap_vector,6
+	lto	extra_heap,4
+	lto	extra_heap_size,4
+	lto	garbage_collect_flag,7
+	lto	garbage_collect_flag,8
+ .endif
+	lto	heap_p3,8
+	lto	n_allocated_words,6
+	lto	stack_overflow_string,0
+	lto	IO_error_string,0
+	lto	new_line_string,0
+	lto	halt_sp,3
+.endif
 	.ltorg
 
 e__system__eaind:
@@ -2598,7 +3027,11 @@ eval_fill:
 	b	e__system__eaind
 	nop
 	nop
+.ifdef PIC
+	.long	e__system__dind-.
+.else
 	.long	e__system__dind
+.endif
 	.long	-2
 e__system__nind:
 __indirection:
@@ -2619,12 +3052,13 @@ __indirection:
 
 .if MARK_GC
 eval_fill2:
-	ldr	r12,=__cycle__in__spine
+	lao	r12,__cycle__in__spine,0
+	otoa	r12,__cycle__in__spine,0
 	str	r12,[r6]
 	str	r6,[r9]
  .if MARK_AND_COPY_GC
- 	ldr	r12,=flags
- 	ldrb	r12,[r12]
+ 	lao	r12,flags,14
+ 	ldo	r12,r12,flags,14
  	tst	r12,#64
 	beq	__cycle__in__spine	
  .endif
@@ -2651,7 +3085,8 @@ eval_fill2:
 	mov	r8,r4
 .endif
 eval_upd_0:
-	ldr	r12,=__indirection
+	lao	r12,__indirection,0
+	otoa	r12,__indirection,0
 	str	r12,[r7]
 	str	r6,[r7,#4]
 	mov	pc,r11
@@ -2662,7 +3097,8 @@ eval_upd_0:
 	mov	r8,r4
 .endif
 eval_upd_1:
-	ldr	r12,=__indirection
+	lao	r12,__indirection,1
+	otoa	r12,__indirection,1
 	str	r12,[r7]
 	ldr	r4,[r7,#4]
 	str	r6,[r7,#4]
@@ -2675,7 +3111,8 @@ eval_upd_1:
 	mov	r8,r4
 .endif
 eval_upd_2:
-	ldr	r12,=__indirection
+	lao	r12,__indirection,2
+	otoa	r12,__indirection,2
 	str	r12,[r7]
 	ldr	r8,[r7,#4]
 	str	r6,[r7,#4]
@@ -2688,7 +3125,8 @@ eval_upd_2:
 	mov	r8,r4
 .endif
 eval_upd_3:
-	ldr	r12,=__indirection
+	lao	r12,__indirection,3
+	otoa	r12,__indirection,3
 	str	r12,[r7]
 	ldr	r8,[r7,#4]
 	str	r6,[r7,#4]
@@ -2703,7 +3141,8 @@ eval_upd_3:
 	mov	r8,r4
 .endif
 eval_upd_4:
-	ldr	r12,=__indirection
+	lao	r12,__indirection,4
+	otoa	r12,__indirection,4
 	str	r12,[r7]
 	ldr	r8,[r7,#4]
 	str	r6,[r7,#4]
@@ -2721,7 +3160,8 @@ eval_upd_4:
 	mov	r8,r4
 .endif
 eval_upd_5:
-	ldr	r12,=__indirection
+	lao	r12,__indirection,5
+	otoa	r12,__indirection,5
 	str	r12,[r7]
 	ldr	r8,[r7,#4]
 	str	r6,[r9]
@@ -2741,7 +3181,8 @@ eval_upd_5:
 	mov	r8,r4
 .endif
 eval_upd_6:
-	ldr	r12,=__indirection
+	lao	r12,__indirection,6
+	otoa	r12,__indirection,6
 	str	r12,[r7]
 	ldr	r8,[r7,#4]
 	str	r6,[r9]
@@ -2766,7 +3207,8 @@ eval_upd_7:
 	mov	r4,#0
 	mov	r3,#20
 eval_upd_n:
-	ldr	r12,=__indirection
+	lao	r12,__indirection,7
+	otoa	r12,__indirection,7
 	add	r2,r7,r3
 	str	r12,[r7]
 	ldr	r8,[r7,#4]
@@ -3043,7 +3485,6 @@ eval_upd_32:
 @
 @	STRINGS
 @
-
 	.section .text.	(catAC)
 catAC:
 	ldr	r4,[r6,#4]
@@ -3061,7 +3502,8 @@ gc_r_3:
 @ fill_node
 
 	str	r10,[sp,#-4]!
-	ldr	r12,=__STRING__+2
+	laol	r12,__STRING__+2,__STRING___o_2,1
+	otoa	r12,__STRING___o_2,1
 	str	r12,[r10]
 
 @ store length
@@ -3121,8 +3563,14 @@ gc_3:	bl	collect_2
 	b	gc_r_3
 
 empty_string:
-	ldr	r6,=zero_length_string
+	lao	r6,zero_length_string,0
+	otoa	r6,zero_length_string,0
 	ldr	pc,[sp],#4
+
+.ifdef PIC
+	ltol	__STRING__+2,__STRING___o_2,1
+	lto	zero_length_string,0
+.endif
 
 	.section .text.sliceAC,"ax"
 sliceAC:
@@ -3152,7 +3600,8 @@ r_gc_4:
 	add	r12,r6,#8
 	add	r7,r12,r3
 
-	ldr	r12,=__STRING__+2
+	laol	r12,__STRING__+2,__STRING___o_2,2
+	otoa	r12,__STRING___o_2,2
 	str	r12,[r10]
 	str	r4,[r10,#4]
 
@@ -3179,6 +3628,10 @@ gc_4:
 	lsr	r8,r8,#2
 	b	r_gc_4
 
+.ifdef PIC
+	ltol	__STRING__+2,__STRING___o_2,2
+.endif
+
 	.section .text.updateAC,"ax"
 updateAC:
 	ldr	r8,[r6,#4]
@@ -3198,7 +3651,8 @@ r_gc_5:
 	mov	r7,r6
 	mov	r6,r10
 
-	ldr	r12,=__STRING__+2
+	laol	r12,__STRING__+2,__STRING___o_2,3
+	otoa	r12,__STRING___o_2,3
 	str	r12,[r10]
 	ldr	r12,[r7,#4]
 	add	r7,r7,#8
@@ -3225,12 +3679,20 @@ gc_5:	bl	collect_1
 	b	r_gc_5
 
 update_string_error:
-	ldr	r8,=high_index_string
+	lao	r8,high_index_string,0
+	otoa	r8,high_index_string,0
 	tst	r4,r4
 	bpl	update_string_error_2
-	ldr	r8,=low_index_string
+	lao	r8,low_index_string,0
+	otoa	r8,low_index_string,0
 update_string_error_2:
 	b	print_error
+
+.ifdef PIC
+	ltol	__STRING__+2,__STRING___o_2,3
+	lto	high_index_string,0
+	lto	low_index_string,0
+.endif
 
 	.section .text.eqAC,"ax"
 eqAC:
@@ -3364,7 +3826,8 @@ string_to_string_node:
 	blo	string_to_string_node_gc
 
 string_to_string_node_r:
-	ldr	r12,=__STRING__+2
+	laol	r12,__STRING__+2,__STRING___o_2,4
+	otoa	r12,__STRING___o_2,4
 	str	r12,[r10]
 	str	r4,[r10,#4]
 	mov	r8,r10
@@ -3387,6 +3850,10 @@ string_to_string_node_gc:
 	ldr	r6,[sp],#4
 	b	string_to_string_node_r
 
+.ifdef PIC
+	ltol	__STRING__+2,__STRING___o_2,4
+.endif
+
 	.section .text.int_array_to_node,"ax"
 int_array_to_node:
 	ldr	r4,[r6,#-8]
@@ -3396,12 +3863,14 @@ int_array_to_node:
 	blo	int_array_to_node_gc
 
 int_array_to_node_r:
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,0
+	otoa	r12,__ARRAY___o_2,0
 	str	r12,[r10]
 	mov	r7,r6
 	str	r4,[r10,#4]
 	mov	r6,r10
-	ldr	r12,=INT+2
+	laol	r12,INT+2,INT_o_2,3
+	otoa	r12,INT_o_2,3
 	str	r12,[r10,#8]
 	add	r10,r10,#12
 	b	int_array_to_node_4
@@ -3421,6 +3890,11 @@ int_array_to_node_gc:
 	ldr	r6,[sp],#4
 	b	int_array_to_node_r
 
+.ifdef PIC
+	ltol	__ARRAY__+2,__ARRAY___o_2,0
+	ltol	INT+2,INT_o_2,3
+.endif
+
 	.section .text.real_array_to_node,"ax"
 real_array_to_node:
 	ldr	r4,[r6,#-8]
@@ -3434,11 +3908,13 @@ real_array_to_node_r:
 	orr	r10,r10,#4
 	addne	r5,r5,#1
 	mov	r7,r6
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,1
+	otoa	r12,__ARRAY___o_2,1
 	str	r12,[r10]
 	str	r4,[r10,#4]
 	mov	r6,r10
-	ldr	r12,=REAL+2
+	laol	r12,REAL+2,REAL_o_2,2
+	otoa	r12,REAL_o_2,2
 	str	r12,[r10,#8]
 	add	r10,r10,#12
 	b	real_array_to_node_4
@@ -3461,6 +3937,12 @@ real_array_to_node_gc:
 	bl	collect_0
 	ldr	r6,[sp],#4
 	b	real_array_to_node_r
+
+.ifdef PIC
+	ltol	__ARRAY__+2,__ARRAY___o_2,1
+	ltol	REAL+2,REAL_o_2,2
+.endif
+	.text
 
 	.p2align	2
 	.long	3
@@ -3568,10 +4050,12 @@ _create_arrayB:
 	bl	collect_0
 no_collect_4574:
 	mov	r6,r10
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,2
+	otoa	r12,__ARRAY___o_2,2
 	str	r12,[r10]
 	str	r4,[r10,#4]
-	ldr	r12,=BOOL+2
+	laol	r12,BOOL+2,BOOL_o_2,2
+	otoa	r12,BOOL_o_2,2
 	str	r12,[r10,#8]
 	add	r12,r10,#12
 	add	r10,r12,r3,lsl #2
@@ -3587,7 +4071,8 @@ _create_arrayC:
 	bl	collect_0
 no_collect_4573:
 	mov	r6,r10
-	ldr	r12,=__STRING__+2
+	laol	r12,__STRING__+2,__STRING___o_2,5
+	otoa	r12,__STRING___o_2,5
 	str	r12,[r10]
 	str	r4,[r10,#4]
 	add	r12,r10,#8
@@ -3601,10 +4086,12 @@ _create_arrayI:
 	bl	collect_0
 no_collect_4572:
 	mov	r6,r10
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,3
+	otoa	r12,__ARRAY___o_2,3
 	str	r12,[r10]
 	str	r4,[r10,#4]
-	ldr	r12,=INT+2
+	laol	r12,INT+2,INT_o_2,4
+	otoa	r12,INT_o_2,4
 	str	r12,[r10,#8]
 	add	r12,r10,#12
 	add	r10,r12,r4,lsl #2
@@ -3621,10 +4108,12 @@ no_collect_4580:
 	orr	r10,r10,#4
 	addne	r5,r5,#1
 	mov	r6,r10
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,4
+	otoa	r12,__ARRAY___o_2,4
 	str	r12,[r10]
 	str	r4,[r10,#4]
-	ldr	r12,=REAL+2
+	laol	r12,REAL+2,REAL_o_2,3
+	otoa	r12,REAL_o_2,3
 	str	r12,[r10,#8]
 	add	r12,r10,#12
 	add	r10,r12,r4,lsl #3
@@ -3642,7 +4131,8 @@ _create_r_array:
 no_collect_4586:
 	mov	r8,r6
 
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,5
+	otoa	r12,__ARRAY___o_2,5
 	str	r12,[r10]
 	str	r4,[r10,#4]
 	str	r3,[r10,#8]
@@ -3761,10 +4251,12 @@ no_collect_4575:
 	orr	r4,r4,r4,lsl #8
 	orr	r4,r4,r4,lsl #16
 	mov	r6,r10
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,6
+	otoa	r12,__ARRAY___o_2,6
 	str	r12,[r10]
 	str	r7,[r10,#4]
-	ldr	r12,=BOOL+2
+	laol	r12,BOOL+2,BOOL_o_2,3
+	otoa	r12,BOOL_o_2,3
 	str	r12,[r10,#8]
 	add	r10,r10,#12
 	b	create_arrayBCI
@@ -3786,7 +4278,8 @@ no_collect_4578:
 	orr	r4,r4,r4,lsl #8
 	orr	r4,r4,r4,lsl #16
 	mov	r6,r10
-	ldr	r12,=__STRING__+2
+	laol	r12,__STRING__+2,__STRING___o_2,6
+	otoa	r12,__STRING___o_2,6
 	str	r12,[r10]
 	str	r7,[r10,#4]
 	add	r10,r10,#8
@@ -3801,10 +4294,12 @@ create_arrayI:
 
 no_collect_4577:
 	mov	r6,r10
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,7
+	otoa	r12,__ARRAY___o_2,7
 	str	r12,[r10]
 	str	r3,[r10,#4]
-	ldr	r12,=INT+2
+	laol	r12,INT+2,INT_o_2,5
+	otoa	r12,INT_o_2,5
 	str	r12,[r10,#8]
 	add	r10,r10,#12
 create_arrayBCI:
@@ -3844,10 +4339,12 @@ no_collect_4579:
 	addne	r5,r5,#1
 
 	mov	r6,r10
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,8
+	otoa	r12,__ARRAY___o_2,8
 	str	r12,[r10]
 	str	r4,[r10,#4]
-	ldr	r12,=REAL+2
+	laol	r12,REAL+2,REAL_o_2,4
+	otoa	r12,REAL_o_2,4
 	str	r12,[r10,#8]
 	add	r10,r10,#12
 	b	st_fillr_array
@@ -3871,7 +4368,8 @@ create_array:
 no_collect_4576:
 	mov	r3,r6
 	mov	r6,r10
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,9
+	otoa	r12,__ARRAY___o_2,9
 	str	r12,[r10]
 	str	r4,[r10,#4]
 	mov	r12,#0
@@ -3904,7 +4402,8 @@ create_R_array_1:
 
 no_collect_4581:
 	mov	r6,r10
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,10
+	otoa	r12,__ARRAY___o_2,10
 	str	r12,[r10]
 	str	r4,[r10,#4]
 	str	r3,[r10,#8]
@@ -3950,7 +4449,8 @@ create_R_array_2:
 
 no_collect_4582:
 	mov	r6,r10
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,11
+	otoa	r12,__ARRAY___o_2,11
 	str	r12,[r10]
 	str	r4,[r10,#4]
 	str	r3,[r10,#8]
@@ -3995,7 +4495,8 @@ create_R_array_3:
 
 no_collect_4583:
 	mov	r6,r10
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,12
+	otoa	r12,__ARRAY___o_2,12
 	str	r12,[r10]
 	str	r4,[r10,#4]
 	str	r3,[r10,#8]
@@ -4048,7 +4549,8 @@ create_R_array_4:
 
 no_collect_4584:
 	mov	r6,r10
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,13
+	otoa	r12,__ARRAY___o_2,13
 	str	r12,[r10]
 	str	r4,[r10,#4]
 	str	r3,[r10,#8]
@@ -4102,7 +4604,8 @@ create_R_array_5:
 	bl	collect_0
 
 no_collect_4585:
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,14
+	otoa	r12,__ARRAY___o_2,14
 	str	r12,[r10]
 	str	r4,[r10,#4]
 	str	r3,[r10,#8]
@@ -4309,6 +4812,45 @@ r_to_i_real:
 	vmov	r4,s0
 	ldr	pc,[sp],#4
 
+	.text
+
+.ifdef PIC
+ .if MARK_GC
+	lto	__cycle__in__spine,0
+  .if MARK_AND_COPY_GC
+ 	lto	flags,14
+  .endif
+ .endif
+	lto	__indirection,0
+	lto	__indirection,1
+	lto	__indirection,2
+	lto	__indirection,3
+	lto	__indirection,4
+	lto	__indirection,5
+	lto	__indirection,6
+	lto	__indirection,7
+	ltol	__STRING__+2,__STRING___o_2,5
+	ltol	__STRING__+2,__STRING___o_2,6
+	ltol	__ARRAY__+2,__ARRAY___o_2,2
+	ltol	BOOL+2,BOOL_o_2,2
+	ltol	__ARRAY__+2,__ARRAY___o_2,3
+	ltol	INT+2,INT_o_2,4
+	ltol	__ARRAY__+2,__ARRAY___o_2,4
+	ltol	REAL+2,REAL_o_2,3
+	ltol	__ARRAY__+2,__ARRAY___o_2,5
+	ltol	__ARRAY__+2,__ARRAY___o_2,6
+	ltol	BOOL+2,BOOL_o_2,3
+	ltol	__ARRAY__+2,__ARRAY___o_2,7
+	ltol	INT+2,INT_o_2,5
+	ltol	__ARRAY__+2,__ARRAY___o_2,8
+	ltol	REAL+2,REAL_o_2,4
+	ltol	__ARRAY__+2,__ARRAY___o_2,9
+	ltol	__ARRAY__+2,__ARRAY___o_2,10
+	ltol	__ARRAY__+2,__ARRAY___o_2,11
+	ltol	__ARRAY__+2,__ARRAY___o_2,12
+	ltol	__ARRAY__+2,__ARRAY___o_2,13
+	ltol	__ARRAY__+2,__ARRAY___o_2,14
+.endif
 	.ltorg
 
 .if NEW_DESCRIPTORS

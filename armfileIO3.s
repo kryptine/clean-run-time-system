@@ -1,6 +1,8 @@
 
 	.fpu	vfp3
 
+	.include "armmacros.s"
+
 	.data
 	.p2align	3
 
@@ -237,8 +239,8 @@ readFS:
 	subs	r1,r5,r12,lsr #2
 	blo	readFS_gc
 readFS_r_gc:
-
-	ldr	r12,=__STRING__+2
+	laol	r12,__STRING__+2,__STRING___o_2,0
+	otoa	r12,__STRING___o_2,0
 	str	r12,[r10]
 	add	r1,r10,#4
 	str	r4,[r10,#4]
@@ -300,7 +302,8 @@ readFString:
 	ldr	pc,[sp],#4
 
 readFString_error:
-	ldr	r8,=freadstring_error
+	lao	r8,freadstring_error,0
+	otoa	r8,freadstring_error,0
 	b	print_error
 
 @	.d 0 2 f
@@ -312,7 +315,8 @@ readLineF:
 	blo	readLineF_gc
 
 readLineF_r_gc:
-	ldr	r12,=__STRING__+2
+	laol	r12,__STRING__+2,__STRING___o_2,1
+	otoa	r12,__STRING___o_2,1
 	add	r2,r10,#8
 	str	r12,[r10]
 	lsl	r1,r5,#2
@@ -348,7 +352,8 @@ readLineF_again:
 
 	add	r5,r5,r4,lsr #2
 
-	ldr	r12,=__STRING__+2
+	laol	r12,__STRING__+2,__STRING___o_2,2
+	otoa	r12,__STRING___o_2,2
 	mov	r6,r10
 	add	r1,r10,r5,lsl #2
 	str	r12,[r10]
@@ -501,7 +506,8 @@ writeFString:
 	ldr	pc,[sp],#4
 
 writeFString_error:
-	ldr	r8,=fwritestring_error
+	lao	r8,fwritestring_error,0
+	otoa	r8,fwritestring_error,0
 	b	print_error
 
 @	.d 0 2 f
@@ -703,7 +709,8 @@ readSFS:
 	blo	readSFS_gc
 
 readSFS_r_gc:
-	ldr	r12,=__STRING__+2
+	laol	r12,__STRING__+2,__STRING___o_2,3
+	otoa	r12,__STRING___o_2,3
 	str	r12,[r10]
 	mov	r1,r4
 	mov	r0,r2
@@ -744,7 +751,8 @@ readLineSF:
 	blo	readLineSF_gc
 
 readLineSF_r_gc:
-	ldr	r12,=__STRING__+2
+	laol	r12,__STRING__+2,__STRING___o_2,4
+	otoa	r12,__STRING___o_2,4
 	add	r2,r10,#8
 	str	r12,[r10]
 	lsl	r1,r5,#2
@@ -783,7 +791,8 @@ readLineSF_again:
 
 	add	r5,r5,r2,lsr #2
 
-	ldr	r12,=__STRING__+2
+	laol	r12,__STRING__+2,__STRING___o_2,5
+	otoa	r12,__STRING___o_2,5
 	add	r1,r10,r5,lsl #2
 	str	r12,[r10]
 
@@ -890,3 +899,14 @@ seekSF:
 	ldr	r4,[sp],#4
 	mov	r3,r6
 	ldr	pc,[sp],#4
+
+.ifdef PIC
+	lto	freadstring_error,0
+	ltol	__STRING__+2,__STRING___o_2,0
+	ltol	__STRING__+2,__STRING___o_2,1
+	ltol	__STRING__+2,__STRING___o_2,2
+	lto	fwritestring_error,0
+	ltol	__STRING__+2,__STRING___o_2,3
+	ltol	__STRING__+2,__STRING___o_2,4
+	ltol	__STRING__+2,__STRING___o_2,5
+.endif

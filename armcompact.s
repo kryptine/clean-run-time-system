@@ -4,26 +4,26 @@ NO_BIT_INSTRUCTIONS = 1
 
 @ mark used nodes and pointers in argument parts and link backward pointers
 
-	ldr	r12,=heap_size_33
-	ldr	r4,[r12]
+	lao	r12,heap_size_33,10
+	ldo	r4,r12,heap_size_33,10
 	lsl	r4,r4,#5
-	ldr	r12,=heap_size_32_33
-	str	r4,[r12]
+	lao	r12,heap_size_32_33,1
+	sto	r4,r12,heap_size_32_33,1
 @ heap_size_32_33 in r2
 	mov	r2,r4
 
-	ldr	r12,=heap_p3
-	ldr	r11,[r12]
+	lao	r12,heap_p3,11
+	ldo	r11,r12,heap_p3,11
 @ heap_p3 in r11
 
 .if COMPACT_MARK_WITH_STACK
 	add	r9,sp,#-8000
 .endif
-	ldr	r12,=caf_list
-	ldr	r4,[r12]
+	lao	r12,caf_list,2
+	ldo	r4,r12,caf_list,2
 .if COMPACT_MARK_WITH_STACK
-	ldr	r12,=end_stack
-	str	r9,[r12]
+	lao	r12,end_stack,1
+	sto	r9,r12,end_stack,1
 @ end_stack in r0
 	mov	r0,r9
 .endif
@@ -42,8 +42,8 @@ mark_cafs_lp:
 	ldr	r4,[r4]
 	add	r6,r8,r4,lsl #2
 .endif
-	ldr	r12,=end_vector
-	str	r6,[r12]
+	lao	r12,end_vector,13
+	sto	r6,r12,end_vector,13
 
 	str	pc,[sp,#-4]!
 .if COMPACT_MARK_WITH_STACK
@@ -58,17 +58,17 @@ mark_cafs_lp:
 
 end_mark_cafs:
 .if COMPACT_MARK_WITH_STACK
-	ldr	r12,=stack_p
-	ldr	r9,[r12]
+	lao	r12,stack_p,6
+	ldo	r9,r12,stack_p,6
 .else
-	ldr	r12,=stack_p
-	ldr	r8,[r12]
+	lao	r12,stack_p,6
+	ldo	r8,r12,stack_p,6
 .endif
 
-	ldr	r12,=stack_top
-	ldr	r6,[r12]
-	ldr	r12,=end_vector
-	str	r6,[r12]
+	lao	r12,stack_top,4
+	ldo	r6,r12,stack_top,4
+	lao	r12,end_vector,14
+	sto	r6,r12,end_vector,14
 	str	pc,[sp,#-4]!
 .if COMPACT_MARK_WITH_STACK
 	bl	rmark_stack_nodes
@@ -83,6 +83,19 @@ end_mark_cafs:
 
 	b	compact_heap
 
+.ifdef PIC
+	lto	heap_size_33,10
+	lto	heap_size_32_33,1
+	lto	heap_p3,11
+	lto	caf_list,2
+ .if COMPACT_MARK_WITH_STACK
+	lto	end_stack,1
+ .endif
+ 	lto	end_vector,13
+	lto	stack_p,6
+	lto	stack_top,4
+	lto	end_vector,14
+.endif
 	.ltorg
 
 .if COMPACT_MARK_WITH_STACK
@@ -97,17 +110,20 @@ end_mark_cafs:
 compact_heap:
 
 .ifdef FINALIZERS
-	ldr	r6,=finalizer_list
-	ldr	r7,=free_finalizer_list
+	lao	r6,finalizer_list,3
+	lao	r7,free_finalizer_list,5
+	otoa	r6,finalizer_list,3
+	otoa	r7,free_finalizer_list,5
 
 	ldr	r8,[r6]
 determine_free_finalizers_after_compact1:
-	ldr	r12,=__Nil-4
+	laol	r12,__Nil-4,__Nil_o_m4,5
+	otoa	r12,__Nil_o_m4,5
 	cmp	r8,r12
 	beq	end_finalizers_after_compact1
 
-	ldr	r12,=heap_p3
-	ldr	r4,[r12]
+	lao	r12,heap_p3,12
+	ldo	r4,r12,heap_p3,12
 	sub	r4,r8,r4
 	lsr	r3,r4,#7
 	and	r4,r4,#31*4
@@ -131,8 +147,8 @@ finalizer_find_descriptor:
 	tst	r4,#1
 	bne	finalizer_find_descriptor_lp
 
-	ldr	r12,=e____system__kFinalizerGCTemp+2
-	str	r12,[r9]
+	laol	r12,e____system__kFinalizerGCTemp+2,e____system__kFinalizerGCTemp_o_2,0
+	sto	r12,r9,e____system__kFinalizerGCTemp_o_2,0
 
 	cmp	r8,r6
 	bhi	finalizer_no_reverse
@@ -148,8 +164,8 @@ finalizer_no_reverse:
 	b	determine_free_finalizers_after_compact1
 
 finalizer_not_used_after_compact1:
-	ldr	r12,=e____system__kFinalizerGCTemp+2
-	str	r12,[r8]
+	laol	r12,e____system__kFinalizerGCTemp+2,e____system__kFinalizerGCTemp_o_2,1
+	sto	r12,r8,e____system__kFinalizerGCTemp_o_2,1
 
 	str	r8,[r7]
 	add	r7,r8,#4
@@ -162,36 +178,40 @@ finalizer_not_used_after_compact1:
 end_finalizers_after_compact1:
 	str	r8,[r7]	
 
-	ldr	r12,=finalizer_list
-	ldr	r6,[r12]
-	ldr	r12,=__Nil-4
+	lao	r12,finalizer_list,4
+	ldo	r6,r12,finalizer_list,4
+	laol	r12,__Nil-4,__Nil_o_m4,6
+	otoa	r12,__Nil_o_m4,6
 	cmp	r6,r12
 	beq	finalizer_list_empty
 	tst	r6,#3
 	bne	finalizer_list_already_reversed
 	ldr	r4,[r6]
-	ldr	r12,=finalizer_list+1
+	laol	r12,finalizer_list+1,finalizer_list_o_1,0
+	otoa	r12,finalizer_list_o_1,0
 	str	r12,[r6]
-	ldr	r12,=finalizer_list
-	str	r4,[r12]
+	lao	r12,finalizer_list,5
+	sto	r4,r12,finalizer_list,5
 finalizer_list_already_reversed:
 finalizer_list_empty:
 
  .if COMPACT_MARK_WITH_STACK
-	ldr	r9,=free_finalizer_list
+	lao	r9,free_finalizer_list,6
+	otoa	r9,free_finalizer_list,6
 	ldr	r6,[r9]
-	ldr	r12,=__Nil-4
-	cmp	r6,r12
  .else
-	ldr	r8,=free_finalizer_list
+	lao	r8,free_finalizer_list,6
+	otoa	r8,free_finalizer_list,6
 	ldr	r6,[r8]
-	ldr	r12,=__Nil-4
-	cmp	r6,r12
  .endif
+	laol	r12,__Nil-4,__Nil_o_m4,7
+	otoa	r12,__Nil_o_m4,7
+	cmp	r6,r12
 	beq	free_finalizer_list_empty
-	ldr	r6,=free_finalizer_list+4
-	ldr	r12,=end_vector
-	str	r6,[r12]
+	laol	r6,free_finalizer_list+4,free_finalizer_list_o_4,0
+	otoa	r6,free_finalizer_list_o_4,0
+	lao	r12,end_vector,15
+	sto	r6,r12,end_vector,15
  .if COMPACT_MARK_WITH_STACK
 	str	pc,[sp,#-4]!
 	bl	rmark_stack_nodes
@@ -202,17 +222,17 @@ finalizer_list_empty:
 free_finalizer_list_empty:
 .endif
 
-	ldr	r12,=heap_size_33
-	ldr	r4,[r12]
+	lao	r12,heap_size_33,11
+	ldo	r4,r12,heap_size_33,11
 	mov	r3,r4
 	lsl	r3,r3,#5
 
-	ldr	r12,=heap_p3
-	ldr	r12,[r12]
+	lao	r12,heap_p3,13
+	ldo	r12,r12,heap_p3,13
 	add	r3,r3,r12
 
-	ldr	r12,=end_heap_p3
-	str	r3,[r12]
+	lao	r12,end_heap_p3,0
+	sto	r3,r12,end_heap_p3,0
 @ end_heap_p3 in r0
  	mov	r0,r3
 
@@ -221,18 +241,18 @@ free_finalizer_list_empty:
 @ vector_counter in r2
 	mov	r2,r4
 
-	ldr	r12,=heap_vector
-	ldr	r6,[r12]
+	lao	r12,heap_vector,9
+	ldo	r6,r12,heap_vector,9
 @ vector_p in r1
 	mov	r1,r6
 
 	mov	r12,#-4
 	rsb	r3,r6,r12
-	ldr	r12,=neg_heap_vector_plus_4
-	str	r3,[r12]
+	lao	r12,neg_heap_vector_plus_4,0
+	sto	r3,r12,neg_heap_vector_plus_4,0
 
-	ldr	r12,=heap_p3
-	ldr	r10,[r12]
+	lao	r12,heap_p3,14
+	ldo	r10,r12,heap_p3,14
 	mov	r9,#0
 @ heap_p3 in r11
 	mov	r11,r10
@@ -248,8 +268,8 @@ skip_zeros:
 	beq	skip_zeros
 @ a2: free
 end_skip_zeros:
-	ldr	r12,=neg_heap_vector_plus_4
-	ldr	r8,[r12]
+	lao	r12,neg_heap_vector_plus_4,1
+	ldo	r8,r12,neg_heap_vector_plus_4,1
 	add	r8,r8,r1
 
 	add	r8,r11,r8,lsl #5
@@ -298,8 +318,8 @@ end_list_2:
 
 copy_record_arguments_all_b:
 	str	r3,[sp,#-4]!
-	ldr	r12,=heap_vector
-	ldr	r3,[r12]
+	lao	r12,heap_vector,10
+	ldo	r3,r12,heap_vector,10
 
 update_up_list_1r:
 	mov	r7,r4
@@ -341,8 +361,8 @@ copy_argument_part_1r:
 	sub	r2,r2,#1
 	ldr	r9,[r1],#4
 
-	ldr	r12,=neg_heap_vector_plus_4
-	ldr	r8,[r12]
+	lao	r12,neg_heap_vector_plus_4,2
+	ldo	r8,r12,neg_heap_vector_plus_4,2
 	add	r8,r8,r1
 	add	r8,r11,r8,lsl #5
 
@@ -364,9 +384,9 @@ copy_b_record_argument_part_arguments:
 	b	find_non_zero_long
 
 copy_record_arguments_aa:
-	ldr	r12,=256+2
+	mov	r12,#(256+2)/2
 	sub	r3,r3,r7
-	sub	r3,r3,r12
+	sub	r3,r3,r12,lsl #1
 
 	str	r3,[sp,#-4]!
 	str	r7,[sp,#-4]!
@@ -610,8 +630,8 @@ move_hnf_1_:
 	b	find_non_zero_long
 
 move_record:
-	ldr	r12,=258
-	subs	r3,r3,r12
+	mov	r12,#258/2
+	subs	r3,r3,r12,lsl #1
 	blo	move_record_1
 	beq	move_record_2
 
@@ -647,8 +667,8 @@ move_record_3_1b:
 	str	r8,[sp,#-4]!
 	sub	r4,r7,r11
 
-	ldr	r12,=heap_vector
-	ldr	r3,[r12]
+	lao	r12,heap_vector,11
+	ldo	r3,r12,heap_vector,11
 	add	r4,r4,#4
 	and	r8,r4,#31*4
 	lsr	r4,r4,#7
@@ -773,10 +793,12 @@ copy_normal_hnf_0:
 	b	find_non_zero_long
 
 move_hnf_0:
-	ldr	r12,=INT+2
+	laol	r12,INT+2,INT_o_2,13
+	otoa	r12,INT_o_2,13
 	cmp	r4,r12
 	blo	move_real_file_string_or_array
-	ldr	r12,=CHAR+2
+	laol	r12,CHAR+2,CHAR_o_2,8
+	otoa	r12,CHAR_o_2,8
 	cmp	r4,r12
 	bls	move_int_bool_or_char
 .ifdef DLL
@@ -788,7 +810,8 @@ move_normal_hnf_0:
 	b	find_non_zero_long
 
 move_real_file_string_or_array:
-	ldr	r12,=__STRING__+2
+	laol	r12,__STRING__+2,__STRING___o_2,10
+	otoa	r12,__STRING___o_2,10
 	cmp	r4,r12
 	bhi	move_real_or_file
 	bne	move_array
@@ -809,7 +832,8 @@ cp_s_arg_lp3:
 
 move_array:
 .ifdef DLL
-	ldr	r12,=__ARRAY__+2
+	laol	r12,__ARRAY__+2,__ARRAY___o_2,2
+	otoa	r12,__ARRAY___o_2,2
 	cmp	r4,r12
 	blo	move_normal_hnf_0
 .endif
@@ -822,8 +846,8 @@ skip_zeros_a:
 	cmp	r9,#0
 	beq	skip_zeros_a
 
-	ldr	r12,=neg_heap_vector_plus_4
-	ldr	r8,[r12]
+	lao	r12,neg_heap_vector_plus_4,3
+	ldo	r8,r12,neg_heap_vector_plus_4,3
 	add	r8,r8,r1
 
 	add	r8,r11,r8,lsl #5
@@ -858,11 +882,13 @@ move_b_array:
 
 move_strict_basic_array:
 	mov	r4,r7
-	ldr	r12,=INT+2
+	laol	r12,INT+2,INT_o_2,14
+	otoa	r12,INT_o_2,14
 	cmp	r3,r12
 	beq	cp_s_arg_lp3
 
-	ldr	r12,=BOOL+2
+	laol	r12,BOOL+2,BOOL_o_2,7
+	otoa	r12,BOOL_o_2,7
 	cmp	r3,r12
 	beq	move_bool_array
 
@@ -1118,20 +1144,66 @@ move_closure_with_unboxed_arguments_1:
 	bne	bsf_and_copy_nodes
 	b	find_non_zero_long	
 
+.ifdef PIC
+ .ifdef FINALIZERS
+	lto	finalizer_list,3
+	lto	free_finalizer_list,5
+	ltol	__Nil-4,__Nil_o_m4,5
+	lto	heap_p3,12
+	ltol	e____system__kFinalizerGCTemp+2,e____system__kFinalizerGCTemp_o_2,0
+	ltol	e____system__kFinalizerGCTemp+2,e____system__kFinalizerGCTemp_o_2,1
+	lto	finalizer_list,4
+	ltol	__Nil-4,__Nil_o_m4,6
+	ltol	finalizer_list+1,finalizer_list_o_1,0
+	lto	finalizer_list,5
+	lto	free_finalizer_list,6
+	ltol	__Nil-4,__Nil_o_m4,7
+	ltol	free_finalizer_list+4,free_finalizer_list_o_4,0
+	lto	end_vector,15
+ .endif
+	lto	heap_size_33,11
+	lto	heap_p3,13
+	lto	end_heap_p3,0
+	lto	heap_vector,9
+	lto	neg_heap_vector_plus_4,0
+	lto	heap_p3,14
+	lto	neg_heap_vector_plus_4,1
+	lto	heap_vector,10
+	lto	neg_heap_vector_plus_4,2
+	lto	heap_vector,11
+	lto	neg_heap_vector_plus_4,3
+	ltol	INT+2,INT_o_2,13
+	ltol	CHAR+2,CHAR_o_2,8
+	ltol	__STRING__+2,__STRING___o_2,10
+	ltol	INT+2,INT_o_2,14
+	ltol	BOOL+2,BOOL_o_2,7
+ .ifdef DLL
+	laol	__ARRAY__+2,__ARRAY___o_2,2
+ .endif
+.endif
 	.ltorg
+.ifdef PIC
+ .ifdef FINALIZERS
+	lto	finalizer_list,6
+	ltol	__Nil-4,__Nil_o_m4,8
+	ltol	e____system__kFinalizer+2,e____system__kFinalizer_o_2,0
+ .endif
+.endif
 
 end_copy:
 
 .ifdef FINALIZERS
-	ldr	r12,=finalizer_list
-	ldr	r6,[r12]
+	lao	r12,finalizer_list,6
+	ldo	r6,r12,finalizer_list,6
 
 restore_finalizer_descriptors:
-	ldr	r12,=__Nil-4
+	laol	r12,__Nil-4,__Nil_o_m4,8
+	otoa	r12,__Nil_o_m4,8
 	cmp	r6,r12
 	beq	end_restore_finalizer_descriptors
 
-	ldr	r12,=e____system__kFinalizer+2
+	laol	r12,e____system__kFinalizer+2,e____system__kFinalizer_o_2,0
+	otoa	r12,e____system__kFinalizer_o_2,0
 	str	r12,[r6]
 	ldr	r6,[r6,#4]
 	b	restore_finalizer_descriptors
