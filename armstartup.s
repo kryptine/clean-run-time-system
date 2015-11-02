@@ -344,10 +344,7 @@ start_address:
 	.globl	repl_args_b
 	.globl	push_arg_b
 	.globl	del_args
-.if 0
-	.globl	o__S_P2
-	.globl	ea__S_P2
-.endif
+
 	.globl	add_IO_time
 	.globl	add_execute_time
 	.globl	IO_error
@@ -3816,12 +3813,12 @@ cmp_string_r1:
 
 	.section .text.string_to_string_node,"ax"
 string_to_string_node:
-	ldr	r4,[r6],#4
+	ldr	r8,[r6],#4
 
-	add	r3,r4,#3
-	lsr	r3,r3,#2
+	add	r4,r8,#3
+	lsr	r4,r4,#2
 
-	add	r12,r3,#2
+	add	r12,r4,#2
 	subs	r5,r5,r12
 	blo	string_to_string_node_gc
 
@@ -3829,25 +3826,25 @@ string_to_string_node_r:
 	laol	r12,__STRING__+2,__STRING___o_2,4
 	otoa	r12,__STRING___o_2,4
 	str	r12,[r10]
-	str	r4,[r10,#4]
+	str	r8,[r10,#4]
 	mov	r8,r10
 	add	r10,r10,#8
 	b	string_to_string_node_4
 
 string_to_string_node_2:
-	ldr	r4,[r6],#4
-	str	r4,[r10],#4
+	ldr	r12,[r6],#4
+	str	r12,[r10],#4
 string_to_string_node_4:
-	subs	r3,r3,#1
+	subs	r4,r4,#1
 	bge	string_to_string_node_2
 
 	mov	r6,r8
 	ldr	pc,[sp],#4
 
 string_to_string_node_gc:
-	str	r6,[sp,#-4]!
+	stmdb	sp!,{r6,r8}
 	bl	collect_0
-	ldr	r6,[sp],#4
+	ldmia	sp!,{r6,r8}
 	b	string_to_string_node_r
 
 .ifdef PIC
@@ -3876,8 +3873,8 @@ int_array_to_node_r:
 	b	int_array_to_node_4
 
 int_array_to_node_2:
-	ldr	r3,[r7],#4
-	str	r3,[r10],#4
+	ldr	r12,[r7],#4
+	str	r12,[r10],#4
 int_array_to_node_4:
 	subs	r4,r4,#1
 	bge	int_array_to_node_2
@@ -3920,8 +3917,8 @@ real_array_to_node_r:
 	b	real_array_to_node_4
 
 real_array_to_node_2:
-	ldr	r3,[r7]
-	str	r3,[r10]
+	ldr	r12,[r7]
+	str	r12,[r10]
 	ldr	r8,[r7,#4]
 	add	r7,r7,#8
 	str	r8,[r10,#4]
