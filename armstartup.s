@@ -366,14 +366,7 @@ start_address:
 	.globl	exp_real
 	.globl	pow_real
 	.globl	r_to_i_real
-	.globl	truncate_real
 	.globl	entier_real
-	.globl	ceiling_real
-	.globl	round__real64
-	.globl	truncate__real64
-	.globl	entier__real64
-	.globl	ceiling__real64
-	.globl	int64a__to__real
 
 .ifdef PROFILE
 	.globl	init_profiler
