@@ -378,8 +378,8 @@ rmarkr_large_tuple_or_record:
 	add	r12,r4,#-12
 	ldr	r6,[r7,r12]
 	ldr	r7,[sp],#4
-	lao	r12,__indirection,20
-	otoa	r12,__indirection,20
+	lao	r12,e__system__nind,20
+	otoa	r12,e__system__nind,20
 	str	r12,[r7,#-4]
 	str	r6,[r7]
 	b	rmarkr_node
@@ -387,8 +387,8 @@ rmarkr_large_tuple_or_record:
 rmarkr_tuple_selector_node_2:
 	ldr	r6,[r7]
 	ldr	r7,[sp],#4
-	lao	r12,__indirection,21
-	otoa	r12,__indirection,21
+	lao	r12,e__system__nind,21
+	otoa	r12,e__system__nind,21
 	str	r12,[r7,#-4]
 	str	r6,[r7]
 	b	rmarkr_node
@@ -461,8 +461,8 @@ rmarkr_small_tuple_or_record:
 rmarkr_tuple_or_record_selector_node_2:
 	ldr	r6,[r7,r4]
 	ldr	r7,[sp],#4
-	lao	r12,__indirection,22
-	otoa	r12,__indirection,22
+	lao	r12,e__system__nind,22
+	otoa	r12,e__system__nind,22
 	str	r12,[r7,#-4]
 	str	r6,[r7]
 	b	rmarkr_node
@@ -1032,9 +1032,9 @@ rmarkr_next_stack_node:
 
 .ifdef PIC
 	ltol	__ARRAY__+2,__ARRAY___o_2,18
-	lto	__indirection,20
-	lto	__indirection,21
-	lto	__indirection,22
+	lto	e__system__nind,20
+	lto	e__system__nind,21
+	lto	e__system__nind,22
 	ltol	INT+2,INT_o_2,12
 	ltol	CHAR+2,CHAR_o_2,7
 	lto	small_integers,4

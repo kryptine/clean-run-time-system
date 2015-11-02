@@ -708,12 +708,12 @@ _large_tuple_or_record:
 	tst	r8,r12
 	bne	_mark_node3
 
-	lao	r8,__indirection,11
+	lao	r8,e__system__nind,11
 .ifdef PIC
 	add	r12,r4,#-8+4
 .endif
 	ldr	r4,[r4,#-8]
-	otoa	r8,__indirection,11
+	otoa	r8,e__system__nind,11
 	str	r8,[r6,#-4]
 	mov	r8,r6
 
@@ -737,12 +737,12 @@ _mark_tuple_selector_node_2:
 	b	_mark_node
 
 _small_tuple_or_record:
-	lao	r8,__indirection,12
+	lao	r8,e__system__nind,12
 .ifdef PIC
 	add	r12,r4,#-8+4
 .endif
 	ldr	r4,[r4,#-8]
-	otoa	r8,__indirection,12
+	otoa	r8,e__system__nind,12
 	str	r8,[r6,#-4]
 	mov	r8,r6
 
@@ -784,12 +784,12 @@ _mark_record_selector_node_1:
 	tst	r8,r12
 	bne	_mark_node3
 
-	lao	r8,__indirection,13
+	lao	r8,e__system__nind,13
 .ifdef PIC
 	add	r12,r4,#-8+4
 .endif
 	ldr	r4,[r4,#-8]
-	otoa	r8,__indirection,13
+	otoa	r8,e__system__nind,13
 	str	r8,[r6,#-4]
 	mov	r8,r6
 
@@ -1435,9 +1435,9 @@ __end_mark_using_reversal:
 
 .ifdef PIC
 	lto	end_vector,2
-	lto	__indirection,11
-	lto	__indirection,12
-	lto	__indirection,13
+	lto	e__system__nind,11
+	lto	e__system__nind,12
+	lto	e__system__nind,13
 	lto	end_vector,3
 	ltol	INT+2,INT_o_2,7
 	ltol	CHAR+2,CHAR_o_2,3
@@ -1639,9 +1639,9 @@ __large_tuple_or_record:
 .else
 	ldr	r4,[r4,#-8]
 .endif
-	lao	r8,__indirection,14
+	lao	r8,e__system__nind,14
 	ldr	r7,[r6]
-	otoa	r8,__indirection,14
+	otoa	r8,e__system__nind,14
 	str	r8,[r6,#-4]
 	mov	r8,r6
 
@@ -1673,9 +1673,9 @@ __small_tuple_or_record:
 .else
 	ldr	r4,[r4,#-8]
 .endif
-	lao	r8,__indirection,15
+	lao	r8,e__system__nind,15
 	ldr	r7,[r6]
-	otoa	r8,__indirection,15
+	otoa	r8,e__system__nind,15
 	str	r8,[r6,#-4]
 	mov	r8,r6
 
@@ -1734,9 +1734,9 @@ __small_record:
 .else
 	ldr	r4,[r4,#-8]
 .endif
-	lao	r8,__indirection,16
+	lao	r8,e__system__nind,16
 	ldr	r7,[r6]
-	otoa	r8,__indirection,16
+	otoa	r8,e__system__nind,16
 	str	r8,[r6,#-4]
 	mov	r8,r6
 
@@ -2438,9 +2438,9 @@ __last__string__bits:
 	b	__mark_next_node
 
 .ifdef PIC
-	lto	__indirection,14
-	lto	__indirection,15
-	lto	__indirection,16
+	lto	e__system__nind,14
+	lto	e__system__nind,15
+	lto	e__system__nind,16
 	lto	small_integers,2
 	lto	static_characters,2
 	lto	lazy_array_list,2

@@ -2033,7 +2033,7 @@ build_node_gc:
 	.globl	apupd_30
 	.globl	apupd_31
 	.globl	apupd_32
-	.globl	__indirection
+	.globl	e__system__nind
 
 apupd_1:
 	ldr	r12,[sp]
@@ -2045,9 +2045,9 @@ apupd_1:
 
 	ldr	r8,[r9,#-4]
 	ldr	r4,[r9,#-8]
-	lao	r12,__indirection,23
+	lao	r12,e__system__nind,23
 	subs	r9,r9,#4
-	otoa	r12,__indirection,23
+	otoa	r12,e__system__nind,23
 	str	r12,[r8]
 	str	r4,[r8,#4]
 ap_1:
@@ -2067,9 +2067,9 @@ apupd_2:
 	ldr	r4,[r9,#-12]
 	ldr	r3,[r9,#-4]
 	str	r3,[r9,#-8]
-	lao	r12,__indirection,24
+	lao	r12,e__system__nind,24
 	subs	r9,r9,#4
-	otoa	r12,__indirection,24
+	otoa	r12,e__system__nind,24
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_2
@@ -2088,9 +2088,9 @@ apupd_3:
 	str	r3,[r9,#-12]
 	ldr	r3,[r9,#-4]
 	str	r3,[r9,#-8]
-	lao	r12,__indirection,25
+	lao	r12,e__system__nind,25
 	subs	r9,r9,#4
-	otoa	r12,__indirection,25
+	otoa	r12,e__system__nind,25
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_3
@@ -2111,9 +2111,9 @@ apupd_4:
 	str	r3,[r9,#-12]
 	ldr	r3,[r9,#-4]
 	str	r3,[r9,#-8]
-	lao	r12,__indirection,26
+	lao	r12,e__system__nind,26
 	subs	r9,r9,#4
-	otoa	r12,__indirection,26
+	otoa	r12,e__system__nind,26
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_4
@@ -2136,9 +2136,9 @@ apupd_5:
 	str	r3,[r9,#-12]
 	ldr	r3,[r9,#-4]
 	str	r3,[r9,#-8]
-	lao	r12,__indirection,27
+	lao	r12,e__system__nind,27
 	subs	r9,r9,#4
-	otoa	r12,__indirection,27
+	otoa	r12,e__system__nind,27
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_5
@@ -2163,9 +2163,9 @@ apupd_6:
 	str	r3,[r9,#-12]
 	ldr	r3,[r9,#-4]
 	str	r3,[r9,#-8]
-	lao	r12,__indirection,28
+	lao	r12,e__system__nind,28
 	subs	r9,r9,#4
-	otoa	r12,__indirection,28
+	otoa	r12,e__system__nind,28
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_6
@@ -2182,9 +2182,9 @@ apupd_7:
 	ldr	r4,[r9,#-32]
 	str	pc,[sp,#-4]!
 	bl	move_8
-	lao	r12,__indirection,29
+	lao	r12,e__system__nind,29
 	subs	r9,r9,#4
-	otoa	r12,__indirection,29
+	otoa	r12,e__system__nind,29
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_7
@@ -2201,9 +2201,9 @@ apupd_8:
 	ldr	r4,[r9,#-36]
 	str	pc,[sp,#-4]!
 	bl	move_9
-	lao	r12,__indirection,30
+	lao	r12,e__system__nind,30
 	subs	r9,r9,#4
-	otoa	r12,__indirection,30
+	otoa	r12,e__system__nind,30
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_8
@@ -2220,9 +2220,9 @@ apupd_9:
 	ldr	r4,[r9,#-40]
 	str	pc,[sp,#-4]!
 	bl	move_10
-	lao	r12,__indirection,31
+	lao	r12,e__system__nind,31
 	subs	r9,r9,#4
-	otoa	r12,__indirection,31
+	otoa	r12,e__system__nind,31
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_9
@@ -2239,9 +2239,9 @@ apupd_10:
 	ldr	r4,[r9,#-44]
 	str	pc,[sp,#-4]!
 	bl	move_11
-	lao	r12,__indirection,32
+	lao	r12,e__system__nind,32
 	subs	r9,r9,#4
-	otoa	r12,__indirection,32
+	otoa	r12,e__system__nind,32
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_10
@@ -2258,9 +2258,9 @@ apupd_11:
 	ldr	r4,[r9,#-48]
 	str	pc,[sp,#-4]!
 	bl	move_12
-	lao	r12,__indirection,33
+	lao	r12,e__system__nind,33
 	subs	r9,r9,#4
-	otoa	r12,__indirection,33
+	otoa	r12,e__system__nind,33
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_11
@@ -2277,9 +2277,9 @@ apupd_12:
 	ldr	r4,[r9,#-52]
 	str	pc,[sp,#-4]!
 	bl	move_13
-	lao	r12,__indirection,34
+	lao	r12,e__system__nind,34
 	subs	r9,r9,#4
-	otoa	r12,__indirection,34
+	otoa	r12,e__system__nind,34
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_12
@@ -2296,9 +2296,9 @@ apupd_13:
 	ldr	r4,[r9,#-56]
 	str	pc,[sp,#-4]!
 	bl	move_14
-	lao	r12,__indirection,35
+	lao	r12,e__system__nind,35
 	subs	r9,r9,#4
-	otoa	r12,__indirection,35
+	otoa	r12,e__system__nind,35
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_13
@@ -2315,9 +2315,9 @@ apupd_14:
 	ldr	r4,[r9,#-60]
 	str	pc,[sp,#-4]!
 	bl	move_15
-	lao	r12,__indirection,36
+	lao	r12,e__system__nind,36
 	subs	r9,r9,#4
-	otoa	r12,__indirection,36
+	otoa	r12,e__system__nind,36
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_14
@@ -2334,9 +2334,9 @@ apupd_15:
 	ldr	r4,[r9,#-64]
 	str	pc,[sp,#-4]!
 	bl	move_16
-	lao	r12,__indirection,37
+	lao	r12,e__system__nind,37
 	subs	r9,r9,#4
-	otoa	r12,__indirection,37
+	otoa	r12,e__system__nind,37
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_15
@@ -2353,9 +2353,9 @@ apupd_16:
 	ldr	r4,[r9,#-68]
 	str	pc,[sp,#-4]!
 	bl	move_17
-	lao	r12,__indirection,38
+	lao	r12,e__system__nind,38
 	subs	r9,r9,#4
-	otoa	r12,__indirection,38
+	otoa	r12,e__system__nind,38
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_16
@@ -2372,9 +2372,9 @@ apupd_17:
 	ldr	r4,[r9,#-72]
 	str	pc,[sp,#-4]!
 	bl	move_18
-	lao	r12,__indirection,39
+	lao	r12,e__system__nind,39
 	subs	r9,r9,#4
-	otoa	r12,__indirection,39
+	otoa	r12,e__system__nind,39
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_17
@@ -2391,9 +2391,9 @@ apupd_18:
 	ldr	r4,[r9,#-76]
 	str	pc,[sp,#-4]!
 	bl	move_19
-	lao	r12,__indirection,40
+	lao	r12,e__system__nind,40
 	subs	r9,r9,#4
-	otoa	r12,__indirection,40
+	otoa	r12,e__system__nind,40
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_18
@@ -2410,9 +2410,9 @@ apupd_19:
 	ldr	r4,[r9,#-80]
 	str	pc,[sp,#-4]!
 	bl	move_20
-	lao	r12,__indirection,41
+	lao	r12,e__system__nind,41
 	subs	r9,r9,#4
-	otoa	r12,__indirection,41
+	otoa	r12,e__system__nind,41
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_19
@@ -2429,9 +2429,9 @@ apupd_20:
 	ldr	r4,[r9,#-84]
 	str	pc,[sp,#-4]!
 	bl	move_21
-	lao	r12,__indirection,42
+	lao	r12,e__system__nind,42
 	subs	r9,r9,#4
-	otoa	r12,__indirection,42
+	otoa	r12,e__system__nind,42
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_20
@@ -2448,9 +2448,9 @@ apupd_21:
 	ldr	r4,[r9,#-88]
 	str	pc,[sp,#-4]!
 	bl	move_22
-	lao	r12,__indirection,43
+	lao	r12,e__system__nind,43
 	subs	r9,r9,#4
-	otoa	r12,__indirection,43
+	otoa	r12,e__system__nind,43
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_21
@@ -2467,9 +2467,9 @@ apupd_22:
 	ldr	r4,[r9,#-92]
 	str	pc,[sp,#-4]!
 	bl	move_23
-	lao	r12,__indirection,44
+	lao	r12,e__system__nind,44
 	subs	r9,r9,#4
-	otoa	r12,__indirection,44
+	otoa	r12,e__system__nind,44
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_22
@@ -2486,9 +2486,9 @@ apupd_23:
 	ldr	r4,[r9,#-96]
 	str	pc,[sp,#-4]!
 	bl	move_24
-	lao	r12,__indirection,45
+	lao	r12,e__system__nind,45
 	subs	r9,r9,#4
-	otoa	r12,__indirection,45
+	otoa	r12,e__system__nind,45
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_23
@@ -2505,9 +2505,9 @@ apupd_24:
 	ldr	r4,[r9,#-100]
 	str	pc,[sp,#-4]!
 	bl	move_25
-	lao	r12,__indirection,46
+	lao	r12,e__system__nind,46
 	subs	r9,r9,#4
-	otoa	r12,__indirection,46
+	otoa	r12,e__system__nind,46
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_24
@@ -2524,9 +2524,9 @@ apupd_25:
 	ldr	r4,[r9,#-104]
 	str	pc,[sp,#-4]!
 	bl	move_26
-	lao	r12,__indirection,47
+	lao	r12,e__system__nind,47
 	subs	r9,r9,#4
-	otoa	r12,__indirection,47
+	otoa	r12,e__system__nind,47
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_25
@@ -2543,9 +2543,9 @@ apupd_26:
 	ldr	r4,[r9,#-108]
 	str	pc,[sp,#-4]!
 	bl	move_27
-	lao	r12,__indirection,48
+	lao	r12,e__system__nind,48
 	subs	r9,r9,#4
-	otoa	r12,__indirection,48
+	otoa	r12,e__system__nind,48
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_26
@@ -2562,9 +2562,9 @@ apupd_27:
 	ldr	r4,[r9,#-112]
 	str	pc,[sp,#-4]!
 	bl	move_28
-	lao	r12,__indirection,49
+	lao	r12,e__system__nind,49
 	subs	r9,r9,#4
-	otoa	r12,__indirection,49
+	otoa	r12,e__system__nind,49
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_27
@@ -2581,9 +2581,9 @@ apupd_28:
 	ldr	r4,[r9,#-116]
 	str	pc,[sp,#-4]!
 	bl	move_29
-	lao	r12,__indirection,50
+	lao	r12,e__system__nind,50
 	subs	r9,r9,#4
-	otoa	r12,__indirection,50
+	otoa	r12,e__system__nind,50
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_28
@@ -2600,9 +2600,9 @@ apupd_29:
 	ldr	r4,[r9,#-120]
 	str	pc,[sp,#-4]!
 	bl	move_30
-	lao	r12,__indirection,51
+	lao	r12,e__system__nind,51
 	subs	r9,r9,#4
-	otoa	r12,__indirection,51
+	otoa	r12,e__system__nind,51
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_29
@@ -2619,9 +2619,9 @@ apupd_30:
 	ldr	r4,[r9,#-124]
 	str	pc,[sp,#-4]!
 	bl	move_31
-	lao	r12,__indirection,52
+	lao	r12,e__system__nind,52
 	subs	r9,r9,#4
-	otoa	r12,__indirection,52
+	otoa	r12,e__system__nind,52
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_30
@@ -2638,9 +2638,9 @@ apupd_31:
 	ldr	r4,[r9,#-128]
 	str	pc,[sp,#-4]!
 	bl	move_32
-	lao	r12,__indirection,53
+	lao	r12,e__system__nind,53
 	subs	r9,r9,#4
-	otoa	r12,__indirection,53
+	otoa	r12,e__system__nind,53
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_31
@@ -2657,9 +2657,9 @@ apupd_32:
 	ldr	r4,[r9,#-132]
 	str	pc,[sp,#-4]!
 	bl	move_33
-	lao	r12,__indirection,54
+	lao	r12,e__system__nind,54
 	subs	r9,r9,#4
-	otoa	r12,__indirection,54
+	otoa	r12,e__system__nind,54
 	str	r12,[r8]
 	str	r4,[r8,#4]
 	b	ap_32
@@ -2808,98 +2808,98 @@ move_7:
 .ifdef PIC
 	lto	apupd_upd,0
 	lto	ap_1,0
-	lto	__indirection,23
+	lto	e__system__nind,23
 	lto	apupd_upd,1
 	lto	ap_2,0
-	lto	__indirection,24
+	lto	e__system__nind,24
 	lto	apupd_upd,2
 	lto	ap_3,0
-	lto	__indirection,25
+	lto	e__system__nind,25
 	lto	apupd_upd,3
 	lto	ap_4,0
-	lto	__indirection,26
+	lto	e__system__nind,26
 	lto	apupd_upd,4
 	lto	ap_5,0
-	lto	__indirection,27
+	lto	e__system__nind,27
 	lto	apupd_upd,5
 	lto	ap_6,0
-	lto	__indirection,28
+	lto	e__system__nind,28
 	lto	apupd_upd,6
 	lto	ap_7,0
-	lto	__indirection,29
+	lto	e__system__nind,29
 	lto	apupd_upd,7
 	lto	ap_8,0
-	lto	__indirection,30
+	lto	e__system__nind,30
 	lto	apupd_upd,8
 	lto	ap_9,0
-	lto	__indirection,31
+	lto	e__system__nind,31
 	lto	apupd_upd,9
 	lto	ap_10,0
-	lto	__indirection,32
+	lto	e__system__nind,32
 	lto	apupd_upd,10
 	lto	ap_11,0
-	lto	__indirection,33
+	lto	e__system__nind,33
 	lto	apupd_upd,11
 	lto	ap_12,0
-	lto	__indirection,34
+	lto	e__system__nind,34
 	lto	apupd_upd,12
 	lto	ap_13,0
-	lto	__indirection,35
+	lto	e__system__nind,35
 	lto	apupd_upd,13
 	lto	ap_14,0
-	lto	__indirection,36
+	lto	e__system__nind,36
 	lto	apupd_upd,14
 	lto	ap_15,0
-	lto	__indirection,37
+	lto	e__system__nind,37
 	lto	apupd_upd,15
 	lto	ap_16,0
-	lto	__indirection,38
+	lto	e__system__nind,38
 	lto	apupd_upd,16
 	lto	ap_17,0
-	lto	__indirection,39
+	lto	e__system__nind,39
 	lto	apupd_upd,17
 	lto	ap_18,0
-	lto	__indirection,40
+	lto	e__system__nind,40
 	lto	apupd_upd,18
 	lto	ap_19,0
-	lto	__indirection,41
+	lto	e__system__nind,41
 	lto	apupd_upd,19
 	lto	ap_20,0
-	lto	__indirection,42
+	lto	e__system__nind,42
 	lto	apupd_upd,20
 	lto	ap_21,0
-	lto	__indirection,43
+	lto	e__system__nind,43
 	lto	apupd_upd,21
 	lto	ap_22,0
-	lto	__indirection,44
+	lto	e__system__nind,44
 	lto	apupd_upd,22
 	lto	ap_23,0
-	lto	__indirection,45
+	lto	e__system__nind,45
 	lto	apupd_upd,23
 	lto	ap_24,0
-	lto	__indirection,46
+	lto	e__system__nind,46
 	lto	apupd_upd,24
 	lto	ap_25,0
-	lto	__indirection,47
+	lto	e__system__nind,47
 	lto	apupd_upd,25
 	lto	ap_26,0
-	lto	__indirection,48
+	lto	e__system__nind,48
 	lto	apupd_upd,26
 	lto	ap_27,0
-	lto	__indirection,49
+	lto	e__system__nind,49
 	lto	apupd_upd,27
 	lto	ap_28,0
-	lto	__indirection,50
+	lto	e__system__nind,50
 	lto	apupd_upd,28
 	lto	ap_29,0
-	lto	__indirection,51
+	lto	e__system__nind,51
 	lto	apupd_upd,29
 	lto	ap_30,0
-	lto	__indirection,52
+	lto	e__system__nind,52
 	lto	apupd_upd,30
 	lto	ap_31,0
-	lto	__indirection,53
+	lto	e__system__nind,53
 	lto	apupd_upd,31
 	lto	ap_32,0
-	lto	__indirection,54
+	lto	e__system__nind,54
 .endif

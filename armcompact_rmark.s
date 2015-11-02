@@ -459,8 +459,8 @@ rmark_large_tuple_or_record:
 	ldr	r6,[r7,r6]
 	ldr	r7,[sp],#4
 	str	r6,[r9]
-	lao	r12,__indirection,17
-	otoa	r12,__indirection,17
+	lao	r12,e__system__nind,17
+	otoa	r12,e__system__nind,17
 	str	r12,[r7,#-4]
 	str	r6,[r7]
 	b	rmark_node_d1
@@ -469,8 +469,8 @@ rmark_tuple_selector_node_2:
 	ldr	r6,[r7]
 	ldr	r7,[sp],#4
 	str	r6,[r9]
-	lao	r12,__indirection,18
-	otoa	r12,__indirection,18
+	lao	r12,e__system__nind,18
+	otoa	r12,e__system__nind,18
 	str	r12,[r7,#-4]
 	str	r6,[r7]
 	b	rmark_node_d1
@@ -543,8 +543,8 @@ rmark_tuple_or_record_selector_node_2:
 	ldr	r6,[r7,r4]
 	ldr	r7,[sp],#4
 	str	r6,[r9]
-	lao	r12,__indirection,19
-	otoa	r12,__indirection,19
+	lao	r12,e__system__nind,19
+	otoa	r12,e__system__nind,19
 	str	r12,[r7,#-4]
 	str	r6,[r7]
 	b	rmark_node_d1
@@ -997,9 +997,9 @@ rmark_array_length_0_1:
 .ifdef PIC
 	lto	end_vector,16
 	lto	end_vector,17
-	lto	__indirection,17
-	lto	__indirection,18
-	lto	__indirection,19
+	lto	e__system__nind,17
+	lto	e__system__nind,18
+	lto	e__system__nind,19
 	ltol	INT+2,INT_o_2,11
 	ltol	CHAR+2,CHAR_o_2,6
 	lto	small_integers,3

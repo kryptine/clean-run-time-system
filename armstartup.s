@@ -329,7 +329,7 @@ start_address:
 	.globl	e__system__nind
 	.globl	e__system__eaind
 @ old names of the previous two labels for compatibility, remove later
-	.globl	__indirection,__eaind
+	.globl	e__system__nind,__eaind
 	.globl	e__system__dind
 	.globl	eval_fill
 
@@ -3085,8 +3085,8 @@ eval_fill2:
 	mov	r8,r4
 .endif
 eval_upd_0:
-	lao	r12,__indirection,0
-	otoa	r12,__indirection,0
+	lao	r12,e__system__nind,0
+	otoa	r12,e__system__nind,0
 	str	r12,[r7]
 	str	r6,[r7,#4]
 	mov	pc,r11
@@ -3097,8 +3097,8 @@ eval_upd_0:
 	mov	r8,r4
 .endif
 eval_upd_1:
-	lao	r12,__indirection,1
-	otoa	r12,__indirection,1
+	lao	r12,e__system__nind,1
+	otoa	r12,e__system__nind,1
 	str	r12,[r7]
 	ldr	r4,[r7,#4]
 	str	r6,[r7,#4]
@@ -3111,8 +3111,8 @@ eval_upd_1:
 	mov	r8,r4
 .endif
 eval_upd_2:
-	lao	r12,__indirection,2
-	otoa	r12,__indirection,2
+	lao	r12,e__system__nind,2
+	otoa	r12,e__system__nind,2
 	str	r12,[r7]
 	ldr	r8,[r7,#4]
 	str	r6,[r7,#4]
@@ -3125,8 +3125,8 @@ eval_upd_2:
 	mov	r8,r4
 .endif
 eval_upd_3:
-	lao	r12,__indirection,3
-	otoa	r12,__indirection,3
+	lao	r12,e__system__nind,3
+	otoa	r12,e__system__nind,3
 	str	r12,[r7]
 	ldr	r8,[r7,#4]
 	str	r6,[r7,#4]
@@ -3141,8 +3141,8 @@ eval_upd_3:
 	mov	r8,r4
 .endif
 eval_upd_4:
-	lao	r12,__indirection,4
-	otoa	r12,__indirection,4
+	lao	r12,e__system__nind,4
+	otoa	r12,e__system__nind,4
 	str	r12,[r7]
 	ldr	r8,[r7,#4]
 	str	r6,[r7,#4]
@@ -3160,8 +3160,8 @@ eval_upd_4:
 	mov	r8,r4
 .endif
 eval_upd_5:
-	lao	r12,__indirection,5
-	otoa	r12,__indirection,5
+	lao	r12,e__system__nind,5
+	otoa	r12,e__system__nind,5
 	str	r12,[r7]
 	ldr	r8,[r7,#4]
 	str	r6,[r9]
@@ -3181,8 +3181,8 @@ eval_upd_5:
 	mov	r8,r4
 .endif
 eval_upd_6:
-	lao	r12,__indirection,6
-	otoa	r12,__indirection,6
+	lao	r12,e__system__nind,6
+	otoa	r12,e__system__nind,6
 	str	r12,[r7]
 	ldr	r8,[r7,#4]
 	str	r6,[r9]
@@ -3207,8 +3207,8 @@ eval_upd_7:
 	mov	r4,#0
 	mov	r3,#20
 eval_upd_n:
-	lao	r12,__indirection,7
-	otoa	r12,__indirection,7
+	lao	r12,e__system__nind,7
+	otoa	r12,e__system__nind,7
 	add	r2,r7,r3
 	str	r12,[r7]
 	ldr	r8,[r7,#4]
@@ -4821,14 +4821,14 @@ r_to_i_real:
  	lto	flags,14
   .endif
  .endif
-	lto	__indirection,0
-	lto	__indirection,1
-	lto	__indirection,2
-	lto	__indirection,3
-	lto	__indirection,4
-	lto	__indirection,5
-	lto	__indirection,6
-	lto	__indirection,7
+	lto	e__system__nind,0
+	lto	e__system__nind,1
+	lto	e__system__nind,2
+	lto	e__system__nind,3
+	lto	e__system__nind,4
+	lto	e__system__nind,5
+	lto	e__system__nind,6
+	lto	e__system__nind,7
 	ltol	__STRING__+2,__STRING___o_2,5
 	ltol	__STRING__+2,__STRING___o_2,6
 	ltol	__ARRAY__+2,__ARRAY___o_2,2

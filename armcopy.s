@@ -719,13 +719,13 @@ copy_selector_2:
 	add	r11,r6,#-8+4
 .endif
 	ldr	r6,[r6,#-8]
-	lao	r12,__indirection,8
+	lao	r12,e__system__nind,8
 .ifdef PIC
 	ldrh	r6,[r11,r6]
 .else
 	ldrh	r6,[r6,#4]
 .endif
-	otoa	r12,__indirection,8
+	otoa	r12,e__system__nind,8
 	str	r12,[r7]
 
 	cmp	r6,#8
@@ -760,13 +760,13 @@ copy_selector_2_:
 	ldr	r6,[r6,#-8]
 	ldr	r3,[sp],#4
 
-	lao	r12,__indirection,9
+	lao	r12,e__system__nind,9
 .ifdef PIC
 	ldrh	r6,[r11,r6]
 .else
 	ldrh	r6,[r6,#4]
 .endif
-	otoa	r12,__indirection,9
+	otoa	r12,e__system__nind,9
 	str	r12,[r7]
 
 	ldr	r6,[r4,r6]
@@ -834,9 +834,9 @@ copy_record_selector_2_:
 	add	r11,r6,#-8+4
 .endif
 	ldr	r4,[r6,#-8]
-	lao	r12,__indirection,10
+	lao	r12,e__system__nind,10
 	ldr	r6,[r7,#4]
-	otoa	r12,__indirection,10
+	otoa	r12,e__system__nind,10
 	str	r12,[r7]
 
 .ifdef PIC
@@ -1309,11 +1309,11 @@ copy_array_21_lp_ab_next:
 	lto	heap_copied_vector,4
 	lto	heap_p1,10
 	lto	heap_copied_vector,5
-	lto	__indirection,8
-	lto	__indirection,9
+	lto	e__system__nind,8
+	lto	e__system__nind,9
 	lto	heap_p1,11
 	lto	heap_copied_vector,6
-	lto	__indirection,10
+	lto	e__system__nind,10
 	lto	heap_p1,12
 	lto	heap_copied_vector,7
  .ifdef DLL
