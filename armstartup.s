@@ -368,15 +368,13 @@ start_address:
 	.globl	_c13,_c14,_c15,_c16,_c17,_c18,_c19,_c20,_c21,_c22
 	.globl	_c23,_c24,_c25,_c26,_c27,_c28,_c29,_c30,_c31,_c32
 
-	.globl	e__system__nind
-	.hidden	e__system__nind
 	.globl	e__system__eaind
 	.hidden	e__system__eaind
-@ old names of the previous two labels for compatibility, remove later
+	.globl	e__system__nind
+	.hidden	e__system__nind
+@ old name of the previous label for compatibility, remove later
 	.globl	__indirection
 	.hidden	__indirection
-	.globl	__eaind
-	.hidden	__eaind
 	.globl	e__system__dind
 	.hidden	e__system__dind
 	.globl	eval_fill
