@@ -90,7 +90,7 @@ ZERO_ARITY_DESCRIPTOR_OFFSET = (-4)
 	.comm	IO_time,4
 
 	.globl	saved_heap_p
-	.comm	saved_heap_p,4
+	.comm	saved_heap_p,8
 
 	.globl	saved_a_stack_p
 	.comm	saved_a_stack_p,4
