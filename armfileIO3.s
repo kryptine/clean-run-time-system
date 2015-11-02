@@ -37,9 +37,7 @@ fwritestring_error:
 	.globl	positionF
 	.globl	seekF
 	.globl	shareF
-.ifndef LINUX
-	.globl	flushF
-.endif	
+@	.globl	flushF
 	.globl	openSF
 	.globl	readSFC
 	.globl	readSFI
