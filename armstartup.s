@@ -520,7 +520,7 @@ init_error:
 	
 	.globl	clean_init
 clean_init:
-	stmdb	sp!,{r4-r11}
+	stmdb	sp!,{r4-r11,lr}
 
 	lao	r12,dll_initisialised,0
 	mov	r0,#1
@@ -543,7 +543,9 @@ clean_init:
  .endif
 
 	lao	r12,saved_heap_p,0
-	sto	r10,r12,saved_heap_p,0
+	otoa	r12,saved_heap_p,0
+	str	r10,[r12]
+	str	r5,[r12,#4]
 	lao	r12,saved_a_stack_p,0
 	sto	r9,r12,saved_a_stack_p,0
 
@@ -556,10 +558,12 @@ init_dll_error:
 
 	.globl	clean_fini
 clean_fini:
-	stmdb	sp!,{r4-r11}
+	stmdb	sp!,{r4-r11,lr}
 
 	lao	r12,saved_heap_p,1
-	ldo	r10,r12,saved_heap_p,1
+	otoa	r12,saved_heap_p,1
+	ldr	r10,[r12]
+	ldr	r5,[r12,#4]
 	lao	r12,saved_a_stack_p,1
 	ldo	r9,r12,saved_a_stack_p,1
 
@@ -3043,7 +3047,6 @@ halt:
 	.ltorg
 
 e__system__eaind:
-__eaind:
 eval_fill:
 	str	r6,[r9],#4
 	mov	r6,r7
