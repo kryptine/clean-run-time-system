@@ -313,6 +313,14 @@ start_address:
 	.comm	static_characters,256*8
 .endif
 
+.ifdef SHARED_LIBRARY
+	.section .init_array
+	.long   clean_init
+
+	.section .fini_array
+	.long   clean_fini
+.endif
+
 	.text
 
 	.globl	abc_main
