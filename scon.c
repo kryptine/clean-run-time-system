@@ -143,6 +143,9 @@ void set_home_and_appl_path (char *command)
 }
 
 #if defined (SOLARIS) || defined (I486) || defined (ARM)
+# if defined (ARM) && defined (PIC)
+__attribute__ ((visibility("hidden")))
+# endif
 extern long ab_stack_size,heap_size,flags;
 #else
 extern long stack_size,heap_size,flags;
@@ -152,6 +155,9 @@ extern long stack_size,heap_size,flags;
 extern long ab_stack_size=512*1024,heap_size=2048*1024,flags=8;
 */
 #ifdef MARKING_GC
+# if defined (ARM) && defined (PIC)
+__attribute__ ((visibility("hidden")))
+# endif
 extern long heap_size_multiple,initial_heap_size;
 #endif
 

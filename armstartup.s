@@ -51,56 +51,92 @@ MINIMUM_HEAP_SIZE_2 = 4000
 DESCRIPTOR_ARITY_OFFSET	= (-2)
 ZERO_ARITY_DESCRIPTOR_OFFSET = (-4)
 
+	.hidden	semi_space_size
 	.comm	semi_space_size,4
 
+	.hidden	heap_mbp
 	.comm	heap_mbp,4
+	.hidden	stack_mbp
 	.comm	stack_mbp,4
+	.hidden	heap_p
 	.comm	heap_p,4
+	.hidden	heap_p1
 	.comm	heap_p1,4
+	.hidden	heap_p2
 	.comm	heap_p2,4
+	.hidden	heap_p3
 	.comm	heap_p3,4
+	.hidden	end_heap_p3
 	.comm	end_heap_p3,4
+	.hidden	heap_size_33
 	.comm	heap_size_33,4
+	.hidden	vector_p
 	.comm	vector_p,4
+	.hidden	vector_counter
 	.comm	vector_counter,4
+	.hidden	neg_heap_vector_plus_4
 	.comm	neg_heap_vector_plus_4,4
 
+	.hidden	heap_size_32_33
 	.comm	heap_size_32_33,4
+	.hidden	heap_vector
 	.comm	heap_vector,4
+	.hidden stack_top
 	.comm	stack_top,4
+	.hidden	end_vector
 	.comm	end_vector,4
 
+	.hidden	heap_size_129
 	.comm	heap_size_129,4
+	.hidden	heap_copied_vector
 	.comm	heap_copied_vector,4
+	.hidden	heap_copied_vector_size
 	.comm	heap_copied_vector_size,4
+	.hidden	heap_end_after_copy_gc
 	.comm	heap_end_after_copy_gc,4
 
+	.hidden	heap_end_after_gc
 	.comm	heap_end_after_gc,4
+	.hidden	extra_heap
 	.comm	extra_heap,4
+	.hidden	extra_heap_size
 	.comm	extra_heap_size,4
+	.hidden	stack_p
 	.comm	stack_p,4
+	.hidden	halt_sp
 	.comm	halt_sp,4
 
+	.hidden	n_allocated_words
 	.comm	n_allocated_words,4
+	.hidden	basic_only
 	.comm	basic_only,4
 
+	.hidden	last_time
 	.comm	last_time,4
+	.hidden	execute_time
 	.comm	execute_time,4
+	.hidden	garbage_collect_time
 	.comm	garbage_collect_time,4
+	.hidden	IO_time
 	.comm	IO_time,4
 
 	.globl	saved_heap_p
+	.hidden	saved_heap_p
 	.comm	saved_heap_p,8
 
 	.globl	saved_a_stack_p
+	.hidden	saved_a_stack_p
 	.comm	saved_a_stack_p,4
 
 	.globl	end_a_stack
+	.hidden	end_a_stack
 	.comm	end_a_stack,4
 
 	.globl	end_b_stack
+	.hidden	end_b_stack
 	.comm	end_b_stack,4
 
+	.hidden	dll_initisialised
 	.comm	dll_initisialised,4
 
 .if WRITE_HEAP
@@ -114,6 +150,7 @@ ZERO_ARITY_DESCRIPTOR_OFFSET = (-4)
 .endif
 
 	.globl	profile_stack_pointer
+	.hidden	profile_stack_pointer
 	.comm	profile_stack_pointer,4
 
 	.data
@@ -145,6 +182,7 @@ bit_vector_size:
 caf_list:
 	.long	0
 	.globl	caf_listp
+	.hidden	caf_listp
 caf_listp:
 	.long	0
 
@@ -170,6 +208,7 @@ garbage_collect_flag:
 	.byte	0
 	.byte	0,0,0
 
+	.hidden	sprintf_buffer
 	.comm	sprintf_buffer,32
 
 out_of_memory_string_1:
@@ -261,13 +300,16 @@ start_address:
 	.long	0
 .endif
 	.p2align	2
+	.hidden	sprintf_time_buffer
 	.comm	sprintf_time_buffer,20
 
 	.p2align	2
 .if SHARE_CHAR_INT
 	.globl	small_integers
+	.hidden	small_integers
 	.comm	small_integers,33*8
 	.globl	static_characters
+	.hidden	static_characters
 	.comm	static_characters,256*8
 .endif
 
@@ -327,10 +369,16 @@ start_address:
 	.globl	_c23,_c24,_c25,_c26,_c27,_c28,_c29,_c30,_c31,_c32
 
 	.globl	e__system__nind
+	.hidden	e__system__nind
 	.globl	e__system__eaind
+	.hidden	e__system__eaind
 @ old names of the previous two labels for compatibility, remove later
-	.globl	e__system__nind,__eaind
+	.globl	__indirection
+	.hidden	__indirection
+	.globl	__eaind
+	.hidden	__eaind
 	.globl	e__system__dind
+	.hidden	e__system__dind
 	.globl	eval_fill
 
 	.globl	eval_upd_0,eval_upd_1,eval_upd_2,eval_upd_3,eval_upd_4
@@ -422,8 +470,10 @@ start_address:
 .if FINALIZERS
 	.global	__Nil
 	.globl	finalizer_list
+	.hidden	finalizer_list
 	.comm	finalizer_list,4
 	.globl	free_finalizer_list
+	.hidden	free_finalizer_list
 	.comm	free_finalizer_list,4
 .endif
 
