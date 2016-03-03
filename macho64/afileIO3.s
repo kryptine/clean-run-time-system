@@ -558,10 +558,10 @@ errorF:
 	ret
 
 positionF:
+	mov	rbp,rsp
 	and	rsp,-16
 	mov	r13,rsi
 	mov	r14,rdi
-	mov	rbp,rsp
 	mov	rdi,rbx
 	att_call	_file_position
 	mov	rsp,rbp
