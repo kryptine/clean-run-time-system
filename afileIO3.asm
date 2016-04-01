@@ -579,7 +579,7 @@ readSFC:
 	push	rax
 
 	mov	rdx,rsp
-	mov	rax,rbx
+	mov	rcx,rbx
 
 	mov	rbp,rsp
 	or	rsp,8
@@ -587,11 +587,11 @@ readSFC:
 	call	file_read_s_char
 	mov	rsp,rbp
 
-	cmp	rax,-1
+	cmp	eax,-1
 	je	readSFC_eof
 
+	mov	r10d,eax
 	pop	rax
-	mov	r10,rax
 	mov	r11,1
 	ret
 

@@ -703,7 +703,7 @@ readSFC:
 	push	rax
 
 	mov	rdx,rsp
-	mov	rax,rbx
+	mov	rcx,rbx
 
 	mov	rbp,rsp
 	or	rsp,8
@@ -716,11 +716,11 @@ readSFC:
  if THREAD
 	mov	r9,r14
  endif
-	cmp	rax,-1
+	cmp	eax,-1
 	je	readSFC_eof
 
+	mov	r10d,eax
 	pop	rax
-	mov	r10,rax
 	mov	r11,1
 	ret
 

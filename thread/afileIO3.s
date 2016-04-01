@@ -671,11 +671,11 @@ readSFC:
 	mov	rsi,r13
 	mov	rdi,r14
 
-	cmp	rax,-1
+	cmp	eax,-1
 	je	readSFC_eof
 
+	mov	r10d,rax
 	pop	rax
-	mov	r10,rax
 	mov	r11,1
 	ret
 
