@@ -982,7 +982,7 @@ no_fast_ap3:
 	mov	r7,r6
 	ldr	r6,[r9,#-4]!
 
-	mov	r3,#3*8
+	mov	r3,#2*8
 	ldrh	r12,[r11]
 	cmp	r12,r3
 	beq	fast_ap_2_2
