@@ -373,8 +373,11 @@ start_address:
 	.globl	collect_3
  
 	.globl	_c3,_c4,_c5,_c6,_c7,_c8,_c9,_c10,_c11,_c12
+	.hidden	_c3,_c4,_c5,_c6,_c7,_c8,_c9,_c10,_c11,_c12
 	.globl	_c13,_c14,_c15,_c16,_c17,_c18,_c19,_c20,_c21,_c22
+	.hidden	_c13,_c14,_c15,_c16,_c17,_c18,_c19,_c20,_c21,_c22
 	.globl	_c23,_c24,_c25,_c26,_c27,_c28,_c29,_c30,_c31,_c32
+	.hidden	_c23,_c24,_c25,_c26,_c27,_c28,_c29,_c30,_c31,_c32
 
 	.globl	e__system__eaind
 	.hidden	e__system__eaind
