@@ -1120,7 +1120,8 @@ printD:	tst	r4,#2
 
 DtoAC_record:
 	ldr	r8,[r4,#-6]
-.ifdef PIC
+@.ifdef PIC
+.if 0
 	add	r12,r4,#-6
 	add	r8,r8,r12
 .endif
@@ -1191,7 +1192,8 @@ printD_:
 
 print_record:
 	ldr	r8,[r4,#-6]
-.ifdef PIC
+@.ifdef PIC
+.if 0
 	add	r12,r4,#-6
 	add	r8,r8,r12
 .endif
