@@ -1416,7 +1416,10 @@ RtoAC:
 	lao	r0,sprintf_buffer,0
 	otoa	r1,printf_real_string,0
 	otoa	r0,sprintf_buffer,0
+	mov	r4,sp
+	and	sp,sp,#-8
 	bl	sprintf
+	mov	sp,r4
 .else
 	lao	r0,sprintf_buffer,1
 	otoa	r0,sprintf_buffer,1
