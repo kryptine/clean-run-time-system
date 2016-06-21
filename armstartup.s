@@ -1259,9 +1259,16 @@ print_false:
 	ldr	pc,[sp],#4
 
 print_real:
+.ifdef SOFT_FP_CC
+	vmov	r0,r1,d0
+.endif
 	b	print_real_
 print_real_node:
+.ifdef SOFT_FP_CC
+	ldrd	r0,r1,[r6,#4]
+.else
 	vldr.f64 d0,[r6,#4]
+.endif
 print_real_:
 	mov	r11,sp
 	bic	sp,sp,#7
@@ -4854,10 +4861,18 @@ exp_real:
 
 	.section .text.pow_real,"ax"
 pow_real:
+.ifdef SOFT_FP_CC
+	vmov	r0,r1,d1
+	vmov	r2,r3,d0
+.else
 	vmov.f64 d2,d0
 	vmov.f64 d0,d1
 	vmov.f64 d1,d2
+.endif
 	bl	pow
+.ifdef SOFT_FP_CC
+	vmov	d0,r0,r1
+.endif
 	ldr	pc,[sp],#4
 
 	.section .text.entier_real,"ax"
