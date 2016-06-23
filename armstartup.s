@@ -4816,47 +4816,101 @@ del_args_gc:
 
 	.section .text.sin_real,"ax"
 sin_real:
+.ifdef SOFT_FP_CC
+	vmov	r0,r1,d0
+.endif
 	bl	sin
+.ifdef SOFT_FP_CC
+	vmov	d0,r0,r1
+.endif
 	ldr	pc,[sp],#4
 
 	.section .text.cos_real,"ax"
 cos_real:
+.ifdef SOFT_FP_CC
+	vmov	r0,r1,d0
+.endif
 	bl	cos
+.ifdef SOFT_FP_CC
+	vmov	d0,r0,r1
+.endif
 	ldr	pc,[sp],#4
 
 	.section .text.tan_real,"ax"
 tan_real:
+.ifdef SOFT_FP_CC
+	vmov	r0,r1,d0
+.endif
 	bl	tan
+.ifdef SOFT_FP_CC
+	vmov	d0,r0,r1
+.endif
 	ldr	pc,[sp],#4
 
 	.section .text.asin_real,"ax"	
 asin_real:
+.ifdef SOFT_FP_CC
+	vmov	r0,r1,d0
+.endif
 	bl	asin
+.ifdef SOFT_FP_CC
+	vmov	d0,r0,r1
+.endif
 	ldr	pc,[sp],#4
 
 	.section .text.acos_real,"ax"
 acos_real:
+.ifdef SOFT_FP_CC
+	vmov	r0,r1,d0
+.endif
 	bl	acos
+.ifdef SOFT_FP_CC
+	vmov	d0,r0,r1
+.endif
 	ldr	pc,[sp],#4
 
 	.section .text.atan_real,"ax"
 atan_real:
+.ifdef SOFT_FP_CC
+	vmov	r0,r1,d0
+.endif
 	bl	atan
+.ifdef SOFT_FP_CC
+	vmov	d0,r0,r1
+.endif
 	ldr	pc,[sp],#4
 
 	.section .text.ln_real,"ax"
 ln_real:
+.ifdef SOFT_FP_CC
+	vmov	r0,r1,d0
+.endif
 	bl	log
+.ifdef SOFT_FP_CC
+	vmov	d0,r0,r1
+.endif
 	ldr	pc,[sp],#4
 
 	.section .text.log10_real,"ax"
 log10_real:
+.ifdef SOFT_FP_CC
+	vmov	r0,r1,d0
+.endif
 	bl	log10
+.ifdef SOFT_FP_CC
+	vmov	d0,r0,r1
+.endif
 	ldr	pc,[sp],#4
 
 	.section .text.exp_real,"ax"
 exp_real:
+.ifdef SOFT_FP_CC
+	vmov	r0,r1,d0
+.endif
 	bl	exp
+.ifdef SOFT_FP_CC
+	vmov	d0,r0,r1
+.endif
 	ldr	pc,[sp],#4
 
 	.section .text.pow_real,"ax"
@@ -4877,7 +4931,13 @@ pow_real:
 
 	.section .text.entier_real,"ax"
 entier_real:
+.ifdef SOFT_FP_CC
+	vmov	r0,r1,d0
+.endif
 	bl	floor
+.ifdef SOFT_FP_CC
+	vmov	d0,r0,r1
+.endif
 
 r_to_i_real:
 	vcvtr.s32.f64 s0,d0
