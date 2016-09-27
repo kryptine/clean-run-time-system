@@ -1,3 +1,4 @@
+Setlocal EnableDelayedExpansion
 if exist "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" (
 	call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" amd64
 ) else if exist "C:\Program Files\Microsoft SDKs\Windows\v6.1\Bin\SetEnv.Cmd" (
