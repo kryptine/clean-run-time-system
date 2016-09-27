@@ -2429,12 +2429,12 @@ collect:
 	mov	16[rsp],r12
 	mov	8[rsp],r13
 	mov	[rsp],r14
-	movsd	40[rsp],xmm0
-	movsd	48[rsp],xmm1
-	movsd	56[rsp],xmm2
-	movsd	64[rsp],xmm3
-	movsd	72[rsp],xmm4
-	movsd	80[rsp],xmm5
+	movsd	qword ptr 40[rsp],xmm0
+	movsd	qword ptr 48[rsp],xmm1
+	movsd	qword ptr 56[rsp],xmm2
+	movsd	qword ptr 64[rsp],xmm3
+	movsd	qword ptr 72[rsp],xmm4
+	movsd	qword ptr 80[rsp],xmm5
  ifdef LINUX
 	movsd	88[rsp],xmm6
 	movsd	96[rsp],xmm7
@@ -2871,12 +2871,12 @@ restore_registers_after_gc_and_return:
 	mov	r12,16[rsp]
 	mov	r13,8[rsp]
 	mov	r14,[rsp]
-	movlpd	xmm0,40[rsp]
-	movlpd	xmm1,48[rsp]
-	movlpd	xmm2,56[rsp]
-	movlpd	xmm3,64[rsp]
-	movlpd	xmm4,72[rsp]
-	movlpd	xmm5,80[rsp]
+	movlpd	xmm0,qword ptr 40[rsp]
+	movlpd	xmm1,qword ptr 48[rsp]
+	movlpd	xmm2,qword ptr 56[rsp]
+	movlpd	xmm3,qword ptr 64[rsp]
+	movlpd	xmm4,qword ptr 72[rsp]
+	movlpd	xmm5,qword ptr 80[rsp]
  ifdef LINUX
 	movlpd	xmm6,88[rsp]
 	movlpd	xmm7,96[rsp]
