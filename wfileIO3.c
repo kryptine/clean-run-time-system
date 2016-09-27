@@ -4,7 +4,7 @@
 	At:			University of Nijmegen
 */
 
-#ifdef _WIN64
+#if defined (_WIN64) && !defined (A64)
 # define A64
 #endif
 
@@ -219,7 +219,7 @@ struct file *open_file (struct clean_string *file_name,unsigned int file_mode)
 				IO_error ("fopen: can't seek to eof");
 			}
 #ifdef A64
- 			file_length=file_length_low+(file_length_high<<32);
+ 			file_length=file_length_low+((FilePositionT)file_length_high<<32);
 #else
  			file_length=file_length_low;
 #endif
@@ -240,7 +240,7 @@ struct file *open_file (struct clean_string *file_name,unsigned int file_mode)
 				IO_error ("fopen: can't get eof");
 			}
 #ifdef A64
- 			file_length=file_length_low+(file_length_high<<32);
+ 			file_length=file_length_low+((FilePositionT)file_length_high<<32);
 #else
  			file_length=file_length_low;
 #endif
@@ -538,7 +538,7 @@ CLEAN_BOOL re_open_file (struct file *f,unsigned int file_mode)
 					IO_error ("freopen: can't seek to eof");
 				}
 #ifdef A64
- 				file_length=file_length_low+(file_length_high<<32);
+ 				file_length=file_length_low+((FilePositionT)file_length_high<<32);
 #else
 	 			file_length=file_length_low;
 #endif
@@ -559,7 +559,7 @@ CLEAN_BOOL re_open_file (struct file *f,unsigned int file_mode)
 					IO_error ("freopen: can't get eof");
 				}
 #ifdef A64
- 				file_length=file_length_low+(file_length_high<<32);
+ 				file_length=file_length_low+((FilePositionT)file_length_high<<32);
 #else
 	 			file_length=file_length_low;
 #endif
@@ -1689,7 +1689,7 @@ CLEAN_BOOL file_seek (struct file *f,FilePositionT position,unsigned long seek_m
 					return 0;
 				}
 #ifdef A64
-				file_position=file_position_low+(file_position_high<<32);
+				file_position=file_position_low+((FilePositionT)file_position_high<<32);
 #else
 				file_position=file_position_low;
 #endif				
@@ -1746,7 +1746,7 @@ CLEAN_BOOL file_seek (struct file *f,FilePositionT position,unsigned long seek_m
 				result=0;
 			} else {
 #ifdef A64
-				file_position=file_position_low+(file_position_high<<32);
+				file_position=file_position_low+((FilePositionT)file_position_high<<32);
 #else
 				file_position=file_position_low;
 #endif
@@ -1859,7 +1859,7 @@ struct file *open_s_file (struct clean_string *file_name,unsigned int file_mode)
 		IO_error ("sfopen: can't get eof");
 	}
 #ifdef A64
- 	file_length=file_length_low+(file_length_high<<32);
+ 	file_length=file_length_low+((FilePositionT)file_length_high<<32);
 #else
  	file_length=file_length_low;
 #endif
@@ -1924,7 +1924,7 @@ static int simple_seek (struct file *f,FilePositionT position)
 				result=0;
 			} else {
 #ifdef A64
-				file_position=file_position_low+(file_position_high<<32);
+				file_position=file_position_low+((FilePositionT)file_position_high<<32);
 #else
 				file_position=file_position_low;
 #endif
@@ -2564,7 +2564,7 @@ CLEAN_BOOL file_s_seek (struct file *f,FilePositionT position,unsigned long seek
 					result=0;
 				} else {
 #ifdef A64
-					file_position=file_position_low+(file_position_high<<32);
+					file_position=file_position_low+((FilePositionT)file_position_high<<32);
 #else
 					file_position=file_position_low;
 #endif
