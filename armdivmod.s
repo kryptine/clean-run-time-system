@@ -98,6 +98,12 @@ modulo:
 	movcs	r3,r1
 	.endr
 
+modulo_divide_result_0:
+	mov	r4,r3
+	cmp	r12,#0
+	neglt	r4,r4
+	ldr	pc,[sp],#4
+
 modulo_large_divide_result:
 	bpl	modulo_divide_result_0
 
@@ -109,12 +115,6 @@ modulo_large_divide_result:
 	vcvt.u32.f64	s15,d7
 	vmov	r2,s15
 	b	modulo_from_quotient
-
-modulo_divide_result_0:
-	mov	r4,r3
-	cmp	r12,#0
-	neglt	r4,r4
-	ldr	pc,[sp],#4
 
 modulo_of_small_number:
 	add	r1,pc,r4,lsl #3
