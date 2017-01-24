@@ -148,7 +148,8 @@ finalizer_find_descriptor:
 	bne	finalizer_find_descriptor_lp
 
 	laol	r12,e____system__kFinalizerGCTemp+2,e____system__kFinalizerGCTemp_o_2,0
-	sto	r12,r9,e____system__kFinalizerGCTemp_o_2,0
+	otoa	r12,e____system__kFinalizerGCTemp_o_2,0
+	str	r12,[r9]
 
 	cmp	r8,r6
 	bhi	finalizer_no_reverse
@@ -165,7 +166,8 @@ finalizer_no_reverse:
 
 finalizer_not_used_after_compact1:
 	laol	r12,e____system__kFinalizerGCTemp+2,e____system__kFinalizerGCTemp_o_2,1
-	sto	r12,r8,e____system__kFinalizerGCTemp_o_2,1
+	otoa	r12,e____system__kFinalizerGCTemp_o_2,1
+	str	r12,[r8]
 
 	str	r8,[r7]
 	add	r7,r8,#4
