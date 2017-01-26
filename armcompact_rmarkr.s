@@ -319,7 +319,7 @@ rmarkr_selector_node_1:
 	mov	r12,#1
 	lsl	r4,r12,r4
 	ldr	r3,[r10,r3,lsl #2]
-	and	r3,r3,r4
+	tst	r3,r4
 	ldr	r4,[sp],#4
 	bne	rmarkr_hnf_1
 
@@ -342,7 +342,7 @@ rmarkr_large_tuple_or_record:
 	mov	r12,#1
 	lsl	r4,r12,r4
 	ldr	r3,[r10,r3,lsl #2]
-	and	r3,r3,r4
+	tst	r3,r4
 	ldr	r4,[sp],#4
 	bne	rmarkr_hnf_1
 
@@ -402,7 +402,7 @@ rmarkr_record_selector_node_1:
 	mov	r12,#1
 	lsl	r4,r12,r4
 	ldr	r3,[r10,r3,lsl #2]
-	and	r3,r3,r4
+	tst	r3,r4
 	ldr	r4,[sp],#4
 	bne	rmarkr_hnf_1
 
@@ -425,7 +425,7 @@ rmarkr_record_selector_node_1:
 	mov	r12,#1
 	lsl	r4,r12,r4
 	ldr	r3,[r10,r3,lsl #2]
-	and	r3,r3,r4
+	tst	r3,r4
 	ldr	r4,[sp],#4
 	bne	rmarkr_hnf_1
 
@@ -474,7 +474,7 @@ rmarkr_strict_record_selector_node_1:
 	mov	r12,#1
 	lsl	r4,r12,r4
 	ldr	r3,[r10,r3,lsl #2]
-	and	r3,r3,r4
+	tst	r3,r4
 	ldr	r4,[sp],#4
 	bne	rmarkr_hnf_1
 
@@ -497,7 +497,7 @@ rmarkr_strict_record_selector_node_1:
 	mov	r12,#1
 	lsl	r4,r12,r4
 	ldr	r3,[r10,r3,lsl #2]
-	and	r3,r3,r4
+	tst	r3,r4
 	ldr	r4,[sp],#4
 	bne	rmarkr_hnf_1
 
