@@ -2932,7 +2932,7 @@ no_mark_6:
 	sto	r4,r12,heap_p1,8
 
 	lao	r12,heap_size_129,3
-	lto	r3,r12,heap_size_129,3
+	ldo	r3,r12,heap_size_129,3
 	lsl	r3,r3,#6
 	add	r4,r4,r3
 	lao	r12,heap_copied_vector,3
