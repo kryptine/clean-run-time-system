@@ -1236,9 +1236,8 @@ print_char_node:
 	ldr	pc,[sp],#4
 
 print_char:
-	str	r4,[sp,#-4]!
+	mov	r0,r4
 	bl	w_print_char
-	add	sp,sp,#4
 	ldr	pc,[sp],#4
 
 print_bool:
