@@ -111,7 +111,7 @@ rmark_no_reverse:
 	beq	rmark_lazy_node
 
 	ldrh	r8,[r4,#-2]
-	tst	r8,r8
+	cmp	r8,#0
 	beq	rmark_hnf_0
 
 	add	r6,r6,#4
@@ -400,7 +400,7 @@ rmark_selector_node_1:
 	mov	r12,#1
 	lsl	r8,r12,r8
 	ldr	r3,[r10,r3,lsl #2]
-	and	r3,r3,r8
+	tst	r3,r8
 	bne	rmark_hnf_1
 
 	ldr	r3,[r7]
@@ -421,7 +421,7 @@ rmark_large_tuple_or_record:
 	mov	r12,#1
 	lsl	r8,r12,r8
 	ldr	r3,[r10,r3,lsl #2]
-	and	r3,r3,r8
+	tst	r3,r8
 	bne	rmark_hnf_1
 
 	add	r12,r6,#-4
@@ -483,7 +483,7 @@ rmark_record_selector_node_1:
 	mov	r12,#1
 	lsl	r8,r12,r8
 	ldr	r3,[r10,r3,lsl #2]
-	and	r3,r3,r8
+	tst	r3,r8
 	bne	rmark_hnf_1
 
 	ldr	r3,[r7]
@@ -504,7 +504,7 @@ rmark_record_selector_node_1:
 	mov	r12,#1
 	lsl	r8,r12,r8
 	ldr	r3,[r10,r3,lsl #2]
-	and	r3,r3,r8
+	tst	r3,r8
 	bne	rmark_hnf_1
 
 rmark_small_tuple_or_record:
@@ -555,7 +555,7 @@ rmark_strict_record_selector_node_1:
 	mov	r12,#1
 	lsl	r8,r12,r8
 	ldr	r3,[r10,r3,lsl #2]
-	and	r3,r3,r8
+	tst	r3,r8
 	bne	rmark_hnf_1
 
 	ldr	r3,[r7]
@@ -576,7 +576,7 @@ rmark_strict_record_selector_node_1:
 	mov	r12,#1
 	lsl	r8,r12,r8
 	ldr	r3,[r10,r3,lsl #2]
-	and	r3,r3,r8
+	tst	r3,r8
 	bne	rmark_hnf_1
 
 rmark_select_from_small_record:
@@ -610,7 +610,7 @@ rmark_strict_record_selector_node_3:
 .else
 	ldrh	r4,[r3,#6]
 .endif
-	tst	r4,r4
+	cmp	r4,#0
 	beq	rmark_strict_record_selector_node_5
 	cmp	r4,#8
 	ble	rmark_strict_record_selector_node_4
@@ -653,7 +653,7 @@ rmark_strict_record_selector_node_7:
 .else
 	ldrh	r4,[r3,#6]
 .endif
-	tst	r4,r4
+	cmp	r4,#0
 	beq	rmark_strict_record_selector_node_9
 	cmp	r4,#8
 	ble	rmark_strict_record_selector_node_8
@@ -826,7 +826,7 @@ rmark_no_normal_hnf_0:
 	bne	rmark_next_node
 
 	ldr	r4,[r6,#8]
-	tst	r4,r4
+	cmp	r4,#0
 	beq	rmark_lazy_array
 
 	ldrh	r7,[r4,#-2+2]
@@ -834,7 +834,7 @@ rmark_no_normal_hnf_0:
 	beq	rmark_b_array
 
 	ldrh	r4,[r4,#-2]
-	tst	r4,r4
+	cmp	r4,#0
 	beq	rmark_b_array
 
 	cmp	sp,r0
