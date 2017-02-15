@@ -2203,7 +2203,7 @@ switch_to_mark_scan_2:
 	mov	r11,#1
 	stob	r11,r12,garbage_collect_flag,5
 
-	cmp	r8,#0
+	cmp	r5,#0
 	bpl	end_garbage_collect
 
 	mov	r11,#-1
@@ -2211,10 +2211,9 @@ switch_to_mark_scan_2:
 
 	lao	r12,extra_heap_size,3
 	ldo	r3,r12,extra_heap_size,3
-	mov	r4,r3
 	lao	r12,n_allocated_words,3
 	ldo	r12,r12,n_allocated_words,3
-	subs	r4,r4,r12
+	subs	r5,r4,r12
 	bmi	out_of_memory_4
 
 	lao	r12,extra_heap,3
