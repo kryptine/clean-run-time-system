@@ -225,7 +225,7 @@ rmark_record_3_bb:
 	cmp	r7,r6
 	bhi	rmark_next_node
 
-	add	r4,r4,r4
+	adds	r4,r4,r4
 	bne	rmark_bit_in_same_word1
 	add	r8,r8,#1
 	mov	r4,#1
