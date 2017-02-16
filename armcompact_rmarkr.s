@@ -155,7 +155,7 @@ rmarkr_record_3_bb:
 	cmp	r7,r6
 	bhi	rmarkr_next_node
 
-	add	r4,r4,r4
+	adds	r4,r4,r4
 	bne	rmarkr_bit_in_same_word1
 	add	r8,r8,#1
 	mov	r4,#1
@@ -200,7 +200,7 @@ rmarkr_record_3_ab:
 	cmp	r7,r6
 	bhi	rmarkr_hnf_1
 
-	add	r4,r4,r4
+	adds	r4,r4,r4
 	bne	rmarkr_bit_in_same_word2
 	add	r8,r8,#1
 	mov	r4,#1
