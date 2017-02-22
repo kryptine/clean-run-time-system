@@ -2206,8 +2206,9 @@ switch_to_mark_scan_2:
 	cmp	r5,#0
 	bpl	end_garbage_collect
 
+	lao	r12,garbage_collect_flag,6
 	mov	r11,#-1
-	strb	r11,[r12]
+	stob	r11,r12,garbage_collect_flag,6
 
 	lao	r12,extra_heap_size,3
 	ldo	r3,r12,extra_heap_size,3
@@ -2371,8 +2372,8 @@ no_heap_use_message:
 	tst	r4,r4
 	bne	copy_to_compact_with_alloc_in_extra_heap	
 
-	lao	r4,garbage_collect_flag,6
-	ldosb	r4,r4,garbage_collect_flag,6
+	lao	r4,garbage_collect_flag,7
+	ldosb	r4,r4,garbage_collect_flag,7
 
 	lao	r12,heap2_begin_and_end,1
 	ldo	r6,r12,heap2_begin_and_end,1
@@ -2480,6 +2481,7 @@ no_write_heap:
 	lto	extra_heap_size,2
 	lto	heap_size,6
 	lto	garbage_collect_flag,5
+	lto	garbage_collect_flag,6
 	lto	extra_heap_size,3
 	lto	n_allocated_words,3
 	lto	extra_heap,3
@@ -2513,7 +2515,7 @@ no_write_heap:
 	lto	flags,10
 	lto	min_write_heap_size,0
 	lto	d3_flag_write_heap,2
-	lto	garbage_collect_flag,6
+	lto	garbage_collect_flag,7
 	lto	heap2_begin_and_end,1
 	ltol	heap2_begin_and_end+4,heap2_begin_and_end_o_4,0
 	lto	heap_p1,7
@@ -2959,15 +2961,15 @@ no_mark_6:
 	lao	r12,extra_heap_size,4
 	sto	r4,r12,extra_heap_size,4
 
-	lao	r12,garbage_collect_flag,7
+	lao	r12,garbage_collect_flag,8
 	mov	r11,#2
-	stob	r11,r12,garbage_collect_flag,7
+	stob	r11,r12,garbage_collect_flag,8
 	b	no_copy_garbage_collection
 
 vector_at_end_2:
-	lao	r12,garbage_collect_flag,8
+	lao	r12,garbage_collect_flag,9
 	mov	r11,#0
-	stob	r11,r12,garbage_collect_flag,8
+	stob	r11,r12,garbage_collect_flag,9
 .endif
 
 no_copy_garbage_collection:
@@ -3055,8 +3057,8 @@ halt:
 	lto	heap_vector,6
 	lto	extra_heap,4
 	lto	extra_heap_size,4
-	lto	garbage_collect_flag,7
 	lto	garbage_collect_flag,8
+	lto	garbage_collect_flag,9
  .endif
 	lto	heap_p3,8
 	lto	n_allocated_words,6
