@@ -126,7 +126,7 @@ modulo_of_small_number:
 	lsr	r2,r2,r1
 modulo_from_quotient:
 @	mls	r4,r4,r2,r3
-	neg	r3,r3
+	neg	r4,r4
 	mla	r4,r4,r2,r3
 	cmp	r12,#0
 	neglt	r4,r4
