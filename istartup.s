@@ -908,9 +908,7 @@ no_memory_2:
 	push	$out_of_memory_string_1
 	call	@ew_print_string
 	add	$4,sp
-#ifdef _WINDOWS_
 	movl	$1,@execution_aborted
-#endif
 	movl	$1,%eax
 	ret
 
@@ -918,9 +916,7 @@ no_memory_3:
 	push	$out_of_memory_string_1
 	call	@ew_print_string
 	add	$4,sp
-#ifdef _WINDOWS_
 	movl	$1,@execution_aborted
-#endif
 
 	push	heap_mbp
 #ifdef USE_CLIB
@@ -2925,9 +2921,9 @@ halt:
 # endif
 #endif
 
-#ifdef _WINDOWS_
 	movl	$1,@execution_aborted
 
+#ifdef _WINDOWS_
 	cmpl	$0,dll_initisialised
 	je	exit
 
