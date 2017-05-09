@@ -2214,7 +2214,7 @@ switch_to_mark_scan_2:
 	ldo	r3,r12,extra_heap_size,3
 	lao	r12,n_allocated_words,3
 	ldo	r12,r12,n_allocated_words,3
-	subs	r5,r4,r12
+	subs	r5,r3,r12
 	bmi	out_of_memory_4
 
 	lao	r12,extra_heap,3
