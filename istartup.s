@@ -2282,9 +2282,8 @@ switch_to_mark_scan_2:
 	movb	$-1,garbage_collect_flag
 	
 	movl	extra_heap_size,d1
-	movl	d1,d0
-	subl	n_allocated_words,d0
-	js	out_of_memory_4
+	cmpl	n_allocated_words,d1
+	jb	out_of_memory_4
 
 	movl	extra_heap,a4
 	shl	$2,d1
