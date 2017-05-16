@@ -76,6 +76,7 @@ heap_end_after_gc	dq	0
 extra_heap	dq	0
 extra_heap_size	dq	0
 stack_p	dq	0
+	public	halt_sp
 halt_sp	dq	0
 	
 n_allocated_words	dq	0
@@ -848,9 +849,9 @@ init_clean:
 	mov	rdi,qword ptr ab_stack_size+0
 	add	rdi,7
   ifdef PIC
-	call	malloc@PLT
+	call	allocate_memory_with_guard_page_at_end@PLT
   else
-	call	malloc
+	call	allocate_memory_with_guard_page_at_end
   endif
 	mov	rdi,r14
  else

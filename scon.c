@@ -21,18 +21,30 @@
 #ifndef SOLARIS
 # define MARKING_GC
 #endif
-#if !defined (A64) && !defined (ARM)
+#if (!defined (A64) || defined (LINUX)) && !defined (ARM)
 # define STACK_OVERFLOW_EXCEPTION_HANDLER
+# ifndef A64
+#  define USE_CR2
+# endif
 #else
 # undef STACK_OVERFLOW_EXCEPTION_HANDLER
 #endif
-#define USE_CR2
 
 #ifdef STACK_OVERFLOW_EXCEPTION_HANDLER
-# include <signal.h>
 # ifdef LINUX
+#  ifndef USE_CR2
+#   /* define __USE_GNU to define REG_RIP and REG_RSP */
+#   ifdef __USE_GNU
+#    include <ucontext.h>
+#   else
+#    define __USE_GNU
+#    include <ucontext.h>
+#    undef __USE_GNU
+#   endif
+#  endif
 #  include <sys/resource.h>
 # endif
+# include <signal.h>
 # ifdef SOLARIS
 #  include <ucontext.h>
 #  include <procfs.h>
@@ -213,37 +225,17 @@ static void clean_exception_handler (int s,volatile struct sigcontext sigcontext
 	}
 }
 # else
-static void clean_exception_handler_info (int s,struct siginfo *siginfo_p,void *p);
-
-static void clean_exception_handler_context (int s,volatile struct sigcontext sigcontext)
-{
-	struct sigaction sa;
-
-	sigcontext.eip=(int)&stack_overflow;
-	sigcontext.esp=(int)halt_sp;
-
-	sigemptyset (&sa.sa_mask);
-	sa.sa_sigaction=&clean_exception_handler_info;
-	sa.sa_flags= SA_ONSTACK | SA_RESTART | SA_SIGINFO;
-
-	sigaction (SIGSEGV,&sa,NULL);
-}
-
-static void clean_exception_handler_info (int s,struct siginfo *siginfo_p,void *p)
+static void clean_exception_handler_info (int s,siginfo_t *siginfo_p,void *p)
 {
 	struct sigaction sa;
 
 	if (
-		(((int)siginfo_p->si_addr ^ (int)below_stack_page) & -4096)==0 ||
-		(((int)siginfo_p->si_addr ^ (int)a_stack_guard_page) & -4096)==0)
+		(((long)siginfo_p->si_addr ^ (long)below_stack_page) & -4096)==0 ||
+		(((long)siginfo_p->si_addr ^ (long)a_stack_guard_page) & -4096)==0)
 	{
-		struct sigaction sa;
-
-		sigemptyset (&sa.sa_mask);
-		sa.sa_handler=&clean_exception_handler_context;
-		sa.sa_flags= SA_ONSTACK | SA_RESTART;
-
-		sigaction (SIGSEGV,&sa,NULL);
+		/* REG_RIP and REG_RSP from /usr/include/x86_64-linux-gnu/sys/ucontext.h */
+		((ucontext_t*)p)->uc_mcontext.gregs[REG_RIP/*16*/]=(size_t)&stack_overflow;
+		((ucontext_t*)p)->uc_mcontext.gregs[REG_RSP/*15*/]=(size_t)halt_sp;
 	} else {
 		if (old_sa.sa_handler==SIG_DFL || old_sa.sa_handler==SIG_IGN)
 			sigaction (SIGSEGV,&old_sa,NULL);
@@ -269,15 +261,36 @@ static void install_clean_exception_handler (void)
 		return;
 
 	for (;;){
+#ifndef A64
 		static char m[17];
-		unsigned int b,e;
+#else
+		static char m[33];
+#endif
+		unsigned long b,e;
+		int n_hex_digits;
 		
-		if (read (proc_map_fd,m,17)==17 && m[8]=='-'){
+		n_hex_digits=0;
+
+		if (read (proc_map_fd,m,17)==17){
+			if (m[8]=='-')
+				n_hex_digits=8;
+#ifdef A64
+			else if (m[12]=='-'){
+				if (read (proc_map_fd,&m[17],8)==8)
+					n_hex_digits=12;			
+			} else if (m[16]=='-'){
+				if (read (proc_map_fd,&m[17],16)==16)
+					n_hex_digits=16;
+			}
+#endif
+		}
+		
+		if (n_hex_digits!=0){
 			int i;
 	
 			b=0;
 			e=0;
-			for (i=0; i<8; ++i){
+			for (i=0; i<n_hex_digits; ++i){
 				int c;
 				
 				c=m[i];
@@ -289,7 +302,7 @@ static void install_clean_exception_handler (void)
 				else
 					break;
 
-				c=m[9+i];
+				c=m[n_hex_digits+1+i];
 				e=e<<4;
 				if ((unsigned)(c-'0')<10)
 					e+=c-'0';
@@ -299,16 +312,15 @@ static void install_clean_exception_handler (void)
 					break;
 			}
 
-			if (i==8){
+			if (i==n_hex_digits){
 				if ((size_t)&a - (size_t)b < (size_t)(e-b)){
 					struct rlimit rlimit;
 					
 					if (getrlimit (RLIMIT_STACK,&rlimit)==0){
-						below_stack_page=(int*)((int)e-rlimit.rlim_cur-4096);					
+						below_stack_page=(int*)((long)e-rlimit.rlim_cur-4096);					
 						break;
 					}
 				}
-				continue;
 			}
 		}
 
