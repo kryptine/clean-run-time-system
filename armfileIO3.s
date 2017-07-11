@@ -604,9 +604,8 @@ shareF:
 @	.o 0 3 b f
 
 openSF:
-	mov	r0,r4
-	add	r1,r6,#4
-	mov	r6,r3
+	add	r0,r6,#4
+	mov	r1,r4
 
 	mov	r4,sp
 	bic	sp,sp,#4
@@ -617,7 +616,7 @@ openSF:
 	movmi	r2,#0
 	movpl	r2,#1
 
-	mov	r3,r6
+	mov	r3,r0
 	mov	r4,#0
 	ldr	pc,[sp],#4
 
@@ -703,7 +702,7 @@ readSFR:
 
 readSFS:
 	add	r12,r4,#8+3
-	subs	r2,r5,r12,lsr #2
+	subs	r1,r5,r12,lsr #2
 	blo	readSFS_gc
 
 readSFS_r_gc:
@@ -712,16 +711,16 @@ readSFS_r_gc:
 	str	r12,[r10]
 	mov	r1,r4
 	mov	r0,r2
-	mov	r8,r2
-	add	r2,r10,#4
+	mov	r6,r2
 	str	r3,[sp,#-4]!
+	add	r2,r10,#4
 	mov	r3,sp
 
 	mov	r4,sp
 	bic	sp,sp,#4
 	bl	file_read_s_string
 	mov	sp,r4
-	mov	r3,r8
+	mov	r3,r6
 
 	ldr	r4,[sp],#4
 
@@ -734,7 +733,7 @@ readSFS_end:
 	ldr	pc,[sp],#4
 
 readSFS_gc:
-	mov	r5,r2
+	mov	r5,r1
 	bl	collect_0
 	add	r12,r4,#8+3
 	add	r5,r5,r12,lsr #2
