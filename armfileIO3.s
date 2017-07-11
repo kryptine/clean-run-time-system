@@ -880,11 +880,11 @@ positionSF:
 @	.o 0 3 b f
 
 seekSF:
-	str	r4,[sp,#-4]!
-	mov	r6,r3
-	mov	r0,r3
-@	mov	r1,r1
-@	mov	r2,r2
+	str	r2,[sp,#-4]!
+	mov	r6,r1
+	mov	r0,r1
+	mov	r1,r3
+	mov	r2,r4
 	mov	r3,sp
 	
 	mov	r4,sp
