@@ -788,6 +788,8 @@ readLineSF_again:
 
 	add	r5,r5,r2,lsr #2
 
+	str	r10,[sp,#-4]!
+
 	laol	r12,__STRING__+2,__STRING___o_2,5
 	otoa	r12,__STRING___o_2,5
 	add	r1,r10,r5,lsl #2
