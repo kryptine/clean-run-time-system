@@ -3569,7 +3569,7 @@ cmp_string_b:
 	beq	cmp_string_2
 	rev32	x10,x10
 	rev32	x16,x16
-	b	cmp_string_ne
+	b	cmp_string_ne_cmp
 cmp_string_2:
 	tbz	x3,#1,cmp_string_3
 	ldrh	w10,[x9],#2
@@ -3578,7 +3578,7 @@ cmp_string_2:
 	beq	cmp_string_3
 	rev16	w10,w10
 	rev16	w16,w16
-	b	cmp_string_ne
+	b	cmp_string_ne_cmp
 cmp_string_3:
 	tbz	x3,#0,cmp_string_eq
 	ldrb	w10,[x9]
@@ -3593,6 +3593,7 @@ cmp_string_eq:
 cmp_string_ne8:
 	rev	x10,x10
 	rev	x16,x16
+cmp_string_ne_cmp:
 	cmp	x10,x16
 cmp_string_ne:
 	bhi	cmp_string_r1
