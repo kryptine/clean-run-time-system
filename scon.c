@@ -526,7 +526,7 @@ int w_get_char()
 #define is_digit(n) ((unsigned)((n)-'0')<(unsigned)10)
 
 #ifdef A64
-int w_get_int (long *i_p);
+int w_get_int (long *i_p)
 #else
 int w_get_int (int *i_p)
 #endif
