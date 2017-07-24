@@ -13,7 +13,7 @@
 # include <unistd.h>
 #endif
 
-#ifdef __x86_64__
+#if defined (__x86_64__) || defined (__aarch64__)
 # define A64
 #endif
 
