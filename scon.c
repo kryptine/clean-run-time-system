@@ -9,7 +9,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/time.h>
-#ifdef SOLARIS
+#if defined (SOLARIS) || (defined (LINUX) && defined (ARM))
 # include <unistd.h>
 #endif
 
