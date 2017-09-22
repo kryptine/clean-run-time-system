@@ -100,977 +100,977 @@
 	.globl	yet_args_needed_31
 
 ap_32:
-	ldr	r11,[r8]
-	mov	r3,#32*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#32*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap32
 
 ap_31:
-	ldr	r11,[r8]
-	mov	r3,#31*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#31*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap31
 
 ap_30:
-	ldr	r11,[r8]
-	mov	r3,#30*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#30*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap30
 
 ap_29:
-	ldr	r11,[r8]
-	mov	r3,#29*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#29*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap29
 
 ap_28:
-	ldr	r11,[r8]
-	mov	r3,#28*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#28*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap28
 
 ap_27:
-	ldr	r11,[r8]
-	mov	r3,#27*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#27*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap27
 
 ap_26:
-	ldr	r11,[r8]
-	mov	r3,#26*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#26*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap26
 
 ap_25:
-	ldr	r11,[r8]
-	mov	r3,#25*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#25*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap25
 
 ap_24:
-	ldr	r11,[r8]
-	mov	r3,#24*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#24*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap24
 
 ap_23:
-	ldr	r11,[r8]
-	mov	r3,#23*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#23*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap23
 
 ap_22:
-	ldr	r11,[r8]
-	mov	r3,#22*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#22*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap22
 
 ap_21:
-	ldr	r11,[r8]
-	mov	r3,#21*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#21*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap21
 
 ap_20:
-	ldr	r11,[r8]
-	mov	r3,#20*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#20*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap20
 
 ap_19:
-	ldr	r11,[r8]
-	mov	r3,#19*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#19*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap19
 
 ap_18:
-	ldr	r11,[r8]
-	mov	r3,#18*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#18*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap18
 
 ap_17:
-	ldr	r11,[r8]
-	mov	r3,#17*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#17*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap17
 
 ap_16:
-	ldr	r11,[r8]
-	mov	r3,#16*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#16*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap16
 
 ap_15:
-	ldr	r11,[r8]
-	mov	r3,#15*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#15*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap15
 
 ap_14:
-	ldr	r11,[r8]
-	mov	r3,#14*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#14*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap14
 
 ap_13:
-	ldr	r11,[r8]
-	mov	r3,#13*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#13*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap13
 
 ap_12:
-	ldr	r11,[r8]
-	mov	r3,#12*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#12*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap12
 
 ap_11:
-	ldr	r11,[r8]
-	mov	r3,#11*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#11*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap11
 
 ap_10:
-	ldr	r11,[r8]
-	mov	r3,#10*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#10*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap10
 
 ap_9:
-	ldr	r11,[r8]
-	mov	r3,#9*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#9*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap9
 
 ap_8:
-	ldr	r11,[r8]
-	mov	r3,#8*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#8*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap8
 
 ap_7:
-	ldr	r11,[r8]
-	mov	r3,#7*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#7*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap7
 
 ap_6:
-	ldr	r11,[r8]
-	mov	r3,#6*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#6*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap6
 
 ap_5:
-	ldr	r11,[r8]
-	mov	r3,#5*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#5*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap5
 
 ap_4:
-	ldr	r11,[r8]
-	mov	r3,#4*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#4*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap4
 
 ap_3:
-	ldr	r11,[r8]
-	mov	r3,#3*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#3*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap
 
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap3
 
 ap_2:
-	ldr	r11,[r8]
-	mov	r3,#2*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	ldr	r12,[r4]
+	mov	r0,#2*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	bne	no_fast_ap2_
 
 fast_ap_2_2_:
-	add	r3,r3,r11
-	ldrh	r4,[r11,#-2]
-	ldr	r2,[r3,#-6]
+	add	r0,r0,r12
+	ldrh	r1,[r12,#-2]
+	ldr	r10,[r0,#-6]
 .ifdef PROFILE
-	sub	r2,r2,#16
+	sub	r10,r10,#16
 .else
-	sub	r2,r2,#8
+	sub	r10,r10,#8
 .endif
-	cmp	r4,#1
+	cmp	r1,#1
 	blo	repl_args_0_2
 	beq	repl_args_1
 
-	cmp	r4,#3
+	cmp	r1,#3
 	blo	repl_args_2
 
-	str	r7,[r9,#4]
-	str	r6,[r9],#8
+	str	r3,[r5,#4]
+	str	r2,[r5],#8
 
-	ldr	r7,[r8,#8]
+	ldr	r3,[r4,#8]
 
 	b	fast_ap_
 
 no_fast_ap2_:
-	str	r6,[r9],#4
-	mov	r6,r7
-	mov	r7,r8
+	str	r2,[r5],#4
+	mov	r2,r3
+	mov	r3,r4
 	b	no_fast_ap2
 
 fast_ap_2_2:
-	mov	r8,r7
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	mov	r4,r3
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 	b	fast_ap_2_2_
 
 fast_ap_2:
-	mov	r8,r7
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	mov	r4,r3
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
 fast_ap:
-	add	r3,r3,r11
-	ldrh	r4,[r11,#-2]
-	ldr	r2,[r3,#-6]
+	add	r0,r0,r12
+	ldrh	r1,[r12,#-2]
+	ldr	r10,[r0,#-6]
 .ifdef PROFILE
-	sub	r2,r2,#16
+	sub	r10,r10,#16
 .else
-	sub	r2,r2,#8
+	sub	r10,r10,#8
 .endif
-	cmp	r4,#1
+	cmp	r1,#1
 	blo	repl_args_0
 	beq	repl_args_1
 
-	cmp	r4,#3
+	cmp	r1,#3
 	blo	repl_args_2
 
-	str	r7,[r9,#4]
-	str	r6,[r9],#8
+	str	r3,[r5,#4]
+	str	r2,[r5],#8
 
-	ldr	r7,[r8,#8]
+	ldr	r3,[r4,#8]
 
 fast_ap_:
-	ldr	r8,[r8,#4]
+	ldr	r4,[r4,#4]
 	beq	repl_args_3
 
-	cmp	r4,#5
+	cmp	r1,#5
 	blo	repl_args_4
 	beq	repl_args_5
 
-	cmp	r4,#7
+	cmp	r1,#7
 	blo	repl_args_6
 
-	sub	r4,r4,#2
+	sub	r1,r1,#2
 
 repl_args_7_:
-	ldr	r1,[r7,r4,lsl #2]
-	str	r1,[r9],#4
-	sub	r4,r4,#1
-	cmp	r4,#6-2
+	ldr	r9,[r3,r1,lsl #2]
+	str	r9,[r5],#4
+	sub	r1,r1,#1
+	cmp	r1,#6-2
 	bne	repl_args_7_
 
 repl_args_6:
-	ldr	r4,[r7,#16]
-	str	r4,[r9],#12
-	ldr	r4,[r7,#12]
-	str	r4,[r9,#-8]
-	ldr	r4,[r7,#8]
-	str	r4,[r9,#-4]
-	ldr	r6,[r7,#4]
-	ldr	r7,[r7]
-	bx	r2
+	ldr	r1,[r3,#16]
+	str	r1,[r5],#12
+	ldr	r1,[r3,#12]
+	str	r1,[r5,#-8]
+	ldr	r1,[r3,#8]
+	str	r1,[r5,#-4]
+	ldr	r2,[r3,#4]
+	ldr	r3,[r3]
+	bx	r10
 
 repl_args_0:
-	mov	r8,r7
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	mov	r4,r3
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 repl_args_0_2:
-	bx	r2
+	bx	r10
 
 repl_args_1:
-	ldr	r8,[r8,#4]
-	bx	r2
+	ldr	r4,[r4,#4]
+	bx	r10
 
 repl_args_2:
-	str	r6,[r9],#4
-	mov	r6,r7
-	ldr	r7,[r8,#8]
-	ldr	r8,[r8,#4]
-	bx	r2
+	str	r2,[r5],#4
+	mov	r2,r3
+	ldr	r3,[r4,#8]
+	ldr	r4,[r4,#4]
+	bx	r10
 
 repl_args_3:
-	ldr	r6,[r7,#4]
-	ldr	r7,[r7]
-	bx	r2
+	ldr	r2,[r3,#4]
+	ldr	r3,[r3]
+	bx	r10
 
 repl_args_4:
-	ldr	r4,[r7,#8]
-	str	r4,[r9],#4
-	ldr	r6,[r7,#4]
-	ldr	r7,[r7]
-	bx	r2
+	ldr	r1,[r3,#8]
+	str	r1,[r5],#4
+	ldr	r2,[r3,#4]
+	ldr	r3,[r3]
+	bx	r10
 
 repl_args_5:
-	ldr	r4,[r7,#12]
-	str	r4,[r9],#8
-	ldr	r4,[r7,#8]
-	str	r4,[r9,#-4]
-	ldr	r6,[r7,#4]
-	ldr	r7,[r7]
-	bx	r2
+	ldr	r1,[r3,#12]
+	str	r1,[r5],#8
+	ldr	r1,[r3,#8]
+	str	r1,[r5,#-4]
+	ldr	r2,[r3,#4]
+	ldr	r3,[r3]
+	bx	r10
 
 no_fast_ap32:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#31*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#31*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap31:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#30*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#30*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap30:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#29*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#29*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap29:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#28*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#28*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap28:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#27*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#27*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap27:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#26*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#26*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap26:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#25*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#25*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap25:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#24*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#24*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap24:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#23*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#23*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap23:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#22*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#22*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap22:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#21*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#21*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap21:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#20*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#20*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap20:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#19*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#19*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap19:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#18*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#18*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap18:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#17*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#17*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap17:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#16*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#16*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap16:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#15*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#15*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap15:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#14*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#14*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap14:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#13*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#13*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap13:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#12*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#12*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap12:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#11*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#11*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap11:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#10*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#10*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap10:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#9*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#9*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap9:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#8*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#8*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap8:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#7*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#7*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap7:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#6*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#6*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap6:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#5*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#5*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap5:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#4*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#4*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap4:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#3*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#3*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2
 
 no_fast_ap3:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r11,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
+	ldr	r12,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
 
-	mov	r3,#2*8
-	ldrh	r12,[r11]
-	cmp	r12,r3
+	mov	r0,#2*8
+	ldrh	r7,[r12]
+	cmp	r7,r0
 	beq	fast_ap_2_2
 
 no_fast_ap2:
-	ldr	r12,[r11,#2]
+	ldr	r7,[r12,#2]
 	adr	r14,1+0f
 	push	{r14}
-	blx	r12
+	blx	r7
 0:
-	ldr	r8,[r6]
-	mov	r7,r6
-	ldr	r6,[r9,#-4]!
-	ldr	r12,[r8,#2]
-	bx	r12
+	ldr	r4,[r2]
+	mov	r3,r2
+	ldr	r2,[r5,#-4]!
+	ldr	r7,[r4,#2]
+	bx	r7
 
 	.ltorg
 
 add_empty_node_2:
-	subs	r5,r5,#3
+	subs	r11,r11,#3
 	blo	add_empty_node_2_gc
 add_empty_node_2_gc_:
-	lao	r12,__cycle__in__spine,1
-	mov	r8,r7
-	mov	r7,r6
-	mov	r6,r10
-	otoa	r12,__cycle__in__spine,1
-	str	r12,[r10],#12
+	lao	r7,__cycle__in__spine,1
+	mov	r4,r3
+	mov	r3,r2
+	mov	r2,r6
+	otoa	r7,__cycle__in__spine,1
+	str	r7,[r6],#12
 	bx	lr
 add_empty_node_2_gc:
 	str	lr,[sp,#-4]!
@@ -1079,13 +1079,13 @@ add_empty_node_2_gc:
 	b	add_empty_node_2_gc_
 
 add_empty_node_3:
-	subs	r5,r5,#3
+	subs	r11,r11,#3
 	blo	add_empty_node_3_gc
 add_empty_node_3_gc_:
-	lao	r12,__cycle__in__spine,2
-	str	r10,[r9],#4
-	otoa	r12,__cycle__in__spine,2
-	str	r12,[r10],#12
+	lao	r7,__cycle__in__spine,2
+	str	r6,[r5],#4
+	otoa	r7,__cycle__in__spine,2
+	str	r7,[r6],#12
 	bx	lr
 add_empty_node_3_gc:
 	str	lr,[sp,#-4]!
@@ -1094,16 +1094,16 @@ add_empty_node_3_gc:
 	b	add_empty_node_3_gc_
 
 add_empty_node_4:
-	subs	r5,r5,#3
+	subs	r11,r11,#3
 	blo	add_empty_node_4_gc
 add_empty_node_4_gc_:
-	ldr	r11,[r9,#-4]
-	str	r11,[r9]
-	str	r10,[r9,#-4]
-	lao	r12,__cycle__in__spine,3
-	add	r9,r9,#4
-	otoa	r12,__cycle__in__spine,3
-	str	r12,[r10],#12
+	ldr	r12,[r5,#-4]
+	str	r12,[r5]
+	str	r6,[r5,#-4]
+	lao	r7,__cycle__in__spine,3
+	add	r5,r5,#4
+	otoa	r7,__cycle__in__spine,3
+	str	r7,[r6],#12
 	bx	lr
 add_empty_node_4_gc:
 	str	lr,[sp,#-4]!
@@ -1112,18 +1112,18 @@ add_empty_node_4_gc:
 	b	add_empty_node_4_gc_
 
 add_empty_node_5:
-	subs	r5,r5,#3
+	subs	r11,r11,#3
 	blo	add_empty_node_5_gc
 add_empty_node_5_gc_:
-	ldr	r11,[r9,#-4]
-	str	r11,[r9]
-	ldr	r11,[r9,#-8]
-	str	r11,[r9,#-4]
-	str	r10,[r9,#-8]
-	lao	r12,__cycle__in__spine,4
-	add	r9,r9,#4
-	otoa	r12,__cycle__in__spine,4
-	str	r12,[r10],#12
+	ldr	r12,[r5,#-4]
+	str	r12,[r5]
+	ldr	r12,[r5,#-8]
+	str	r12,[r5,#-4]
+	str	r6,[r5,#-8]
+	lao	r7,__cycle__in__spine,4
+	add	r5,r5,#4
+	otoa	r7,__cycle__in__spine,4
+	str	r7,[r6],#12
 	bx	lr
 add_empty_node_5_gc:
 	str	lr,[sp,#-4]!
@@ -1132,302 +1132,302 @@ add_empty_node_5_gc:
 	b	add_empty_node_5_gc_
 
 add_empty_node_6:
-	subs	r5,r5,#3
+	subs	r11,r11,#3
 	blo	add_empty_node_6_gc
 add_empty_node_6_gc_:
-	ldr	r11,[r9,#-4]
-	str	r11,[r9]
-	ldr	r11,[r9,#-8]
-	str	r11,[r9,#-4]
-	ldr	r11,[r9,#-12]
-	str	r11,[r9,#-8]
-	str	r10,[r9,#-12]
-	lao	r12,__cycle__in__spine,5
-	add	r9,r9,#4
-	otoa	r12,__cycle__in__spine,5
-	str	r12,[r10],#12
+	ldr	r12,[r5,#-4]
+	str	r12,[r5]
+	ldr	r12,[r5,#-8]
+	str	r12,[r5,#-4]
+	ldr	r12,[r5,#-12]
+	str	r12,[r5,#-8]
+	str	r6,[r5,#-12]
+	lao	r7,__cycle__in__spine,5
+	add	r5,r5,#4
+	otoa	r7,__cycle__in__spine,5
+	str	r7,[r6],#12
 	bx	lr
 add_empty_node_6_gc:
 	bl	collect_3
 	b	add_empty_node_6_gc_
 
 add_empty_node_7:
-	subs	r5,r5,#3
+	subs	r11,r11,#3
 	blo	add_empty_node_7_gc
 add_empty_node_7_gc_:
-	ldr	r11,[r9,#-4]
-	str	r11,[r9]
-	ldr	r11,[r9,#-8]
-	str	r11,[r9,#-4]
-	ldr	r11,[r9,#-12]
-	str	r11,[r9,#-8]
-	ldr	r11,[r9,#-16]
-	str	r11,[r9,#-12]
-	str	r10,[r9,#-16]
-	lao	r12,__cycle__in__spine,6
-	add	r9,r9,#4
-	otoa	r12,__cycle__in__spine,6
-	str	r12,[r10],#12
+	ldr	r12,[r5,#-4]
+	str	r12,[r5]
+	ldr	r12,[r5,#-8]
+	str	r12,[r5,#-4]
+	ldr	r12,[r5,#-12]
+	str	r12,[r5,#-8]
+	ldr	r12,[r5,#-16]
+	str	r12,[r5,#-12]
+	str	r6,[r5,#-16]
+	lao	r7,__cycle__in__spine,6
+	add	r5,r5,#4
+	otoa	r7,__cycle__in__spine,6
+	str	r7,[r6],#12
 	bx	lr
 add_empty_node_7_gc:
 	bl	collect_3
 	b	add_empty_node_7_gc_
 
 add_empty_node_8:
-	subs	r5,r5,#3
+	subs	r11,r11,#3
 	blo	add_empty_node_8_gc
 add_empty_node_8_gc_:
-	ldr	r11,[r9,#-4]
-	str	r11,[r9]
-	ldr	r11,[r9,#-8]
-	str	r11,[r9,#-4]
-	ldr	r11,[r9,#-12]
-	str	r11,[r9,#-8]
-	ldr	r11,[r9,#-16]
-	str	r11,[r9,#-12]
-	ldr	r11,[r9,#-20]
-	str	r11,[r9,#-16]
-	str	r10,[r9,#-20]
-	lao	r12,__cycle__in__spine,7
-	add	r9,r9,#4
-	otoa	r12,__cycle__in__spine,7
-	str	r12,[r10],#12
+	ldr	r12,[r5,#-4]
+	str	r12,[r5]
+	ldr	r12,[r5,#-8]
+	str	r12,[r5,#-4]
+	ldr	r12,[r5,#-12]
+	str	r12,[r5,#-8]
+	ldr	r12,[r5,#-16]
+	str	r12,[r5,#-12]
+	ldr	r12,[r5,#-20]
+	str	r12,[r5,#-16]
+	str	r6,[r5,#-20]
+	lao	r7,__cycle__in__spine,7
+	add	r5,r5,#4
+	otoa	r7,__cycle__in__spine,7
+	str	r7,[r6],#12
 	bx	lr
 add_empty_node_8_gc:
 	bl	collect_3
 	b	add_empty_node_8_gc_
 
 add_empty_node_9:
-	subs	r5,r5,#3
+	subs	r11,r11,#3
 	blo	add_empty_node_9_gc
 add_empty_node_9_gc_:
-	ldr	r11,[r9,#-4]
-	str	r11,[r9]
-	ldr	r11,[r9,#-8]
-	str	r11,[r9,#-4]
-	ldr	r11,[r9,#-12]
-	str	r11,[r9,#-8]
-	ldr	r11,[r9,#-16]
-	str	r11,[r9,#-12]
-	ldr	r11,[r9,#-20]
-	str	r11,[r9,#-16]
-	ldr	r11,[r9,#-24]
-	str	r11,[r9,#-20]
-	str	r10,[r9,#-24]
-	lao	r12,__cycle__in__spine,8
-	add	r9,r9,#4
-	otoa	r12,__cycle__in__spine,8
-	str	r12,[r10],#12
+	ldr	r12,[r5,#-4]
+	str	r12,[r5]
+	ldr	r12,[r5,#-8]
+	str	r12,[r5,#-4]
+	ldr	r12,[r5,#-12]
+	str	r12,[r5,#-8]
+	ldr	r12,[r5,#-16]
+	str	r12,[r5,#-12]
+	ldr	r12,[r5,#-20]
+	str	r12,[r5,#-16]
+	ldr	r12,[r5,#-24]
+	str	r12,[r5,#-20]
+	str	r6,[r5,#-24]
+	lao	r7,__cycle__in__spine,8
+	add	r5,r5,#4
+	otoa	r7,__cycle__in__spine,8
+	str	r7,[r6],#12
 	bx	lr
 add_empty_node_9_gc:
 	bl	collect_3
 	b	add_empty_node_9_gc_
 
 add_empty_node_10:
-	subs	r5,r5,#3
+	subs	r11,r11,#3
 	blo	add_empty_node_10_gc
 add_empty_node_10_gc_:
-	ldr	r11,[r9,#-4]
-	str	r11,[r9]
-	ldr	r11,[r9,#-8]
-	str	r11,[r9,#-4]
-	ldr	r11,[r9,#-12]
-	str	r11,[r9,#-8]
-	ldr	r11,[r9,#-16]
-	str	r11,[r9,#-12]
-	ldr	r11,[r9,#-20]
-	str	r11,[r9,#-16]
-	ldr	r11,[r9,#-24]
-	str	r11,[r9,#-20]
-	ldr	r11,[r9,#-28]
-	str	r11,[r9,#-24]
-	str	r10,[r9,#-28]
-	lao	r12,__cycle__in__spine,9
-	add	r9,r9,#4
-	otoa	r12,__cycle__in__spine,9
-	str	r12,[r10],#12
+	ldr	r12,[r5,#-4]
+	str	r12,[r5]
+	ldr	r12,[r5,#-8]
+	str	r12,[r5,#-4]
+	ldr	r12,[r5,#-12]
+	str	r12,[r5,#-8]
+	ldr	r12,[r5,#-16]
+	str	r12,[r5,#-12]
+	ldr	r12,[r5,#-20]
+	str	r12,[r5,#-16]
+	ldr	r12,[r5,#-24]
+	str	r12,[r5,#-20]
+	ldr	r12,[r5,#-28]
+	str	r12,[r5,#-24]
+	str	r6,[r5,#-28]
+	lao	r7,__cycle__in__spine,9
+	add	r5,r5,#4
+	otoa	r7,__cycle__in__spine,9
+	str	r7,[r6],#12
 	bx	lr
 add_empty_node_10_gc:
 	bl	collect_3
 	b	add_empty_node_10_gc_
 
 add_empty_node_31:
-	mov	r3,#7
+	mov	r0,#7
 	b	add_empty_node_11_
 add_empty_node_27:
-	mov	r3,#6
+	mov	r0,#6
 	b	add_empty_node_11_
 add_empty_node_23:
-	mov	r3,#5
+	mov	r0,#5
 	b	add_empty_node_11_
 add_empty_node_19:
-	mov	r3,#4
+	mov	r0,#4
 	b	add_empty_node_11_
 add_empty_node_15:
-	mov	r3,#3
+	mov	r0,#3
 	b	add_empty_node_11_
 add_empty_node_11:
-	mov	r3,#2
+	mov	r0,#2
 add_empty_node_11_:
-	subs	r5,r5,#3
+	subs	r11,r11,#3
 	blo	add_empty_node_11_gc
 add_empty_node_11_gc_:
-	mov	r4,r9
+	mov	r1,r5
 add_empty_node_11_lp:
-	ldr	r11,[r4,#-4]
-	str	r11,[r4]
-	ldr	r11,[r4,#-8]
-	str	r11,[r4,#-4]
-	ldr	r11,[r4,#-12]
-	str	r11,[r4,#-8]
-	ldr	r11,[r4,#-16]
-	str	r11,[r4,#-12]
-	sub	r4,r4,#16
-	subs	r3,r3,#1
+	ldr	r12,[r1,#-4]
+	str	r12,[r1]
+	ldr	r12,[r1,#-8]
+	str	r12,[r1,#-4]
+	ldr	r12,[r1,#-12]
+	str	r12,[r1,#-8]
+	ldr	r12,[r1,#-16]
+	str	r12,[r1,#-12]
+	sub	r1,r1,#16
+	subs	r0,r0,#1
 	bne	add_empty_node_11_lp
-	str	r10,[r4]
-	lao	r12,__cycle__in__spine,10
-	add	r9,r9,#4
-	otoa	r12,__cycle__in__spine,10
-	str	r12,[r10],#12
+	str	r6,[r1]
+	lao	r7,__cycle__in__spine,10
+	add	r5,r5,#4
+	otoa	r7,__cycle__in__spine,10
+	str	r7,[r6],#12
 	bx	lr
 add_empty_node_11_gc:
 	bl	collect_3
 	b	add_empty_node_11_gc_
 
 add_empty_node_32:
-	mov	r3,#7
+	mov	r0,#7
 	b	add_empty_node_12_
 add_empty_node_28:
-	mov	r3,#6
+	mov	r0,#6
 	b	add_empty_node_12_
 add_empty_node_24:
-	mov	r3,#5
+	mov	r0,#5
 	b	add_empty_node_12_
 add_empty_node_20:
-	mov	r3,#4
+	mov	r0,#4
 	b	add_empty_node_12_
 add_empty_node_16:
-	mov	r3,#3
+	mov	r0,#3
 	b	add_empty_node_12_
 add_empty_node_12:
-	mov	r3,#2
+	mov	r0,#2
 add_empty_node_12_:
-	subs	r5,r5,#3
+	subs	r11,r11,#3
 	blo	add_empty_node_12_gc
 add_empty_node_12_gc_:
-	mov	r4,r9
-	ldr	r11,[r9,#-4]
-	str	r11,[r9]
+	mov	r1,r5
+	ldr	r12,[r5,#-4]
+	str	r12,[r5]
 add_empty_node_12_lp:
-	ldr	r11,[r4,#-8]
-	str	r11,[r4,#-4]
-	ldr	r11,[r4,#-12]
-	str	r11,[r4,#-8]
-	ldr	r11,[r4,#-16]
-	str	r11,[r4,#-12]
-	ldr	r11,[r4,#-20]
-	str	r11,[r4,#-16]!
-	subs	r3,r3,#1
+	ldr	r12,[r1,#-8]
+	str	r12,[r1,#-4]
+	ldr	r12,[r1,#-12]
+	str	r12,[r1,#-8]
+	ldr	r12,[r1,#-16]
+	str	r12,[r1,#-12]
+	ldr	r12,[r1,#-20]
+	str	r12,[r1,#-16]!
+	subs	r0,r0,#1
 	bne	add_empty_node_12_lp
-	str	r10,[r4,#-4]
-	lao	r12,__cycle__in__spine,11
-	add	r9,r9,#4
-	otoa	r12,__cycle__in__spine,11
-	str	r12,[r10],#12
+	str	r6,[r1,#-4]
+	lao	r7,__cycle__in__spine,11
+	add	r5,r5,#4
+	otoa	r7,__cycle__in__spine,11
+	str	r7,[r6],#12
 	bx	lr
 add_empty_node_12_gc:
 	bl	collect_3
 	b	add_empty_node_12_gc_
 
 add_empty_node_29:
-	mov	r3,#6
+	mov	r0,#6
 	b	add_empty_node_13_
 add_empty_node_25:
-	mov	r3,#5
+	mov	r0,#5
 	b	add_empty_node_13_
 add_empty_node_21:
-	mov	r3,#4
+	mov	r0,#4
 	b	add_empty_node_13_
 add_empty_node_17:
-	mov	r3,#3
+	mov	r0,#3
 	b	add_empty_node_13_
 add_empty_node_13:
-	mov	r3,#2
+	mov	r0,#2
 add_empty_node_13_:
-	subs	r5,r5,#3
+	subs	r11,r11,#3
 	blo	add_empty_node_13_gc
 add_empty_node_13_gc_:
-	mov	r4,r9
-	ldr	r11,[r9,#-4]
-	str	r11,[r9]
-	ldr	r11,[r9,#-8]
-	str	r11,[r9,#-4]
+	mov	r1,r5
+	ldr	r12,[r5,#-4]
+	str	r12,[r5]
+	ldr	r12,[r5,#-8]
+	str	r12,[r5,#-4]
 add_empty_node_13_lp:
-	ldr	r11,[r4,#-12]
-	str	r11,[r4,#-8]
-	ldr	r11,[r4,#-16]
-	str	r11,[r4,#-12]
-	ldr	r11,[r4,#-20]
-	str	r11,[r4,#-16]
-	ldr	r11,[r4,#-24]
-	str	r11,[r4,#-20]
-	sub	r4,r4,#16
-	subs	r3,r3,#1
+	ldr	r12,[r1,#-12]
+	str	r12,[r1,#-8]
+	ldr	r12,[r1,#-16]
+	str	r12,[r1,#-12]
+	ldr	r12,[r1,#-20]
+	str	r12,[r1,#-16]
+	ldr	r12,[r1,#-24]
+	str	r12,[r1,#-20]
+	sub	r1,r1,#16
+	subs	r0,r0,#1
 	bne	add_empty_node_13_lp
-	str	r10,[r4,#-8]
-	lao	r12,__cycle__in__spine,12
-	add	r9,r9,#4
-	otoa	r12,__cycle__in__spine,12
-	str	r12,[r10],#12
+	str	r6,[r1,#-8]
+	lao	r7,__cycle__in__spine,12
+	add	r5,r5,#4
+	otoa	r7,__cycle__in__spine,12
+	str	r7,[r6],#12
 	bx	lr
 add_empty_node_13_gc:
 	bl	collect_3
 	b	add_empty_node_13_gc_
 
 add_empty_node_30:
-	mov	r3,#6
+	mov	r0,#6
 	b	add_empty_node_14_
 add_empty_node_26:
-	mov	r3,#5
+	mov	r0,#5
 	b	add_empty_node_14_
 add_empty_node_22:
-	mov	r3,#4
+	mov	r0,#4
 	b	add_empty_node_14_
 add_empty_node_18:
-	mov	r3,#3
+	mov	r0,#3
 	b	add_empty_node_14_
 add_empty_node_14:
-	mov	r3,#2
+	mov	r0,#2
 	b	add_empty_node_14_
 add_empty_node_14_:
-	subs	r5,r5,#3
+	subs	r11,r11,#3
 	blo	add_empty_node_14_gc
 add_empty_node_14_gc:
-	mov	r4,r9
-	ldr	r11,[r9,#-4]
-	str	r11,[r9]
-	ldr	r11,[r9,#-8]
-	str	r11,[r9,#-4]
-	ldr	r11,[r9,#-12]
-	str	r11,[r9,#-8]
+	mov	r1,r5
+	ldr	r12,[r5,#-4]
+	str	r12,[r5]
+	ldr	r12,[r5,#-8]
+	str	r12,[r5,#-4]
+	ldr	r12,[r5,#-12]
+	str	r12,[r5,#-8]
 add_empty_node_14_lp:
-	ldr	r11,[r4,#-16]
-	str	r11,[r4,#-12]
-	ldr	r11,[r4,#-20]
-	str	r11,[r4,#-16]
-	ldr	r11,[r4,#-24]
-	str	r11,[r4,#-20]
-	ldr	r11,[r4,#-28]
-	str	r11,[r4,#-24]
-	sub	r4,r4,#16
-	subs	r3,r3,#1
+	ldr	r12,[r1,#-16]
+	str	r12,[r1,#-12]
+	ldr	r12,[r1,#-20]
+	str	r12,[r1,#-16]
+	ldr	r12,[r1,#-24]
+	str	r12,[r1,#-20]
+	ldr	r12,[r1,#-28]
+	str	r12,[r1,#-24]
+	sub	r1,r1,#16
+	subs	r0,r0,#1
 	bne	add_empty_node_14_lp
-	str	r10,[r4,#-12]
-	lao	r12,__cycle__in__spine,13
-	add	r9,r9,#4
-	otoa	r12,__cycle__in__spine,13
-	str	r12,[r10],#12
+	str	r6,[r1,#-12]
+	lao	r7,__cycle__in__spine,13
+	add	r5,r5,#4
+	otoa	r7,__cycle__in__spine,13
+	str	r7,[r6],#12
 	bx	lr
 add_empty_node_14_gc_:
 	bl	collect_3
@@ -1452,14 +1452,14 @@ add_empty_node_14_gc_:
 
 	.thumb_func
 yet_args_needed_0:
-	subs	r5,r5,#2
+	subs	r11,r11,#2
 	blo	yet_args_needed_0_gc
 yet_args_needed_0_gc_r:
-	str	r6,[r10,#4]
-	ldr	r4,[r7]
-	mov	r6,r10
-	add	r4,r4,#8
-	str	r4,[r10],#8
+	str	r2,[r6,#4]
+	ldr	r1,[r3]
+	mov	r2,r6
+	add	r1,r1,#8
+	str	r1,[r6],#8
 	ldr	pc,[sp],#4
 
 yet_args_needed_0_gc:
@@ -1468,7 +1468,7 @@ yet_args_needed_0_gc:
 
 
 	.p2align	2
-	subs.w	r5,r5,#3
+	subs.w	r11,r11,#3
 	b.w	build_node_2
 .ifdef PROFILE
 	nop
@@ -1476,17 +1476,17 @@ yet_args_needed_0_gc:
 .endif
 	.thumb_func
 yet_args_needed_1:
-	subs	r5,r5,#3
+	subs	r11,r11,#3
 	blo	yet_args_needed_1_gc
 yet_args_needed_1_gc_r:
-	str	r6,[r10,#8]
-	ldr	r4,[r7]
-	mov	r6,r10
-	add	r4,r4,#8
-	str	r4,[r10]
-	ldr	r3,[r7,#4]
-	str	r3,[r10,#4]
-	add	r10,r10,#12
+	str	r2,[r6,#8]
+	ldr	r1,[r3]
+	mov	r2,r6
+	add	r1,r1,#8
+	str	r1,[r6]
+	ldr	r0,[r3,#4]
+	str	r0,[r6,#4]
+	add	r6,r6,#12
 	ldr	pc,[sp],#4
 
 yet_args_needed_1_gc:
@@ -1496,11 +1496,11 @@ yet_args_needed_1_gc:
 build_node_2:
 	blo	build_node_2_gc
 build_node_2_gc_r:
-	str	r3,[r10]
-	str	r7,[r10,#4]
-	str	r6,[r10,#8]
-	mov	r6,r10
-	add	r10,r10,#12
+	str	r0,[r6]
+	str	r3,[r6,#4]
+	str	r2,[r6,#8]
+	mov	r2,r6
+	add	r6,r6,#12
 	ldr	pc,[sp],#4
 
 build_node_2_gc:
@@ -1509,7 +1509,7 @@ build_node_2_gc:
 
 
 	.p2align	2	
-	subs.w	r5,r5,#5
+	subs.w	r11,r11,#5
 	b.w	build_node_3
 .ifdef PROFILE
 	nop
@@ -1517,20 +1517,20 @@ build_node_2_gc:
 .endif
 	.thumb_func
 yet_args_needed_2:
-	subs	r5,r5,#5
+	subs	r11,r11,#5
 	blo	gc_22
 gc_r_22:
-	ldr	r4,[r7]
-	str	r6,[r10,#4]
-	add	r4,r4,#8
-	ldr	r8,[r7,#4]
-	str	r4,[r10,#8]
-	add	r6,r10,#8
-	str	r8,[r10,#12]
-	ldr	r8,[r7,#8]
-	str	r8,[r10]
-	str	r10,[r10,#16]
-	add	r10,r10,#20
+	ldr	r1,[r3]
+	str	r2,[r6,#4]
+	add	r1,r1,#8
+	ldr	r4,[r3,#4]
+	str	r1,[r6,#8]
+	add	r2,r6,#8
+	str	r4,[r6,#12]
+	ldr	r4,[r3,#8]
+	str	r4,[r6]
+	str	r6,[r6,#16]
+	add	r6,r6,#20
 	ldr	pc,[sp],#4
 
 gc_22:	bl	collect_2
@@ -1539,16 +1539,16 @@ gc_22:	bl	collect_2
 build_node_3:
 	blo	build_node_3_gc
 build_node_3_gc_r:
-	str	r3,[r10]
-	add	r8,r10,#12
-	str	r7,[r10,#4]
-	str	r8,[r10,#8]
-	str	r6,[r10,#12]
-	mov	r6,r10
-	ldr	r8,[r9,#-4]
-	subs	r9,r9,#4
-	str	r8,[r10,#16]
-	add	r10,r10,#20
+	str	r0,[r6]
+	add	r4,r6,#12
+	str	r3,[r6,#4]
+	str	r4,[r6,#8]
+	str	r2,[r6,#12]
+	mov	r2,r6
+	ldr	r4,[r5,#-4]
+	subs	r5,r5,#4
+	str	r4,[r6,#16]
+	add	r6,r6,#20
 	ldr	pc,[sp],#4
 
 build_node_3_gc:
@@ -1557,7 +1557,7 @@ build_node_3_gc:
 
 
 	.p2align	2	
-	subs.w	r5,r5,#6
+	subs.w	r11,r11,#6
 	b.w	build_node_4
 .ifdef PROFILE
 	nop
@@ -1565,23 +1565,23 @@ build_node_3_gc:
 .endif
 	.thumb_func
 yet_args_needed_3:
-	subs	r5,r5,#6
+	subs	r11,r11,#6
 	blo	gc_23
 gc_r_23:
-	ldr	r4,[r7]
-	str	r6,[r10,#8]
-	add	r4,r4,#8
-	ldr	r8,[r7,#4]
-	str	r4,[r10,#12]
-	ldr	r7,[r7,#8]
-	str	r8,[r10,#16]
-	ldr	r8,[r7]
-	str	r10,[r10,#20]
-	str	r8,[r10]
-	ldr	r8,[r7,#4]
-	add	r6,r10,#12
-	str	r8,[r10,#4]
-	add	r10,r10,#24
+	ldr	r1,[r3]
+	str	r2,[r6,#8]
+	add	r1,r1,#8
+	ldr	r4,[r3,#4]
+	str	r1,[r6,#12]
+	ldr	r3,[r3,#8]
+	str	r4,[r6,#16]
+	ldr	r4,[r3]
+	str	r6,[r6,#20]
+	str	r4,[r6]
+	ldr	r4,[r3,#4]
+	add	r2,r6,#12
+	str	r4,[r6,#4]
+	add	r6,r6,#24
 	ldr	pc,[sp],#4
 
 gc_23:	bl	collect_2
@@ -1590,18 +1590,18 @@ gc_23:	bl	collect_2
 build_node_4:
 	blo	build_node_4_gc
 build_node_4_gc_r:
-	str	r3,[r10]
-	add	r8,r10,#12
-	str	r7,[r10,#4]
-	str	r8,[r10,#8]
-	str	r6,[r10,#12]
-	mov	r6,r10
-	ldr	r8,[r9,#-4]
-	str	r8,[r10,#16]
-	ldr	r8,[r9,#-8]
-	subs	r9,r9,#8
-	str	r8,[r10,#20]
-	add	r10,r10,#24
+	str	r0,[r6]
+	add	r4,r6,#12
+	str	r3,[r6,#4]
+	str	r4,[r6,#8]
+	str	r2,[r6,#12]
+	mov	r2,r6
+	ldr	r4,[r5,#-4]
+	str	r4,[r6,#16]
+	ldr	r4,[r5,#-8]
+	subs	r5,r5,#8
+	str	r4,[r6,#20]
+	add	r6,r6,#24
 	ldr	pc,[sp],#4
 
 build_node_4_gc:
@@ -1610,7 +1610,7 @@ build_node_4_gc:
 
 
 	.p2align	2
-	subs.w	r5,r5,#7
+	subs.w	r11,r11,#7
 	b.w	build_node_5
 .ifdef PROFILE
 	nop
@@ -1618,25 +1618,25 @@ build_node_4_gc:
 .endif
 	.thumb_func
 yet_args_needed_4:
-	subs	r5,r5,#7
+	subs	r11,r11,#7
 	blo	gc_24
 gc_r_24:
-	ldr	r4,[r7]
-	str	r6,[r10,#12]
-	add	r4,r4,#8
-	ldr	r8,[r7,#4]
-	str	r4,[r10,#16]
-	ldr	r7,[r7,#8]
-	str	r8,[r10,#20]
-	ldr	r8,[r7]
-	str	r10,[r10,#24]
-	str	r8,[r10]
-	ldr	r8,[r7,#4]
-	add	r6,r10,#16
-	str	r8,[r10,#4]
-	ldr	r8,[r7,#8]
-	str	r8,[r10,#8]
-	add	r10,r10,#28
+	ldr	r1,[r3]
+	str	r2,[r6,#12]
+	add	r1,r1,#8
+	ldr	r4,[r3,#4]
+	str	r1,[r6,#16]
+	ldr	r3,[r3,#8]
+	str	r4,[r6,#20]
+	ldr	r4,[r3]
+	str	r6,[r6,#24]
+	str	r4,[r6]
+	ldr	r4,[r3,#4]
+	add	r2,r6,#16
+	str	r4,[r6,#4]
+	ldr	r4,[r3,#8]
+	str	r4,[r6,#8]
+	add	r6,r6,#28
 	ldr	pc,[sp],#4
 
 gc_24:	bl	collect_2
@@ -1645,20 +1645,20 @@ gc_24:	bl	collect_2
 build_node_5:
 	blo	build_node_5_gc
 build_node_5_gc_r:
-	str	r3,[r10]
-	add	r8,r10,#12
-	str	r7,[r10,#4]
-	str	r8,[r10,#8]
-	str	r6,[r10,#12]
-	mov	r6,r10
-	ldr	r8,[r9,#-4]
-	str	r8,[r10,#16]
-	ldr	r8,[r9,#-8]
-	str	r8,[r10,#20]
-	ldr	r8,[r9,#-12]
-	subs	r9,r9,#12
-	str	r8,[r10,#24]
-	add	r10,r10,#28
+	str	r0,[r6]
+	add	r4,r6,#12
+	str	r3,[r6,#4]
+	str	r4,[r6,#8]
+	str	r2,[r6,#12]
+	mov	r2,r6
+	ldr	r4,[r5,#-4]
+	str	r4,[r6,#16]
+	ldr	r4,[r5,#-8]
+	str	r4,[r6,#20]
+	ldr	r4,[r5,#-12]
+	subs	r5,r5,#12
+	str	r4,[r6,#24]
+	add	r6,r6,#28
 	ldr	pc,[sp],#4
 
 build_node_5_gc:
@@ -1667,7 +1667,7 @@ build_node_5_gc:
 
 
 	.p2align	2	
-	mov.w	r4,#8
+	mov.w	r1,#8
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1675,13 +1675,13 @@ build_node_5_gc:
 .endif
 	.thumb_func
 yet_args_needed_5:
-	ldr	r3,[r7]
-	mov	r4,#8
+	ldr	r0,[r3]
+	mov	r1,#8
 	b	yet_args_needed_
 
 
 	.p2align	2	
-	mov.w	r4,#9
+	mov.w	r1,#9
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1689,12 +1689,12 @@ yet_args_needed_5:
 .endif
 	.thumb_func
 yet_args_needed_6:
-	ldr	r3,[r7]
-	mov	r4,#9
+	ldr	r0,[r3]
+	mov	r1,#9
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#10
+	mov.w	r1,#10
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1702,12 +1702,12 @@ yet_args_needed_6:
 .endif
 	.thumb_func
 yet_args_needed_7:
-	ldr	r3,[r7]
-	mov	r4,#10
+	ldr	r0,[r3]
+	mov	r1,#10
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#11
+	mov.w	r1,#11
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1715,12 +1715,12 @@ yet_args_needed_7:
 .endif
 	.thumb_func
 yet_args_needed_8:
-	ldr	r3,[r7]
-	mov	r4,#11
+	ldr	r0,[r3]
+	mov	r1,#11
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#12
+	mov.w	r1,#12
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1728,12 +1728,12 @@ yet_args_needed_8:
 .endif
 	.thumb_func
 yet_args_needed_9:
-	ldr	r3,[r7]
-	mov	r4,#12
+	ldr	r0,[r3]
+	mov	r1,#12
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#13
+	mov.w	r1,#13
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1741,12 +1741,12 @@ yet_args_needed_9:
 .endif
 	.thumb_func
 yet_args_needed_10:
-	ldr	r3,[r7]
-	mov	r4,#13
+	ldr	r0,[r3]
+	mov	r1,#13
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#14
+	mov.w	r1,#14
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1754,12 +1754,12 @@ yet_args_needed_10:
 .endif
 	.thumb_func
 yet_args_needed_11:
-	ldr	r3,[r7]
-	mov	r4,#14
+	ldr	r0,[r3]
+	mov	r1,#14
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#15
+	mov.w	r1,#15
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1767,12 +1767,12 @@ yet_args_needed_11:
 .endif
 	.thumb_func
 yet_args_needed_12:
-	ldr	r3,[r7]
-	mov	r4,#15
+	ldr	r0,[r3]
+	mov	r1,#15
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#16
+	mov.w	r1,#16
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1780,12 +1780,12 @@ yet_args_needed_12:
 .endif
 	.thumb_func
 yet_args_needed_13:
-	ldr	r3,[r7]
-	mov	r4,#16
+	ldr	r0,[r3]
+	mov	r1,#16
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#17
+	mov.w	r1,#17
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1793,12 +1793,12 @@ yet_args_needed_13:
 .endif
 	.thumb_func
 yet_args_needed_14:
-	ldr	r3,[r7]
-	mov	r4,#17
+	ldr	r0,[r3]
+	mov	r1,#17
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#18
+	mov.w	r1,#18
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1806,12 +1806,12 @@ yet_args_needed_14:
 .endif
 	.thumb_func
 yet_args_needed_15:
-	ldr	r3,[r7]
-	mov	r4,#18
+	ldr	r0,[r3]
+	mov	r1,#18
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#19
+	mov.w	r1,#19
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1819,12 +1819,12 @@ yet_args_needed_15:
 .endif
 	.thumb_func
 yet_args_needed_16:
-	ldr	r3,[r7]
-	mov	r4,#19
+	ldr	r0,[r3]
+	mov	r1,#19
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#20
+	mov.w	r1,#20
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1832,12 +1832,12 @@ yet_args_needed_16:
 .endif
 	.thumb_func
 yet_args_needed_17:
-	ldr	r3,[r7]
-	mov	r4,#20
+	ldr	r0,[r3]
+	mov	r1,#20
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#21
+	mov.w	r1,#21
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1845,12 +1845,12 @@ yet_args_needed_17:
 .endif
 	.thumb_func
 yet_args_needed_18:
-	ldr	r3,[r7]
-	mov	r4,#21
+	ldr	r0,[r3]
+	mov	r1,#21
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#22
+	mov.w	r1,#22
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1858,12 +1858,12 @@ yet_args_needed_18:
 .endif
 	.thumb_func
 yet_args_needed_19:
-	ldr	r3,[r7]
-	mov	r4,#22
+	ldr	r0,[r3]
+	mov	r1,#22
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#23
+	mov.w	r1,#23
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1871,12 +1871,12 @@ yet_args_needed_19:
 .endif
 	.thumb_func
 yet_args_needed_20:
-	ldr	r3,[r7]
-	mov	r4,#23
+	ldr	r0,[r3]
+	mov	r1,#23
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#24
+	mov.w	r1,#24
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1884,12 +1884,12 @@ yet_args_needed_20:
 .endif
 	.thumb_func
 yet_args_needed_21:
-	ldr	r3,[r7]
-	mov	r4,#24
+	ldr	r0,[r3]
+	mov	r1,#24
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#25
+	mov.w	r1,#25
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1897,12 +1897,12 @@ yet_args_needed_21:
 .endif
 	.thumb_func
 yet_args_needed_22:
-	ldr	r3,[r7]
-	mov	r4,#25
+	ldr	r0,[r3]
+	mov	r1,#25
 	b	yet_args_needed_
 
 	.p2align	2	
-	mov	r4,#26
+	mov	r1,#26
 	b	build_node_
 .ifdef PROFILE
 	nop
@@ -1910,12 +1910,12 @@ yet_args_needed_22:
 .endif
 	.thumb_func
 yet_args_needed_23:
-	ldr	r3,[r7]
-	mov	r4,#26
+	ldr	r0,[r3]
+	mov	r1,#26
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#27
+	mov.w	r1,#27
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1923,12 +1923,12 @@ yet_args_needed_23:
 .endif
 	.thumb_func
 yet_args_needed_24:
-	ldr	r3,[r7]
-	mov	r4,#27
+	ldr	r0,[r3]
+	mov	r1,#27
 	b	yet_args_needed_
 
 	.p2align	2	
-	mov	r4,#28
+	mov	r1,#28
 	b	build_node_
 .ifdef PROFILE
 	nop
@@ -1936,12 +1936,12 @@ yet_args_needed_24:
 .endif
 	.thumb_func
 yet_args_needed_25:
-	ldr	r3,[r7]
-	mov	r4,#28
+	ldr	r0,[r3]
+	mov	r1,#28
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#29
+	mov.w	r1,#29
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1949,12 +1949,12 @@ yet_args_needed_25:
 .endif
 	.thumb_func
 yet_args_needed_26:
-	ldr	r3,[r7]
-	mov	r4,#29
+	ldr	r0,[r3]
+	mov	r1,#29
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#30
+	mov.w	r1,#30
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1962,12 +1962,12 @@ yet_args_needed_26:
 .endif
 	.thumb_func
 yet_args_needed_27:
-	ldr	r3,[r7]
-	mov	r4,#30
+	ldr	r0,[r3]
+	mov	r1,#30
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#31
+	mov.w	r1,#31
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1975,12 +1975,12 @@ yet_args_needed_27:
 .endif
 	.thumb_func
 yet_args_needed_28:
-	ldr	r3,[r7]
-	mov	r4,#31
+	ldr	r0,[r3]
+	mov	r1,#31
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#32
+	mov.w	r1,#32
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -1988,12 +1988,12 @@ yet_args_needed_28:
 .endif
 	.thumb_func
 yet_args_needed_29:
-	ldr	r3,[r7]
-	mov	r4,#32
+	ldr	r0,[r3]
+	mov	r1,#32
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#33
+	mov.w	r1,#33
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -2001,12 +2001,12 @@ yet_args_needed_29:
 .endif
 	.thumb_func
 yet_args_needed_30:
-	ldr	r3,[r7]
-	mov	r4,#33
+	ldr	r0,[r3]
+	mov	r1,#33
 	b	yet_args_needed_
 
 	.p2align	2
-	mov.w	r4,#34
+	mov.w	r1,#34
 	b.w	build_node_
 .ifdef PROFILE
 	nop
@@ -2014,49 +2014,49 @@ yet_args_needed_30:
 .endif
 	.thumb_func
 yet_args_needed_31:
-	ldr	r3,[r7]
-	mov	r4,#34
+	ldr	r0,[r3]
+	mov	r1,#34
 	b	yet_args_needed_
 
 yet_args_needed:
 @ for more than 4 arguments
-	ldr	r3,[r7]
-	ldrh	r4,[r3,#-2]
-	add	r4,r4,#3
+	ldr	r0,[r3]
+	ldrh	r1,[r0,#-2]
+	add	r1,r1,#3
 yet_args_needed_:
-	subs	r5,r5,r4
+	subs	r11,r11,r1
 	blo	yet_args_needed_gc
 yet_args_needed_gc_r:
-	subs	r4,r4,#3+1+4
-	str	r3,[sp,#-4]!
-	str	r6,[sp,#-4]!
-	ldr	r3,[r7,#4]
-	ldr	r7,[r7,#8]
-	mov	r8,r10
-	ldr	r6,[r7]
-	str	r6,[r10]
-	ldr	r6,[r7,#4]
-	str	r6,[r10,#4]
-	ldr	r6,[r7,#8]
-	str	r6,[r10,#8]
-	add	r7,r7,#12
-	add	r10,r10,#12
+	subs	r1,r1,#3+1+4
+	str	r0,[sp,#-4]!
+	str	r2,[sp,#-4]!
+	ldr	r0,[r3,#4]
+	ldr	r3,[r3,#8]
+	mov	r4,r6
+	ldr	r2,[r3]
+	str	r2,[r6]
+	ldr	r2,[r3,#4]
+	str	r2,[r6,#4]
+	ldr	r2,[r3,#8]
+	str	r2,[r6,#8]
+	add	r3,r3,#12
+	add	r6,r6,#12
 
 yet_args_needed_cp_a:
-	ldr	r6,[r7],#4
-	str	r6,[r10],#4
-	subs	r4,r4,#1
+	ldr	r2,[r3],#4
+	str	r2,[r6],#4
+	subs	r1,r1,#1
 	bge	yet_args_needed_cp_a
 
-	ldr	r6,[sp],#4
-	str	r6,[r10]
-	ldr	r4,[sp],#4
-	add	r4,r4,#8
-	str	r4,[r10,#4]
-	add	r6,r10,#4
-	str	r3,[r10,#8]
-	str	r8,[r10,#12]
-	add	r10,r10,#16
+	ldr	r2,[sp],#4
+	str	r2,[r6]
+	ldr	r1,[sp],#4
+	add	r1,r1,#8
+	str	r1,[r6,#4]
+	add	r2,r6,#4
+	str	r0,[r6,#8]
+	str	r4,[r6,#12]
+	add	r6,r6,#16
 	ldr	pc,[sp],#4
 
 yet_args_needed_gc:
@@ -2064,29 +2064,29 @@ yet_args_needed_gc:
 	b	yet_args_needed_gc_r
 
 build_node_:
-	subs	r5,r5,r4
+	subs	r11,r11,r1
 	blo	build_node_gc
 build_node_gc_r:
-	str	r3,[r10]
-	add	r8,r10,#12
-	str	r7,[r10,#4]
-	str	r8,[r10,#8]
-	str	r6,[r10,#12]
-	mov	r6,r10
-	ldr	r8,[r9,#-4]
-	str	r8,[r10,#16]
-	ldr	r8,[r9,#-8]
-	str	r8,[r10,#20]
-	ldr	r8,[r9,#-12]
-	subs	r9,r9,#12
-	str	r8,[r10,#24]
-	add	r10,r10,#28
+	str	r0,[r6]
+	add	r4,r6,#12
+	str	r3,[r6,#4]
+	str	r4,[r6,#8]
+	str	r2,[r6,#12]
+	mov	r2,r6
+	ldr	r4,[r5,#-4]
+	str	r4,[r6,#16]
+	ldr	r4,[r5,#-8]
+	str	r4,[r6,#20]
+	ldr	r4,[r5,#-12]
+	subs	r5,r5,#12
+	str	r4,[r6,#24]
+	add	r6,r6,#28
 
-	subs	r4,r4,#5+2
+	subs	r1,r1,#5+2
 build_node_cp_a:
-	ldr	r8,[r9,#-4]!
-	str	r8,[r10],#4
-	subs	r4,r4,#1
+	ldr	r4,[r5,#-4]!
+	str	r4,[r6],#4
+	subs	r1,r1,#1
 	bne	build_node_cp_a
 
 	ldr	pc,[sp],#4
@@ -2130,684 +2130,684 @@ build_node_gc:
 	.globl	e__system__nind
 
 apupd_1:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,0
-	otoa	r8,apupd_upd,0
-	cmp	r12,r8
-	lao	r8,ap_1,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,0
+	otoa	r4,apupd_upd,0
+	cmp	r7,r4
+	lao	r4,ap_1,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-4]
-	ldr	r4,[r9,#-8]
-	lao	r12,e__system__nind,23
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,23
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	ldr	r4,[r5,#-4]
+	ldr	r1,[r5,#-8]
+	lao	r7,e__system__nind,23
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,23
+	str	r7,[r4]
+	str	r1,[r4,#4]
 ap_1:
-	ldr	r8,[r7]
-	ldr	r12,[r8,#2]
-	bx	r12
+	ldr	r4,[r3]
+	ldr	r7,[r4,#2]
+	bx	r7
 
 apupd_2:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,1
-	otoa	r8,apupd_upd,1
-	cmp	r12,r8
-	lao	r8,ap_2,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,1
+	otoa	r4,apupd_upd,1
+	cmp	r7,r4
+	lao	r4,ap_2,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-8]
-	ldr	r4,[r9,#-12]
-	ldr	r3,[r9,#-4]
-	str	r3,[r9,#-8]
-	lao	r12,e__system__nind,24
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,24
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	ldr	r4,[r5,#-8]
+	ldr	r1,[r5,#-12]
+	ldr	r0,[r5,#-4]
+	str	r0,[r5,#-8]
+	lao	r7,e__system__nind,24
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,24
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_2
 
 apupd_3:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,2
-	otoa	r8,apupd_upd,2
-	cmp	r12,r8
-	lao	r8,ap_3,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,2
+	otoa	r4,apupd_upd,2
+	cmp	r7,r4
+	lao	r4,ap_3,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-12]
-	ldr	r4,[r9,#-16]
-	ldr	r3,[r9,#-8]
-	str	r3,[r9,#-12]
-	ldr	r3,[r9,#-4]
-	str	r3,[r9,#-8]
-	lao	r12,e__system__nind,25
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,25
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	ldr	r4,[r5,#-12]
+	ldr	r1,[r5,#-16]
+	ldr	r0,[r5,#-8]
+	str	r0,[r5,#-12]
+	ldr	r0,[r5,#-4]
+	str	r0,[r5,#-8]
+	lao	r7,e__system__nind,25
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,25
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_3
 
 apupd_4:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,3
-	otoa	r8,apupd_upd,3
-	cmp	r12,r8
-	lao	r8,ap_4,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,3
+	otoa	r4,apupd_upd,3
+	cmp	r7,r4
+	lao	r4,ap_4,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-16]
-	ldr	r4,[r9,#-20]
-	ldr	r3,[r9,#-12]
-	str	r3,[r9,#-16]
-	ldr	r3,[r9,#-8]
-	str	r3,[r9,#-12]
-	ldr	r3,[r9,#-4]
-	str	r3,[r9,#-8]
-	lao	r12,e__system__nind,26
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,26
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	ldr	r4,[r5,#-16]
+	ldr	r1,[r5,#-20]
+	ldr	r0,[r5,#-12]
+	str	r0,[r5,#-16]
+	ldr	r0,[r5,#-8]
+	str	r0,[r5,#-12]
+	ldr	r0,[r5,#-4]
+	str	r0,[r5,#-8]
+	lao	r7,e__system__nind,26
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,26
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_4
 
 apupd_5:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,4
-	otoa	r8,apupd_upd,4
-	cmp	r12,r8
-	lao	r8,ap_5,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,4
+	otoa	r4,apupd_upd,4
+	cmp	r7,r4
+	lao	r4,ap_5,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-20]
-	ldr	r4,[r9,#-24]
-	ldr	r3,[r9,#-16]
-	str	r3,[r9,#-20]
-	ldr	r3,[r9,#-12]
-	str	r3,[r9,#-16]
-	ldr	r3,[r9,#-8]
-	str	r3,[r9,#-12]
-	ldr	r3,[r9,#-4]
-	str	r3,[r9,#-8]
-	lao	r12,e__system__nind,27
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,27
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	ldr	r4,[r5,#-20]
+	ldr	r1,[r5,#-24]
+	ldr	r0,[r5,#-16]
+	str	r0,[r5,#-20]
+	ldr	r0,[r5,#-12]
+	str	r0,[r5,#-16]
+	ldr	r0,[r5,#-8]
+	str	r0,[r5,#-12]
+	ldr	r0,[r5,#-4]
+	str	r0,[r5,#-8]
+	lao	r7,e__system__nind,27
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,27
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_5
 
 apupd_6:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,5
-	otoa	r8,apupd_upd,5
-	cmp	r12,r8
-	lao	r8,ap_6,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,5
+	otoa	r4,apupd_upd,5
+	cmp	r7,r4
+	lao	r4,ap_6,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-24]
-	ldr	r4,[r9,#-28]
-	ldr	r3,[r9,#-20]
-	str	r3,[r9,#-24]
-	ldr	r3,[r9,#-16]
-	str	r3,[r9,#-20]
-	ldr	r3,[r9,#-12]
-	str	r3,[r9,#-16]
-	ldr	r3,[r9,#-8]
-	str	r3,[r9,#-12]
-	ldr	r3,[r9,#-4]
-	str	r3,[r9,#-8]
-	lao	r12,e__system__nind,28
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,28
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	ldr	r4,[r5,#-24]
+	ldr	r1,[r5,#-28]
+	ldr	r0,[r5,#-20]
+	str	r0,[r5,#-24]
+	ldr	r0,[r5,#-16]
+	str	r0,[r5,#-20]
+	ldr	r0,[r5,#-12]
+	str	r0,[r5,#-16]
+	ldr	r0,[r5,#-8]
+	str	r0,[r5,#-12]
+	ldr	r0,[r5,#-4]
+	str	r0,[r5,#-8]
+	lao	r7,e__system__nind,28
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,28
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_6
 
 apupd_7:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,6
-	otoa	r8,apupd_upd,6
-	cmp	r12,r8
-	lao	r8,ap_7,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,6
+	otoa	r4,apupd_upd,6
+	cmp	r7,r4
+	lao	r4,ap_7,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-28]
-	ldr	r4,[r9,#-32]
+	ldr	r4,[r5,#-28]
+	ldr	r1,[r5,#-32]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_8
 0:
-	lao	r12,e__system__nind,29
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,29
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,29
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,29
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_7
 
 apupd_8:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,7
-	otoa	r8,apupd_upd,7
-	cmp	r12,r8
-	lao	r8,ap_8,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,7
+	otoa	r4,apupd_upd,7
+	cmp	r7,r4
+	lao	r4,ap_8,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-32]
-	ldr	r4,[r9,#-36]
+	ldr	r4,[r5,#-32]
+	ldr	r1,[r5,#-36]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_9
 0:
-	lao	r12,e__system__nind,30
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,30
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,30
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,30
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_8
 
 apupd_9:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,8
-	otoa	r8,apupd_upd,8
-	cmp	r12,r8
-	lao	r8,ap_9,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,8
+	otoa	r4,apupd_upd,8
+	cmp	r7,r4
+	lao	r4,ap_9,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-36]
-	ldr	r4,[r9,#-40]
+	ldr	r4,[r5,#-36]
+	ldr	r1,[r5,#-40]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_10
 0:
-	lao	r12,e__system__nind,31
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,31
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,31
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,31
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_9
 
 apupd_10:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,9
-	otoa	r8,apupd_upd,9
-	cmp	r12,r8
-	lao	r8,ap_10,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,9
+	otoa	r4,apupd_upd,9
+	cmp	r7,r4
+	lao	r4,ap_10,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-40]
-	ldr	r4,[r9,#-44]
+	ldr	r4,[r5,#-40]
+	ldr	r1,[r5,#-44]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_11
 0:
-	lao	r12,e__system__nind,32
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,32
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,32
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,32
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_10
 
 apupd_11:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,10
-	otoa	r8,apupd_upd,10
-	cmp	r12,r8
-	lao	r8,ap_11,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,10
+	otoa	r4,apupd_upd,10
+	cmp	r7,r4
+	lao	r4,ap_11,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-44]
-	ldr	r4,[r9,#-48]
+	ldr	r4,[r5,#-44]
+	ldr	r1,[r5,#-48]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_12
 0:
-	lao	r12,e__system__nind,33
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,33
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,33
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,33
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_11
 
 apupd_12:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,11
-	otoa	r8,apupd_upd,11
-	cmp	r12,r8
-	lao	r8,ap_12,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,11
+	otoa	r4,apupd_upd,11
+	cmp	r7,r4
+	lao	r4,ap_12,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-48]
-	ldr	r4,[r9,#-52]
+	ldr	r4,[r5,#-48]
+	ldr	r1,[r5,#-52]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_13
 0:
-	lao	r12,e__system__nind,34
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,34
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,34
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,34
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_12
 
 apupd_13:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,12
-	otoa	r8,apupd_upd,12
-	cmp	r12,r8
-	lao	r8,ap_13,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,12
+	otoa	r4,apupd_upd,12
+	cmp	r7,r4
+	lao	r4,ap_13,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-52]
-	ldr	r4,[r9,#-56]
+	ldr	r4,[r5,#-52]
+	ldr	r1,[r5,#-56]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_14
 0:
-	lao	r12,e__system__nind,35
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,35
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,35
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,35
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_13
 
 apupd_14:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,13
-	otoa	r8,apupd_upd,13
-	cmp	r12,r8
-	lao	r8,ap_14,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,13
+	otoa	r4,apupd_upd,13
+	cmp	r7,r4
+	lao	r4,ap_14,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-56]
-	ldr	r4,[r9,#-60]
+	ldr	r4,[r5,#-56]
+	ldr	r1,[r5,#-60]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_15
 0:
-	lao	r12,e__system__nind,36
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,36
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,36
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,36
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_14
 
 apupd_15:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,14
-	otoa	r8,apupd_upd,14
-	cmp	r12,r8
-	lao	r8,ap_15,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,14
+	otoa	r4,apupd_upd,14
+	cmp	r7,r4
+	lao	r4,ap_15,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-60]
-	ldr	r4,[r9,#-64]
+	ldr	r4,[r5,#-60]
+	ldr	r1,[r5,#-64]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_16
 0:
-	lao	r12,e__system__nind,37
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,37
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,37
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,37
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_15
 
 apupd_16:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,15
-	otoa	r8,apupd_upd,15
-	cmp	r12,r8
-	lao	r8,ap_16,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,15
+	otoa	r4,apupd_upd,15
+	cmp	r7,r4
+	lao	r4,ap_16,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-64]
-	ldr	r4,[r9,#-68]
+	ldr	r4,[r5,#-64]
+	ldr	r1,[r5,#-68]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_17
 0:
-	lao	r12,e__system__nind,38
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,38
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,38
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,38
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_16
 
 apupd_17:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,16
-	otoa	r8,apupd_upd,16
-	cmp	r12,r8
-	lao	r8,ap_17,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,16
+	otoa	r4,apupd_upd,16
+	cmp	r7,r4
+	lao	r4,ap_17,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-68]
-	ldr	r4,[r9,#-72]
+	ldr	r4,[r5,#-68]
+	ldr	r1,[r5,#-72]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_18
 0:
-	lao	r12,e__system__nind,39
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,39
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,39
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,39
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_17
 
 apupd_18:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,17
-	otoa	r8,apupd_upd,17
-	cmp	r12,r8
-	lao	r8,ap_18,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,17
+	otoa	r4,apupd_upd,17
+	cmp	r7,r4
+	lao	r4,ap_18,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-72]
-	ldr	r4,[r9,#-76]
+	ldr	r4,[r5,#-72]
+	ldr	r1,[r5,#-76]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_19
 0:
-	lao	r12,e__system__nind,40
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,40
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,40
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,40
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_18
 
 apupd_19:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,18
-	otoa	r8,apupd_upd,18
-	cmp	r12,r8
-	lao	r8,ap_19,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,18
+	otoa	r4,apupd_upd,18
+	cmp	r7,r4
+	lao	r4,ap_19,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-76]
-	ldr	r4,[r9,#-80]
+	ldr	r4,[r5,#-76]
+	ldr	r1,[r5,#-80]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_20
 0:
-	lao	r12,e__system__nind,41
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,41
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,41
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,41
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_19
 
 apupd_20:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,19
-	otoa	r8,apupd_upd,19
-	cmp	r12,r8
-	lao	r8,ap_20,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,19
+	otoa	r4,apupd_upd,19
+	cmp	r7,r4
+	lao	r4,ap_20,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-80]
-	ldr	r4,[r9,#-84]
+	ldr	r4,[r5,#-80]
+	ldr	r1,[r5,#-84]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_21
 0:
-	lao	r12,e__system__nind,42
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,42
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,42
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,42
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_20
 
 apupd_21:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,20
-	otoa	r8,apupd_upd,20
-	cmp	r12,r8
-	lao	r8,ap_21,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,20
+	otoa	r4,apupd_upd,20
+	cmp	r7,r4
+	lao	r4,ap_21,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-84]
-	ldr	r4,[r9,#-88]
+	ldr	r4,[r5,#-84]
+	ldr	r1,[r5,#-88]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_22
 0:
-	lao	r12,e__system__nind,43
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,43
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,43
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,43
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_21
 
 apupd_22:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,21
-	otoa	r8,apupd_upd,21
-	cmp	r12,r8
-	lao	r8,ap_22,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,21
+	otoa	r4,apupd_upd,21
+	cmp	r7,r4
+	lao	r4,ap_22,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-88]
-	ldr	r4,[r9,#-92]
+	ldr	r4,[r5,#-88]
+	ldr	r1,[r5,#-92]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_23
 0:
-	lao	r12,e__system__nind,44
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,44
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,44
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,44
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_22
 
 apupd_23:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,22
-	otoa	r8,apupd_upd,22
-	cmp	r12,r8
-	lao	r8,ap_23,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,22
+	otoa	r4,apupd_upd,22
+	cmp	r7,r4
+	lao	r4,ap_23,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-92]
-	ldr	r4,[r9,#-96]
+	ldr	r4,[r5,#-92]
+	ldr	r1,[r5,#-96]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_24
 0:
-	lao	r12,e__system__nind,45
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,45
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,45
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,45
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_23
 
 apupd_24:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,23
-	otoa	r8,apupd_upd,23
-	cmp	r12,r8
-	lao	r8,ap_24,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,23
+	otoa	r4,apupd_upd,23
+	cmp	r7,r4
+	lao	r4,ap_24,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-96]
-	ldr	r4,[r9,#-100]
+	ldr	r4,[r5,#-96]
+	ldr	r1,[r5,#-100]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_25
 0:
-	lao	r12,e__system__nind,46
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,46
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,46
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,46
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_24
 
 apupd_25:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,24
-	otoa	r8,apupd_upd,24
-	cmp	r12,r8
-	lao	r8,ap_25,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,24
+	otoa	r4,apupd_upd,24
+	cmp	r7,r4
+	lao	r4,ap_25,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-100]
-	ldr	r4,[r9,#-104]
+	ldr	r4,[r5,#-100]
+	ldr	r1,[r5,#-104]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_26
 0:
-	lao	r12,e__system__nind,47
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,47
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,47
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,47
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_25
 
 apupd_26:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,25
-	otoa	r8,apupd_upd,25
-	cmp	r12,r8
-	lao	r8,ap_26,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,25
+	otoa	r4,apupd_upd,25
+	cmp	r7,r4
+	lao	r4,ap_26,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-104]
-	ldr	r4,[r9,#-108]
+	ldr	r4,[r5,#-104]
+	ldr	r1,[r5,#-108]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_27
 0:
-	lao	r12,e__system__nind,48
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,48
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,48
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,48
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_26
 
 apupd_27:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,26
-	otoa	r8,apupd_upd,26
-	cmp	r12,r8
-	lao	r8,ap_27,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,26
+	otoa	r4,apupd_upd,26
+	cmp	r7,r4
+	lao	r4,ap_27,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-108]
-	ldr	r4,[r9,#-112]
+	ldr	r4,[r5,#-108]
+	ldr	r1,[r5,#-112]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_28
 0:
-	lao	r12,e__system__nind,49
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,49
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,49
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,49
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_27
 
 apupd_28:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,27
-	otoa	r8,apupd_upd,27
-	cmp	r12,r8
-	lao	r8,ap_28,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,27
+	otoa	r4,apupd_upd,27
+	cmp	r7,r4
+	lao	r4,ap_28,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-112]
-	ldr	r4,[r9,#-116]
+	ldr	r4,[r5,#-112]
+	ldr	r1,[r5,#-116]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_29
 0:
-	lao	r12,e__system__nind,50
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,50
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,50
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,50
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_28
 
 apupd_29:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,28
-	otoa	r8,apupd_upd,28
-	cmp	r12,r8
-	lao	r8,ap_29,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,28
+	otoa	r4,apupd_upd,28
+	cmp	r7,r4
+	lao	r4,ap_29,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-116]
-	ldr	r4,[r9,#-120]
+	ldr	r4,[r5,#-116]
+	ldr	r1,[r5,#-120]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_30
 0:
-	lao	r12,e__system__nind,51
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,51
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,51
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,51
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_29
 
 apupd_30:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,29
-	otoa	r8,apupd_upd,29
-	cmp	r12,r8
-	lao	r8,ap_30,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,29
+	otoa	r4,apupd_upd,29
+	cmp	r7,r4
+	lao	r4,ap_30,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-120]
-	ldr	r4,[r9,#-124]
+	ldr	r4,[r5,#-120]
+	ldr	r1,[r5,#-124]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_31
 0:
-	lao	r12,e__system__nind,52
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,52
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,52
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,52
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_30
 
 apupd_31:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,30
-	otoa	r8,apupd_upd,30
-	cmp	r12,r8
-	lao	r8,ap_31,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,30
+	otoa	r4,apupd_upd,30
+	cmp	r7,r4
+	lao	r4,ap_31,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-124]
-	ldr	r4,[r9,#-128]
+	ldr	r4,[r5,#-124]
+	ldr	r1,[r5,#-128]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_32
 0:
-	lao	r12,e__system__nind,53
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,53
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,53
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,53
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_31
 
 apupd_32:
-	ldr	r12,[sp]
-	lao	r8,apupd_upd,31
-	otoa	r8,apupd_upd,31
-	cmp	r12,r8
-	lao	r8,ap_32,0
+	ldr	r7,[sp]
+	lao	r4,apupd_upd,31
+	otoa	r4,apupd_upd,31
+	cmp	r7,r4
+	lao	r4,ap_32,0
 	bne	ap_upd
 
-	ldr	r8,[r9,#-128]
-	ldr	r4,[r9,#-132]
+	ldr	r4,[r5,#-128]
+	ldr	r1,[r5,#-132]
 	adr	r14,1+0f
 	push	{r14}
 	bl	move_33
 0:
-	lao	r12,e__system__nind,54
-	subs	r9,r9,#4
-	otoa	r12,e__system__nind,54
-	str	r12,[r8]
-	str	r4,[r8,#4]
+	lao	r7,e__system__nind,54
+	subs	r5,r5,#4
+	otoa	r7,e__system__nind,54
+	str	r7,[r4]
+	str	r1,[r4,#4]
 	b	ap_32
 
 ap_upd:
@@ -2844,113 +2844,113 @@ ap_29__u0:
 ap_30__u0:
 ap_31__u0:
 ap_32__u0:
-	add	r8,r8,pc
+	add	r4,r4,pc
 .endif
 	adr	r14,1+0f
 	push	{r14}
-	blx	r8
+	blx	r4
 0:
 apupd_upd:
-	ldr	r7,[r9,#-4]
-	subs	r9,r9,#4
-	ldr	r4,[r6]
-	str	r4,[r7]
-	ldr	r4,[r6,#4]
-	str	r4,[r7,#4]
-	ldr	r4,[r6,#8]
-	mov	r6,r7
-	str	r4,[r7,#8]	
+	ldr	r3,[r5,#-4]
+	subs	r5,r5,#4
+	ldr	r1,[r2]
+	str	r1,[r3]
+	ldr	r1,[r2,#4]
+	str	r1,[r3,#4]
+	ldr	r1,[r2,#8]
+	mov	r2,r3
+	str	r1,[r3,#8]	
 	ldr	pc,[sp],#4
 
 move_33:
-	ldr	r3,[r9,#-124]
-	str	r3,[r9,#-128]
+	ldr	r0,[r5,#-124]
+	str	r0,[r5,#-128]
 move_32:
-	ldr	r3,[r9,#-120]
-	str	r3,[r9,#-124]
+	ldr	r0,[r5,#-120]
+	str	r0,[r5,#-124]
 move_31:
-	ldr	r3,[r9,#-116]
-	str	r3,[r9,#-120]
+	ldr	r0,[r5,#-116]
+	str	r0,[r5,#-120]
 move_30:
-	ldr	r3,[r9,#-112]
-	str	r3,[r9,#-116]
+	ldr	r0,[r5,#-112]
+	str	r0,[r5,#-116]
 move_29:
-	ldr	r3,[r9,#-108]
-	str	r3,[r9,#-112]
+	ldr	r0,[r5,#-108]
+	str	r0,[r5,#-112]
 move_28:
-	ldr	r3,[r9,#-104]
-	str	r3,[r9,#-108]
+	ldr	r0,[r5,#-104]
+	str	r0,[r5,#-108]
 move_27:
-	ldr	r3,[r9,#-100]
-	str	r3,[r9,#-104]
+	ldr	r0,[r5,#-100]
+	str	r0,[r5,#-104]
 move_26:
-	ldr	r3,[r9,#-96]
-	str	r3,[r9,#-100]
+	ldr	r0,[r5,#-96]
+	str	r0,[r5,#-100]
 move_25:
-	ldr	r3,[r9,#-92]
-	str	r3,[r9,#-96]
+	ldr	r0,[r5,#-92]
+	str	r0,[r5,#-96]
 move_24:
-	ldr	r3,[r9,#-88]
-	str	r3,[r9,#-92]
+	ldr	r0,[r5,#-88]
+	str	r0,[r5,#-92]
 move_23:
-	ldr	r3,[r9,#-84]
-	str	r3,[r9,#-88]
+	ldr	r0,[r5,#-84]
+	str	r0,[r5,#-88]
 move_22:
-	ldr	r3,[r9,#-80]
-	str	r3,[r9,#-84]
+	ldr	r0,[r5,#-80]
+	str	r0,[r5,#-84]
 move_21:
-	ldr	r3,[r9,#-76]
-	str	r3,[r9,#-80]
+	ldr	r0,[r5,#-76]
+	str	r0,[r5,#-80]
 move_20:
-	ldr	r3,[r9,#-72]
-	str	r3,[r9,#-76]
+	ldr	r0,[r5,#-72]
+	str	r0,[r5,#-76]
 move_19:
-	ldr	r3,[r9,#-68]
-	str	r3,[r9,#-72]
+	ldr	r0,[r5,#-68]
+	str	r0,[r5,#-72]
 move_18:
-	ldr	r3,[r9,#-64]
-	str	r3,[r9,#-68]
+	ldr	r0,[r5,#-64]
+	str	r0,[r5,#-68]
 move_17:
-	ldr	r3,[r9,#-60]
-	str	r3,[r9,#-64]
+	ldr	r0,[r5,#-60]
+	str	r0,[r5,#-64]
 move_16:
-	ldr	r3,[r9,#-56]
-	str	r3,[r9,#-60]
+	ldr	r0,[r5,#-56]
+	str	r0,[r5,#-60]
 move_15:
-	ldr	r3,[r9,#-52]
-	str	r3,[r9,#-56]
+	ldr	r0,[r5,#-52]
+	str	r0,[r5,#-56]
 move_14:
-	ldr	r3,[r9,#-48]
-	str	r3,[r9,#-52]
+	ldr	r0,[r5,#-48]
+	str	r0,[r5,#-52]
 move_13:
-	ldr	r3,[r9,#-44]
-	str	r3,[r9,#-48]
+	ldr	r0,[r5,#-44]
+	str	r0,[r5,#-48]
 move_12:
-	ldr	r3,[r9,#-40]
-	str	r3,[r9,#-44]
+	ldr	r0,[r5,#-40]
+	str	r0,[r5,#-44]
 move_11:
-	ldr	r3,[r9,#-36]
-	str	r3,[r9,#-40]
+	ldr	r0,[r5,#-36]
+	str	r0,[r5,#-40]
 move_10:
-	ldr	r3,[r9,#-32]
-	str	r3,[r9,#-36]
+	ldr	r0,[r5,#-32]
+	str	r0,[r5,#-36]
 move_9:
-	ldr	r3,[r9,#-28]
-	str	r3,[r9,#-32]
+	ldr	r0,[r5,#-28]
+	str	r0,[r5,#-32]
 move_8:
-	ldr	r3,[r9,#-24]
-	str	r3,[r9,#-28]
+	ldr	r0,[r5,#-24]
+	str	r0,[r5,#-28]
 move_7:
-	ldr	r3,[r9,#-20]
-	str	r3,[r9,#-24]
-	ldr	r3,[r9,#-16]
-	str	r3,[r9,#-20]
-	ldr	r3,[r9,#-12]
-	str	r3,[r9,#-16]
-	ldr	r3,[r9,#-8]
-	str	r3,[r9,#-12]
-	ldr	r3,[r9,#-4]
-	str	r3,[r9,#-8]
+	ldr	r0,[r5,#-20]
+	str	r0,[r5,#-24]
+	ldr	r0,[r5,#-16]
+	str	r0,[r5,#-20]
+	ldr	r0,[r5,#-12]
+	str	r0,[r5,#-16]
+	ldr	r0,[r5,#-8]
+	str	r0,[r5,#-12]
+	ldr	r0,[r5,#-4]
+	str	r0,[r5,#-8]
 	ldr	pc,[sp],#4
 
 .ifdef PIC

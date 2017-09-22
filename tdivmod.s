@@ -7,148 +7,148 @@
 
 	.globl	divide
 divide:
-	eor	r12,r3,r4
-	cmp	r4,#0
+	eor	r7,r0,r1
+	cmp	r1,#0
 	it	lt
-	neglt	r4,r4
-	cmp	r3,#0
+	neglt	r1,r1
+	cmp	r0,#0
 	it	lt
-	neglt	r3,r3
+	neglt	r0,r0
 
-	cmp	r4,#32
+	cmp	r1,#32
 	bls	divide_by_small_number
 
-	clz	r1,r4
-	clz	r2,r3
-	rsb	r1,r1,#31-5-11
-	add	r1,r1,r2
-	mov	r2,#0
+	clz	r9,r1
+	clz	r10,r0
+	rsb	r9,r9,#31-5-11
+	add	r9,r9,r10
+	mov	r10,#0
 
-	cmp	r1,#32-5-11
+	cmp	r9,#32-5-11
 	bhs	divide_large_result
 
-	add	r1,r1,r1,lsl #1
-	lsl	r1,r1,#2
-	add	pc,r1
+	add	r9,r9,r9,lsl #1
+	lsl	r9,r9,#2
+	add	pc,r9
 	nop
 
 	.set	shift,32-5-11
 	.rept	32-5-11
 	.set	shift,shift-1
-	subs	r1,r3,r4,lsl #shift
+	subs	r9,r0,r1,lsl #shift
 	itt	cs
-	movcs	r3,r1
-	orrcs	r2,r2,#1<<shift
+	movcs	r0,r9
+	orrcs	r10,r10,#1<<shift
 	.endr
 
-	mov	r4,r2
-	cmp	r12,#0
+	mov	r1,r10
+	cmp	r7,#0
 	it	lt
-	neglt	r4,r4
+	neglt	r1,r1
 	pop	{pc}
 
 divide_large_result:
 	bpl	divide_result_0
 
-	vmov    s13,r3
-	vmov    s15,r4
+	vmov    s13,r0
+	vmov    s15,r1
 	vcvt.f64.u32	d6,s13
 	vcvt.f64.u32	d7,s15
 	vdiv.f64	d7,d6,d7
 	vcvt.u32.f64	s15,d7
-	vmov	r4,s15
-	cmp	r12,#0
+	vmov	r1,s15
+	cmp	r7,#0
 	it	lt
-	neglt	r4,r4
+	neglt	r1,r1
 	pop	{pc}
 
 divide_result_0:
-	mov	r4,#0
+	mov	r1,#0
 	pop	{pc}
 
 divide_by_small_number:
-	adr	r1,div_mod_table
-	add	r1,r1,r4,lsl #3
-	ldrb	r4,[r1,#1]
-	ldr	r2,[r1,#4]
-	ldrb	r1,[r1]
-	adds	r3,r3,r4
+	adr	r9,div_mod_table
+	add	r9,r9,r1,lsl #3
+	ldrb	r1,[r9,#1]
+	ldr	r10,[r9,#4]
+	ldrb	r9,[r9]
+	adds	r0,r0,r1
 	it	cc
-	umullcc	r4,r2,r3,r2
-	lsr	r4,r2,r1
-	cmp	r12,#0
+	umullcc	r1,r10,r0,r10
+	lsr	r1,r10,r9
+	cmp	r7,#0
 	it	lt
-	neglt	r4,r4
+	neglt	r1,r1
 	pop	{pc}
 
 	.globl	modulo	
 modulo:
-	cmp	r4,#0
+	cmp	r1,#0
 	it	lt
-	neglt	r4,r4
-	movs	r12,r3
+	neglt	r1,r1
+	movs	r7,r0
 	it	lt
-	neglt	r3,r3
+	neglt	r0,r0
 
-	cmp	r4,#32
+	cmp	r1,#32
 	bls	modulo_of_small_number
 
-	clz	r1,r4
-	clz	r2,r3
-	rsb	r1,r1,#31-5-11
-	add	r1,r1,r2
+	clz	r9,r1
+	clz	r10,r0
+	rsb	r9,r9,#31-5-11
+	add	r9,r9,r10
 
-	cmp	r1,#32-5-11
+	cmp	r9,#32-5-11
 	bhs	modulo_large_divide_result
 
-	lsl	r1,r1,#3
-	add	pc,r1
+	lsl	r9,r9,#3
+	add	pc,r9
 	nop
 
 	.set	shift,32
 	.rept	32
 	.set	shift,shift-1
-	subs	r1,r3,r4,lsl #shift
+	subs	r9,r0,r1,lsl #shift
 	it	cs
-	movcs	r3,r1
+	movcs	r0,r9
 	.endr
 
 modulo_divide_result_0:
-	mov	r4,r3
-	cmp	r12,#0
+	mov	r1,r0
+	cmp	r7,#0
 	it	lt
-	neglt	r4,r4
+	neglt	r1,r1
 	pop	{pc}
 
 modulo_large_divide_result:
 	bpl	modulo_divide_result_0
 
-	vmov    s13,r3
-	vmov    s15,r4
+	vmov    s13,r0
+	vmov    s15,r1
 	vcvt.f64.u32	d6,s13
 	vcvt.f64.u32	d7,s15
 	vdiv.f64	d7,d6,d7
 	vcvt.u32.f64	s15,d7
-	vmov	r2,s15
+	vmov	r10,s15
 	b	modulo_from_quotient
 
 modulo_of_small_number:
-	adr	r1,div_mod_table
-	add	r1,r1,r4,lsl #3
-	ldrb	r0,[r1,1]
-	ldr	r2,[r1,#4]
-	ldrb	r1,[r1]
-	adds	r14,r3,r0
+	adr	r9,div_mod_table
+	add	r9,r9,r1,lsl #3
+	ldrb	r8,[r9,1]
+	ldr	r10,[r9,#4]
+	ldrb	r9,[r9]
+	adds	r14,r0,r8
 	it	cc
-	umullcc	r0,r2,r14,r2
-	lsr	r2,r2,r1
+	umullcc	r8,r10,r14,r10
+	lsr	r10,r10,r9
 modulo_from_quotient:
-@	mls	r4,r4,r2,r3
-	neg	r4,r4
-	mla	r4,r4,r2,r3
-	cmp	r12,#0
+@	mls	r1,r1,r10,r0
+	neg	r1,r1
+	mla	r1,r1,r10,r0
+	cmp	r7,#0
 	it	lt
-	neglt	r4,r4
+	neglt	r1,r1
 	pop	{pc}
 
 div_mod_table:
