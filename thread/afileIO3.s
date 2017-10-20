@@ -674,7 +674,7 @@ readSFC:
 	cmp	eax,-1
 	je	readSFC_eof
 
-	mov	r10d,rax
+	mov	r10d,eax
 	pop	rax
 	mov	r11,1
 	ret
