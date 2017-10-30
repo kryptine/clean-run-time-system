@@ -11,6 +11,6 @@ cp aap.s linux64Trace/aap.s
 cp areals.s linux64Trace/areals.s
 sed -r -f astartup.sed atrace.asm > linux64Trace/atrace.s
 (cd linux64Trace; as --defsym LINUX=1 --defsym PROFILE=1 --defsym TRACE=1 astartup.s -o astartup.o)
-gcc -c -O -DUSE_CLIB -DLINUX -DI486 -DGNU_C -DELF -DTIME_PROFILE -DPROFILE -DTRACE -ffunction-sections -fdata-sections ./scon.c -o linux64Trace/scon.o
-gcc -c -O -DUSE_CLIB -DLINUX -DI486 -DGNU_C -DELF -DTIME_PROFILE -DPROFILE -DTRACE -ffunction-sections -fdata-sections ./ufileIO2.c -o linux64Trace/ufileIO2.o
+gcc -fno-pie -c -O -DUSE_CLIB -DLINUX -DI486 -DGNU_C -DELF -DTIME_PROFILE -DPROFILE -DTRACE -ffunction-sections -fdata-sections ./scon.c -o linux64Trace/scon.o
+gcc -fno-pie -c -O -DUSE_CLIB -DLINUX -DI486 -DGNU_C -DELF -DTIME_PROFILE -DPROFILE -DTRACE -ffunction-sections -fdata-sections ./ufileIO2.c -o linux64Trace/ufileIO2.o
 ld -r -o linux64Trace/_startupTrace.o linux64Trace/astartup.o linux64Trace/scon.o afileIO3.o linux64Trace/ufileIO2.o

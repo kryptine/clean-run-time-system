@@ -11,6 +11,6 @@ cp aap.s linux64/aap.s
 cp areals.s linux64/areals.s
 (cd linux64; as --defsym LINUX=1 astartup.s -o astartup.o)
 as afileIO3.s -o afileIO3.o
-gcc -c -O -DUSE_CLIB -DLINUX -DI486 -DGNU_C -DELF -ffunction-sections -fdata-sections -o linux64/ufileIO2.o ./ufileIO2.c
-gcc -c -O -DUSE_CLIB -DLINUX -DI486 -DGNU_C -DELF -ffunction-sections -fdata-sections ./scon.c -o linux64/scon.o
+gcc -fno-pie -c -O -DUSE_CLIB -DLINUX -DI486 -DGNU_C -DELF -ffunction-sections -fdata-sections -o linux64/ufileIO2.o ./ufileIO2.c
+gcc -fno-pie -c -O -DUSE_CLIB -DLINUX -DI486 -DGNU_C -DELF -ffunction-sections -fdata-sections ./scon.c -o linux64/scon.o
 ld -r -o linux64/_startup.o linux64/astartup.o linux64/scon.o afileIO3.o linux64/ufileIO2.o
