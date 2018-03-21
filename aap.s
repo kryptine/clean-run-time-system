@@ -1801,19 +1801,21 @@ add_empty_node_12_:
 	jb	add_empty_node_12_gc
 add_empty_node_12_gc_:
 	mov	rax,rsi
+	mov	r9,qword ptr -8[rsi]
+	mov	qword ptr [rsi],r9
 add_empty_node_12_lp:
-	mov	r9,qword ptr -8[rax]
-	mov	qword ptr [rax],r9
 	mov	r9,qword ptr -16[rax]
 	mov	qword ptr -8[rax],r9
 	mov	r9,qword ptr -24[rax]
 	mov	qword ptr -16[rax],r9
 	mov	r9,qword ptr -32[rax]
 	mov	qword ptr -24[rax],r9
+	mov	r9,qword ptr -40[rax]
+	mov	qword ptr -32[rax],r9
 	sub	rax,32
 	sub	rbx,1
 	jne	add_empty_node_12_lp
-	mov	qword ptr [rax],rdi
+	mov	qword ptr -8[rax],rdi
  .ifdef PIC
 	lea	rbp,__cycle__in__spine[rip]
 	mov	qword ptr [rdi],rbp
@@ -1848,19 +1850,21 @@ add_empty_node_13_gc_:
 	mov	rax,rsi
 	mov	r9,qword ptr -8[rsi]
 	mov	qword ptr [rsi],r9
+	mov	rsi,qword ptr -16[rsi]
+	mov	qword ptr -8[rsi],r9
 add_empty_node_13_lp:
-	mov	r9,qword ptr -16[rax]
-	mov	qword ptr -8[rax],r9
 	mov	r9,qword ptr -24[rax]
 	mov	qword ptr -16[rax],r9
 	mov	r9,qword ptr -32[rax]
 	mov	qword ptr -24[rax],r9
 	mov	r9,qword ptr -40[rax]
 	mov	qword ptr -32[rax],r9
+	mov	r9,qword ptr -48[rax]
+	mov	qword ptr -40[rax],r9
 	sub	rax,32
 	sub	rbx,1
 	jne	add_empty_node_13_lp
-	mov	qword ptr -8[rax],rdi
+	mov	qword ptr -16[rax],rdi
  .ifdef PIC
 	lea	rbp,__cycle__in__spine[rip]
 	mov	qword ptr [rdi],rbp
@@ -1895,21 +1899,23 @@ add_empty_node_14_gc_:
 	mov	rax,rsi
 	mov	r9,qword ptr -8[rsi]
 	mov	qword ptr [rsi],r9
-	mov	rsi,qword ptr -16[rsi]
+	mov	r9,qword ptr -16[rsi]
 	mov	qword ptr -8[rsi],r9
+	mov	r9,qword ptr -24[rsi]
+	mov	qword ptr -16[rsi],r9
 add_empty_node_14_lp:
-	mov	r9,qword ptr -24[rax]
-	mov	qword ptr -16[rax],r9
 	mov	r9,qword ptr -32[rax]
 	mov	qword ptr -24[rax],r9
 	mov	r9,qword ptr -40[rax]
 	mov	qword ptr -32[rax],r9
 	mov	r9,qword ptr -48[rax]
 	mov	qword ptr -40[rax],r9
+	mov	r9,qword ptr -56[rax]
+	mov	qword ptr -48[rax],r9
 	sub	rax,32
 	sub	rbx,1
 	jne	add_empty_node_14_lp
-	mov	qword ptr -16[rax],rdi
+	mov	qword ptr -24[rax],rdi
  .ifdef PIC
 	lea	rbp,__cycle__in__spine[rip]
 	mov	qword ptr [rdi],rbp
@@ -1924,43 +1930,37 @@ add_empty_node_14_gc:
 	jmp	add_empty_node_14_gc_
 
 add_empty_node_31:
-	mov	rbx,6
+	mov	rbx,7
 	jmp	add_empty_node_15_
 add_empty_node_27:
-	mov	rbx,5
+	mov	rbx,6
 	jmp	add_empty_node_15_
 add_empty_node_23:
-	mov	rbx,4
+	mov	rbx,5
 	jmp	add_empty_node_15_
 add_empty_node_19:
-	mov	rbx,3
+	mov	rbx,4
 	jmp	add_empty_node_15_
 add_empty_node_15:
-	mov	rbx,2
+	mov	rbx,3
 add_empty_node_15_:
 	sub	r15,3
 	jb	add_empty_node_15_gc
 add_empty_node_15_gc_:
-	mov	rax,r9
-	mov	r9,qword ptr -8[rsi]
-	mov	qword ptr [rsi],r9
-	mov	r9,qword ptr -16[rsi]
-	mov	qword ptr -8[rsi],r9
-	mov	r9,qword ptr -24[rsi]
-	mov	qword ptr -16[rsi],r9
+	mov	rax,rsi
 add_empty_node_15_lp:
+	mov	r9,qword ptr -8[rax]
+	mov	qword ptr [rax],r9
+	mov	r9,qword ptr -16[rax]
+	mov	qword ptr -8[rax],r9
+	mov	r9,qword ptr -24[rax]
+	mov	qword ptr -16[rax],r9
 	mov	r9,qword ptr -32[rax]
 	mov	qword ptr -24[rax],r9
-	mov	r9,qword ptr -40[rax]
-	mov	qword ptr -32[rax],r9
-	mov	r9,qword ptr -48[rax]
-	mov	qword ptr -40[rax],r9
-	mov	r9,qword ptr -56[rax]
-	mov	qword ptr -48[rax],r9
 	sub	rax,32
 	sub	rbx,1
 	jne	add_empty_node_15_lp
-	mov	qword ptr -24[rax],rdi
+	mov	qword ptr [rax],rdi
  .ifdef PIC
 	lea	rbp,__cycle__in__spine[rip]
 	mov	qword ptr [rdi],rbp

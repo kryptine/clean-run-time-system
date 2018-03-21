@@ -1300,23 +1300,25 @@ add_empty_node_16:
 add_empty_node_12:
 	mov	d1,2
 add_empty_node_12_:
-	sub	d7,3
+	sub	d7,2
 	jb	add_empty_node_12_gc
 add_empty_node_12_gc_:
 	mov	d0,a5
+	mov	a3,qw -8[a5]
+	mov	qw [a5],a3
 add_empty_node_12_lp:
-	mov	a3,qw -8[d0]
-	mov	qw [d0],a3
 	mov	a3,qw -16[d0]
 	mov	qw -8[d0],a3
 	mov	a3,qw -24[d0]
 	mov	qw -16[d0],a3
 	mov	a3,qw -32[d0]
 	mov	qw -24[d0],a3
+	mov	a3,qw -40[d0]
+	mov	qw -32[d0],a3
 	sub	d0,32
 	sub	d1,1
 	jne	add_empty_node_12_lp
-	mov	qw [d0],a6
+	mov	qw -8[d0],a6
  ifdef PIC
 	lea	rbp,__cycle__in__spine+0
 	mov	qw [a6],rbp
@@ -1351,19 +1353,21 @@ add_empty_node_13_gc_:
 	mov	d0,a5
 	mov	a3,qw -8[a5]
 	mov	qw [a5],a3
+	mov	a5,qw -16[a5]
+	mov	qw -8[a5],a3
 add_empty_node_13_lp:
-	mov	a3,qw -16[d0]
-	mov	qw -8[d0],a3
 	mov	a3,qw -24[d0]
 	mov	qw -16[d0],a3
 	mov	a3,qw -32[d0]
 	mov	qw -24[d0],a3
 	mov	a3,qw -40[d0]
 	mov	qw -32[d0],a3
+	mov	a3,qw -48[d0]
+	mov	qw -40[d0],a3
 	sub	d0,32
 	sub	d1,1
 	jne	add_empty_node_13_lp
-	mov	qw -8[d0],a6
+	mov	qw -16[d0],a6
  ifdef PIC
 	lea	rbp,__cycle__in__spine+0
 	mov	qw [a6],rbp
@@ -1398,21 +1402,23 @@ add_empty_node_14_gc_:
 	mov	d0,a5
 	mov	a3,qw -8[a5]
 	mov	qw [a5],a3
-	mov	a5,qw -16[a5]
+	mov	a3,qw -16[a5]
 	mov	qw -8[a5],a3
+	mov	a3,qw -24[a5]
+	mov	qw -16[a5],a3
 add_empty_node_14_lp:
-	mov	a3,qw -24[d0]
-	mov	qw -16[d0],a3
 	mov	a3,qw -32[d0]
 	mov	qw -24[d0],a3
 	mov	a3,qw -40[d0]
 	mov	qw -32[d0],a3
 	mov	a3,qw -48[d0]
 	mov	qw -40[d0],a3
+	mov	a3,qw -56[d0]
+	mov	qw -48[d0],a3
 	sub	d0,32
 	sub	d1,1
 	jne	add_empty_node_14_lp
-	mov	qw -16[d0],a6
+	mov	qw -24[d0],a6
  ifdef PIC
 	lea	rbp,__cycle__in__spine+0
 	mov	qw [a6],rbp
@@ -1427,43 +1433,37 @@ add_empty_node_14_gc:
 	jmp	add_empty_node_14_gc_
 
 add_empty_node_31:
-	mov	d1,6
+	mov	d1,7
 	jmp	add_empty_node_15_
 add_empty_node_27:
-	mov	d1,5
+	mov	d1,6
 	jmp	add_empty_node_15_
 add_empty_node_23:
-	mov	d1,4
+	mov	d1,5
 	jmp	add_empty_node_15_
 add_empty_node_19:
-	mov	d1,3
+	mov	d1,4
 	jmp	add_empty_node_15_
 add_empty_node_15:
-	mov	d1,2
+	mov	d1,3
 add_empty_node_15_:
 	sub	d7,3
 	jb	add_empty_node_15_gc
 add_empty_node_15_gc_:
-	mov	d0,a3
-	mov	a3,qw -8[a5]
-	mov	qw [a5],a3
-	mov	a3,qw -16[a5]
-	mov	qw -8[a5],a3
-	mov	a3,qw -24[a5]
-	mov	qw -16[a5],a3
+	mov	d0,a5
 add_empty_node_15_lp:
+	mov	a3,qw -8[d0]
+	mov	qw [d0],a3
+	mov	a3,qw -16[d0]
+	mov	qw -8[d0],a3
+	mov	a3,qw -24[d0]
+	mov	qw -16[d0],a3
 	mov	a3,qw -32[d0]
 	mov	qw -24[d0],a3
-	mov	a3,qw -40[d0]
-	mov	qw -32[d0],a3
-	mov	a3,qw -48[d0]
-	mov	qw -40[d0],a3
-	mov	a3,qw -56[d0]
-	mov	qw -48[d0],a3
 	sub	d0,32
 	sub	d1,1
 	jne	add_empty_node_15_lp
-	mov	qw -24[d0],a6
+	mov	qw [d0],a6
  ifdef PIC
 	lea	rbp,__cycle__in__spine+0
 	mov	qw [a6],rbp
