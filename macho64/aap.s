@@ -1259,19 +1259,21 @@ add_empty_node_12_:
 	jb	add_empty_node_12_gc
 add_empty_node_12_gc_:
 	mov	rax,rsi
+	mov	r9,qword ptr [rsi-8]
+	mov	qword ptr [rsi],r9
 add_empty_node_12_lp:
-	mov	r9,qword ptr [rax-8]
-	mov	qword ptr [rax],r9
 	mov	r9,qword ptr [rax-16]
 	mov	qword ptr [rax-8],r9
 	mov	r9,qword ptr [rax-24]
 	mov	qword ptr [rax-16],r9
 	mov	r9,qword ptr [rax-32]
 	mov	qword ptr [rax-24],r9
+	mov	r9,qword ptr [rax-40]
+	mov	qword ptr [rax-32],r9
 	sub	rax,32
 	sub	rbx,1
 	att_jne	add_empty_node_12_lp
-	mov	qword ptr [rax],rdi
+	mov	qword ptr [rax-8],rdi
 	lea	rbp,[rip+__cycle__in__spine]
 	mov	qword ptr [rdi],rbp
 	add	rsi,8
@@ -1302,19 +1304,21 @@ add_empty_node_13_gc_:
 	mov	rax,rsi
 	mov	r9,qword ptr [rsi-8]
 	mov	qword ptr [rsi],r9
+	mov	rsi,qword ptr [rsi-16]
+	mov	qword ptr [rsi-8],r9
 add_empty_node_13_lp:
-	mov	r9,qword ptr [rax-16]
-	mov	qword ptr [rax-8],r9
 	mov	r9,qword ptr [rax-24]
 	mov	qword ptr [rax-16],r9
 	mov	r9,qword ptr [rax-32]
 	mov	qword ptr [rax-24],r9
 	mov	r9,qword ptr [rax-40]
 	mov	qword ptr [rax-32],r9
+	mov	r9,qword ptr [rax-48]
+	mov	qword ptr [rax-40],r9
 	sub	rax,32
 	sub	rbx,1
 	att_jne	add_empty_node_13_lp
-	mov	qword ptr [rax-8],rdi
+	mov	qword ptr [rax-16],rdi
 	lea	rbp,[rip+__cycle__in__spine]
 	mov	qword ptr [rdi],rbp
 	add	rsi,8
@@ -1345,56 +1349,11 @@ add_empty_node_14_gc_:
 	mov	rax,rsi
 	mov	r9,qword ptr [rsi-8]
 	mov	qword ptr [rsi],r9
-	mov	rsi,qword ptr [rsi-16]
-	mov	qword ptr [rsi-8],r9
-add_empty_node_14_lp:
-	mov	r9,qword ptr [rax-24]
-	mov	qword ptr [rax-16],r9
-	mov	r9,qword ptr [rax-32]
-	mov	qword ptr [rax-24],r9
-	mov	r9,qword ptr [rax-40]
-	mov	qword ptr [rax-32],r9
-	mov	r9,qword ptr [rax-48]
-	mov	qword ptr [rax-40],r9
-	sub	rax,32
-	sub	rbx,1
-	att_jne	add_empty_node_14_lp
-	mov	qword ptr [rax-16],rdi
-	lea	rbp,[rip+__cycle__in__spine]
-	mov	qword ptr [rdi],rbp
-	add	rsi,8
-	add	rdi,24
-	ret
-add_empty_node_14_gc:
-	att_call	collect_3
-	att_jmp	add_empty_node_14_gc_
-
-add_empty_node_31:
-	mov	rbx,6
-	att_jmp	add_empty_node_15_
-add_empty_node_27:
-	mov	rbx,5
-	att_jmp	add_empty_node_15_
-add_empty_node_23:
-	mov	rbx,4
-	att_jmp	add_empty_node_15_
-add_empty_node_19:
-	mov	rbx,3
-	att_jmp	add_empty_node_15_
-add_empty_node_15:
-	mov	rbx,2
-add_empty_node_15_:
-	sub	r15,3
-	jb	add_empty_node_15_gc
-add_empty_node_15_gc_:
-	mov	rax,r9
-	mov	r9,qword ptr [rsi-8]
-	mov	qword ptr [rsi],r9
 	mov	r9,qword ptr [rsi-16]
 	mov	qword ptr [rsi-8],r9
 	mov	r9,qword ptr [rsi-24]
 	mov	qword ptr [rsi-16],r9
-add_empty_node_15_lp:
+add_empty_node_14_lp:
 	mov	r9,qword ptr [rax-32]
 	mov	qword ptr [rax-24],r9
 	mov	r9,qword ptr [rax-40]
@@ -1405,8 +1364,49 @@ add_empty_node_15_lp:
 	mov	qword ptr [rax-48],r9
 	sub	rax,32
 	sub	rbx,1
-	att_jne	add_empty_node_15_lp
+	att_jne	add_empty_node_14_lp
 	mov	qword ptr [rax-24],rdi
+	lea	rbp,[rip+__cycle__in__spine]
+	mov	qword ptr [rdi],rbp
+	add	rsi,8
+	add	rdi,24
+	ret
+add_empty_node_14_gc:
+	att_call	collect_3
+	att_jmp	add_empty_node_14_gc_
+
+add_empty_node_31:
+	mov	rbx,7
+	att_jmp	add_empty_node_15_
+add_empty_node_27:
+	mov	rbx,6
+	att_jmp	add_empty_node_15_
+add_empty_node_23:
+	mov	rbx,5
+	att_jmp	add_empty_node_15_
+add_empty_node_19:
+	mov	rbx,4
+	att_jmp	add_empty_node_15_
+add_empty_node_15:
+	mov	rbx,3
+add_empty_node_15_:
+	sub	r15,3
+	jb	add_empty_node_15_gc
+add_empty_node_15_gc_:
+	mov	rax,rsi
+add_empty_node_15_lp:
+	mov	r9,qword ptr [rax-8]
+	mov	qword ptr [rax],r9
+	mov	r9,qword ptr [rax-16]
+	mov	qword ptr [rax-8],r9
+	mov	r9,qword ptr [rax-24]
+	mov	qword ptr [rax-16],r9
+	mov	r9,qword ptr [rax-32]
+	mov	qword ptr [rax-24],r9
+	sub	rax,32
+	sub	rbx,1
+	att_jne	add_empty_node_15_lp
+	mov	qword ptr [rax],rdi
 	lea	rbp,[rip+__cycle__in__spine]
 	mov	qword ptr [rdi],rbp
 	add	rsi,8
