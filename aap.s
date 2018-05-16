@@ -1850,7 +1850,7 @@ add_empty_node_13_gc_:
 	mov	rax,rsi
 	mov	r9,qword ptr -8[rsi]
 	mov	qword ptr [rsi],r9
-	mov	rsi,qword ptr -16[rsi]
+	mov	r9,qword ptr -16[rsi]
 	mov	qword ptr -8[rsi],r9
 add_empty_node_13_lp:
 	mov	r9,qword ptr -24[rax]

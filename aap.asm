@@ -1353,7 +1353,7 @@ add_empty_node_13_gc_:
 	mov	d0,a5
 	mov	a3,qw -8[a5]
 	mov	qw [a5],a3
-	mov	a5,qw -16[a5]
+	mov	a3,qw -16[a5]
 	mov	qw -8[a5],a3
 add_empty_node_13_lp:
 	mov	a3,qw -24[d0]
