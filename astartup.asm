@@ -2890,23 +2890,45 @@ restore_registers_after_gc_and_return:
 	ret
 
 call_finalizers:
-	mov	rax,qword ptr free_finalizer_list+0
+	mov	rbx,qword ptr free_finalizer_list+0
+	lea	r9,__Nil-8+0
+	cmp	rbx,r9
+	je	end_call_finalizers
+
+ ifdef LINUX
+	push	rdi
+	push	rsi
+ endif
+	mov	rbp,rsp
+	and	rsp,-16
+ ifndef	LINUX
+	sub	rsp,32
+ endif
 
 call_finalizers_lp:
-	lea	r9,__Nil-8+0
-	cmp	rax,r9
-	je	end_call_finalizers
-	push	8[rax]
-	mov	rbx,qword ptr 16[rax]
-	push	8[rbx]
-	call	qword ptr [rbx]
-	add	rsp,8
-	pop	rax 
-	jmp	call_finalizers_lp
-end_call_finalizers:
+	mov	rax,qword ptr 16[rbx]
+	mov	rbx,8[rbx]
+
+ ifdef LINUX
+	mov	rdi,8[rax]
+ else
+	mov	rcx,8[rax]
+ endif
+	call	qword ptr [rax]
 
 	lea	r9,__Nil-8+0
+	cmp	rbx,r9
+	jne	call_finalizers_lp
+
 	mov	qword ptr free_finalizer_list+0,r9
+
+	mov	rsp,rbp
+ ifdef LINUX
+	pop	rsi
+	pop	rdi
+ endif
+
+end_call_finalizers:
 	ret
 
 copy_to_compact_with_alloc_in_extra_heap:
