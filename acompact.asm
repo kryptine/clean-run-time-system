@@ -181,12 +181,12 @@ finalizer_list_already_reversed:
 finalizer_list_empty:
 
  ifdef PIC
-	lea	rbp,free_finalizer_list+0
+	lea	rsi,free_finalizer_list+0
  else
-	mov	rbp,offset free_finalizer_list
+	mov	rsi,offset free_finalizer_list
  endif
 	lea	r9,__Nil-8+0
-	cmp	qword ptr [rbp],r9
+	cmp	qword ptr [rsi],r9
 	je	free_finalizer_list_empty
 
  ifdef PIC
