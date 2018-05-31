@@ -2899,6 +2899,7 @@ call_finalizers:
 	push	rdi
 	push	rsi
  endif
+	push	rbp
 	mov	rbp,rsp
 	and	rsp,-16
  ifndef	LINUX
@@ -2923,6 +2924,7 @@ call_finalizers_lp:
 	mov	qword ptr free_finalizer_list+0,r9
 
 	mov	rsp,rbp
+	pop	rbp
  ifdef LINUX
 	pop	rsi
 	pop	rdi
