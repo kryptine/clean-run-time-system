@@ -36,9 +36,7 @@ fwritestring_error:
 	.globl	positionF
 	.globl	seekF
 	.globl	shareF
-.if 0
 	.globl	flushF
-.endif
 	.globl	openSF
 	.globl	readSFC
 	.globl	readSFI
@@ -68,9 +66,7 @@ fwritestring_error:
 	.globl	file_position
 	.globl	file_seek
 	.globl	file_share
-.if 0
 	.globl	flush_file_buffer
-.endif
 	.globl	open_s_file
 	.globl	file_read_s_char
 	.globl	file_read_s_int
@@ -593,7 +589,7 @@ shareF:
 	
 	mov	rax,-1
 	ret
-.if 0
+
 flushF:
 	mov	rbp,rsp
 	and	rsp,-16
@@ -608,7 +604,6 @@ flushF:
 	mov	r10,rax
 	mov	rax,-1
 	ret
-.endif
 
 openSF:
 	mov	rbp,rsp
