@@ -429,6 +429,27 @@ long close_file (long fn)
 	}
 }
 
+long flush_file_buffer (long fn)
+{
+	if (fn<FIRST_REAL_FILE){
+		if (fn==0)
+			return fflush (stderr)==0 ? CLEAN_TRUE : 0;
+		else if (fn==1)
+			return fflush (stdout)==0 ? CLEAN_TRUE : 0;
+		
+		return CLEAN_TRUE;
+	} else {
+		FILE *fd;
+
+		fd=file_table[fn].file;
+		if (fd!=NULL)
+			/* fflush (NULL) flushes all files on linux */
+			return fflush (fd)==0 ? CLEAN_TRUE : 0;
+		else
+			return 0;
+	}
+}
+
 int re_open_file (long fn,unsigned int file_mode)
 {	
 	if (file_mode>5)
