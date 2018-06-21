@@ -97,9 +97,7 @@ fwritestring_error:
 	.globl	@file_position
 	.globl	@file_seek
 	.globl	@file_share
-#ifndef LINUX
 	.globl	@flush_file_buffer
-#endif
 	.globl	@open_s_file
 	.globl	@file_read_s_char
 	.globl	@file_read_s_int
@@ -506,7 +504,6 @@ shareF:
 	movl	$-1,d0
 	ret
 
-#ifndef LINUX
 flushF:
 	pushl	d1
 	call	@flush_file_buffer
@@ -515,7 +512,6 @@ flushF:
 	movl	$-1,4(sp)
 	movl	a2,(sp)
 	ret
-#endif
 
 openSF:	pushl	d0
 	addl	$4,a0
