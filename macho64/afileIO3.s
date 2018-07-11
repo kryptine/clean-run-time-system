@@ -96,9 +96,7 @@ fwritestring_error:
 	.globl	_file_position
 	.globl	_file_seek
 	.globl	_file_share
-.if 0
 	.globl	flush_file_buffer
-.endif
 	.globl	_open_s_file
 	.globl	_file_read_s_char
 	.globl	_file_read_s_int
