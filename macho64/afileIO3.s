@@ -96,7 +96,7 @@ fwritestring_error:
 	.globl	_file_position
 	.globl	_file_seek
 	.globl	_file_share
-	.globl	flush_file_buffer
+	.globl	_flush_file_buffer
 	.globl	_open_s_file
 	.globl	_file_read_s_char
 	.globl	_file_read_s_int
@@ -606,7 +606,7 @@ flushF:
 	mov	r13,rsi
 	mov	r14,rdi
 	mov	rdi,rbx
-	call	flush_file_buffer
+	call	_flush_file_buffer
 	mov	rsp,rbp
 	mov	rsi,r13
 	mov	rdi,r14
