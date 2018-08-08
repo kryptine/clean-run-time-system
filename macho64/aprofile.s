@@ -668,20 +668,25 @@ write_functions_on_stack:
 
 	push	rbp
 
+ .if LINUX
+	mov	r11,rsi
+	mov	r14,rdi
+	movsxd	rdx,dword ptr [rcx-4]
+	lea	rdx,[rcx+rdx-4]
+	lea	rdi,[rcx+8]
+	mov	r12,rdx
+ .else
 	mov	edx,dword ptr [rcx-4]
 	add	rcx,8
 
 	mov	r12d,dword ptr [rdx]
 	lea	r13,[rdx+4]
+ .endif
 
 	mov	rbp,rsp
 	sub	rsp,40
 	and	rsp,-16
- .if LINUX
-	mov	r11,rsi
-	mov	r14,rdi
-	mov	rdi,rcx
- .endif
+
 	att_call _ew_print_string
 
  .if LINUX
@@ -692,8 +697,8 @@ write_functions_on_stack:
 	att_call _ew_print_string
 
  .if LINUX
-	mov	rsi,r12
-	mov	rdi,r13
+	mov	esi,dword ptr [r12]
+	lea	rdi,[r12+4]
  .else
 	mov	rdx,r12
 	mov	rcx,r13
