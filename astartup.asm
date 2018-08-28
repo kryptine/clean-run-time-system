@@ -1990,12 +1990,15 @@ end_reverse_digits:
 
 return_sprintf_buffer:
  ifdef PIC
-	lea	rax,sprintf_buffer-1+0
+	lea	rax,sprintf_buffer+0
  else
-	mov	rax,offset sprintf_buffer-1
+	mov	rax,offset sprintf_buffer
  endif
+	jmp	skip_characters_
+
 skip_characters:
 	inc	rax 
+skip_characters_:
 	cmp	byte ptr [rax],0
 	jne	skip_characters
 
