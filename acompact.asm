@@ -8,6 +8,14 @@
 	lea	rax,(-16000)[rsp]
 	mov	qword ptr end_stack+0,rax
 
+ ifdef GC_HOOKS
+	mov	rax,qword ptr gc_hook_before_compact+0
+	test	rax,rax
+	je	no_gc_hook_before_compact
+	call	rax
+no_gc_hook_before_compact:
+ endif
+
 	mov	rax,qword ptr caf_list+0
 
 	test	qword ptr flags+0,4096
@@ -83,6 +91,14 @@ end_rmarkp_cafs:
 ; compact the heap
 
 compact_heap:
+
+ ifdef GC_HOOKS
+	mov	rax,qword ptr gc_hook_between_mark_and_compact+0
+	test	rax,rax
+	je	no_gc_hook_between_mark_and_compact
+	call	rax
+no_gc_hook_between_mark_and_compact:
+ endif
 
  ifdef PIC
 	lea	rcx,finalizer_list+0
@@ -1290,4 +1306,12 @@ restore_finalizer_descriptors:
 	jmp	restore_finalizer_descriptors
 
 end_restore_finalizer_descriptors:
+
+ ifdef GC_HOOKS
+	mov	rax,qword ptr gc_hook_after_compact+0
+	test	rax,rax
+	je	no_gc_hook_after_compact
+	call	rax
+no_gc_hook_after_compact:
+ endif
 

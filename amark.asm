@@ -10,14 +10,22 @@
 	
 	lea	rsi,(-4000)[rsp]
 
-	mov	rax,qword ptr caf_list+0
-
 	mov	qword ptr end_stack+0,rsi 
 
 	mov	r10,neg_heap_p3+0
 	mov	r11,heap_size_64_65+0
 	mov	r13,qword ptr end_stack+0
 	mov	r14,0
+
+ ifdef GC_HOOKS
+	mov	rax,qword ptr gc_hook_before_mark+0
+	test	rax,rax
+	je	no_gc_hook_before_mark
+	call	rax
+no_gc_hook_before_mark:
+ endif
+
+	mov	rax,qword ptr caf_list+0
 
 	test	rax,rax 
 	je	_end_mark_cafs
@@ -161,6 +169,14 @@ finalizer_not_used_after_mark:
 
 end_finalizers_after_mark:
 	mov	qword ptr [rdx],rbp 
+
+ ifdef GC_HOOKS
+	mov	rax,qword ptr gc_hook_after_mark+0
+	test	rax,rax
+	je	no_gc_hook_after_mark
+	call	rax
+no_gc_hook_after_mark:
+ endif
 
 	call	add_garbage_collect_time
 

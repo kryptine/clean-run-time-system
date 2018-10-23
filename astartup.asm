@@ -364,6 +364,37 @@ __start_address	dq 0
 ;	DD	000000009H
 ;	DD	imagerel(clean_exception_handler)
 
+ ifdef GC_HOOKS
+	align(1 shl  3)
+	public gc_hook_before_copy
+gc_hook_before_copy label ptr
+	dq	0
+	public gc_hook_after_copy
+gc_hook_after_copy label ptr
+	dq	0
+	public gc_hook_before_mark
+gc_hook_before_mark label ptr
+	dq	0
+	public gc_hook_before_mark_prefetch
+gc_hook_before_mark_prefetch label ptr
+	dq	0
+	public gc_hook_after_mark
+gc_hook_after_mark label ptr
+	dq	0
+	public gc_hook_before_compact
+gc_hook_before_compact label ptr
+	dq	0
+	public gc_hook_between_mark_and_compact
+gc_hook_between_mark_and_compact label ptr
+	dq	0
+	public gc_hook_after_compact
+gc_hook_after_compact label ptr
+	dq	0
+	public gc_hook_after_call_finalizers
+gc_hook_after_call_finalizers label ptr
+	dq	0
+ endif
+
 _DATA	ends
 	_TEXT segment
 
@@ -2934,6 +2965,13 @@ call_finalizers_lp:
  endif
 
 end_call_finalizers:
+ ifdef GC_HOOKS
+	mov	rax,gc_hook_after_call_finalizers+0
+	test	rax,rax
+	je	no_gc_hook_after_call_finalizers
+	jmp	rax
+no_gc_hook_after_call_finalizers:
+ endif
 	ret
 
 copy_to_compact_with_alloc_in_extra_heap:

@@ -23,8 +23,6 @@ pmark:
 
 	lea	rsi,(-4000)[rsp]
 
-	mov	rax,qword ptr caf_list+0
-
 	mov	qword ptr end_stack+0,rsi
 
 	mov	r15,0
@@ -34,6 +32,16 @@ pmark:
 	mov	r11,heap_size_64_65+0
 	mov	r13,qword ptr end_stack+0
 	mov	r14,0
+
+ ifdef GC_HOOKS
+	mov	rax,gc_hook_before_mark_prefetch+0
+	test	rax,rax
+	je	no_gc_hook_before_mark_prefetch
+	call	rax
+no_gc_hook_before_mark_prefetch:
+ endif
+
+	mov	rax,qword ptr caf_list+0
 
 	test	rax,rax
 	je	end_pmark_cafs

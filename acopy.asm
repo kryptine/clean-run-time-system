@@ -12,6 +12,14 @@ COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP = 1
 
 	mov	qword ptr (heap2_begin_and_end+8)+0,rsi 
 
+ ifdef GC_HOOKS
+	mov	rax,qword ptr gc_hook_before_copy+0
+	test	rax,rax
+	je	no_gc_hook_before_copy
+	call	rax
+no_gc_hook_before_copy:
+ endif
+
 	mov	rax,qword ptr caf_list+0
 	test	rax,rax 
 	je	end_copy_cafs
@@ -1429,4 +1437,13 @@ finalizer_not_used_after_copy:
 
 end_finalizers_after_copy:
 	mov	qword ptr [rcx],rbp 
-	mov	qword ptr [rdx],rbp 
+	mov	qword ptr [rdx],rbp
+
+ ifdef GC_HOOKS
+	mov	rax,qword ptr gc_hook_after_copy+0
+	test	rax,rax
+	je	no_gc_hook_after_copy
+	call	rax
+no_gc_hook_after_copy:
+ endif
+
