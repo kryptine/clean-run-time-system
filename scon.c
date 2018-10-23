@@ -9,7 +9,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/time.h>
-#if defined (SOLARIS) || (defined (LINUX) && defined (ARM))
+#ifndef MACH_O64
 # include <unistd.h>
 #endif
 
