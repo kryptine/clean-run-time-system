@@ -159,9 +159,9 @@ end_finalizers_after_compact1:
 finalizer_list_already_reversed:
 finalizer_list_empty:
 
-	lea	rbp,[rip+free_finalizer_list]
+	lea	rsi,[rip+free_finalizer_list]
 	lea	r9,[rip+__Nil-8]
-	cmp	qword ptr [rbp],r9
+	cmp	qword ptr [rsi],r9
 	je	free_finalizer_list_empty
 
 	lea	r9,[rip+free_finalizer_list+8]
