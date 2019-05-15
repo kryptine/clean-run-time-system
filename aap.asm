@@ -1300,7 +1300,7 @@ add_empty_node_16:
 add_empty_node_12:
 	mov	d1,2
 add_empty_node_12_:
-	sub	d7,2
+	sub	d7,3
 	jb	add_empty_node_12_gc
 add_empty_node_12_gc_:
 	mov	d0,a5
