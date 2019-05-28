@@ -542,7 +542,7 @@ _large_tuple_or_record:
 
 	movsxd	rbp,dword ptr [rax-8]
 	add	rax,rbp
-	lea	rbp,[rip+__indirection]
+	lea	rbp,[rip+e__system__nind]
 	mov	qword ptr [rcx-8],rbp
 	movzx	eax,word ptr [rax+4-8]
 	mov	rbp,rcx
@@ -563,7 +563,7 @@ _mark_tuple_selector_node_2:
 _small_tuple_or_record:
 	movsxd	rbp,dword ptr [rax-8]
 	add	rax,rbp
-	lea	rbp,[rip+__indirection]
+	lea	rbp,[rip+e__system__nind]
 	mov	qword ptr [rcx-8],rbp
 	movzx	eax,word ptr [rax+4-8]
 	mov	rbp,rcx
@@ -599,7 +599,7 @@ _mark_record_selector_node_1:
 
 	movsxd	rbp,dword ptr [rax-8]
 	add	rax,rbp
-	lea	rbp,[rip+__indirection]
+	lea	rbp,[rip+e__system__nind]
 	mov	qword ptr [rcx-8],rbp
 	movzx	eax,word ptr [rax+4-8]
 	mov	rbp,rcx
@@ -1264,7 +1264,7 @@ __large_tuple_or_record:
 
 	movsxd	rdx,dword ptr [rax-8]
 	add	rax,rdx
-	lea	rdx,[rip+__indirection]
+	lea	rdx,[rip+e__system__nind]
 	pop	rbx
 
 	mov	qword ptr [rcx-8],rdx
@@ -1286,7 +1286,7 @@ __mark_tuple_selector_node_2:
 __small_tuple_or_record:
 	movsxd	rdx,dword ptr [rax-8]
 	add	rax,rdx
-	lea	rdx,[rip+__indirection]
+	lea	rdx,[rip+e__system__nind]
 	pop	rbx 
 
 	mov	qword ptr [rcx-8],rdx
@@ -1334,7 +1334,7 @@ __mark_record_selector_node_1:
 __small_record:
 	movsxd	rdx,dword ptr [rax-8]
 	add	rax,rdx
-	lea	rdx,[rip+__indirection]
+	lea	rdx,[rip+e__system__nind]
 	pop	rbx 
 
 	mov	qword ptr [rcx-8],rdx

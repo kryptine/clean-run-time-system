@@ -515,7 +515,7 @@ rmark_large_tuple_or_record:
 	movl	-12(a1,d0),a0
 	pop	a1
 	movl	a0,(a3)
-	movl	$__indirection,-4(a1)
+	movl	$e__system__nind,-4(a1)
 	movl	a0,(a1)
 	jmp	rmark_node_d1
 
@@ -523,7 +523,7 @@ rmark_tuple_selector_node_2:
 	movl	(a1),a0
 	pop	a1
 	movl	a0,(a3)
-	movl	$__indirection,-4(a1)
+	movl	$e__system__nind,-4(a1)
 	movl	a0,(a1)
 	jmp	rmark_node_d1
 #else
@@ -555,7 +555,7 @@ rmark_small_tuple_or_record:
 
 	movl	pointer_compare_address,d1
 
-	movl	$__indirection,-4(a1)
+	movl	$e__system__nind,-4(a1)
 	movl	a0,(a1)
 	jmp	rmark_node_d1
 #endif
@@ -620,7 +620,7 @@ rmark_tuple_or_record_selector_node_2:
 	movl	(a1,d0),a0
 	pop	a1
 	movl	a0,(a3)
-	movl	$__indirection,-4(a1)
+	movl	$e__system__nind,-4(a1)
 	movl	a0,(a1)
 	jmp	rmark_node_d1
 #else

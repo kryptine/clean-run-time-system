@@ -3500,7 +3500,7 @@ eval_fill2:
  ifdef PIC
 	public	eval_upd_0_
 eval_upd_0_:
-	lea	r8,__indirection+0
+	lea	r8,e__system__nind+0
 	mov	qword ptr [rdx],r8
 	mov	8[rdx],rcx 
 	ret
@@ -3512,10 +3512,10 @@ eval_upd_0_:
  endif
 eval_upd_0:
  ifdef PIC
-	lea	r8,__indirection+0
+	lea	r8,e__system__nind+0
 	mov	qword ptr [rdx],r8
  else
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
  endif
 	mov	8[rdx],rcx 
 	jmp	rbp
@@ -3523,7 +3523,7 @@ eval_upd_0:
  ifdef PIC
 	public	eval_upd_1_
 eval_upd_1_:
-	lea	r8,__indirection+0
+	lea	r8,e__system__nind+0
 	mov	qword ptr [rdx],r8
 	mov	rax,8[rdx]
 	mov	8[rdx],rcx 
@@ -3537,10 +3537,10 @@ eval_upd_1_:
  endif
 eval_upd_1:
  ifdef PIC
-	lea	r8,__indirection+0
+	lea	r8,e__system__nind+0
 	mov	qword ptr [rdx],r8
  else
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
  endif
 	mov	rax,8[rdx]
 	mov	8[rdx],rcx 
@@ -3550,7 +3550,7 @@ eval_upd_1:
  ifdef PIC
 	public	eval_upd_2_
 eval_upd_2_:
-	lea	r8,__indirection+0
+	lea	r8,e__system__nind+0
 	mov	qword ptr [rdx],r8
 	mov	r8,8[rdx]
 	mov	8[rdx],rcx
@@ -3564,10 +3564,10 @@ eval_upd_2_:
  endif
 eval_upd_2:
  ifdef PIC
-	lea	r8,__indirection+0
+	lea	r8,e__system__nind+0
 	mov	qword ptr [rdx],r8
  else
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
  endif
 	mov	r8,8[rdx]
 	mov	8[rdx],rcx
@@ -3577,7 +3577,7 @@ eval_upd_2:
  ifdef PIC
  	public eval_upd_3_
 eval_upd_3_:
-	lea	r8,__indirection+0
+	lea	r8,e__system__nind+0
 	mov	qword ptr [rdx],r8
 	mov	r8,8[rdx]
 	mov	8[rdx],rcx
@@ -3594,10 +3594,10 @@ eval_upd_3_:
  endif
 eval_upd_3:
  ifdef PIC
-	lea	r8,__indirection+0
+	lea	r8,e__system__nind+0
 	mov	qword ptr [rdx],r8
  else
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
  endif
 	mov	r8,8[rdx]
 	mov	8[rdx],rcx
@@ -3610,7 +3610,7 @@ eval_upd_3:
  ifdef PIC
  	public eval_upd_4_
 eval_upd_4_:
-	lea	r8,__indirection+0
+	lea	r8,e__system__nind+0
 	mov	qword ptr [rdx],r8
 	mov	r8,8[rdx]
 	mov	8[rdx],rcx 
@@ -3629,10 +3629,10 @@ eval_upd_4_:
  endif
 eval_upd_4:
  ifdef PIC
-	lea	r8,__indirection+0
+	lea	r8,e__system__nind+0
 	mov	qword ptr [rdx],r8
  else
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
  endif
 	mov	r8,8[rdx]
 	mov	8[rdx],rcx 
@@ -3647,7 +3647,7 @@ eval_upd_4:
  ifdef PIC
  	public eval_upd_5_
 eval_upd_5_:
-	lea	r8,__indirection+0
+	lea	r8,e__system__nind+0
 	mov	qword ptr [rdx],r8
 	mov	r8,8[rdx]
 	mov	[rsi],rcx 
@@ -3668,10 +3668,10 @@ eval_upd_5_:
  endif
 eval_upd_5:
  ifdef PIC
-	lea	r8,__indirection+0
+	lea	r8,e__system__nind+0
 	mov	qword ptr [rdx],r8
  else
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
  endif
 	mov	r8,8[rdx]
 	mov	[rsi],rcx 
@@ -3688,7 +3688,7 @@ eval_upd_5:
  ifdef PIC
  	public eval_upd_6_
 eval_upd_6_:
-	lea	r8,__indirection+0
+	lea	r8,e__system__nind+0
 	mov	qword ptr [rdx],r8
 	mov	r8,8[rdx]
 	mov	[rsi],rcx 
@@ -3711,10 +3711,10 @@ eval_upd_6_:
  endif
 eval_upd_6:
  ifdef PIC
-	lea	r8,__indirection+0
+	lea	r8,e__system__nind+0
 	mov	qword ptr [rdx],r8
  else
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
  endif
 	mov	r8,8[rdx]
 	mov	[rsi],rcx 
@@ -3736,7 +3736,7 @@ eval_upd_7_:
 	mov	rax,0
 	mov	rbx,40
 eval_upd_n_:
-	lea	r8,__indirection+0
+	lea	r8,e__system__nind+0
 	mov	qword ptr [rdx],r8
 	mov	r8,8[rdx]
 	mov	[rsi],rcx 
@@ -3772,10 +3772,10 @@ eval_upd_7:
 	mov	rbx,40
 eval_upd_n:
  ifdef PIC
-	lea	r8,__indirection+0
+	lea	r8,e__system__nind+0
 	mov	qword ptr [rdx],r8
  else
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
  endif
 	mov	r8,8[rdx]
 	mov	[rsi],rcx 

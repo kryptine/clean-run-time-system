@@ -836,7 +836,7 @@ copy_selector_2:
 	movl	-8(a0),a0
 
 	movzwl	4(a0),a0
-	movl	$__indirection,(a1)
+	movl	$e__system__nind,(a1)
 
 	cmpl	$8,a0
 	jl	copy_selector_2_1
@@ -874,7 +874,7 @@ copy_selector_2_:
 	movl	copy_sp_offset_5+4(sp),d1
 
 	movzwl	4(a0),a0
-	movl	$__indirection,(a1)
+	movl	$e__system__nind,(a1)
 
 	movl	(d0,a0),a0
 	movl	a0,4(a1)
@@ -928,7 +928,7 @@ copy_selector_2__:
 copy_record_selector_2_:
 	movl	-8(a0),d0
 	movl	4(a1),a0
-	movl	$__indirection,(a1)
+	movl	$e__system__nind,(a1)
 
 	movzwl	4(d0),d0
 	cmpl	$8,d0

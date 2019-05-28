@@ -534,7 +534,7 @@ rmark_large_tuple_or_record:
 	movzx	eax,word ptr 4[rax]
 	mov	rbx,r12
 
-	mov	qword ptr (-8)[rcx],offset __indirection
+	mov	qword ptr (-8)[rcx],offset e__system__nind
 
 	cmp	rax,16
 	jl	rmark_tuple_or_record_selector_node_2
@@ -582,7 +582,7 @@ rmark_small_tuple_or_record:
 
 	mov	rbx,r12
 
-	mov	qword ptr (-8)[rdx],offset __indirection
+	mov	qword ptr (-8)[rdx],offset e__system__nind
 	mov	qword ptr [rdx],rcx 
 	jmp	rmark_node_d1
  endif
@@ -643,7 +643,7 @@ rmark_small_tuple_or_record:
 	movzx	eax,word ptr 4[rax]
 	mov	rbx,r12
 
-	mov	qword ptr (-8)[rcx],offset __indirection
+	mov	qword ptr (-8)[rcx],offset e__system__nind
 
 	cmp	rax,16
 	jle	rmark_tuple_or_record_selector_node_2

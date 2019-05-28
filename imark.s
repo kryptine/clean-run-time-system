@@ -655,7 +655,7 @@ _large_tuple_or_record:
 
 #ifdef NEW_DESCRIPTORS
 	movl	-8(d0),d0
-	movl	$__indirection,-4(a0)
+	movl	$e__system__nind,-4(a0)
 	movl	a0,a2
 
 	movzwl	4(d0),d0
@@ -676,7 +676,7 @@ _mark_tuple_selector_node_2:
 _small_tuple_or_record:
 #ifdef NEW_DESCRIPTORS
 	movl	-8(d0),d0
-	movl	$__indirection,-4(a0)
+	movl	$e__system__nind,-4(a0)
 	movl	a0,a2
 
 	movzwl	4(d0),d0
@@ -690,7 +690,7 @@ _mark_tuple_selector_node_1:
 	call	*4(d0)
 	popl	a1
 	
-	movl	$__indirection,-4(a1)
+	movl	$e__system__nind,-4(a1)
 	movl	a0,(a1)
 #endif
 	jmp	_mark_node
@@ -719,7 +719,7 @@ _mark_record_selector_node_1:
 	jne	_mark_node3
 
 	movl	-8(d0),d0
-	movl	$__indirection,-4(a0)
+	movl	$e__system__nind,-4(a0)
 	movl	a0,a2
 
 	movzwl	4(d0),d0
@@ -1390,7 +1390,7 @@ __large_tuple_or_record:
 #ifdef NEW_DESCRIPTORS
 	movl	-8(d0),d0
 	movl	(a0),a1
-	movl	$__indirection,-4(a0)
+	movl	$e__system__nind,-4(a0)
 	movl	a0,a2
 
 	popl	d1
@@ -1415,7 +1415,7 @@ __small_tuple_or_record:
 #ifdef NEW_DESCRIPTORS
 	movl	-8(d0),d0
 	movl	(a0),a1
-	movl	$__indirection,-4(a0)
+	movl	$e__system__nind,-4(a0)
 	movl	a0,a2
 
 	popl	d1
@@ -1433,7 +1433,7 @@ __mark_tuple_selector_node_1:
 	call	*4(d0)
 	popl	a1
 
-	movl	$__indirection,-4(a1)
+	movl	$e__system__nind,-4(a1)
 	movl	a0,(a1)
 #endif
 	jmp	__mark_node
@@ -1471,7 +1471,7 @@ __mark_record_selector_node_1:
 __small_record:
 	movl	-8(d0),d0
 	movl	(a0),a1
-	movl	$__indirection,-4(a0)
+	movl	$e__system__nind,-4(a0)
 	movl	a0,a2
 
 	popl	d1

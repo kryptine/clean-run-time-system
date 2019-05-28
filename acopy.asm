@@ -959,11 +959,11 @@ copy_selector_2:
 
  ifdef PIC
 	movzx	d3,word ptr (4-8)[rcx+d3]
-	lea	r9,__indirection+0
+	lea	r9,e__system__nind+0
 	mov	qword ptr [rdx],r9
  else
 	movzx	d3,word ptr 4[d3]
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
  endif
 
 	cmp	d3,16
@@ -990,11 +990,11 @@ copy_selector_2_2:
 copy_selector_2_:
   ifdef PIC
 	movzx	d3,word ptr (4-8)[rcx+d3]
-	lea	r9,__indirection+0
+	lea	r9,e__system__nind+0
 	mov	qword ptr [rdx],r9
   else
 	movzx	d3,word ptr 4[d3]
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
   endif
 
 	mov	rcx,qword ptr [rax+d3]
@@ -1028,7 +1028,7 @@ copy_selector_2_:
 	pop	rbp 
 	pop	rdx 
 
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
 	mov	8[rdx],rcx
 
 	mov	rdx,rcx 
@@ -1097,11 +1097,11 @@ copy_selector_2__:
 copy_record_selector_2_:
  ifdef PIC
 	movzx	d3,word ptr (4-8)[rcx+d3]
-	lea	r9,__indirection+0
+	lea	r9,e__system__nind+0
 	mov	qword ptr [rdx],r9
  else
 	movzx	d3,word ptr 4[d3]
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
  endif
 
 	cmp	d3,16

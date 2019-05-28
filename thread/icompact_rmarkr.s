@@ -367,14 +367,14 @@ rmarkr_large_tuple_or_record:
 	je	rmarkr_tuple_selector_node_2
 	movl	-12(a1,d0),a0
 	pop	a1
-	movl	$__indirection,-4(a1)
+	movl	$e__system__nind,-4(a1)
 	movl	a0,(a1)
 	jmp	rmarkr_node
 
 rmarkr_tuple_selector_node_2:
 	movl	(a1),a0
 	pop	a1
-	movl	$__indirection,-4(a1)
+	movl	$e__system__nind,-4(a1)
 	movl	a0,(a1)
 	jmp	rmarkr_node
 
@@ -438,7 +438,7 @@ rmarkr_small_tuple_or_record:
 rmarkr_tuple_or_record_selector_node_2:
 	movl	(a1,d0),a0
 	pop	a1
-	movl	$__indirection,-4(a1)
+	movl	$e__system__nind,-4(a1)
 	movl	a0,(a1)
 	jmp	rmarkr_node
 

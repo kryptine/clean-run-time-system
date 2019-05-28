@@ -3006,7 +3006,7 @@ eval_fill2:
 	movl	d0,a2
 #endif
 eval_upd_0:
-	movl	$__indirection,(a1)
+	movl	$e__system__nind,(a1)
 	mov	a0,4(a1)
 	jmp	*a2
 
@@ -3015,7 +3015,7 @@ eval_upd_0:
 	movl	d0,a2
 #endif
 eval_upd_1:
-	movl	$__indirection,(a1)
+	movl	$e__system__nind,(a1)
 	mov	4(a1),d0
 	mov	a0,4(a1)
 	mov	d0,a1
@@ -3026,7 +3026,7 @@ eval_upd_1:
 	movl	d0,a2
 #endif
 eval_upd_2:
-	movl	$__indirection,(a1)
+	movl	$e__system__nind,(a1)
 	mov	4(a1),d0
 	mov	a0,4(a1)
 	mov	a0,(a3)
@@ -3040,7 +3040,7 @@ eval_upd_2:
 	movl	d0,a2
 #endif
 eval_upd_3:
-	movl	$__indirection,(a1)
+	movl	$e__system__nind,(a1)
 	mov	4(a1),d0
 	mov	a0,4(a1)
 	mov	a0,(a3)
@@ -3056,7 +3056,7 @@ eval_upd_3:
 	movl	d0,a2
 #endif
 eval_upd_4:
-	movl	$__indirection,(a1)
+	movl	$e__system__nind,(a1)
 	mov	4(a1),d0
 	mov	a0,4(a1)
 	mov	a0,(a3)
@@ -3074,7 +3074,7 @@ eval_upd_4:
 	movl	d0,a2
 #endif
 eval_upd_5:
-	movl	$__indirection,(a1)
+	movl	$e__system__nind,(a1)
 	mov	4(a1),d0
 	mov	a0,(a3)
 	mov	a0,4(a1)
@@ -3094,7 +3094,7 @@ eval_upd_5:
 	movl	d0,a2
 #endif
 eval_upd_6:
-	movl	$__indirection,(a1)
+	movl	$e__system__nind,(a1)
 	mov	4(a1),d0
 	mov	a0,(a3)
 	mov	a0,4(a1)
@@ -3119,7 +3119,7 @@ eval_upd_7:
 	mov	$0,d0
 	mov	$20,d1
 eval_upd_n:
-	movl	$__indirection,(a1)
+	movl	$e__system__nind,(a1)
 	push	4(a1)
 	mov	a0,(a3)
 	mov	a0,4(a1)
@@ -4720,7 +4720,7 @@ o__S_P2_2:
 
 ea__S_P2:
 	mov	4(a1),d0
-	movl	$__indirection,(a1)
+	movl	$e__system__nind,(a1)
 	mov	a0,4(a1)
 	mov	d0,a1
 	mov	(a1),d0

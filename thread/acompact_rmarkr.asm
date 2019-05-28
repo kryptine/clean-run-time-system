@@ -404,14 +404,14 @@ rmarkr_large_tuple_or_record:
 	je	rmarkr_tuple_selector_node_2
 	mov	rcx,qword ptr (-24)[rdx+rax]
 	pop	rdx
-	mov	qword ptr (-8)[rdx],offset __indirection
+	mov	qword ptr (-8)[rdx],offset e__system__nind
 	mov	qword ptr [rdx],rcx
 	jmp	rmarkr_node
 
 rmarkr_tuple_selector_node_2:
 	mov	rcx,qword ptr [rdx]
 	pop	rdx
-	mov	qword ptr (-8)[rdx],offset __indirection
+	mov	qword ptr (-8)[rdx],offset e__system__nind
 	mov	qword ptr [rdx],rcx
 	jmp	rmarkr_node
  else
@@ -440,7 +440,7 @@ rmarkr_small_tuple_or_record:
 	pop	rbp
 	pop	rdx
 
-	mov	qword ptr (-8)[rdx],offset __indirection
+	mov	qword ptr (-8)[rdx],offset e__system__nind
 	mov	qword ptr [rdx],rcx
 	jmp	rmarkr_node
  endif
@@ -513,7 +513,7 @@ rmarkr_small_tuple_or_record:
 rmarkr_tuple_or_record_selector_node_2:
 	mov	rcx,qword ptr [rdx+rax]
 	pop	rdx
-	mov	qword ptr (-8)[rdx],offset __indirection
+	mov	qword ptr (-8)[rdx],offset e__system__nind
 	mov	qword ptr [rdx],rcx
 	jmp	rmarkr_node
  else

@@ -3998,7 +3998,7 @@ eval_fill2:
 	mov	rbp,rax
  endif
 eval_upd_0:
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
 	mov	8[rdx],rcx 
 	jmp	rbp
 
@@ -4007,7 +4007,7 @@ eval_upd_0:
 	mov	rbp,rax
  endif
 eval_upd_1:
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
 	mov	rax,8[rdx]
 	mov	8[rdx],rcx 
 	mov	rdx,rax 
@@ -4018,7 +4018,7 @@ eval_upd_1:
 	mov	rbp,rax
  endif
 eval_upd_2:
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
 	mov	r8,8[rdx]
 	mov	8[rdx],rcx
 	mov	rdx,16[rdx]
@@ -4029,7 +4029,7 @@ eval_upd_2:
 	mov	rbp,rax
  endif
 eval_upd_3:
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
 	mov	r8,8[rdx]
 	mov	8[rdx],rcx
 	mov	[rsi],rcx
@@ -4043,7 +4043,7 @@ eval_upd_3:
 	mov	rbp,rax
  endif
 eval_upd_4:
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
 	mov	r8,8[rdx]
 	mov	8[rdx],rcx 
 	mov	[rsi],rcx 
@@ -4059,7 +4059,7 @@ eval_upd_4:
 	mov	rbp,rax
  endif
 eval_upd_5:
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
 	mov	r8,8[rdx]
 	mov	[rsi],rcx 
 	mov	8[rdx],rcx 
@@ -4077,7 +4077,7 @@ eval_upd_5:
 	mov	rbp,rax
  endif
 eval_upd_6:
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
 	mov	r8,8[rdx]
 	mov	[rsi],rcx 
 	mov	8[rdx],rcx 
@@ -4100,7 +4100,7 @@ eval_upd_7:
 	mov	rax,0
 	mov	rbx,40
 eval_upd_n:
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
 	mov	r8,8[rdx]
 	mov	[rsi],rcx 
 	mov	8[rdx],rcx 

@@ -368,7 +368,7 @@ rmarkr_large_tuple_or_record:
 	je	rmarkr_tuple_selector_node_2
 	mov	rcx,qword ptr (-24)[rdx+rax]
 	pop	rdx
-	lea	rax,__indirection[rip]
+	lea	rax,e__system__nind[rip]
 	mov	qword ptr (-8)[rdx],rax
 	mov	qword ptr [rdx],rcx
 	att_jmp	rmarkr_node
@@ -376,7 +376,7 @@ rmarkr_large_tuple_or_record:
 rmarkr_tuple_selector_node_2:
 	mov	rcx,qword ptr [rdx]
 	pop	rdx
-	lea	rax,__indirection[rip]
+	lea	rax,e__system__nind[rip]
 	mov	qword ptr (-8)[rdx],rax
 	mov	qword ptr [rdx],rcx
 	att_jmp	rmarkr_node
@@ -444,7 +444,7 @@ rmarkr_small_tuple_or_record:
 rmarkr_tuple_or_record_selector_node_2:
 	mov	rcx,qword ptr [rdx+rax]
 	pop	rdx
-	lea	rax,__indirection[rip]
+	lea	rax,e__system__nind[rip]
 	mov	qword ptr (-8)[rdx],rax
 	mov	qword ptr [rdx],rcx
 	att_jmp	rmarkr_node

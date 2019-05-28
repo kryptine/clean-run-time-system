@@ -910,7 +910,7 @@ copy_selector_2:
 	att_jne	copy_arity_1_node2_
 
 	movzx	r11,word ptr [rcx+r11+4-8]
-	lea	r9,[rip+__indirection]
+	lea	r9,[rip+e__system__nind]
 	mov	qword ptr [rdx],r9
 
 	cmp	r11,16
@@ -936,7 +936,7 @@ copy_selector_2_2:
 
 copy_selector_2_:
 	movzx	r11,word ptr [rcx+r11+4-8]
-	lea	r9,[rip+__indirection]
+	lea	r9,[rip+e__system__nind]
 	mov	qword ptr [rdx],r9
 
 	mov	rcx,qword ptr [rax+r11]
@@ -995,7 +995,7 @@ copy_selector_2__:
  .endif
 copy_record_selector_2_:
 	movzx	r11,word ptr [rcx+r11+4-8]
-	lea	r9,[rip+__indirection]
+	lea	r9,[rip+e__system__nind]
 	mov	qword ptr [rdx],r9
 
 	cmp	r11,16

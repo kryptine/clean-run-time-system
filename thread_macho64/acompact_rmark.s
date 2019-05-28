@@ -446,7 +446,7 @@ rmark_large_tuple_or_record:
 	movzx	eax,word ptr (4-8)[rax]
 	mov	rbx,r12
 
-	lea	r11,__indirection[rip]
+	lea	r11,e__system__nind[rip]
 	mov	qword ptr (-8)[rcx],r11
 
 	cmp	rax,16
@@ -517,7 +517,7 @@ rmark_small_tuple_or_record:
 	movzx	eax,word ptr (4-8)[rax]
 	mov	rbx,r12
 
-	lea	r11,__indirection[rip]
+	lea	r11,e__system__nind[rip]
 	mov	qword ptr (-8)[rcx],r11
 
 	cmp	rax,16

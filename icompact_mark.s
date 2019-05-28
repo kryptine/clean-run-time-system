@@ -408,7 +408,7 @@ small_tuple_or_record:
 	pop	a2
 	pop	a1
 
-	movl	$__indirection,-4(a1)
+	movl	$e__system__nind,-4(a1)
 	movl	a0,(a1)
 	
 	jmp	mark_node

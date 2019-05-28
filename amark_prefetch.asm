@@ -412,7 +412,7 @@ pmark_large_tuple_or_record:
   else
 	mov	eax,(-8)[rax]
   endif
-	lea	rbp,__indirection+0
+	lea	rbp,e__system__nind+0
 	mov	qword ptr (-8)[rcx],rbp
   ifdef PIC
 	movzx	eax,word ptr (4-8)[rax]
@@ -443,7 +443,7 @@ pmark_small_tuple_or_record:
   else
 	mov	eax,(-8)[rax]
   endif
-	lea	rbp,__indirection+0
+	lea	rbp,e__system__nind+0
 	mov	qword ptr (-8)[rcx],rbp
   ifdef PIC
 	movzx	eax,word ptr (4-8)[rax]
@@ -462,7 +462,7 @@ pmark_tuple_selector_node_1:
 	call	near ptr rax
 	pop	rdx
 	
-	lea	r9,__indirection
+	lea	r9,e__system__nind
 	mov	qword ptr (-8)[rdx],r9
 	mov	qword ptr [rdx],rcx
  endif
@@ -503,7 +503,7 @@ pmark_record_selector_node_1:
  else
 	mov	eax,(-8)[rax]
  endif
-	lea	rbp,__indirection+0
+	lea	rbp,e__system__nind+0
 	mov	qword ptr (-8)[rcx],rbp
  ifdef PIC
 	movzx	eax,word ptr (4-8)[rax]
@@ -1254,7 +1254,7 @@ pmarkr_large_tuple_or_record:
   else
 	mov	eax,dword ptr (-8)[rax]
   endif
-	lea	rdx,__indirection+0
+	lea	rdx,e__system__nind+0
 	pop	rbx 
 
 	mov	qword ptr (-8)[rcx],rdx
@@ -1287,7 +1287,7 @@ pmarkr_small_tuple_or_record:
   else
 	mov	eax,(-8)[rax]
   endif
-	lea	rdx,__indirection+0
+	lea	rdx,e__system__nind+0
 	pop	rbx 
 
 	mov	qword ptr (-8)[rcx],rdx
@@ -1311,7 +1311,7 @@ pmarkr_tuple_selector_node_1:
 	call	near ptr rax
 	pop	rdx 
 
-	mov	qword ptr (-8)[rdx],offset __indirection
+	mov	qword ptr (-8)[rdx],offset e__system__nind
 	mov	qword ptr [rdx],rcx 
  endif
 	jmp	pmarkr_node
@@ -1370,7 +1370,7 @@ pmarkr_small_record:
   else
 	mov	eax,dword ptr (-8)[rax]
   endif
-	lea	rdx,__indirection+0
+	lea	rdx,e__system__nind+0
 	pop	rbx 
 
 	mov	qword ptr (-8)[rcx],rdx

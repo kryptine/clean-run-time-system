@@ -1891,7 +1891,7 @@ build_node_gc:
 	.globl	apupd_30
 	.globl	apupd_31
 	.globl	apupd_32
-	.globl	__indirection
+	.globl	e__system__nind
 
 apupd_1:
 	cmpl	$apupd_upd,(sp)
@@ -1901,7 +1901,7 @@ apupd_1:
 	movl	-4(a3),a2
 	movl	-8(a3),d0
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 ap_1:
 	movl	(a1),a2
@@ -1917,7 +1917,7 @@ apupd_2:
 	movl	-4(a3),d1
 	movl	d1,-8(a3)
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_2
 
@@ -1933,7 +1933,7 @@ apupd_3:
 	movl	-4(a3),d1
 	movl	d1,-8(a3)
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_3
 
@@ -1951,7 +1951,7 @@ apupd_4:
 	movl	-4(a3),d1
 	movl	d1,-8(a3)
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_4
 
@@ -1971,7 +1971,7 @@ apupd_5:
 	movl	-4(a3),d1
 	movl	d1,-8(a3)
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_5
 
@@ -1993,7 +1993,7 @@ apupd_6:
 	movl	-4(a3),d1
 	movl	d1,-8(a3)
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_6
 
@@ -2006,7 +2006,7 @@ apupd_7:
 	movl	-32(a3),d0
 	call	move_8
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_7
 
@@ -2019,7 +2019,7 @@ apupd_8:
 	movl	-36(a3),d0
 	call	move_9
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_8
 
@@ -2032,7 +2032,7 @@ apupd_9:
 	movl	-40(a3),d0
 	call	move_10
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_9
 
@@ -2045,7 +2045,7 @@ apupd_10:
 	movl	-44(a3),d0
 	call	move_11
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_10
 
@@ -2058,7 +2058,7 @@ apupd_11:
 	movl	-48(a3),d0
 	call	move_12
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_11
 
@@ -2071,7 +2071,7 @@ apupd_12:
 	movl	-52(a3),d0
 	call	move_13
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_12
 
@@ -2084,7 +2084,7 @@ apupd_13:
 	movl	-56(a3),d0
 	call	move_14
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_13
 
@@ -2097,7 +2097,7 @@ apupd_14:
 	movl	-60(a3),d0
 	call	move_15
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_14
 
@@ -2110,7 +2110,7 @@ apupd_15:
 	movl	-64(a3),d0
 	call	move_16
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_15
 
@@ -2123,7 +2123,7 @@ apupd_16:
 	movl	-68(a3),d0
 	call	move_17
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_16
 
@@ -2136,7 +2136,7 @@ apupd_17:
 	movl	-72(a3),d0
 	call	move_18
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_17
 
@@ -2149,7 +2149,7 @@ apupd_18:
 	movl	-76(a3),d0
 	call	move_19
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_18
 
@@ -2162,7 +2162,7 @@ apupd_19:
 	movl	-80(a3),d0
 	call	move_20
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_19
 
@@ -2175,7 +2175,7 @@ apupd_20:
 	movl	-84(a3),d0
 	call	move_21
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_20
 
@@ -2188,7 +2188,7 @@ apupd_21:
 	movl	-88(a3),d0
 	call	move_22
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_21
 
@@ -2201,7 +2201,7 @@ apupd_22:
 	movl	-92(a3),d0
 	call	move_23
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_22
 
@@ -2214,7 +2214,7 @@ apupd_23:
 	movl	-96(a3),d0
 	call	move_24
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_23
 
@@ -2227,7 +2227,7 @@ apupd_24:
 	movl	-100(a3),d0
 	call	move_25
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_24
 
@@ -2240,7 +2240,7 @@ apupd_25:
 	movl	-104(a3),d0
 	call	move_26
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_25
 
@@ -2253,7 +2253,7 @@ apupd_26:
 	movl	-108(a3),d0
 	call	move_27
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_26
 
@@ -2266,7 +2266,7 @@ apupd_27:
 	movl	-112(a3),d0
 	call	move_28
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_27
 
@@ -2279,7 +2279,7 @@ apupd_28:
 	movl	-116(a3),d0
 	call	move_29
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_28
 
@@ -2292,7 +2292,7 @@ apupd_29:
 	movl	-120(a3),d0
 	call	move_30
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_29
 
@@ -2305,7 +2305,7 @@ apupd_30:
 	movl	-124(a3),d0
 	call	move_31
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_30
 
@@ -2318,7 +2318,7 @@ apupd_31:
 	movl	-128(a3),d0
 	call	move_32
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_31
 
@@ -2331,7 +2331,7 @@ apupd_32:
 	movl	-132(a3),d0
 	call	move_33
 	subl	$4,a3
-	movl	$__indirection,(a2)
+	movl	$e__system__nind,(a2)
 	movl	d0,4(a2)
 	jmp	ap_32
 
@@ -2392,7 +2392,7 @@ jmpupd_0:
 	movl	-4(a3),d0
 	movl	-8(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2403,7 +2403,7 @@ jmpupd_1:
 	movl	-4(a3),d0
 	movl	-8(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2414,7 +2414,7 @@ jmpupd_2:
 	movl	-4(a3),d0
 	movl	-8(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2427,7 +2427,7 @@ jmpupd_3:
 	movl	d1,-8(a3)
 	movl	-12(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2442,7 +2442,7 @@ jmpupd_4:
 	movl	d1,-8(a3)
 	movl	-16(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2459,7 +2459,7 @@ jmpupd_5:
 	movl	d1,-8(a3)
 	movl	-20(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2478,7 +2478,7 @@ jmpupd_6:
 	movl	d1,-8(a3)
 	movl	-24(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2490,7 +2490,7 @@ jmpupd_7:
 	call	move_7
 	movl	-28(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2502,7 +2502,7 @@ jmpupd_8:
 	call	move_8
 	movl	-32(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2514,7 +2514,7 @@ jmpupd_9:
 	call	move_9
 	movl	-36(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2526,7 +2526,7 @@ jmpupd_10:
 	call	move_10
 	movl	-40(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2538,7 +2538,7 @@ jmpupd_11:
 	call	move_11
 	movl	-44(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2550,7 +2550,7 @@ jmpupd_12:
 	call	move_12
 	movl	-48(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2562,7 +2562,7 @@ jmpupd_13:
 	call	move_13
 	movl	-52(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2574,7 +2574,7 @@ jmpupd_14:
 	call	move_14
 	movl	-56(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2586,7 +2586,7 @@ jmpupd_15:
 	call	move_15
 	movl	-60(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2598,7 +2598,7 @@ jmpupd_16:
 	call	move_16
 	movl	-64(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2610,7 +2610,7 @@ jmpupd_17:
 	call	move_17
 	movl	-68(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2622,7 +2622,7 @@ jmpupd_18:
 	call	move_18
 	movl	-72(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2634,7 +2634,7 @@ jmpupd_19:
 	call	move_19
 	movl	-76(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2646,7 +2646,7 @@ jmpupd_20:
 	call	move_20
 	movl	-80(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2658,7 +2658,7 @@ jmpupd_21:
 	call	move_21
 	movl	-84(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2670,7 +2670,7 @@ jmpupd_22:
 	call	move_22
 	movl	-88(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2682,7 +2682,7 @@ jmpupd_23:
 	call	move_23
 	movl	-92(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2694,7 +2694,7 @@ jmpupd_24:
 	call	move_24
 	movl	-96(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2706,7 +2706,7 @@ jmpupd_25:
 	call	move_25
 	movl	-100(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2718,7 +2718,7 @@ jmpupd_26:
 	call	move_26
 	movl	-104(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2730,7 +2730,7 @@ jmpupd_27:
 	call	move_27
 	movl	-108(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2742,7 +2742,7 @@ jmpupd_28:
 	call	move_28
 	movl	-112(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2754,7 +2754,7 @@ jmpupd_29:
 	call	move_29
 	movl	-116(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2766,7 +2766,7 @@ jmpupd_30:
 	call	move_30
 	movl	-120(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2778,7 +2778,7 @@ jmpupd_31:
 	call	move_31
 	movl	-124(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 
@@ -2790,7 +2790,7 @@ jmpupd_32:
 	call	move_32
 	movl	-128(a3),d1
 	subl	$4,a3
-	movl	$__indirection,(d0)
+	movl	$e__system__nind,(d0)
 	movl	d1,4(d0)
 	jmp	*a2
 

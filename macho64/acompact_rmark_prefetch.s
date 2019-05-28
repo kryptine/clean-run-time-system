@@ -666,7 +666,7 @@ rmarkp_large_tuple_or_record:
 	movzx	eax,word ptr [rax+4-8]
 	mov	rbx,qword ptr [rip+pointer_compare_address]
 
-	lea	r9,[rip+__indirection]
+	lea	r9,[rip+e__system__nind]
 	mov	qword ptr [rcx-8],r9
 
 	cmp	rax,16
@@ -737,7 +737,7 @@ rmarkp_small_tuple_or_record:
 	movzx	eax,word ptr [rax+4-8]
 	mov	rbx,qword ptr [rip+pointer_compare_address]
 
-	lea	r9,[rip+__indirection]
+	lea	r9,[rip+e__system__nind]
 	mov	qword ptr [rcx-8],r9
 
 	cmp	rax,16

@@ -952,7 +952,7 @@ copy_selector_2:
 	jne	copy_arity_1_node2_
 
 	movzx	d3,word ptr 4[d3]
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
 
 	cmp	d3,16
 	jl	copy_selector_2_1
@@ -977,7 +977,7 @@ copy_selector_2_2:
 
 copy_selector_2_:
 	movzx	d3,word ptr 4[d3]
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
 
 	mov	rcx,qword ptr [rax+d3]
 	mov	qword ptr 8[rdx],rcx
@@ -1010,7 +1010,7 @@ copy_selector_2_:
 	pop	rbp 
 	pop	rdx 
 
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
 	mov	8[rdx],rcx
 
 	mov	rdx,rcx 
@@ -1081,7 +1081,7 @@ copy_selector_2__:
   endif
 copy_record_selector_2_:
 	movzx	d3,word ptr 4[d3]
-	mov	qword ptr [rdx],offset __indirection
+	mov	qword ptr [rdx],offset e__system__nind
 
 	cmp	d3,16
 	jle	copy_record_selector_3

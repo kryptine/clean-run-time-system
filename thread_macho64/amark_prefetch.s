@@ -337,7 +337,7 @@ pmark_large_tuple_or_record:
 
 	movsxd	rbp,dword ptr(-8)[rax]
 	add	rax,rbp
-	lea	rbp,__indirection[rip]
+	lea	rbp,e__system__nind[rip]
 	mov	qword ptr (-8)[rcx],rbp
 	movzx	eax,word ptr (4-8)[rax]
 	mov	rbp,rcx
@@ -358,7 +358,7 @@ pmark_tuple_selector_node_2:
 pmark_small_tuple_or_record:
 	movsxd	rbp,dword ptr(-8)[rax]
 	add	rax,rbp
-	lea	rbp,__indirection[rip]
+	lea	rbp,e__system__nind[rip]
 	mov	qword ptr (-8)[rcx],rbp
 	movzx	eax,word ptr (4-8)[rax]
 	mov	rbp,rcx
@@ -395,7 +395,7 @@ pmark_record_selector_node_1:
 
 	movsxd	rbp,dword ptr(-8)[rax]
 	add	rax,rbp
-	lea	rbp,__indirection[rip]
+	lea	rbp,e__system__nind[rip]
 	mov	qword ptr (-8)[rcx],rbp
 	movzx	eax,word ptr (4-8)[rax]
 	mov	rbp,rcx
@@ -1078,7 +1078,7 @@ pmarkr_large_tuple_or_record:
 
 	movsxd	rdx,dword ptr (-8)[rax]
 	add	rax,rdx
-	lea	rdx,__indirection[rip]
+	lea	rdx,e__system__nind[rip]
 
 	pop	rbx
 	pop	rsi
@@ -1103,7 +1103,7 @@ pmarkr_tuple_selector_node_2:
 pmarkr_small_tuple_or_record:
 	movsxd	rdx,dword ptr(-8)[rax]
 	add	rax,rdx
-	lea	rdx,__indirection[rip]
+	lea	rdx,e__system__nind[rip]
 
 	pop	rbx
 	pop	rsi
@@ -1151,7 +1151,7 @@ pmarkr_record_selector_node_1:
 pmarkr_small_record:
 	movsxd	rdx,dword ptr (-8)[rax]
 	add	rax,rdx
-	lea	rdx,__indirection[rip]
+	lea	rdx,e__system__nind[rip]
 
 	pop	rbx
 	pop	rsi

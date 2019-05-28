@@ -773,10 +773,10 @@ rmarkp_large_tuple_or_record:
 	mov	rbx,qword ptr pointer_compare_address+0
 
  ifdef PIC
-	lea	r9,__indirection+0
+	lea	r9,e__system__nind+0
 	mov	qword ptr (-8)[rcx],r9
  else
-	mov	qword ptr (-8)[rcx],offset __indirection
+	mov	qword ptr (-8)[rcx],offset e__system__nind
  endif
 
 	cmp	rax,16
@@ -821,7 +821,7 @@ rmarkp_small_tuple_or_record:
 
 	mov	rbx,qword ptr pointer_compare_address+0
 
-	mov	qword ptr (-8)[rdx],offset __indirection
+	mov	qword ptr (-8)[rdx],offset e__system__nind
 	mov	qword ptr [rdx],rcx 
 	jmp	rmarkp_node_d1
  endif
@@ -899,10 +899,10 @@ rmarkp_small_tuple_or_record:
 	mov	rbx,qword ptr pointer_compare_address+0
 
  ifdef PIC
-	lea	r9,__indirection+0
+	lea	r9,e__system__nind+0
 	mov	qword ptr (-8)[rcx],r9
  else
-	mov	qword ptr (-8)[rcx],offset __indirection
+	mov	qword ptr (-8)[rcx],offset e__system__nind
  endif
 
 	cmp	rax,16

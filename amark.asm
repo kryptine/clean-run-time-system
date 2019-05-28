@@ -587,7 +587,7 @@ _large_tuple_or_record:
   else
 	mov	eax,(-8)[rax]
   endif
-	lea	rbp,__indirection+0
+	lea	rbp,e__system__nind+0
 	mov	qword ptr (-8)[rcx],rbp
   ifdef PIC
 	movzx	eax,word ptr (4-8)[rax]
@@ -618,7 +618,7 @@ _small_tuple_or_record:
   else
 	mov	eax,(-8)[rax]
   endif
-	lea	rbp,__indirection+0
+	lea	rbp,e__system__nind+0
 	mov	qword ptr (-8)[rcx],rbp
   ifdef PIC
 	movzx	eax,word ptr (4-8)[rax]
@@ -637,7 +637,7 @@ _mark_tuple_selector_node_1:
 	call	near ptr rax
 	pop	rdx 
 
-	lea	r9,__indirection
+	lea	r9,e__system__nind
 	mov	qword ptr (-8)[rdx],r9
 	mov	qword ptr [rdx],rcx 
  endif
@@ -678,7 +678,7 @@ _mark_record_selector_node_1:
   else
 	mov	eax,(-8)[rax]
   endif
-	lea	rbp,__indirection+0
+	lea	rbp,e__system__nind+0
 	mov	qword ptr (-8)[rcx],rbp
   ifdef PIC
 	movzx	eax,word ptr (4-8)[rax]
@@ -882,7 +882,7 @@ _mark_real_int_bool_or_char:
 
  ifdef PIC
 _mark_normal_hnf_0_:
-	or	dword ptr [rdi+rbx*4],esi 
+	or	dword ptr [rdi+rbx*4],esi
  endif
 
 _mark_normal_hnf_0:
@@ -1432,7 +1432,7 @@ __large_tuple_or_record:
   else
 	mov	eax,dword ptr (-8)[rax]
   endif
-	lea	rdx,__indirection+0
+	lea	rdx,e__system__nind+0
 	pop	rbx
 
 	mov	qword ptr (-8)[rcx],rdx
@@ -1464,7 +1464,7 @@ __small_tuple_or_record:
   else
 	mov	eax,dword ptr (-8)[rax]
   endif
-	lea	rdx,__indirection+0
+	lea	rdx,e__system__nind+0
 	pop	rbx 
 
 	mov	qword ptr (-8)[rcx],rdx
@@ -1488,7 +1488,7 @@ __mark_tuple_selector_node_1:
 	call	near ptr rax
 	pop	rdx
 
-	mov	qword ptr (-8)[rdx],offset __indirection
+	mov	qword ptr (-8)[rdx],offset e__system__nind
 	mov	qword ptr [rdx],rcx 
  endif
 	jmp	__mark_node
@@ -1547,7 +1547,7 @@ __small_record:
  else
 	mov	eax,(-8)[rax]
  endif
-	lea	rdx,__indirection+0
+	lea	rdx,e__system__nind+0
 	pop	rbx 
 
 	mov	qword ptr (-8)[rcx],rdx
@@ -1841,7 +1841,7 @@ __mark_hnf_0:
 	lea	r9,dINT+2+0
 	cmp	rax,r9
  else
- 	cmp	rax,offset dINT+2
+	cmp	rax,offset dINT+2
  endif
 	jne	__no_int_3
 
@@ -1886,7 +1886,7 @@ __no_int_3:
  	lea	r9,CHAR+2+0
  	cmp	rax,r9
  else
- 	cmp	rax,offset CHAR+2
+	cmp	rax,offset CHAR+2
  endif
  	jne	__no_char_3
 
