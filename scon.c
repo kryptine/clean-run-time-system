@@ -788,7 +788,11 @@ __attribute__ ((visibility("default")))
 char **global_argv;
 
 #ifdef TIME_PROFILE
+# ifdef PROFILE_GRAPH
+char time_profile_file_name_suffix[]=".pgcl";
+# else
 char time_profile_file_name_suffix[]=" Time Profile.pcl";
+# endif
 
 void create_profile_file_name (unsigned char *profile_file_name_string)
 {

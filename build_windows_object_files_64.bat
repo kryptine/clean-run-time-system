@@ -5,6 +5,8 @@ ml64 /nologo /c /Fo _startup1_.o astartup.asm
 .\rename_Tn_sections_and_dINT _startup1_.o _startup1.o
 ml64 /nologo /c /DPROFILE /Fo _startup1Profile_.o astartup.asm
 .\rename_Tn_sections_and_dINT _startup1Profile_.o _startup1Profile.o
+ml64 /nologo /c /DPROFILE /DPROFILE_GRAPH /Fo _startup1ProfileGraph_.o astartup.asm
+.\rename_Tn_sections_and_dINT _startup1ProfileGraph_.o _startup1ProfileGraph.o
 ml64 /nologo /c /DPROFILE /DTRACE /Fo _startup1Trace_.o astartup.asm
 .\rename_Tn_sections_and_dINT _startup1Trace_.o _startup1Trace.o
 cl /nologo /c /O /DWINDOWS /DTIME_PROFILE /DWRITE_HEAP /Fo_startup2.o wcon.c

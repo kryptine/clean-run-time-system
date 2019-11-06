@@ -1039,7 +1039,11 @@ move_lazy_node:
 	je	move_lazy_node_0
 
 	sub	rbx,1
+ .if PROFILE_GRAPH
+	jle	move_selector_or_indirection
+ .else
 	jle	move_lazy_node_1
+ .endif
 
 	cmp	rbx,256
 	jge	move_closure_with_unboxed_arguments
@@ -1074,6 +1078,13 @@ move_lazy_node_arguments_:
 	test	rsi,rsi
 	att_jne	bsf_and_copy_nodes
 	att_jmp	find_non_zero_long
+
+ .if PROFILE_GRAPH
+move_selector_or_indirection:
+	mov	rbx,257
+	cmp	rbx,0
+	att_jmp	move_closure_with_unboxed_arguments
+ .endif
 
 move_lazy_node_1:
 	mov	rdx,qword ptr [rcx]

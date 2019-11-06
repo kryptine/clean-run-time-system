@@ -874,6 +874,11 @@ cp_arg_lp2:
 	jae	copy_lp2
 	ret
 
+ ifdef PROFILE_GRAPH
+copy_arity_2_node2_:
+	mov	rax,16[rdx]
+	mov	16[rdi],rax
+ endif
 copy_arity_1_node2:
 copy_arity_1_node2_:
 	mov	[rbp],rdi 
@@ -941,7 +946,11 @@ copy_selector_2:
  ifdef NEW_DESCRIPTORS
 	mov	d2,[rax]
 	test	d2b,2
- 	je	copy_arity_1_node2_
+  ifdef PROFILE_GRAPH
+	je	copy_arity_2_node2_
+  else
+	je	copy_arity_1_node2_
+  endif
 
  ifdef PIC
 	movsxd	d3,dword ptr (-8)[rcx]
@@ -955,7 +964,11 @@ copy_selector_2:
  	mov	d2,16[rax]
 
 	test	byte ptr [d2],1
+  ifdef PROFILE_GRAPH
+	jne	copy_arity_2_node2_
+  else
 	jne	copy_arity_1_node2_
+  endif
 
  ifdef PIC
 	movzx	d3,word ptr (4-8)[rcx+d3]
@@ -1004,7 +1017,11 @@ copy_selector_2_:
  else
 	mov	rax,[rax]
  	test	al,2
+  ifdef PROFILE_GRAPH
+	je	copy_arity_2_node2_
+  else
 	je	copy_arity_1_node2_
+  endif
 
 	cmp	word ptr (-2)[rax],2
 	jbe	copy_selector_2_
@@ -1015,7 +1032,11 @@ copy_selector_2__:
 	mov	rax,8[rdx]
 	mov	rax,16[rax]
 	test	byte ptr [rax],1
+  ifdef PROFILE_GRAPH
+	jne	copy_arity_2_node2_
+  else
 	jne	copy_arity_1_node2_
+  endif
 
 copy_selector_2_:
 	mov	eax,(-8)[rcx]
@@ -1042,7 +1063,11 @@ copy_record_selector_2:
 	je	copy_strict_record_selector_2
 
  	test	d2b,2
+  ifdef PROFILE_GRAPH
+	je	copy_arity_2_node2_
+  else
 	je	copy_arity_1_node2_
+  endif
 
 	mov	d3d,dword ptr (-8)[rcx]
 
@@ -1085,14 +1110,26 @@ copy_record_selector_2:
  ifdef NEW_DESCRIPTORS
   if COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
 	je	copy_record_selector_2_
+   ifdef PROFILE_GRAPH
+	jmp	copy_arity_2_node2_
+   else
 	jmp	copy_arity_1_node2_
+   endif
 copy_selector_2__:
 	mov	d4,qword ptr 16[rax]
 	lea	d2,(-24)[d4]
 	test	byte ptr [d4],1
-	jne	copy_arity_1_node2_	
-  else
+   ifdef PROFILE_GRAPH
+	jne	copy_arity_2_node2_
+   else
 	jne	copy_arity_1_node2_
+   endif
+  else
+   ifdef PROFILE_GRAPH
+	jne	copy_arity_2_node2_
+   else
+	jne	copy_arity_1_node2_
+   endif
   endif
 copy_record_selector_2_:
  ifdef PIC
@@ -1113,13 +1150,21 @@ copy_record_selector_3:
 	mov	rdx,rcx
 	jmp	continue_after_selector_2
  else
+  ifdef PROFILE_GRAPH
+	jne	copy_arity_2_node2_
+  else
 	jne	copy_arity_1_node2_
+  endif
  	jmp	copy_selector_2_
  endif
 
 copy_strict_record_selector_2:
 	test	d2b,2
+ ifdef PROFILE_GRAPH
+	je	copy_arity_2_node2_
+ else
 	je	copy_arity_1_node2_
+ endif
 
  ifdef PIC
 	movsxd	d3,dword ptr (-8)[rcx]
@@ -1137,7 +1182,11 @@ copy_strict_record_selector_2:
 	mov	d4,qword ptr 16[rax]
 	lea	d2,(-24)[d4]
 	test	byte ptr [d4],1
-	jne	copy_arity_1_node2_	
+ ifdef PROFILE_GRAPH
+	jne	copy_arity_2_node2_
+ else
+	jne	copy_arity_1_node2_
+ endif
 
 	jmp	copy_strict_record_selector_2_
 
@@ -1168,7 +1217,11 @@ copy_strict_record_selector_2_b:
 	
 	and	d4d,[d5]
 
+ ifdef PROFILE_GRAPH
+	jne	copy_arity_2_node2_
+ else
 	jne	copy_arity_1_node2_
+ endif
 
 copy_strict_record_selector_2_:
  ifdef PIC
