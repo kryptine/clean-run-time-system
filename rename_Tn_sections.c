@@ -86,14 +86,15 @@ int main (int argc,char **argv)
 
 		if (symbol[16]==3 && n_numaux!=0 && n_scnum!=-1){
 			if (*(int*)&symbol[0]!=0){
+/*
 				int n;
 
 				for (n=0; n<8; ++n){
 					if (symbol[n]=='\0')
 						break;
-/*					printf ("%c",symbol[n]); */
+					printf ("%c",symbol[n]);
 				}
-
+*/
 				if (symbol[0]=='_' &&
 					symbol[1]=='T' &&
 					(unsigned)(symbol[2]-'0') < 10u &&
