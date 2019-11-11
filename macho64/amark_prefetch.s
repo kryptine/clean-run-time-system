@@ -871,7 +871,7 @@ pmark_array_using_reversal:
 
 pmark_strict_basic_array:
 	mov	rax,qword ptr [rcx+8]
-	lea	r9,[rip+dINT+2]
+	lea	r9,[rip+INT+2]
 	cmp	rbp,r9
 	jle	pmark_strict_int_or_real_array
 	lea	r9,[rip+BOOL+2]
@@ -1386,7 +1386,7 @@ pmarkr_closure_1_with_unboxed_argument:
 	att_jmp	pmarkr_node2_bb
 
 pmarkr_hnf_0:
-	lea	r9,[rip+dINT+2]
+	lea	r9,[rip+INT+2]
 	cmp	rax,r9
 	jne	pmarkr_no_int_3
 
@@ -1695,7 +1695,7 @@ pmarkr_b_record_array:
 
 pmarkr_strict_basic_array:
 	mov	rax,qword ptr [rcx+8]
-	lea	r9,[rip+dINT+2]
+	lea	r9,[rip+INT+2]
 	cmp	rbp,r9
 	jle	pmarkr_strict_int_or_real_array
 	lea	r9,[rip+BOOL+2]

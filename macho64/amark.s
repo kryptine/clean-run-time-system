@@ -1046,7 +1046,7 @@ _mark_array_using_reversal:
 
 _mark_strict_basic_array:
 	mov	rax,qword ptr [rcx+8]
-	lea	r9,[rip+dINT+2]
+	lea	r9,[rip+INT+2]
 	cmp	rbp,r9
 	jle	_mark_strict_int_or_real_array
 	lea	r9,[rip+BOOL+2]
@@ -1562,7 +1562,7 @@ __mark_closure_1_with_unboxed_argument:
 	att_jmp	__mark_node2_bb
 
 __mark_hnf_0:
-	lea	r9,[rip+dINT+2]
+	lea	r9,[rip+INT+2]
 	cmp	rax,r9
 	jne	__no_int_3
 
@@ -1871,7 +1871,7 @@ __mark_b_record_array:
 
 __mark_strict_basic_array:
 	mov	rax,qword ptr [rcx+8]
-	lea	r9,[rip+dINT+2]
+	lea	r9,[rip+INT+2]
 	cmp	rbp,r9
 	jle	__mark__strict__int__or__real__array
 	lea	r9,[rip+BOOL+2]

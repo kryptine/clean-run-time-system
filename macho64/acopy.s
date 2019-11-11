@@ -402,7 +402,7 @@ copy_int_bool_or_char_2:
 	mov	rax,[rdx+8]
 	je	copy_char_2
 
-	lea	r9,[rip+dINT+2]
+	lea	r9,[rip+INT+2]
 	cmp	rcx,r9
 	jne	no_small_int_or_char_2
 
@@ -1185,7 +1185,7 @@ copy_array_a3:
 copy_strict_basic_array_2:
 	mov	rbx,qword ptr [rcx+8]
 
-	lea	r9,[rip+dINT+2]
+	lea	r9,[rip+INT+2]
 	cmp	rax,r9
 	jle	copy_int_or_real_array_2
 

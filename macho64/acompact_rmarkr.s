@@ -596,7 +596,7 @@ rmarkr_closure_with_unboxed_arguments:
 	att_jmp	rmarkr_next_node
 
 rmarkr_hnf_0:
-	lea	r9,[rip+dINT+2]
+	lea	r9,[rip+INT+2]
 	cmp	rax,r9
 	je	rmarkr_int_3
 

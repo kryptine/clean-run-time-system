@@ -888,7 +888,7 @@ move_b_array:
 
 move_strict_basic_array:
 	mov	rax,rdx
-	lea	r9,[rip+dINT+2]
+	lea	r9,[rip+INT+2]
 	cmp	rbx,r9
 	att_jle	cp_s_arg_lp3
 	lea	r9,[rip+BOOL+2]

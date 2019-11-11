@@ -577,7 +577,7 @@ first_one_bit_table:
 	.globl	__driver
 
 /* from system.abc: */
-	.globl	dINT
+	.globl	INT
 	.globl	INT32
 	.globl	CHAR
 	.globl	BOOL
@@ -897,7 +897,7 @@ init_clean:
 
 	lea	rcx,[rip+small_integers]
 	xor	rax,rax 
-	lea	rbx,[rip+dINT+2]
+	lea	rbx,[rip+INT+2]
 
 make_small_integers_lp:
 	mov	[rcx],rbx 
@@ -1438,7 +1438,7 @@ print_symbol_sc:
 print_symbol_2:
 	mov	rax,[rcx]
 
-	lea	rbp,[rip+dINT+2]
+	lea	rbp,[rip+INT+2]
 	cmp	rax,rbp
 	je	print_int_node
 
@@ -1975,7 +1975,7 @@ eqD:	mov	rax,[rcx]
 	cmp	rax,[rdx]
 	jne	eqD_false
 
-	lea	rbp,[rip+dINT+2]
+	lea	rbp,[rip+INT+2]
 	cmp	rax,rbp
 	je	eqD_INT
 	lea	rbp,[rip+CHAR+2]
@@ -2693,7 +2693,7 @@ gc1:
 	lea	rbp,[rip+static_characters]
 	mov	qword ptr [rax+72],rbp
 
-	lea	rbp,[rip+dINT+2]
+	lea	rbp,[rip+INT+2]
 	mov	qword ptr [rax+80],rbp
 	lea	rbp,[rip+CHAR+2]
 	mov	qword ptr [rax+88],rbp
@@ -4005,7 +4005,7 @@ int_array_to_node_r:
 	mov	rdx,rcx
 	mov	qword ptr [rdi+8],rax
 	mov	rcx,rdi
-	lea	rbx,[rip+dINT+2]
+	lea	rbx,[rip+INT+2]
 	mov	qword ptr [rdi+16],rbx
 	add	rdi,24
 	jmp	int_or_real_array_to_node_4
@@ -4190,7 +4190,7 @@ no_collect_4572:
 	lea	rdx,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rdx
 	mov	qword ptr [rdi+8],rax
-	lea	rbp,[rip+dINT+2]
+	lea	rbp,[rip+INT+2]
 	mov	qword ptr [rdi+16],rbp
 	lea	rdi,[rdi+rax*8+24]
 	ret
@@ -4441,7 +4441,7 @@ no_collect_4577:
 	lea	rbp,[rip+__ARRAY__+2]
 	mov	qword ptr [rdi],rbp
 	mov	qword ptr [rdi+8],rbx 
-	lea	rbp,[rip+dINT+2]
+	lea	rbp,[rip+INT+2]
 	mov	qword ptr [rdi+16],rbp
 	add	rdi,24
 create_arrayBCI:
