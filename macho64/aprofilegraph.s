@@ -16,8 +16,8 @@
 	.extern	_profile_last_tail_call:near
 	.extern	_ab_stack_size:near
 
-ticks	= 16
-allocated_words	= 24
+ticks	= 8
+allocated_words	= 16
 
 profile_t:
 	push	rax

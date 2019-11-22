@@ -21,13 +21,6 @@ static inline void *safe_realloc (void *ptr,size_t size)
 	return ptr;
 }
 
-#ifdef MACH_O64
-extern void *_STRING__;
-# define __STRING__ _STRING__
-#else
-extern void *__STRING__;
-#endif
-
 struct clean_string {
 	int length;
 	char characters[];
@@ -65,7 +58,6 @@ struct profile_node_children {
 };
 
 struct profile_node {
-	void *node_string_descriptor;
 	struct profile_info *node_info;
 	unsigned long node_ticks;
 	unsigned long node_allocated_words;
@@ -97,7 +89,6 @@ void c_init_profiler (long ab_stack_size)
 #endif
 
 	root_node=safe_malloc (sizeof (struct profile_node));
-	root_node->node_string_descriptor=(void*)((long)&__STRING__+2);
 	root_node->node_info=&init_profiler_info;
 	root_node->node_ticks=0;
 	root_node->node_allocated_words=0;
@@ -288,7 +279,6 @@ static inline struct profile_node *push (struct profile_node *parent,int *addres
 	struct profile_node *node=parent->node_children.node_children_cur;
 	if (!node){
 		node=safe_malloc (sizeof (struct profile_node));
-		node->node_string_descriptor=(void*)((long)&__STRING__+2);
 		node->node_info=info;
 		node->node_ticks=0;
 		node->node_allocated_words=0;
@@ -309,7 +299,6 @@ static inline struct profile_node *push (struct profile_node *parent,int *addres
 				return *++profile_data_stack_ptr=list->node_children_cur;
 
 		struct profile_node *new_node=safe_malloc (sizeof (struct profile_node));
-		new_node->node_string_descriptor=(void*)((long)&__STRING__+2);
 		new_node->node_info=info;
 		new_node->node_ticks=0;
 		new_node->node_allocated_words=0;
@@ -336,9 +325,10 @@ void c_profile_n (int *address,long ticks,long words,void **a0)
 
 	profile_last_tail_call=NULL;
 
-	int arity=((int*)*a0)[-1];
-	int a_size=arity<0 ? 2 : (arity&0xff) - (arity>>8);
-	struct profile_node *parent=(struct profile_node*)a0[a_size];
+	char arity=((int*)*a0)[-1] & 0xff;
+	if (arity<0)
+		arity=2;
+	struct profile_node *parent=(struct profile_node*)a0[arity];
 
 	push (parent,address)->node_lazy_calls++;
 }
