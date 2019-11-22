@@ -25,15 +25,15 @@ ml64 /nologo /c /Fo _startup0.o _startup0.asm
 cd ml64
 ml64 /nologo /c /Fo ..\_startup1_.o astartup.asm
 cd ..
-.\rename_Tn_sections _startup1_.o _startup1.o
+.\rename_Tn_sections_and_dINT _startup1_.o _startup1.o
 cd ml64
 ml64 /nologo /c /DPROFILE /Fo ..\_startup1Profile_.o astartup.asm
 cd ..
-.\rename_Tn_sections _startup1Profile_.o _startup1Profile.o
+.\rename_Tn_sections_and_dINT _startup1Profile_.o _startup1Profile.o
 cd ml64
 ml64 /nologo /c /DPROFILE /DTRACE /Fo..\_startup1Trace_.o astartup.asm
 cd ..
-.\rename_Tn_sections _startup1Trace_.o _startup1Trace.o
+.\rename_Tn_sections_and_dINT _startup1Trace_.o _startup1Trace.o
 cl /nologo /TC /c /GS- /GR- /EHs-c- /O /DWINDOWS /DTIME_PROFILE /DWRITE_HEAP /Fo_startup2.o wcon.c
 ml64 /nologo /c /Fo _startup3.o afileIO3.asm
 cl /nologo /TC /c /GS- /GR- /EHs-c- /O /DWINDOWS /DA64 /DTIME_PROFILE /Fo_startup4.o wfileIO3.c
