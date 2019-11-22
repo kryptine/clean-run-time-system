@@ -20,7 +20,7 @@ copy /y areals.asm ml64\areals.asm
 sed -r -f astartup_ml64.sed < aap.asm > ml64\aap.asm
 copy /y aprofile.asm ml64\aprofile.asm
 copy /y atrace.asm ml64\atrace.asm
-cl /nologo /O rename_Tn_sections.c
+cl /nologo /O rename_Tn_sections_and_dINT.c
 ml64 /nologo /c /Fo _startup0.o _startup0.asm
 cd ml64
 ml64 /nologo /c /Fo ..\_startup1_.o astartup.asm
