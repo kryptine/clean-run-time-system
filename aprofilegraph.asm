@@ -23,6 +23,7 @@ _DATA	ends
 
 ticks	= 8
 allocated_words	= 16
+tail_and_return_calls = 24
 
 profile_t:
 	push	rax
@@ -58,6 +59,8 @@ profile_r_:
 	mov	qword ptr words_free,r15
 	sub	rdx,r15
 	add	qword ptr allocated_words[rax],rdx
+
+	inc	dword ptr tail_and_return_calls[rax]
 
 	sub	qword ptr profile_data_stack_ptr,8
 	mov	rdx,qword ptr profile_data_stack_ptr

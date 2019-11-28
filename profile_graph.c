@@ -61,6 +61,7 @@ struct profile_node {
 	struct profile_info *node_info;
 	unsigned long node_ticks;
 	unsigned long node_allocated_words;
+	unsigned int node_tail_and_return_calls;
 	unsigned int node_strict_calls;
 	unsigned int node_lazy_calls;
 	unsigned int node_curried_calls;
@@ -189,6 +190,7 @@ static void write_profile_node (struct profile_node *node,FILE *f)
 	write_unsigned_int (info->profile_info_id,f);
 	write_unsigned_int (node->node_ticks,f);
 	write_unsigned_int (node->node_allocated_words,f);
+	write_unsigned_int (node->node_tail_and_return_calls,f);
 	write_unsigned_int (node->node_strict_calls,f);
 	write_unsigned_int (node->node_lazy_calls,f);
 	write_unsigned_int (node->node_curried_calls,f);
