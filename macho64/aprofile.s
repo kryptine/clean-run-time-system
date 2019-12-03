@@ -736,6 +736,8 @@ stack_not_initialised:
 	ret
 
 init_profiler:
+	mov	dword ptr [rip+_profile_type],1
+
 	mov	rbp,rsp
 	sub	rsp,40
 	and	rsp,-16

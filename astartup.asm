@@ -258,10 +258,16 @@ m_system:
 	db	"System"
 	db	0
 	db	0
+  ifdef PROFILE_GRAPH
+	dd	0
 
+	dd	0
+  endif
 	dd	m_system
 garbage_collector_name:
+  ifndef PROFILE_GRAPH
 	dq	0
+  endif
 	db	"garbage_collector"
 	db	0
 	align	8
@@ -394,6 +400,13 @@ gc_hook_after_compact label ptr
 gc_hook_after_call_finalizers label ptr
 	dq	0
  endif
+
+	public profile_type
+profile_type label ptr
+	dd	0
+	public profile_current_cost_centre
+profile_current_cost_centre label ptr
+	dq	0
 
 _DATA	ends
 	_TEXT segment
@@ -3503,11 +3516,19 @@ eval_upd_0_:
 	lea	r8,e__system__nind+0
 	mov	qword ptr [rdx],r8
 	mov	8[rdx],rcx 
+  ifdef PROFILE_GRAPH
+	mov	r8,qword ptr profile_current_cost_centre
+	mov	16[rdx],r8
+  endif
 	ret
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_0:
@@ -3518,6 +3539,10 @@ eval_upd_0:
 	mov	qword ptr [rdx],offset e__system__nind
  endif
 	mov	8[rdx],rcx 
+ ifdef PROFILE_GRAPH
+	mov	r8,qword ptr profile_current_cost_centre
+	mov	16[rdx],r8
+ endif
 	jmp	rbp
 
  ifdef PIC
@@ -3532,7 +3557,11 @@ eval_upd_1_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_1:
@@ -3541,6 +3570,10 @@ eval_upd_1:
 	mov	qword ptr [rdx],r8
  else
 	mov	qword ptr [rdx],offset e__system__nind
+ endif
+ ifdef PROFILE_GRAPH
+	mov	rax,qword ptr profile_current_cost_centre
+	mov	16[rdx],rax
  endif
 	mov	rax,8[rdx]
 	mov	8[rdx],rcx 
@@ -3559,7 +3592,11 @@ eval_upd_2_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_2:
@@ -3571,7 +3608,14 @@ eval_upd_2:
  endif
 	mov	r8,8[rdx]
 	mov	8[rdx],rcx
+ ifdef PROFILE_GRAPH
+	mov	rax,qword ptr profile_current_cost_centre
+	mov	rbx,16[rdx]
+	mov	16[rdx],rax
+	mov	rdx,rbx
+ else
 	mov	rdx,16[rdx]
+ endif
 	jmp	rbp 
 
  ifdef PIC
@@ -3589,7 +3633,11 @@ eval_upd_3_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_3:
@@ -3604,7 +3652,14 @@ eval_upd_3:
 	mov	[rsi],rcx
 	mov	rcx,24[rdx]
 	add	rsi,8
+ ifdef PROFILE_GRAPH
+	mov	rax,qword ptr profile_current_cost_centre
+	mov	rbx,16[rdx]
+	mov	16[rdx],rax
+	mov	rdx,rbx
+ else
 	mov	rdx,16[rdx]
+ endif
 	jmp	rbp
 
  ifdef PIC
@@ -3624,7 +3679,11 @@ eval_upd_4_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_4:
@@ -3641,7 +3700,14 @@ eval_upd_4:
 	mov	8[rsi],rbx 
 	mov	rcx,24[rdx]
 	add	rsi,16
+ ifdef PROFILE_GRAPH
+	mov	rax,qword ptr profile_current_cost_centre
+	mov	rbx,16[rdx]
+	mov	16[rdx],rax
+	mov	rdx,rbx
+ else
 	mov	rdx,16[rdx]
+ endif
 	jmp	rbp
 
  ifdef PIC
@@ -3663,7 +3729,11 @@ eval_upd_5_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_5:
@@ -3682,7 +3752,14 @@ eval_upd_5:
 	mov	16[rsi],rbx 
 	mov	rcx,24[rdx]
 	add	rsi,24
+ ifdef PROFILE_GRAPH
+	mov	rax,qword ptr profile_current_cost_centre
+	mov	rbx,16[rdx]
+	mov	16[rdx],rax
+	mov	rdx,rbx
+ else
 	mov	rdx,16[rdx]
+ endif
 	jmp	rbp
 
  ifdef PIC
@@ -3701,12 +3778,23 @@ eval_upd_6_:
 	mov	24[rsi],rbx 
 	mov	rcx,24[rdx]
 	add	rsi,32
+ ifdef PROFILE_GRAPH
+	mov	rax,qword ptr profile_current_cost_centre
+	mov	rbx,16[rdx]
+	mov	16[rdx],rax
+	mov	rdx,rbx
+ else
 	mov	rdx,16[rdx]
+ endif
 	ret
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_6:
@@ -3764,7 +3852,11 @@ eval_upd_n_lp_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_7:
@@ -3798,7 +3890,14 @@ eval_upd_n_lp:
 	jnc	eval_upd_n_lp
 
 	mov	rcx,(-8)[rdx]
-	mov	rdx,(-16)[rdx ]
+ ifdef PROFILE_GRAPH
+	mov	rax,qword ptr profile_current_cost_centre
+	mov	rbx,(-16)[rdx]
+	mov	(-16)[rdx],rax
+	mov	rdx,rbx
+ else
+	mov	rdx,(-16)[rdx]
+ endif
 	jmp	rbp 
 
  ifdef PIC
@@ -3810,7 +3909,11 @@ eval_upd_8_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_8:
@@ -3827,7 +3930,11 @@ eval_upd_9_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_9:
@@ -3844,7 +3951,11 @@ eval_upd_10_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_10:
@@ -3861,7 +3972,11 @@ eval_upd_11_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_11:
@@ -3878,7 +3993,11 @@ eval_upd_12_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_12:
@@ -3895,7 +4014,11 @@ eval_upd_13_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_13:
@@ -3912,7 +4035,11 @@ eval_upd_14_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_14:
@@ -3929,7 +4056,11 @@ eval_upd_15_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_15:
@@ -3946,7 +4077,11 @@ eval_upd_16_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_16:
@@ -3963,7 +4098,11 @@ eval_upd_17_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_17:
@@ -3980,7 +4119,11 @@ eval_upd_18_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_18:
@@ -3997,7 +4140,11 @@ eval_upd_19_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_19:
@@ -4014,7 +4161,11 @@ eval_upd_20_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_20:
@@ -4031,7 +4182,11 @@ eval_upd_21_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_21:
@@ -4048,7 +4203,11 @@ eval_upd_22_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_22:
@@ -4065,7 +4224,11 @@ eval_upd_23_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_23:
@@ -4082,7 +4245,11 @@ eval_upd_24_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_24:
@@ -4099,7 +4266,11 @@ eval_upd_25_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_25:
@@ -4116,7 +4287,11 @@ eval_upd_26_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_26:
@@ -4133,7 +4308,11 @@ eval_upd_27_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_27:
@@ -4150,7 +4329,11 @@ eval_upd_28_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_28:
@@ -4167,7 +4350,11 @@ eval_upd_29_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_29:
@@ -4184,7 +4371,11 @@ eval_upd_30_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_30:
@@ -4201,7 +4392,11 @@ eval_upd_31_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_31:
@@ -4218,7 +4413,11 @@ eval_upd_32_:
  endif
 
  ifdef PROFILE
+  ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+  else
 	call	profile_n
+  endif
 	mov	rbp,rax
  endif
 eval_upd_32:
@@ -5874,7 +6073,11 @@ _TEXT	ends
   ifdef TRACE
 	include	atrace.asm
   else
+   ifdef PROFILE_GRAPH
+	include aprofilegraph.asm
+   else
 	include	aprofile.asm
+   endif
   endif
  endif
 

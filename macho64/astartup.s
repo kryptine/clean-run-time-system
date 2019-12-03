@@ -345,10 +345,16 @@ m_system:
 	.ascii	"System"
 	.byte	0
 	.byte	0
+  .if PROFILE_GRAPH
+	.long	0
 
+	.long	0
+  .endif
 	.long	m_system-.
 garbage_collector_name:
+  .if !PROFILE_GRAPH
 	.quad	0
+  .endif
 	.ascii	"garbage_collector"
 	.byte	0
 	.align	3
@@ -445,6 +451,12 @@ first_one_bit_table:
 /*	DD	000000009H */
 /*	DD	imagerel(clean_exception_handler) */
 
+	.globl	_profile_type
+_profile_type:
+	.long	0
+	.globl	_profile_current_cost_centre
+_profile_current_cost_centre:
+	.quad	0
 
 	.text
 
@@ -3283,29 +3295,49 @@ eval_fill2:
 	ret
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	call	profile_eval_upd
+  .else
 	call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_0:
 	lea	r8,[rip+e__system__nind]
 	mov	qword ptr [rdx],r8
 	mov	[rdx+8],rcx 
+ .if PROFILE_GRAPH
+	mov	r8,qword ptr [rip+_profile_current_cost_centre]
+	mov	[rdx+16],r8
+ .endif
 	jmp	rbp
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_1:
 	lea	r8,[rip+e__system__nind]
 	mov	qword ptr [rdx],r8
+ .if PROFILE_GRAPH
+	mov	rax,qword ptr [rip+_profile_current_cost_centre]
+	mov	[rdx+16],rax
+ .endif
 	mov	rax,[rdx+8]
-	mov	[rdx+8],rcx 
-	mov	rdx,rax 
+	mov	[rdx+8],rcx
+	mov	rdx,rax
 	jmp	rbp
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_2:
@@ -3313,11 +3345,22 @@ eval_upd_2:
 	mov	qword ptr [rdx],r8
 	mov	r8,[rdx+8]
 	mov	[rdx+8],rcx
+ .if PROFILE_GRAPH
+	mov	rax,qword ptr [rip+_profile_current_cost_centre]
+	mov	rbx,[rdx+16]
+	mov	[rdx+16],rax
+	mov	rdx,rbx
+ .else
 	mov	rdx,[rdx+16]
+ .endif
 	jmp	rbp 
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_3:
@@ -3328,11 +3371,22 @@ eval_upd_3:
 	mov	[rsi],rcx
 	mov	rcx,[rdx+24]
 	add	rsi,8
+ .if PROFILE_GRAPH
+	mov	rax,qword ptr [rip+_profile_current_cost_centre]
+	mov	rbx,[rdx+16]
+	mov	[rdx+16],rax
+	mov	rdx,rbx
+ .else
 	mov	rdx,[rdx+16]
+ .endif
 	jmp	rbp
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_4:
@@ -3345,11 +3399,22 @@ eval_upd_4:
 	mov	[rsi+8],rbx 
 	mov	rcx,[rdx+24]
 	add	rsi,16
+ .if PROFILE_GRAPH
+	mov	rax,qword ptr [rip+_profile_current_cost_centre]
+	mov	rbx,[rdx+16]
+	mov	[rdx+16],rax
+	mov	rdx,rbx
+ .else
 	mov	rdx,[rdx+16]
+ .endif
 	jmp	rbp
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_5:
@@ -3364,11 +3429,22 @@ eval_upd_5:
 	mov	[rsi+16],rbx 
 	mov	rcx,[rdx+24]
 	add	rsi,24
+ .if PROFILE_GRAPH
+	mov	rax,qword ptr [rip+_profile_current_cost_centre]
+	mov	rbx,[rdx+16]
+	mov	[rdx+16],rax
+	mov	rdx,rbx
+ .else
 	mov	rdx,[rdx+16]
+ .endif
 	jmp	rbp
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_6:
@@ -3385,11 +3461,22 @@ eval_upd_6:
 	mov	[rsi+24],rbx 
 	mov	rcx,[rdx+24]
 	add	rsi,32
+ .if PROFILE_GRAPH
+	mov	rax,qword ptr [rip+_profile_current_cost_centre]
+	mov	rbx,[rdx+16]
+	mov	[rdx+16],rax
+	mov	rdx,rbx
+ .else
 	mov	rdx,[rdx+16]
+ .endif
 	jmp	rbp 
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_7:
@@ -3419,11 +3506,22 @@ eval_upd_n_lp:
 	att_jnc	eval_upd_n_lp
 
 	mov	rcx,[rdx-8]
-	mov	rdx,[rdx -16]
+ .if PROFILE_GRAPH
+	mov	rax,qword ptr [rip+_profile_current_cost_centre]
+	mov	rbx,[rdx-16]
+	mov	[rdx-16],rax
+	mov	rdx,rbx
+ .else
+	mov	rdx,[rdx-16]
+ .endif
 	jmp	rbp 
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_8:
@@ -3432,7 +3530,11 @@ eval_upd_8:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_9:
@@ -3441,7 +3543,11 @@ eval_upd_9:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_10:
@@ -3450,7 +3556,11 @@ eval_upd_10:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_11:
@@ -3459,7 +3569,11 @@ eval_upd_11:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_12:
@@ -3468,7 +3582,11 @@ eval_upd_12:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_13:
@@ -3477,7 +3595,11 @@ eval_upd_13:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_14:
@@ -3486,7 +3608,11 @@ eval_upd_14:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_15:
@@ -3495,7 +3621,11 @@ eval_upd_15:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_16:
@@ -3504,7 +3634,11 @@ eval_upd_16:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_17:
@@ -3513,7 +3647,11 @@ eval_upd_17:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_18:
@@ -3522,7 +3660,11 @@ eval_upd_18:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_19:
@@ -3531,7 +3673,11 @@ eval_upd_19:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_20:
@@ -3540,7 +3686,11 @@ eval_upd_20:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_21:
@@ -3549,7 +3699,11 @@ eval_upd_21:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_22:
@@ -3558,7 +3712,11 @@ eval_upd_22:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_23:
@@ -3567,7 +3725,11 @@ eval_upd_23:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_24:
@@ -3576,7 +3738,11 @@ eval_upd_24:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_25:
@@ -3585,7 +3751,11 @@ eval_upd_25:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_26:
@@ -3594,7 +3764,11 @@ eval_upd_26:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_27:
@@ -3603,7 +3777,11 @@ eval_upd_27:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_28:
@@ -3612,7 +3790,11 @@ eval_upd_28:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_29:
@@ -3621,7 +3803,11 @@ eval_upd_29:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_30:
@@ -3630,7 +3816,11 @@ eval_upd_30:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_31:
@@ -3639,7 +3829,11 @@ eval_upd_31:
 	att_jmp	eval_upd_n
 
  .if PROFILE
+  .if PROFILE_GRAPH
+	att_call	profile_eval_upd
+  .else
 	att_call	profile_n
+  .endif
 	mov	rbp,rax
  .endif
 eval_upd_32:
@@ -5144,6 +5338,8 @@ getheapend:
  .if PROFILE
   .if TRACE
 	.include	"atrace.s"
+  .elseif PROFILE_GRAPH
+	.include	"aprofilegraph.s"
   .else
 	.include	"aprofile.s"
   .endif

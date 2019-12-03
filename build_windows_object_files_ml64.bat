@@ -19,6 +19,7 @@ sed -r -f astartup_ml64.sed < acompact_rmarkr.asm > ml64\acompact_rmarkr.asm
 copy /y areals.asm ml64\areals.asm
 sed -r -f astartup_ml64.sed < aap.asm > ml64\aap.asm
 copy /y aprofile.asm ml64\aprofile.asm
+copy /y aprofilegraph.asm ml64\aprofilegraph.asm
 copy /y atrace.asm ml64\atrace.asm
 cl /nologo /O rename_Tn_sections_and_dINT.c
 ml64 /nologo /c /Fo _startup0.o _startup0.asm
@@ -30,6 +31,10 @@ cd ml64
 ml64 /nologo /c /DPROFILE /Fo ..\_startup1Profile_.o astartup.asm
 cd ..
 .\rename_Tn_sections_and_dINT _startup1Profile_.o _startup1Profile.o
+cd ml64
+ml64 /nologo /c /DPROFILE /DPROFILE_GRAPH /Fo ..\_startup1ProfileGraph_.o astartup.asm
+cd ..
+.\rename_Tn_sections _startup1ProfileGraph_.o _startup1ProfileGraph.o
 cd ml64
 ml64 /nologo /c /DPROFILE /DTRACE /Fo..\_startup1Trace_.o astartup.asm
 cd ..

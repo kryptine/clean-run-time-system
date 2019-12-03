@@ -830,6 +830,11 @@ cp_arg_lp2:
 	att_jae	copy_lp2
 	ret
 
+ .if PROFILE_GRAPH
+copy_arity_2_node2_:
+	mov	rax,16[rdx]
+	mov	16[rdi],rax
+ .endif
 copy_arity_1_node2:
 copy_arity_1_node2_:
 	mov	[rbp],rdi 
@@ -897,7 +902,11 @@ copy_selector_2:
 
 	mov	r10,[rax]
 	test	r10b,2
- 	att_je	copy_arity_1_node2_
+ .if PROFILE_GRAPH
+	att_je	copy_arity_2_node2_
+ .else
+	att_je	copy_arity_1_node2_
+ .endif
 
 	movsxd	r11,dword ptr [rcx-8]
 
@@ -907,7 +916,11 @@ copy_selector_2:
  	mov	r10,[rax+16]
 
 	test	byte ptr [r10],1
+ .if PROFILE_GRAPH
+	att_jne	copy_arity_2_node2_
+ .else
 	att_jne	copy_arity_1_node2_
+ .endif
 
 	movzx	r11,word ptr [rcx+r11+4-8]
 	lea	r9,[rip+e__system__nind]
@@ -951,7 +964,11 @@ copy_record_selector_2:
 	je	copy_strict_record_selector_2
 
  	test	r10b,2
+ .if PROFILE_GRAPH
+	att_je	copy_arity_2_node2_
+ .else
 	att_je	copy_arity_1_node2_
+ .endif
 
 	movsxd	r11,dword ptr [rcx-8]
 
@@ -984,14 +1001,26 @@ copy_record_selector_2:
 	and	r12d,dword ptr [r13]
  .if COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
 	att_je	copy_record_selector_2_
+  .if PROFILE_GRAPH
+	att_jmp	copy_arity_2_node2_
+  .else
 	att_jmp	copy_arity_1_node2_
+  .endif
 copy_selector_2__:
 	mov	r12,qword ptr [rax+16]
 	lea	r10,[r12-24]
 	test	byte ptr [r12],1
-	att_jne	copy_arity_1_node2_	
+  .if PROFILE_GRAPH
+	att_jne	copy_arity_2_node2_
+  .else
+	att_jne	copy_arity_1_node2_
+  .endif
  .else
-	jne	copy_arity_1_node2_
+  .if PROFILE_GRAPH
+	att_jne	copy_arity_2_node2_
+  .else
+	att_jne	copy_arity_1_node2_
+  .endif
  .endif
 copy_record_selector_2_:
 	movzx	r11,word ptr [rcx+r11+4-8]
@@ -1009,7 +1038,11 @@ copy_record_selector_3:
 
 copy_strict_record_selector_2:
 	test	r10b,2
+ .if PROFILE_GRAPH
+	att_je	copy_arity_2_node2_
+ .else
 	att_je	copy_arity_1_node2_
+ .endif
 
 	movsxd	r11,dword ptr [rcx-8]
 
@@ -1023,7 +1056,11 @@ copy_strict_record_selector_2:
 	mov	r12,qword ptr [rax+16]
 	lea	r10,[r12-24]
 	test	byte ptr [r12],1
-	att_jne	copy_arity_1_node2_	
+  .if PROFILE_GRAPH
+	att_jne	copy_arity_2_node2_
+  .else
+	att_jne	copy_arity_1_node2_
+  .endif
 
 	att_jmp	copy_strict_record_selector_2_
 
@@ -1050,7 +1087,11 @@ copy_strict_record_selector_2_b:
 	
 	and	r12d,[r13]
 
+ .if PROFILE_GRAPH
+	att_jne	copy_arity_2_node2_
+ .else
 	att_jne	copy_arity_1_node2_
+ .endif
 
 copy_strict_record_selector_2_:
 	add	r11,rcx
