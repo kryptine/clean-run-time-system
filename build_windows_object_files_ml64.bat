@@ -34,7 +34,7 @@ cd ..
 cd ml64
 ml64 /nologo /c /DPROFILE /DPROFILE_GRAPH /Fo ..\_startup1ProfileGraph_.o astartup.asm
 cd ..
-.\rename_Tn_sections _startup1ProfileGraph_.o _startup1ProfileGraph.o
+.\rename_Tn_sections_and_dINT _startup1ProfileGraph_.o _startup1ProfileGraph.o
 cd ml64
 ml64 /nologo /c /DPROFILE /DTRACE /Fo..\_startup1Trace_.o astartup.asm
 cd ..
