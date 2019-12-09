@@ -1,38 +1,65 @@
-#include <stdio.h>
+#ifdef WINDOWS
+# include <windows.h>
+# define HFILE HANDLE
+# include "wcon.h"
+# include "wfileIO3.h"
+extern void halt (void);
+# define INT64 long long
+#else
 #include <stdlib.h>
-#include <string.h>
-
-#define CYCLE_DETECTION_FRAMES 5
-#define STACK_FRAMES 20
-
-static inline void *safe_malloc (size_t size)
-{
-	void *ptr=malloc (size);
-	if (!ptr)
-		perror ("malloc");
-	return ptr;
-}
-
-static inline void *safe_realloc (void *ptr,size_t size)
-{
-	ptr=realloc (ptr,size);
-	if (!ptr)
-		perror ("realloc");
-	return ptr;
-}
+# include "scon.h"
+struct file;
+extern void file_write_char (int c,struct file *f);
+extern void file_write_characters (unsigned char *p,unsigned int length,struct file *f);
+extern void file_write_int (long i,struct file *f);
+# define INT64 long
+#endif
 
 struct clean_string {
 	int length;
 	char characters[];
 };
 
-static char buffer[128];
-static inline char *clean_string (struct clean_string *cs)
+extern struct file *open_file (struct clean_string *file_name,unsigned int file_mode);
+extern int close_file (struct file *f);
+
+#define CYCLE_DETECTION_FRAMES 5
+#define STACK_FRAMES 20
+
+static inline void *safe_malloc (size_t size)
 {
-	int len=cs->length < 127 ? cs->length : 127;
-	memcpy (buffer,&cs->characters,len);
-	buffer[len]='\0';
-	return buffer;
+#ifdef WINDOWS
+	void *ptr=HeapAlloc (GetProcessHeap(),0,size);
+#else
+	void *ptr=malloc (size);
+#endif
+	if (!ptr){
+		ew_print_string ("Failed to allocate memory for callgraph profiling.\n");
+#ifdef WINDOWS
+		halt();
+#else
+		exit (-1);
+#endif
+	}
+	return ptr;
+}
+
+static inline void *safe_realloc (void *ptr,size_t size)
+{
+#ifdef WINDOWS
+	ptr=HeapReAlloc (GetProcessHeap(),0,ptr,size);
+#else
+	ptr=realloc (ptr,size);
+#endif
+	if (!ptr){
+		ew_print_string ("Failed to allocate memory for callgraph profiling.\n");
+#ifdef WINDOWS
+		halt();
+#else
+		exit (-1);
+#endif
+	}
+	return ptr;
 }
 
 struct profile_info {
@@ -46,7 +73,7 @@ static struct clean_string *module_string (struct profile_info *info)
 #ifdef MACH_O64
 	return (struct clean_string*)((long)&info->profile_info_module+info->profile_info_module);
 #else
-	return (struct clean_string*)(long)info->profile_info_module;
+	return (struct clean_string*)(INT64)info->profile_info_module;
 #endif
 }
 
@@ -59,8 +86,8 @@ struct profile_node_children {
 
 struct profile_node {
 	struct profile_info *node_info;
-	unsigned long node_ticks;
-	unsigned long node_allocated_words;
+	unsigned INT64 node_ticks;
+	unsigned INT64 node_allocated_words;
 	unsigned int node_tail_and_return_calls;
 	unsigned int node_strict_calls;
 	unsigned int node_lazy_calls;
@@ -86,7 +113,7 @@ void c_init_profiler (long ab_stack_size)
 #ifdef MACH_O64
 	init_profiler_info.profile_info_module=(int)((void*)&system_module-(void*)&init_profiler_info.profile_info_module);
 #else
-	init_profiler_info.profile_info_module=(int)(long)&system_module;
+	init_profiler_info.profile_info_module=(int)(INT64)&system_module;
 #endif
 
 	root_node=safe_malloc (sizeof (struct profile_node));
@@ -108,27 +135,35 @@ void c_init_profiler (long ab_stack_size)
 void c_write_profile_stack (void)
 {
 	int i=STACK_FRAMES;
-	fprintf (stderr,"Stack:\n");
+	ew_print_string ("Stack:\n");
 	for (; *profile_data_stack_ptr!=root_node; profile_data_stack_ptr--){
 		if (--i<0){
-			fprintf (stderr,"...\n");
+			ew_print_string ("...\n");
 			break;
 		}
 		struct profile_info *info=(*profile_data_stack_ptr)->node_info;
-		fprintf (stderr,"%s: %s\n",clean_string (module_string (info)),info->profile_info_name);
+		struct clean_string *module_name=module_string (info);
+		ew_print_text (module_name->characters,module_name->length);
+		ew_print_string (": ");
+		ew_print_string (info->profile_info_name);
+		ew_print_char ('\n');
 	}
 
 	i=STACK_FRAMES;
-	fprintf (stderr,"\nThe node under evaluation was created in:\n");
+	ew_print_string ("\nThe node under evaluation was created in:\n");
 	for (profile_current_cost_centre=profile_current_cost_centre->node_parent;
 			profile_current_cost_centre!=root_node;
 			profile_current_cost_centre=profile_current_cost_centre->node_parent){
 		if (--i<0){
-			fprintf (stderr,"...\n");
+			ew_print_string ("...\n");
 			break;
 		}
 		struct profile_info *info=profile_current_cost_centre->node_info;
-		fprintf (stderr,"%s: %s\n",clean_string (module_string (info)),info->profile_info_name);
+		struct clean_string *module_name=module_string (info);
+		ew_print_text (module_name->characters,module_name->length);
+		ew_print_string (": ");
+		ew_print_string (info->profile_info_name);
+		ew_print_char ('\n');
 	}
 }
 
@@ -172,18 +207,18 @@ static void find_unique_modules_and_cost_centres (struct profile_node *node)
 	}
 }
 
-static void write_unsigned_int (unsigned long n,FILE *f)
+static void write_unsigned_int (unsigned INT64 n,struct file *f)
 {
 	do {
 		char c=n & 0x7f;
 		n>>=7;
 		if (n)
 			c|=0x80;
-		fputc (c,f);
+		file_write_char (c,f);
 	} while (n);
 }
 
-static void write_profile_node (struct profile_node *node,FILE *f)
+static void write_profile_node (struct profile_node *node,struct file *f)
 {
 	struct profile_info *info=node->node_info;
 
@@ -221,7 +256,7 @@ extern void create_profile_file_name (unsigned char *profile_file_name_string);
 void c_write_profile_information (void)
 {
 	char profile_file_name[128];
-	create_profile_file_name (&profile_file_name[-2*sizeof(size_t)]);
+	create_profile_file_name (profile_file_name);
 
 	unique_modules=safe_malloc (2*sizeof (struct profile_info*));
 	n_unique_modules=2;
@@ -233,29 +268,32 @@ void c_write_profile_information (void)
 
 	find_unique_modules_and_cost_centres (root_node);
 
-	FILE *f=fopen (profile_file_name,"w");
+	struct file *f=open_file ((struct clean_string*)(profile_file_name+8),4);
 
-	fputs ("prof",f);
-	int file_version=1;
-	fwrite (&file_version,4,1,f);
-	fwrite (&unique_modules_ptr,4,1,f);
-	fwrite (&unique_cost_centres_ptr,4,1,f);
+	file_write_characters ("prof",4,f); /* magic number */
+	file_write_int (1,f); /* version */
+	file_write_int (unique_modules_ptr,f);
+	file_write_int (unique_cost_centres_ptr,f);
 
 	for (int i=0; i<unique_modules_ptr; i++){
-		fputs (clean_string (module_string (unique_modules[i])),f);
-		fputc ('\0',f);
+		struct clean_string *module_name=module_string (unique_modules[i]);
+		file_write_characters (module_name->characters,module_name->length,f);
+		file_write_char ('\0',f);
 	}
 
 	for (int i=0; i<unique_cost_centres_ptr; i++){
 		int *info_module_string=(int*)module_string (unique_cost_centres[i]);
+		char *name=unique_cost_centres[i]->profile_info_name;
 		write_unsigned_int (info_module_string[(info_module_string[0]+7)>>2],f);
-		fputs (unique_cost_centres[i]->profile_info_name,f);
-		fputc ('\0',f);
+		char *name_p;
+		for (name_p=name; *name_p; name_p++);
+		file_write_characters (name,name_p-name,f);
+		file_write_char ('\0',f);
 	}
 
 	write_profile_node (root_node,f);
 
-	fclose (f);
+	close_file (f);
 }
 
 static inline struct profile_node *push (struct profile_node *parent,int *address)
@@ -320,7 +358,7 @@ static inline struct profile_node *push (struct profile_node *parent,int *addres
 	}
 }
 
-void c_profile_n (int *address,long ticks,long words,void **a0)
+void c_profile_n (int *address,INT64 ticks,INT64 words,void **a0)
 {
 	profile_current_cost_centre->node_ticks+=ticks;
 	profile_current_cost_centre->node_allocated_words+=words;
@@ -335,7 +373,7 @@ void c_profile_n (int *address,long ticks,long words,void **a0)
 	push (parent,address)->node_lazy_calls++;
 }
 
-void c_profile_s (int *address,long ticks,long words)
+void c_profile_s (int *address,INT64 ticks,INT64 words)
 {
 	profile_current_cost_centre->node_ticks+=ticks;
 	profile_current_cost_centre->node_allocated_words+=words;
@@ -343,7 +381,7 @@ void c_profile_s (int *address,long ticks,long words)
 	push (profile_current_cost_centre,address)->node_strict_calls++;
 }
 
-void c_profile_l (int *address,long ticks,long words)
+void c_profile_l (int *address,INT64 ticks,INT64 words)
 {
 	profile_current_cost_centre->node_ticks+=ticks;
 	profile_current_cost_centre->node_allocated_words+=words;

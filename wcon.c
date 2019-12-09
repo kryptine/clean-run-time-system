@@ -1758,9 +1758,11 @@ int clean_main (void)
 
 #ifdef TIME_PROFILE
 char time_profile_file_name_suffix[]=" Time Profile.pcl";
+char callgraph_time_profile_file_name_suffix[]=".pgcl";
 
 #define MAX_PATH_LENGTH 256
 
+extern int profile_type;
 void create_profile_file_name (unsigned char *profile_file_name_string)
 {
 	char *time_profile_file_name_p,*time_profile_file_name_suffix_p,*profile_file_name,*p;
@@ -1817,11 +1819,20 @@ void create_profile_file_name (unsigned char *profile_file_name_string)
 	if (length_time_profile_file_name>3 && p[-4]=='.' && p[-3]=='e' && p[-2]=='x' && p[-1]=='e')
 		length_time_profile_file_name-=4;
 	
-	time_profile_file_name_suffix_p=time_profile_file_name_suffix;
-	time_profile_file_name_suffix_length=sizeof (time_profile_file_name_suffix);	
+	if (profile_type==2){ /* callgraph profiling */
+		time_profile_file_name_suffix_p=callgraph_time_profile_file_name_suffix;
+		time_profile_file_name_suffix_length=sizeof (callgraph_time_profile_file_name_suffix);
+	} else {
+		time_profile_file_name_suffix_p=time_profile_file_name_suffix;
+		time_profile_file_name_suffix_length=sizeof (time_profile_file_name_suffix);
+	}
 	if (length_time_profile_file_name+time_profile_file_name_suffix_length>MAX_PATH_LENGTH){
-		time_profile_file_name_suffix_length=MAX_PATH_LENGTH-length_time_profile_file_name;
-		time_profile_file_name_suffix_p=&time_profile_file_name_suffix_p[sizeof (time_profile_file_name_suffix)-time_profile_file_name_suffix_length];
+		if (profile_type==2){
+			length_time_profile_file_name=MAX_PATH_LENGTH-time_profile_file_name_suffix_length;
+		} else {
+			time_profile_file_name_suffix_length=MAX_PATH_LENGTH-length_time_profile_file_name;
+			time_profile_file_name_suffix_p=&time_profile_file_name_suffix_p[sizeof (time_profile_file_name_suffix)-time_profile_file_name_suffix_length];
+		}
 	}
 	
 	p=profile_file_name+length_time_profile_file_name;

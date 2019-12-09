@@ -88,14 +88,17 @@ profile_l:
 	push	rdx
 	push	rcx
 	rdtsc
+ ifdef LINUX
 	push	rsi
 	push	rdi
+ endif
 	push	r8
 	push	r9
 	push	r10
 	push	r11
 	push	rbp
 
+ ifdef LINUX
 	mov	rdi,rbp
 
 	mov	rsi,rdx
@@ -104,8 +107,18 @@ profile_l:
 	sub	rsi,qword ptr tick_count
 
 	mov	rdx,qword ptr words_free
-	mov	qword ptr words_free,r15
 	sub	rdx,r15
+ else
+	mov	rcx,rbp
+
+	shl	rdx,32
+	add	rdx,rax
+	sub	rdx,qword ptr tick_count
+
+	mov	r8,qword ptr words_free
+	sub	r8,r15
+ endif
+	mov	qword ptr words_free,r15
 
 	mov	rbp,rsp
 	sub	rsp,40
@@ -118,14 +131,17 @@ profile_l2:
 	push	rdx
 	push	rcx
 	rdtsc
+ ifdef LINUX
 	push	rsi
 	push	rdi
+ endif
 	push	r8
 	push	r9
 	push	r10
 	push	r11
 	push	rbp
 
+ ifdef LINUX
 	mov	rdi,rbp
 
 	mov	rsi,rdx
@@ -134,8 +150,18 @@ profile_l2:
 	sub	rsi,qword ptr tick_count
 
 	mov	rdx,qword ptr words_free
-	mov	qword ptr words_free,r15
 	sub	rdx,r15
+ else
+	mov	rcx,rbp
+
+	shl	rdx,32
+	add	rdx,rax
+	sub	rdx,qword ptr tick_count
+
+	mov	r8,qword ptr words_free
+	sub	r8,r15
+ endif
+	mov	qword ptr words_free,r15
 
 	mov	rbp,rsp
 	sub	rsp,40
@@ -148,14 +174,17 @@ profile_n:
 	push	rdx
 	push	rcx
 	rdtsc
+ ifdef LINUX
 	push	rsi
 	push	rdi
+ endif
 	push	r8
 	push	r9
 	push	r10
 	push	r11
 	push	rbp
 
+ ifdef LINUX
 	mov	rdi,rbp
 
 	mov	rsi,rdx
@@ -164,8 +193,20 @@ profile_n:
 	sub	rsi,qword ptr tick_count
 
 	mov	rdx,qword ptr words_free
-	mov	qword ptr words_free,r15
 	sub	rdx,r15
+ else
+	mov	r9,rcx
+
+	mov	rcx,rbp
+
+	shl	rdx,32
+	add	rdx,rax
+	sub	rdx,qword ptr tick_count
+
+	mov	r8,qword ptr words_free
+	sub	r8,r15
+ endif
+	mov	qword ptr words_free,r15
 
 	mov	rbp,rsp
 	sub	rsp,40
@@ -178,14 +219,17 @@ profile_n2:
 	push	rdx
 	push	rcx
 	rdtsc
+ ifdef LINUX
 	push	rsi
 	push	rdi
+ endif
 	push	r8
 	push	r9
 	push	r10
 	push	r11
 	push	rbp
 
+ ifdef LINUX
 	mov	rdi,rbp
 
 	mov	rsi,rdx
@@ -194,8 +238,20 @@ profile_n2:
 	sub	rsi,qword ptr tick_count
 
 	mov	rdx,qword ptr words_free
-	mov	qword ptr words_free,r15
 	sub	rdx,r15
+ else
+	mov	r9,rcx
+
+	mov	rcx,rbp
+
+	shl	rdx,32
+	add	rdx,rax
+	sub	rdx,qword ptr tick_count
+
+	mov	r8,qword ptr words_free
+	sub	r8,r15
+ endif
+	mov	qword ptr words_free,r15
 
 	mov	rbp,rsp
 	sub	rsp,40
@@ -209,14 +265,17 @@ profile_eval_upd:
 	push	rcx
 	mov	rcx,rdx
 	rdtsc
+ ifdef LINUX
 	push	rsi
 	push	rdi
+ endif
 	push	r8
 	push	r9
 	push	r10
 	push	r11
 	push	rbp
 
+ ifdef LINUX
 	mov	rdi,rbp
 
 	mov	rsi,rdx
@@ -225,8 +284,20 @@ profile_eval_upd:
 	sub	rsi,qword ptr tick_count
 
 	mov	rdx,qword ptr words_free
-	mov	qword ptr words_free,r15
 	sub	rdx,r15
+ else
+	mov	r9,rcx
+
+	mov	rcx,rbp
+
+	shl	rdx,32
+	add	rdx,rax
+	sub	rdx,qword ptr tick_count
+
+	mov	r8,qword ptr words_free
+	sub	r8,r15
+ endif
+	mov	qword ptr words_free,r15
 
 	mov	rbp,rsp
 	sub	rsp,40
@@ -239,14 +310,17 @@ profile_s:
 	push	rdx
 	push	rcx
 	rdtsc
+ ifdef LINUX
 	push	rsi
 	push	rdi
+ endif
 	push	r8
 	push	r9
 	push	r10
 	push	r11
 	push	rbp
 
+ ifdef LINUX
 	mov	rdi,rbp
 
 	mov	rsi,rdx
@@ -255,8 +329,18 @@ profile_s:
 	sub	rsi,qword ptr tick_count
 
 	mov	rdx,qword ptr words_free
-	mov	qword ptr words_free,r15
 	sub	rdx,r15
+ else
+	mov	rcx,rbp
+
+	shl	rdx,32
+	add	rdx,rax
+	sub	rdx,qword ptr tick_count
+
+	mov	r8,qword ptr words_free
+	sub	r8,r15
+ endif
+	mov	qword ptr words_free,r15
 
 	mov	rbp,rsp
 	sub	rsp,40
@@ -269,14 +353,17 @@ profile_s2:
 	push	rdx
 	push	rcx
 	rdtsc
+ ifdef LINUX
 	push	rsi
 	push	rdi
+ endif
 	push	r8
 	push	r9
 	push	r10
 	push	r11
 	push	rbp
 
+ ifdef LINUX
 	mov	rdi,rbp
 
 	mov	rsi,rdx
@@ -285,8 +372,18 @@ profile_s2:
 	sub	rsi,qword ptr tick_count
 
 	mov	rdx,qword ptr words_free
-	mov	qword ptr words_free,r15
 	sub	rdx,r15
+ else
+	mov	rcx,rbp
+
+	shl	rdx,32
+	add	rdx,rax
+	sub	rdx,qword ptr tick_count
+
+	mov	r8,qword ptr words_free
+	sub	r8,r15
+ endif
+	mov	qword ptr words_free,r15
 
 	mov	rbp,rsp
 	sub	rsp,40
@@ -313,8 +410,10 @@ end_profile_call_:
 	pop	r10
 	pop	r9
 	pop	r8
+ ifdef LINUX
 	pop	rdi
 	pop	rsi
+ endif
 	pop	rcx
 
 	rdtsc
@@ -347,22 +446,30 @@ init_profiler:
 
 	push	rax
 	push	rdx
+ ifdef LINUX
 	push	rsi
 	push	rdi
+ endif
 	push	r8
 	push	rcx
 
 	mov	rbp,rsp
 	sub	rsp,40
 	and	rsp,-16
+ ifdef LINUX
 	mov	rdi,qword ptr ab_stack_size
+ else
+	mov	rcx,qword ptr ab_stack_size
+ endif
 	call	c_init_profiler
 	mov	rsp,rbp
 
 	pop	rcx
 	pop	r8
+ ifdef LINUX
 	pop	rdi
 	pop	rsi
+ endif
 
 	rdtsc
 	shl	rdx,32
