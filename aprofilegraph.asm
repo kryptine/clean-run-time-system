@@ -21,6 +21,13 @@ _DATA	ends
 	extrn	profile_last_tail_call:near
 	extrn	ab_stack_size:near
 
+	extrn	c_profile_l:near
+	extrn	c_profile_n:near
+	extrn	c_profile_s:near
+	extrn	c_write_profile_stack:near
+	extrn	c_write_profile_information:near
+	extrn	c_init_profiler:near
+
 ticks	= 8
 allocated_words	= 16
 tail_and_return_calls = 24
