@@ -848,6 +848,11 @@ cp_arg_lp2:
 	jae	copy_lp2
 	ret
 
+#ifdef PROFILE_GRAPH
+copy_arity_2_node2_:
+	mov	8(a1),d0
+	mov	d0,8(a4)
+#endif
 #ifdef NEW_DESCRIPTORS
 copy_arity_1_node2__:
 	pop	d1
@@ -921,14 +926,22 @@ copy_selector_2:
 
 	mov	(d0),d1
  	testb	$2,d1b
+# ifdef PROFILE_GRAPH
+	je	copy_arity_2_node2_
+# else
 	je	copy_arity_1_node2__
+# endif
 
 	cmpw	$2,-2(d1)
 	jbe	copy_selector_2_
 
 	movl	8(d0),d1
 	testb	$1,(d1)
+# ifdef PROFILE_GRAPH
+	jne	copy_arity_2_node2_
+# else
 	jne	copy_arity_1_node2__
+# endif
 
 	movl	-8(a0),a0
 
@@ -973,7 +986,11 @@ copy_selector_2_:
 #else
 	mov	(d0),d0
  	testb	$2,d0b
+# ifdef PROFILE_GRAPH
+	je	copy_arity_2_node2_
+# else
 	je	copy_arity_1_node2_
+# endif
 
 	cmpw	$2,-2(d0)
 	jbe	copy_selector_2_
@@ -984,7 +1001,11 @@ copy_selector_2__:
 	mov	4(a1),d0
 	mov	8(d0),d0
 	testb	$1,(d0)
+# ifdef PROFILE_GRAPH
+	jne	copy_arity_2_node2_
+# else
 	jne	copy_arity_1_node2_
+# endif
 
 copy_selector_2_:
 	mov	-8(a0),d0
@@ -1010,7 +1031,11 @@ copy_record_selector_2:
 	je	copy_strict_record_selector_2
 
  	testb	$2,d0b
+# ifdef PROFILE_GRAPH
+	je	copy_arity_2_node2_
+# else
 	je	copy_arity_1_node2_
+# endif
 
 	cmpw	$258,-2(d0)
 #ifdef NEW_DESCRIPTORS
@@ -1049,14 +1074,26 @@ copy_record_selector_2:
 #ifdef NEW_DESCRIPTORS
 # ifdef COPY_RECORDS_WITHOUT_POINTERS_TO_END_OF_HEAP
 	je	copy_record_selector_2_
+#  ifdef PROFILE_GRAPH
+	jmp	copy_arity_2_node2_
+#  else
 	jmp	copy_arity_1_node2_
+#  endif
 copy_selector_2__:
 	mov	4(a1),d0
 	mov	8(d0),d0
 	testb	$1,(d0)
+#  ifdef PROFILE_GRAPH
+	jne	copy_arity_2_node2_
+#  else
 	jne	copy_arity_1_node2_
+#  endif
 # else
+#  ifdef PROFILE_GRAPH
+	jne	copy_arity_2_node2_
+#  else
 	jne	copy_arity_1_node2_
+#  endif
 # endif
 copy_record_selector_2_:
 	movl	-8(a0),d0
@@ -1076,13 +1113,21 @@ copy_record_selector_3:
 	movl	a0,a1
 	jmp	continue_after_selector_2
 #else
+# ifdef PROFILE_GRAPH
+	jne	copy_arity_2_node2_
+# else
 	jne	copy_arity_1_node2_
+# endif
  	jmp	copy_selector_2_
 #endif
 
 copy_strict_record_selector_2:
 	testb	$2,d0b
+# ifdef PROFILE_GRAPH
+	je	copy_arity_2_node2_
+# else
 	je	copy_arity_1_node2_
+# endif
 
 	cmpw	$258,-2(d0)
 	jbe	copy_strict_record_selector_2_
@@ -1094,7 +1139,11 @@ copy_strict_record_selector_2:
  	movl	4(a1),d0
 	movl	8(d0),d0
 	testb	$1,(d0)
+# ifdef PROFILE_GRAPH
+	jne	copy_arity_2_node2_
+# else
 	jne	copy_arity_1_node2_
+# endif
 
 	jmp	copy_strict_record_selector_2_
 
@@ -1123,7 +1172,11 @@ copy_strict_record_selector_2_b:
 	and	(a1),d0
 	popl	a1
 
+# ifdef PROFILE_GRAPH
+	jne	copy_arity_2_node2_
+# else
 	jne	copy_arity_1_node2_
+# endif
 
 copy_strict_record_selector_2_:
 	movl	-8(a0),d0

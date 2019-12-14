@@ -335,6 +335,8 @@ stack_not_initialised:
 	ret
 
 init_profiler:
+	movl	$3,@profile_type
+
 	pushl	@ab_stack_size
 #ifdef LINUX
 	call	@malloc

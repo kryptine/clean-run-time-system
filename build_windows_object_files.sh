@@ -47,6 +47,24 @@ as _startup1.s -o _startup1.go
 
 
 cp istartup.s istartup.cpp
+gcc -E -DPROFILE -DPROFILE_GRAPH -DWRITE_HEAP -D_WINDOWS_ istartup.cpp -o istartup.b
+sed -f a.sed < istartup.b > istartup.a
+
+cp iprofilegraph.s iprofilegraph.cpp
+gcc -E -D_WINDOWS_ iprofilegraph.cpp -o iprofilegraph.b
+sed -f a.sed < iprofilegraph.b > iprofilegraph.a
+
+gcc -S -O -Wall -DWINDOWS -DTIME_PROFILE -DWRITE_HEAP -o wcon.s wcon.c
+sed -f c.sed <wcon.s >wcon.a
+
+cat istartup.a iprofilegraph.a wcon.a > _startup1.s
+as _startup1.s -o _startup1.go
+./fixgnuasobj.exe _startup1.go _startup1ProfileGraph.o
+
+gcc -c -O -Wall -DWINDOWS -o _startup1ProfileGraphB.o profile_graph.c
+
+
+cp istartup.s istartup.cpp
 gcc -E -DPROFILE -DWRITE_HEAP -D_WINDOWS_ istartup.cpp -o istartup.b
 sed -f a.sed < istartup.b > istartup.a
 

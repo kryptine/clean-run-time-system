@@ -707,6 +707,8 @@ stack_not_initialised:
 	ret
 
 init_profiler:
+	movl	$1,@profile_type
+
 	pushfl
 	movl	$0x200000,%eax
 	pop	%ebx

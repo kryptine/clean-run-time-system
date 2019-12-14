@@ -1137,7 +1137,11 @@ move_lazy_node:
 	je	move_lazy_node_0
 
 	subl	$1,d1
+#ifdef PROFILE_GRAPH
+	jle	move_selector_or_indirection
+#else
 	jle	move_lazy_node_1
+#endif
 
 	cmpl	$256,d1
 	jge	move_closure_with_unboxed_arguments
@@ -1167,6 +1171,13 @@ move_lazy_node_arguments:
 	jne	copy_nodes
 #endif
 	jmp	find_non_zero_long
+
+#ifdef PROFILE_GRAPH
+move_selector_or_indirection:
+	mov	$257,d1
+	cmp	$0,d1
+	jmp	move_closure_with_unboxed_arguments
+#endif
 
 move_lazy_node_arguments_:
 	movl	a1,(a4)

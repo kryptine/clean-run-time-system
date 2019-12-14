@@ -5,14 +5,23 @@
 # include "wfileIO3.h"
 extern void halt (void);
 # define INT64 long long
+# if _WIN64
+#  define PTR_INT long long
+#  define IF_INT_64_OR_32(a,b) (a)
+# else
+#  define PTR_INT long
+#  define IF_INT_64_OR_32(a,b) (b)
+# endif
 #else
-#include <stdlib.h>
+# include <stdlib.h>
 # include "scon.h"
 struct file;
 extern void file_write_char (int c,struct file *f);
 extern void file_write_characters (unsigned char *p,unsigned int length,struct file *f);
 extern void file_write_int (long i,struct file *f);
-# define INT64 long
+# define INT64 long long
+# define PTR_INT long
+# define IF_INT_64_OR_32(a,b) (a)
 #endif
 
 struct clean_string {
@@ -73,7 +82,7 @@ static struct clean_string *module_string (struct profile_info *info)
 #ifdef MACH_O64
 	return (struct clean_string*)((long)&info->profile_info_module+info->profile_info_module);
 #else
-	return (struct clean_string*)(INT64)info->profile_info_module;
+	return (struct clean_string*)(PTR_INT)info->profile_info_module;
 #endif
 }
 
@@ -86,6 +95,9 @@ struct profile_node_children {
 
 struct profile_node {
 	struct profile_info *node_info;
+#ifdef WIN32
+	void *_padding;
+#endif
 	unsigned INT64 node_ticks;
 	unsigned INT64 node_allocated_words;
 	unsigned int node_tail_and_return_calls;
@@ -102,10 +114,10 @@ struct profile_node **profile_data_stack_ptr;
 struct profile_node *profile_last_tail_call;
 extern struct profile_node *profile_current_cost_centre;
 
-static char system_module[]="\06\0\0\0System\0\0\0\0";
+static char system_module[]="\06\0\0\0System\0\0\0\0\0\0\0\0\0\0";
 static struct profile_info init_profiler_info={0,0,"_start"};
 
-void c_init_profiler (long ab_stack_size)
+void c_init_profiler (unsigned int ab_stack_size)
 {
 	profile_data_stack=profile_data_stack_ptr=safe_malloc (ab_stack_size*sizeof (struct profile_node*));
 	profile_last_tail_call=NULL;
@@ -113,7 +125,7 @@ void c_init_profiler (long ab_stack_size)
 #ifdef MACH_O64
 	init_profiler_info.profile_info_module=(int)((void*)&system_module-(void*)&init_profiler_info.profile_info_module);
 #else
-	init_profiler_info.profile_info_module=(int)(INT64)&system_module;
+	init_profiler_info.profile_info_module=(int)(PTR_INT)&system_module;
 #endif
 
 	root_node=safe_malloc (sizeof (struct profile_node));
@@ -268,7 +280,7 @@ void c_write_profile_information (void)
 
 	find_unique_modules_and_cost_centres (root_node);
 
-	struct file *f=open_file ((struct clean_string*)(profile_file_name+8),4);
+	struct file *f=open_file ((struct clean_string*)(profile_file_name+IF_INT_64_OR_32(8,4)),4);
 
 	file_write_characters ("prof",4,f); /* magic number */
 	file_write_int (1,f); /* version */

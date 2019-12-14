@@ -307,11 +307,18 @@ m_system:
 	.ascii	"System"
 	.byte	0
 	.byte	0
+#  ifdef PROFILE_GRAPH
+	.long	0
+
+	.long	0
+#  endif
 	.long	m_system
 
 # endif
 garbage_collector_name:
+# ifndef PROFILE_GRAPH
 	.long	0
+# endif
 	.asciz	"garbage_collector"
 	align	(2)
 #endif
@@ -383,6 +390,13 @@ start_address:
 	.comm	static_characters,256*8
 #endif
 
+	.globl	@profile_type
+@profile_type:
+	.long	0
+	.globl	@profile_current_cost_centre
+@profile_current_cost_centre:
+	.long	0
+
 	.text
 
 	.globl	@abc_main
@@ -400,6 +414,7 @@ start_address:
 	.globl	push_t_r_args
 	.globl	push_a_r_args
 	.globl	halt
+	.globl	@halt
 	.globl	dump
 
 	.globl	catAC
@@ -2903,6 +2918,7 @@ print_error:
 	call	@ew_print_string
 	add	$4,sp
 
+@halt:
 halt:
 	mov	halt_sp,sp
 
@@ -3004,7 +3020,11 @@ eval_fill2:
 #endif
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_0:
@@ -3013,7 +3033,11 @@ eval_upd_0:
 	jmp	*a2
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_1:
@@ -3024,7 +3048,11 @@ eval_upd_1:
 	jmp	*a2
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_2:
@@ -3038,7 +3066,11 @@ eval_upd_2:
 	jmp	*a2
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_3:
@@ -3054,7 +3086,11 @@ eval_upd_3:
 	jmp	*a2
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_4:
@@ -3072,7 +3108,11 @@ eval_upd_4:
 	jmp	*a2
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_5:
@@ -3092,7 +3132,11 @@ eval_upd_5:
 	jmp	*a2
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_6:
@@ -3114,7 +3158,11 @@ eval_upd_6:
 	jmp	*a2
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_7:
@@ -3150,7 +3198,11 @@ eval_upd_n_lp:
 	jmp	*a2
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_8:
@@ -3159,7 +3211,11 @@ eval_upd_8:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_9:
@@ -3168,7 +3224,11 @@ eval_upd_9:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_10:
@@ -3177,7 +3237,11 @@ eval_upd_10:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_11:
@@ -3186,7 +3250,11 @@ eval_upd_11:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_12:
@@ -3195,7 +3263,11 @@ eval_upd_12:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_13:
@@ -3204,7 +3276,11 @@ eval_upd_13:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_14:
@@ -3213,7 +3289,11 @@ eval_upd_14:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_15:
@@ -3222,7 +3302,11 @@ eval_upd_15:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_16:
@@ -3231,7 +3315,11 @@ eval_upd_16:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_17:
@@ -3240,7 +3328,11 @@ eval_upd_17:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_18:
@@ -3249,7 +3341,11 @@ eval_upd_18:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_19:
@@ -3258,7 +3354,11 @@ eval_upd_19:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_20:
@@ -3267,7 +3367,11 @@ eval_upd_20:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_21:
@@ -3276,7 +3380,11 @@ eval_upd_21:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_22:
@@ -3285,7 +3393,11 @@ eval_upd_22:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_23:
@@ -3294,7 +3406,11 @@ eval_upd_23:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_24:
@@ -3303,7 +3419,11 @@ eval_upd_24:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_25:
@@ -3312,7 +3432,11 @@ eval_upd_25:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_26:
@@ -3321,7 +3445,11 @@ eval_upd_26:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_27:
@@ -3330,7 +3458,11 @@ eval_upd_27:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_28:
@@ -3339,7 +3471,11 @@ eval_upd_28:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_29:
@@ -3348,7 +3484,11 @@ eval_upd_29:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_30:
@@ -3357,7 +3497,11 @@ eval_upd_30:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_31:
@@ -3366,7 +3510,11 @@ eval_upd_31:
 	jmp	eval_upd_n
 
 #ifdef PROFILE
+# ifdef PROFILE_GRAPH
+	call	profile_eval_upd
+# else
 	call	profile_n
+# endif
 	movl	d0,a2
 #endif
 eval_upd_32:
