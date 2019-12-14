@@ -267,7 +267,7 @@ static void write_profile_node (struct profile_node *node,struct file *f)
 extern void create_profile_file_name (unsigned char *profile_file_name_string);
 void c_write_profile_information (void)
 {
-	char profile_file_name[128];
+	unsigned char profile_file_name[128];
 	create_profile_file_name (profile_file_name);
 
 	unique_modules=safe_malloc (2*sizeof (struct profile_info*));
@@ -282,14 +282,14 @@ void c_write_profile_information (void)
 
 	struct file *f=open_file ((struct clean_string*)(profile_file_name+IF_INT_64_OR_32(8,4)),4);
 
-	file_write_characters ("prof",4,f); /* magic number */
+	file_write_characters ((unsigned char*)"prof",4,f); /* magic number */
 	file_write_int (1,f); /* version */
 	file_write_int (unique_modules_ptr,f);
 	file_write_int (unique_cost_centres_ptr,f);
 
 	for (int i=0; i<unique_modules_ptr; i++){
 		struct clean_string *module_name=module_string (unique_modules[i]);
-		file_write_characters (module_name->characters,module_name->length,f);
+		file_write_characters ((unsigned char*)module_name->characters,module_name->length,f);
 		file_write_char ('\0',f);
 	}
 
@@ -299,7 +299,7 @@ void c_write_profile_information (void)
 		write_unsigned_int (info_module_string[(info_module_string[0]+7)>>2],f);
 		char *name_p;
 		for (name_p=name; *name_p; name_p++);
-		file_write_characters (name,name_p-name,f);
+		file_write_characters ((unsigned char*)name,name_p-name,f);
 		file_write_char ('\0',f);
 	}
 
@@ -377,7 +377,7 @@ void c_profile_n (int *address,INT64 ticks,INT64 words,void **a0)
 
 	profile_last_tail_call=NULL;
 
-	char arity=((int*)*a0)[-1] & 0xff;
+	int arity=((int*)*a0)[-1] & 0xff;
 	if (arity<0)
 		arity=2;
 	struct profile_node *parent=(struct profile_node*)a0[arity];
