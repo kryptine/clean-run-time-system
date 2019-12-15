@@ -14,6 +14,7 @@ extern void halt (void);
 # endif
 #else
 # include <stdlib.h>
+# include <time.h>
 # include "scon.h"
 struct file;
 extern void file_write_char (int c,struct file *f);
@@ -34,6 +35,11 @@ extern int close_file (struct file *f);
 
 #define CYCLE_DETECTION_FRAMES 5
 #define STACK_FRAMES 20
+#define OVERHEAD_SAMPLES 40
+#ifdef WINDOWS
+# define FREQUENCY_N_TICKS 1000
+#endif
+#define FREQUENCY_SAMPLES 32
 
 static inline void *safe_malloc (size_t size)
 {
@@ -263,11 +269,176 @@ static void write_profile_node (struct profile_node *node,struct file *f)
 	} while (list);
 }
 
+static void sort (unsigned int *arr,int lo,int hi)
+{
+	unsigned int p,temp;
+	int i,j;
+
+	if (lo>=hi)
+		return;
+
+	p=arr[lo+(hi-lo)/2];
+
+	i=lo-1;
+	j=hi+1;
+
+	for (;;){
+		do {
+			i++;
+		} while (arr[i]<p);
+		do {
+			j--;
+		} while (arr[j]>p);
+		if (i>=j)
+			break;
+		temp=arr[i];
+		arr[i]=arr[j];
+		arr[j]=temp;
+	}
+
+	sort (arr,lo,j);
+	sort (arr,j+1,hi);
+}
+
+extern unsigned INT64 get_time_stamp_counter (void);
+static inline unsigned int measure_cpu_frequency (
+#ifdef WINDOWS
+		unsigned INT64 pc_frequency
+#else
+		void
+#endif
+){
+	unsigned INT64 ticks;
+
+#ifdef WINDOWS
+	LARGE_INTEGER before,begin,end;
+
+	QueryPerformanceCounter (&before);
+	do {
+		QueryPerformanceCounter (&begin);
+		ticks=get_time_stamp_counter();
+	} while (begin.QuadPart==before.QuadPart);
+
+	do {
+		QueryPerformanceCounter (&end);
+	} while (end.QuadPart<begin.QuadPart+FREQUENCY_N_TICKS);
+
+	ticks=get_time_stamp_counter()-ticks;
+	ticks*=pc_frequency;
+	/* avoid 64-bit division on 32-bit platforms */
+	ticks=(unsigned INT64)((double)ticks/(double)(end.QuadPart-begin.QuadPart));
+#else
+	struct timespec tspec;
+	unsigned long threshold;
+
+	do {
+		clock_gettime (CLOCK_THREAD_CPUTIME_ID,&tspec);
+	} while (tspec.tv_nsec>=990000000);
+
+	ticks=get_time_stamp_counter();
+	threshold=tspec.tv_nsec+10000000;
+
+	do {
+		clock_gettime (CLOCK_THREAD_CPUTIME_ID,&tspec);
+	} while (tspec.tv_nsec<threshold);
+
+	ticks=get_time_stamp_counter()-ticks;
+	ticks*=100;
+#endif
+
+	return ticks;
+}
+
+static unsigned int compute_cpu_frequency (void)
+{
+	unsigned int frequency[FREQUENCY_SAMPLES];
+	int begin,end;
+	unsigned INT64 avg_frequency;
+
+#ifdef WINDOWS
+	LARGE_INTEGER pc_frequency;
+	QueryPerformanceFrequency (&pc_frequency);
+#endif
+
+	for (int i=0; i<FREQUENCY_SAMPLES; i++)
+		frequency[i]=measure_cpu_frequency(
+#ifdef WINDOWS
+				pc_frequency.QuadPart
+#endif
+		);
+
+	sort (frequency,0,FREQUENCY_SAMPLES-1);
+
+	begin=FREQUENCY_SAMPLES>>2;
+	end=FREQUENCY_SAMPLES-begin;
+	avg_frequency=0;
+	for (int i=begin; i<end; i++)
+		avg_frequency+=frequency[i];
+
+	return (unsigned INT64)((double)avg_frequency/(double)(FREQUENCY_SAMPLES>>1));
+}
+
+extern unsigned int measure_profile_overhead (void);
+static unsigned int compute_profile_overhead_1000 (void)
+{
+	unsigned int ticks_without_profile[OVERHEAD_SAMPLES];
+	unsigned int ticks_with_profile[OVERHEAD_SAMPLES];
+	struct profile_node *with_profile_cost_centre;
+	int begin,end;
+	int overhead;
+
+	/* measure_profile_overhead returns the nr. of ticks in 100k iterations
+	 * *without* profiling calls, and leaves a cost centre *with* profiling one
+	 * space above the stack. */
+	for (int i=0; i<OVERHEAD_SAMPLES; i++){
+		ticks_without_profile[i]=measure_profile_overhead();
+		with_profile_cost_centre=profile_data_stack_ptr[1];
+		ticks_with_profile[i]=with_profile_cost_centre->node_ticks;
+		with_profile_cost_centre->node_ticks=0;
+	}
+
+	/* Drop potential outliers; keep middle half of the samples */
+	sort (ticks_with_profile,0,OVERHEAD_SAMPLES-1);
+	sort (ticks_without_profile,0,OVERHEAD_SAMPLES-1);
+
+	begin=OVERHEAD_SAMPLES>>2;
+	end=OVERHEAD_SAMPLES-begin;
+	overhead=0;
+	for (int i=begin; i<end; i++){
+		overhead+=ticks_with_profile[i];
+		overhead-=ticks_without_profile[i];
+	}
+
+	/* Remove the association of the new cost centre as child of root_node to
+	 * make sure it is not exported. */
+	root_node->node_children.node_children_next=root_node->node_children.node_children_next->node_children_next;
+
+	/* measure_profile_overhead does 200000 profile calls, so we now have the
+	 * overhead of OVERHEAD_SAMPLES / 2 * 200K calls; divide by 100 *
+	 * OVERHEAD_SAMPLES to get the overhead per 1000 calls. */
+	return overhead<0 ? 0 : overhead/OVERHEAD_SAMPLES/100;
+}
+
 /* from scon.c */
 extern void create_profile_file_name (unsigned char *profile_file_name_string);
 void c_write_profile_information (void)
 {
 	unsigned char profile_file_name[128];
+	unsigned INT64 cpu_frequency,profile_overhead_1000;
+
+#ifdef WINDOWS
+	HANDLE thread=GetCurrentThread();
+	int priority=GetThreadPriority (thread);
+	if (priority!=THREAD_PRIORITY_ERROR_RETURN)
+		SetThreadPriority (thread,THREAD_PRIORITY_TIME_CRITICAL);
+#endif
+	cpu_frequency=compute_cpu_frequency();
+	profile_overhead_1000=compute_profile_overhead_1000();
+#ifdef WINDOWS
+	if (priority!=THREAD_PRIORITY_ERROR_RETURN)
+		SetThreadPriority (thread,priority);
+#endif
+
 	create_profile_file_name (profile_file_name);
 
 	unique_modules=safe_malloc (2*sizeof (struct profile_info*));
@@ -283,9 +454,11 @@ void c_write_profile_information (void)
 	struct file *f=open_file ((struct clean_string*)(profile_file_name+IF_INT_64_OR_32(8,4)),4);
 
 	file_write_characters ((unsigned char*)"prof",4,f); /* magic number */
-	file_write_int (1,f); /* version */
+	file_write_int (2,f); /* version */
 	file_write_int (unique_modules_ptr,f);
 	file_write_int (unique_cost_centres_ptr,f);
+	write_unsigned_int (cpu_frequency,f);
+	write_unsigned_int (profile_overhead_1000,f);
 
 	for (int i=0; i<unique_modules_ptr; i++){
 		struct clean_string *module_name=module_string (unique_modules[i]);

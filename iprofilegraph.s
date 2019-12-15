@@ -24,6 +24,8 @@
 	.global	write_profile_stack
 	.global	write_profile_information
 	.global	init_profiler
+	.global	@get_time_stamp_counter
+	.global	@measure_profile_overhead
 
 	.global	@profile_data_stack_ptr
 	.global	@profile_last_tail_call
@@ -338,6 +340,52 @@ init_profiler:
 	pop	d0
 	ret
 
+@get_time_stamp_counter:
+	rdtsc
+	ret
+
+@measure_profile_overhead:
+	push	a2
+	lea	measure_profile_overhead_dummy,a2
+
+	mov	end_heap,a1
+	sub	a4,a1
+	add	$32,a1
+	mov	a1,bytes_free
+
+	rdtsc
+	mov	a1,tick_count_hi
+	mov	d0,tick_count_lo
+
+	call	profile_s
+	mov	$99999,d0
+measure_profile_overhead_lp1:
+	call	profile_s
+	add	a0,a0
+	add	a1,a1
+	add	a0,a0
+	add	a1,a1
+	call	profile_r
+	sub	$1,d0
+	jne	measure_profile_overhead_lp1
+	call	profile_r
+
+	mov	$100000,d0
+measure_profile_overhead_lp2:
+	add	a0,a0
+	add	a1,a1
+	add	a0,a0
+	add	a1,a1
+	sub	$1,d0
+	jne	measure_profile_overhead_lp2
+
+	rdtsc
+	sub	tick_count_lo,d0
+	sbb	tick_count_hi,a1
+
+	pop	a2
+	ret
+
 	.data
 	align	(2)
 tick_count_lo:
@@ -346,3 +394,8 @@ tick_count_hi:
 	.long	0
 bytes_free:
 	.long	0
+
+	align	(2)
+	.long	m_system
+measure_profile_overhead_dummy:
+	.byte	0

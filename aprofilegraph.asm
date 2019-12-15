@@ -16,6 +16,8 @@ _DATA	ends
 	public	write_profile_stack
 	public	write_profile_information
 	public	init_profiler
+	public	get_time_stamp_counter
+	public	measure_profile_overhead
 
 	extrn	profile_data_stack_ptr:near
 	extrn	profile_last_tail_call:near
@@ -86,8 +88,8 @@ profile_r_:
 profile_l:
 	push	rax
 	push	rdx
-	push	rcx
 	rdtsc
+	push	rcx
  ifdef LINUX
 	push	rsi
 	push	rdi
@@ -129,8 +131,8 @@ profile_l:
 profile_l2:
 	push	rax
 	push	rdx
-	push	rcx
 	rdtsc
+	push	rcx
  ifdef LINUX
 	push	rsi
 	push	rdi
@@ -172,8 +174,8 @@ profile_l2:
 profile_n:
 	push	rax
 	push	rdx
-	push	rcx
 	rdtsc
+	push	rcx
  ifdef LINUX
 	push	rsi
 	push	rdi
@@ -217,8 +219,8 @@ profile_n:
 profile_n2:
 	push	rax
 	push	rdx
-	push	rcx
 	rdtsc
+	push	rcx
  ifdef LINUX
 	push	rsi
 	push	rdi
@@ -308,8 +310,8 @@ profile_eval_upd:
 profile_s:
 	push	rax
 	push	rdx
-	push	rcx
 	rdtsc
+	push	rcx
  ifdef LINUX
 	push	rsi
 	push	rdi
@@ -351,8 +353,8 @@ profile_s:
 profile_s2:
 	push	rax
 	push	rdx
-	push	rcx
 	rdtsc
+	push	rcx
  ifdef LINUX
 	push	rsi
 	push	rdi
@@ -482,12 +484,62 @@ init_profiler:
 	pop	rax
 	ret
 
+get_time_stamp_counter:
+	rdtsc
+	shl	rdx,32
+	add	rax,rdx
+	ret
+
+measure_profile_overhead:
+	push	rbp
+	lea	rbp,measure_profile_overhead_dummy
+
+	rdtsc
+	shl	rdx,32
+	add	rdx,rax
+	mov	qword ptr tick_count,rdx
+
+	call	profile_s
+	mov	rax,99999
+measure_profile_overhead_lp1:
+	call	profile_s
+	add	rcx,rcx
+	add	rdx,rdx
+	call	profile_r
+	add	rcx,rcx
+	add	rdx,rdx
+	sub	rax,1
+	jne	measure_profile_overhead_lp1
+	call	profile_r
+
+	mov	rax,100000
+measure_profile_overhead_lp2:
+	add	rcx,rcx
+	add	rdx,rdx
+	add	r8,r8
+	add	r9,r9
+	sub	rax,1
+	jne	measure_profile_overhead_lp2
+
+	rdtsc
+	shl	rdx,32
+	add	rax,rdx
+	sub	rax,qword ptr tick_count
+
+	pop	rbp
+	ret
+
 _TEXT	ends
 
 	_DATA segment
 
 tick_count	dq	0
 words_free	dq	0
+
+	align	8
+	dd	m_system
+measure_profile_overhead_dummy:
+	db	0
 
 	align (1 shl 3)
 
