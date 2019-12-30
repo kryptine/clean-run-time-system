@@ -550,10 +550,10 @@ void c_profile_n (int *address,INT64 ticks,INT64 words,void **a0)
 
 	profile_last_tail_call=NULL;
 
-	int arity=((int*)*a0)[-1] & 0xff;
+	int arity=((int*)*a0)[-1];
 	if (arity<0)
 		arity=2;
-	struct profile_node *parent=(struct profile_node*)a0[arity];
+	struct profile_node *parent=(struct profile_node*)a0[arity & 0xff];
 
 	push (parent,address)->node_lazy_calls++;
 }
