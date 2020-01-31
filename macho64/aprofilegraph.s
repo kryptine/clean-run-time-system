@@ -373,7 +373,7 @@ _get_time_stamp_counter:
 
 _measure_profile_overhead:
 	push	rbp
-	lea	rbp,measure_profile_overhead_dummy[rip]
+	lea	rbp,[rip+measure_profile_overhead_dummy]
 
 	rdtsc
 	shl	rdx,32
