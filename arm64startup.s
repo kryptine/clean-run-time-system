@@ -1392,7 +1392,7 @@ BtoAC_true:
 	ret	x29
 BtoAC_false:
 	adrp	x8,false_string
-	add	x8,x8,false_string
+	add	x8,x8,#:lo12:false_string
 	mov	x29,x30
 	ldr	x30,[x28],#8
 	ret	x29
