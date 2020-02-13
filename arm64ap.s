@@ -510,6 +510,9 @@ fast_ap:
 	add	x5,x5,x11
 	ldrh	w6,[x11,#-2]
 	ldr	w4,[x5,#-6]
+
+	mov	x29,x30
+
 .ifdef PROFILE
 	sub	x4,x4,#16
 .else
@@ -1009,10 +1012,14 @@ add_empty_node_2_gc_:
 	mov	x8,x27
 	add	x16,x16,#:lo12:__cycle__in__spine
 	str	x16,[x27],#24
-	ret	x30	
+	mov	x16,x30
+	mov	x30,x29
+	ret	x16
 add_empty_node_2_gc:
+	str	x29,[x28,#-8]!
 	str	x30,[x28,#-8]!
 	bl	collect_2
+	ldr	x29,[x28],#8
 	b	add_empty_node_2_gc_
 
 add_empty_node_3:
@@ -1023,10 +1030,14 @@ add_empty_node_3_gc_:
 	str	x27,[x26],#8
 	add	x16,x16,#:lo12:__cycle__in__spine
 	str	x16,[x27],#24
-	ret	x30
+	mov	x16,x30
+	mov	x30,x29
+	ret	x16
 add_empty_node_3_gc:
+	str	x29,[x28,#-8]!
 	str	x30,[x28,#-8]!
 	bl	collect_3
+	ldr	x29,[x28],#8
 	b	add_empty_node_3_gc_
 
 add_empty_node_4:
@@ -1040,10 +1051,14 @@ add_empty_node_4_gc_:
 	add	x26,x26,#8
 	add	x16,x16,#:lo12:__cycle__in__spine
 	str	x16,[x27],#24
-	ret	x30
+	mov	x16,x30
+	mov	x30,x29
+	ret	x16
 add_empty_node_4_gc:
+	str	x29,[x28,#-8]!
 	str	x30,[x28,#-8]!
 	bl	collect_3
+	ldr	x29,[x28],#8
 	b	add_empty_node_4_gc_
 
 add_empty_node_5:
@@ -1059,10 +1074,14 @@ add_empty_node_5_gc_:
 	add	x26,x26,#8
 	add	x16,x16,#:lo12:__cycle__in__spine
 	str	x16,[x27],#24
-	ret	x30
+	mov	x16,x30
+	mov	x30,x29
+	ret	x16
 add_empty_node_5_gc:
+	str	x29,[x28,#-8]!
 	str	x30,[x28,#-8]!
 	bl	collect_3
+	ldr	x29,[x28],#8
 	b	add_empty_node_5_gc_
 
 add_empty_node_6:
@@ -1080,10 +1099,14 @@ add_empty_node_6_gc_:
 	add	x26,x26,#8
 	add	x16,x16,#:lo12:__cycle__in__spine
 	str	x16,[x27],#24
-	ret	x30
+	mov	x16,x30
+	mov	x30,x29
+	ret	x16
 add_empty_node_6_gc:
+	str	x29,[x28,#-8]!
 	str	x30,[x28,#-8]!
 	bl	collect_3
+	ldr	x29,[x28],#8
 	b	add_empty_node_6_gc_
 
 add_empty_node_7:
@@ -1103,10 +1126,14 @@ add_empty_node_7_gc_:
 	add	x26,x26,#8
 	add	x16,x16,#:lo12:__cycle__in__spine
 	str	x16,[x27],#24
-	ret	x30
+	mov	x16,x30
+	mov	x30,x29
+	ret	x16
 add_empty_node_7_gc:
+	str	x29,[x28,#-8]!
 	str	x30,[x28,#-8]!
 	bl	collect_3
+	ldr	x29,[x28],#8
 	b	add_empty_node_7_gc_
 
 add_empty_node_8:
@@ -1128,10 +1155,14 @@ add_empty_node_8_gc_:
 	add	x26,x26,#8
 	add	x16,x16,#:lo12:__cycle__in__spine
 	str	x16,[x27],#24
-	ret	x30
+	mov	x16,x30
+	mov	x30,x29
+	ret	x16
 add_empty_node_8_gc:
+	str	x29,[x28,#-8]!
 	str	x30,[x28,#-8]!
 	bl	collect_3
+	ldr	x29,[x28],#8
 	b	add_empty_node_8_gc_
 
 add_empty_node_9:
@@ -1155,10 +1186,14 @@ add_empty_node_9_gc_:
 	add	x26,x26,#8
 	add	x16,x16,#:lo12:__cycle__in__spine
 	str	x16,[x27],#24
-	ret	x30
+	mov	x16,x30
+	mov	x30,x29
+	ret	x16
 add_empty_node_9_gc:
+	str	x29,[x28,#-8]!
 	str	x30,[x28,#-8]!
 	bl	collect_3
+	ldr	x29,[x28],#8
 	b	add_empty_node_9_gc_
 
 add_empty_node_10:
@@ -1184,10 +1219,14 @@ add_empty_node_10_gc_:
 	add	x26,x26,#8
 	add	x16,x16,#:lo12:__cycle__in__spine
 	str	x16,[x27],#24
-	ret	x30
+	mov	x16,x30
+	mov	x30,x29
+	ret	x16
 add_empty_node_10_gc:
+	str	x29,[x28,#-8]!
 	str	x30,[x28,#-8]!
 	bl	collect_3
+	ldr	x29,[x28],#8
 	b	add_empty_node_10_gc_
 
 add_empty_node_31:
@@ -1229,10 +1268,14 @@ add_empty_node_11_lp:
 	add	x26,x26,#8
 	add	x16,x16,#:lo12:__cycle__in__spine
 	str	x16,[x27],#24
-	ret	x30
+	mov	x16,x30
+	mov	x30,x29
+	ret	x16
 add_empty_node_11_gc:
+	str	x29,[x28,#-8]!
 	str	x30,[x28,#-8]!
 	bl	collect_3
+	ldr	x29,[x28],#8
 	b	add_empty_node_11_gc_
 
 add_empty_node_32:
@@ -1275,10 +1318,14 @@ add_empty_node_12_lp:
 	add	x26,x26,#8
 	add	x16,x16,#:lo12:__cycle__in__spine
 	str	x16,[x27],#24
-	ret	x30
+	mov	x16,x30
+	mov	x30,x29
+	ret	x16
 add_empty_node_12_gc:
+	str	x29,[x28,#-8]!
 	str	x30,[x28,#-8]!
 	bl	collect_3
+	ldr	x29,[x28],#8
 	b	add_empty_node_12_gc_
 
 add_empty_node_29:
@@ -1321,10 +1368,14 @@ add_empty_node_13_lp:
 	add	x26,x26,#8
 	add	x16,x16,#:lo12:__cycle__in__spine
 	str	x16,[x27],#24
-	ret	x30
+	mov	x16,x30
+	mov	x30,x29
+	ret	x16
 add_empty_node_13_gc:
+	str	x29,[x28,#-8]!
 	str	x30,[x28,#-8]!
 	bl	collect_3
+	ldr	x29,[x28],#8
 	b	add_empty_node_13_gc_
 
 add_empty_node_30:
@@ -1370,10 +1421,14 @@ add_empty_node_14_lp:
 	add	x26,x26,#8
 	add	x16,x16,#:lo12:__cycle__in__spine
 	str	x16,[x27],#24
-	ret	x30
+	mov	x16,x30
+	mov	x30,x29
+	ret	x16
 add_empty_node_14_gc_:
+	str	x29,[x28,#-8]!
 	str	x30,[x28,#-8]!
 	bl	collect_3
+	ldr	x29,[x28],#8
 	b	add_empty_node_14_gc_
 
 yet_args_needed_0:
