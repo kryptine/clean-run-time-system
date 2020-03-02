@@ -1458,15 +1458,6 @@ EXCEPTION_DISPOSITION clean_exception_handler
 		}
 	}
 
-	{
-	EXCEPTION_POINTERS exception_pointers;
-	
-	exception_pointers.ExceptionRecord=exception_record_p;
-	exception_pointers.ContextRecord=context_record_p;
-
-	UnhandledExceptionFilter (&exception_pointers);
-	}
-
 	return ExceptionContinueSearch;
 }
 # else
