@@ -470,6 +470,9 @@ fast_ap_2_2_:
 	add	x5,x5,x11
 	ldrh	w6,[x11,#-2]
 	ldr	w4,[x5,#-6]
+
+	mov	x29,x30
+
 .ifdef PROFILE
 	sub	x4,x4,#16
 .else
