@@ -1215,8 +1215,8 @@ print_bool:
 print_true:
 	adrp	x0,true_c_string
 	add	x0,x0,#:lo12:true_c_string
-	bl	w_print_string
 	mov	x29,x30
+	bl	w_print_string
 	ldr	x30,[x28],#8
 	ret	x29
 
@@ -1225,7 +1225,6 @@ print_false:
 	add	x0,x0,#:lo12:false_c_string
 	mov	x29,x30
 	bl	w_print_string
-	mov	x29,x30
 	ldr	x30,[x28],#8
 	ret	x29
 
@@ -1235,11 +1234,10 @@ print_real_node:
 	ldr	d0,[x8,#8]
 print_real_:
 	mov	x19,sp
-	and	sp,x19,#-8
+	and	sp,x19,#-16
 	mov	x29,x30
 	bl	w_print_real
 	mov	sp,x19
-	mov	x29,x30
 	ldr	x30,[x28],#8
 	ret	x29
 
@@ -1248,7 +1246,6 @@ print_string_a2:
 	add	x0,x10,#4
 	mov	x29,x30
 	bl	w_print_text
-	mov	x29,x30
 	ldr	x30,[x28],#8
 	ret	x29
 
