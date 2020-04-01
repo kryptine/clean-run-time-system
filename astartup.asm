@@ -128,6 +128,11 @@ heap_mbp	dq	0
 heap_p		dq	0
 stack_mbp	dq	0
 
+ ifdef LINUX
+page_size_m1	dq	0
+page_size_m1_neg	dq	0
+ endif
+
 bit_counter	label ptr
 	dq	0
 bit_vector_p	label ptr
@@ -866,11 +871,28 @@ init_clean:
 	mov	rbp,rsp
 	and	rsp,-16
  ifdef LINUX
-	mov	rdi,rax
+	mov	rbx,rax
+	mov	rdi,30
   ifdef PIC
-	call	malloc@PLT
+	call	sysconf@PLT
   else
-	call	malloc
+	call	sysconf
+  endif
+	sub	rax,1
+	mov	qword ptr page_size_m1,rax
+	not	rax
+	mov	qword ptr page_size_m1_neg,rax
+
+	xor	rdi,rdi
+	mov	rsi,rbx
+	mov	rdx,0x3
+	mov	rcx,0x22
+	mov	r8,-1
+	xor	r9,r9
+  ifdef PIC
+	call	mmap@PLT
+  else
+	call	mmap
   endif
  else
 	mov	rcx,rax
@@ -1044,11 +1066,12 @@ no_memory_3:
 	mov	qword ptr execution_aborted+0,1
  
  ifdef LINUX
+	mov	rsi,qword ptr heap_size+0
 	mov	rdi,heap_mbp+0
   ifdef PIC
-	call	free@PLT
+	call	munmap@PLT
   else
-	call	free
+	call	munmap
   endif
  else
 	mov	rcx,heap_mbp
@@ -1296,11 +1319,12 @@ no_print_execution_time:
 	call	free
   endif
 
+	mov	rsi,qword ptr heap_size+0
 	mov	rdi,heap_mbp+0
   ifdef PIC
-	call	free@PLT
+	call	munmap@PLT
   else
-	call	free
+	call	munmap
   endif
  else
 	mov	rcx,stack_mbp
@@ -2611,6 +2635,30 @@ end_zero_bit_vector:
 
 	include	acopy.asm
 
+ ifdef LINUX
+	push	rdi
+	push	rsi
+	mov	rdi,qword ptr heap_p1
+	mov	rsi,qword ptr heap_mbp
+	cmp	rdi,rsi
+	mov	rsi,qword ptr heap_copied_vector
+	je	advise_after_copy_1
+	mov	rsi,qword ptr heap_mbp
+	add	rsi,qword ptr heap_size
+advise_after_copy_1:
+	add	rdi,qword ptr page_size_m1
+	and	rdi,qword ptr page_size_m1_neg
+	sub	rsi,rdi
+	mov	rdx,4
+  ifdef PIC
+	call	madvise@PLT
+  else
+	call	madvise
+  endif
+	pop	rsi
+	pop	rdi
+ endif
+
 	mov	qword ptr heap2_begin_and_end+0,rsi 
 
 	mov	r15,rsi
@@ -3294,6 +3342,27 @@ no_mark_6:
 
 no_copy_garbage_collection:
 	call	add_compact_garbage_collect_time
+
+ ifdef LINUX
+	push	rdi
+	push	rsi
+	mov	rsi,r15
+	shl	rsi,3
+	add	rdi,rsi
+	add	rdi,qword ptr page_size_m1
+	and	rdi,qword ptr page_size_m1_neg
+	mov	rsi,qword ptr heap_mbp
+	add	rsi,qword ptr heap_size
+	sub	rsi,rdi
+	mov	rdx,4
+  ifdef PIC
+	call	madvise@PLT
+  else
+	call	madvise
+  endif
+	pop	rsi
+	pop	rdi
+ endif
 
 	mov	rax,rdi
 	sub	rax,qword ptr heap_p3+0
