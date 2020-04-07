@@ -995,6 +995,12 @@ move_strict_basic_array:
 	cmpl	$BOOL+2,d1
 	je	move_bool_array
 
+	cmpl	$REAL+2,d1
+	je	move_real_array
+
+	jmp	cp_s_arg_lp3
+
+move_real_array:
 	addl	d0,d0
 	jmp	cp_s_arg_lp3
 

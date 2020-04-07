@@ -1349,6 +1349,12 @@ copy_strict_basic_array_2:
 	cmpl	$BOOL+2,d0
 	je	copy_bool_array_2
 
+	cmpl	$REAL+2,d0
+	je	copy_real_array_2
+
+	jmp	copy_int_array_2
+
+copy_real_array_2:
 	addl	d1,d1
 copy_int_array_2:
 	shl	$2,d1

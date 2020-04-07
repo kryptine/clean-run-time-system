@@ -1183,6 +1183,9 @@ _mark_strict_basic_array:
 	je	_mark_strict_int_array
 	cmpl	$BOOL+2,a2
 	je	_mark_strict_bool_array
+	cmpl	$REAL+2,a2
+	je	_mark_strict_real_array
+	jmp	_mark_strict_int_array
 _mark_strict_real_array:
 	addl	d0,d0
 _mark_strict_int_array:
@@ -2041,6 +2044,9 @@ __mark_strict_basic_array:
 	je	__mark__strict__int__array
 	cmpl	$BOOL+2,a2
 	je	__mark__strict__bool__array
+	cmpl	$REAL+2,a2
+	je	__mark__strict__real__array
+	jmp	__mark__strict__int__array
 __mark__strict__real__array:
 	addl	d0,d0
 __mark__strict__int__array:
