@@ -430,13 +430,17 @@ start_address:
 	.globl	_create_arrayB
 	.globl	_create_arrayC
 	.globl	_create_arrayI
+	.globl	_create_arrayI32
 	.globl	_create_arrayR
+	.globl	_create_arrayR32
 	.globl	_create_r_array
 	.globl	create_array
 	.globl	create_arrayB
 	.globl	create_arrayC
 	.globl	create_arrayI
+	.globl	create_arrayI32
 	.globl	create_arrayR
+	.globl	create_arrayR32
 	.globl	create_R_array
 
 	.globl	BtoAC
@@ -527,9 +531,11 @@ start_address:
 
 / from system.abc:	
 	.global	INT
+	.global	INT32
 	.global	CHAR
 	.global	BOOL
 	.global	REAL
+	.global	REAL32
 	.global	FILE
 	.global	__STRING__
 	.global	__ARRAY__
@@ -4070,6 +4076,19 @@ no_collect_4572:
 	lea	12(a4,d0,4),a4
 	ret
 
+_create_arrayI32:
+	lea	-32+12(a4,d0,4),a2
+	cmpl	end_heap,a2
+	jb	no_collect__create_arrayI32
+	call	collect_0l
+no_collect__create_arrayI32:
+	movl	a4,a0
+	movl	$__ARRAY__+2,(a4)
+	movl	d0,4(a4)
+	movl	$INT32+2,8(a4)
+	lea	12(a4,d0,4),a4
+	ret
+
 _create_arrayR:
 	lea	-32+12+4(a4,d0,8),a2
 	cmpl	end_heap,a2
@@ -4082,6 +4101,20 @@ no_collect_4580:
 	movl	d0,4(a4)
 	movl	$REAL+2,8(a4)
 	lea	12(a4,d0,8),a4
+	ret
+
+_create_arrayR32:
+	lea	-32+12+4(a4,d0,4),a2
+	cmpl	end_heap,a2
+	jb	no_collect__create_arrayR32
+	call	collect_0l
+no_collect__create_arrayR32:
+	orl	$4,a4
+	movl	a4,a0
+	movl	$__ARRAY__+2,(a4)
+	movl	d0,4(a4)
+	movl	$REAL32+2,8(a4)
+	lea	12(a4,d0,4),a4
 	ret
 
 / vier(sp): number of elements, (sp): element descriptor
@@ -4278,6 +4311,20 @@ no_collect_4578:
 	addl	$8,a4
 	jmp	create_arrayBCI
 
+create_arrayI32:
+	lea	-32+12(a4,d1,4),a2
+	cmpl	end_heap,a2
+	jb	no_collect_create_arrayI32
+	call	collect_0l
+no_collect_create_arrayI32:
+	movl	a4,a0
+	movl	$__ARRAY__+2,(a4)
+	movl	d1,4(a4)
+	lea	0(,d1,4),a1
+	movl	$INT32+2,8(a4)
+	addl	$12,a4
+	jmp	create_arrayBCI
+
 create_arrayI:
 	lea	-32+12(a4,d1,4),a2
 	cmpl	end_heap,a2
@@ -4311,6 +4358,27 @@ st_filli_array:
 	jnc	filli_array
 
 	ret
+
+create_arrayR32:
+	fsts	-4(sp)
+
+	lea	-32+12+4(a4,d0,4),a2
+
+	movl	-4(sp),d1
+
+	cmpl	end_heap,a2
+	jb	no_collect_create_arrayR32
+	call	collect_0l
+no_collect_create_arrayR32:
+	orl	$4,a4
+
+	movl	a4,a0
+	movl	$__ARRAY__+2,(a4)
+	movl	d0,4(a4)
+	movl	$REAL32+2,8(a4)
+	addl	$12,a4
+	mov	d1,a1
+	jmp	st_fillr_array
 
 create_arrayR:
 	fstl	-8(sp)
