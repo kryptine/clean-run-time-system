@@ -346,12 +346,16 @@ start_address:
 	.globl	_create_arrayC
 	.globl	_create_arrayI
 	.globl	_create_arrayR
+	.globl	_create_arrayI32
+	.globl	_create_arrayR32
 	.globl	_create_r_array
 	.globl	create_array
 	.globl	create_arrayB
 	.globl	create_arrayC
 	.globl	create_arrayI
 	.globl	create_arrayR
+	.globl	create_arrayI32
+	.globl	create_arrayR32
 	.globl	create_R_array
 
 	.globl	BtoAC
@@ -426,9 +430,11 @@ start_address:
 
 # from system.abc:	
 	.globl	INT
+	.globl	INT32
 	.globl	CHAR
 	.globl	BOOL
 	.globl	REAL
+	.globl	REAL32
 	.globl	FILE
 	.globl	__STRING__
 	.globl	__ARRAY__
@@ -3906,6 +3912,52 @@ _create_arrayR_no_collect:
 	ldr	x30,[x28],#8
 	ret	x29
 
+_create_arrayI32:
+	add	x6,x6,#1
+	lsr	x6,x6,#1
+	add	x16,x6,#3
+	subs	x25,x25,x16
+	bhs	_create_arrayI32_no_collect
+	str	x30,[x28,#-8]!
+	bl	collect_0
+_create_arrayI32_no_collect:
+	mov	x8,x27
+	adrp	x16,__ARRAY__+2
+	add	x16,x16,#:lo12:__ARRAY__+2
+	str	x16,[x27]
+	str	x6,[x27,#8]
+	adrp	x16,INT32+2
+	add	x16,x16,#:lo12:INT32+2
+	str	x16,[x27,#16]
+	add	x16,x27,#24
+	add	x27,x16,x6,lsl #3
+	mov	x29,x30
+	ldr	x30,[x28],#8
+	ret	x29
+
+_create_arrayR32:
+	add	x6,x6,#1
+	lsr	x6,x6,#1
+	add	x16,x6,#3
+	subs	x25,x25,x16
+	bhs	_create_arrayR32_no_collect
+	str	x30,[x28,#-8]!
+	bl	collect_0
+_create_arrayR32_no_collect:
+	mov	x8,x27
+	adrp	x16,__ARRAY__+2
+	add	x16,x16,#:lo12:__ARRAY__+2
+	str	x16,[x27]
+	str	x6,[x27,#8]
+	adrp	x16,REAL32+2
+	add	x16,x16,#:lo12:REAL32+2
+	str	x16,[x27,#16]
+	add	x16,x27,#24
+	add	x27,x16,x6,lsl #3
+	mov	x29,x30
+	ldr	x30,[x28],#8
+	ret	x29
+
 # x6: number of elements, x5: element descriptor
 # x4: element size, x3: element a size, a0:a_element-> a0: array
 
@@ -4092,6 +4144,34 @@ no_collect_4578:
 
 	b	create_arrayBCI
 
+create_arrayI32:
+	mov	x9,x5
+	add	x5,x5,#1
+	lsr	x5,x5,#1
+
+	add	x16,x5,#3
+	subs	x25,x25,x16
+	bhs	create_arrayI32_no_collect
+
+	str	x9,[x28,#-8]!
+	str	x30,[x28,#-8]!
+	bl	collect_0
+	ldr	x9,[x28],#8
+
+create_arrayI32_no_collect:
+	orr	x6,x6,x6,lsl #32
+
+	mov	x8,x27
+	adrp	x16,__ARRAY__+2
+	add	x16,x16,#:lo12:__ARRAY__+2
+	str	x16,[x27]
+	str	x9,[x27,#8]
+	adrp	x16,INT32+2
+	add	x16,x16,#:lo12:INT32+2
+	str	x16,[x27,#16]
+	add	x27,x27,#24
+	b	create_arrayBCI
+
 create_arrayI:
 	add	x16,x5,#3
 	subs	x25,x25,x16
@@ -4127,6 +4207,38 @@ st_filli_array:
 	mov	x29,x30
 	ldr	x30,[x28],#8
 	ret	x29
+
+create_arrayR32:
+	mov	x9,x6
+	add	x6,x6,#1
+	lsr	x6,x6,#1
+
+	fcvt	s0,d0
+	fmov	w5,s0
+
+	add	x16,x6,#3
+	subs	x25,x25,x16
+	bhs	create_arrayR32_no_collect
+
+	str	x9,[x28,#-8]!
+	str	x30,[x28,#-8]!
+	bl	collect_0
+	ldr	x9,[x28],#8
+
+create_arrayR32_no_collect:
+	orr	x5,x5,x5,lsl #32
+
+	mov	x8,x27
+	adrp	x16,__ARRAY__+2
+	add	x16,x16,#:lo12:__ARRAY__+2
+	str	x16,[x27]
+	str	x9,[x27,#8]
+	adrp	x16,REAL32+2
+	add	x16,x16,#:lo12:REAL32+2
+	str	x16,[x27,#16]
+	add	x27,x27,#24
+
+	b	st_fillr_array
 
 create_arrayR:
 	add	x16,x6,#3
